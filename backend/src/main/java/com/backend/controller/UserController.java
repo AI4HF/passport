@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+//Spring Controller which implements the Authentication measures and role management
+//Internally uses Keycloak's own API for the Authentication
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -38,6 +40,9 @@ public class UserController {
     }
 
 
+    //Our main login method
+    //Handles the Keycloak Authentication process, access token and resource_access retrieval.
+    //Extracts the user's roles on the client and returns them in the body to allow the Frontend work based around it.
     @PostMapping("/login")
     public ResponseEntity<List<String>> login(@NotNull @RequestBody LoginRequest loginRequest) {
         Keycloak keycloak = kcProvider.newKeycloakBuilderWithPasswordCredentials(loginRequest.getUsername(), loginRequest.getPassword()).build();

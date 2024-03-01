@@ -10,10 +10,14 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+//Class which allows the Keycloak methods to be called on Spring.
+//Additional methods for Keycloak can be implemented here if needed.
 @Configuration
 @Getter
 public class KeycloakProvider {
 
+    //Keycloak variables that are necessary to access the desired Keycloak Realm and Client.
+    //Values are provided in resources/application.properties
     @Value("${keycloak.auth-server-url}")
     public String serverURL;
     @Value("${keycloak.realm}")
@@ -28,21 +32,9 @@ public class KeycloakProvider {
     public KeycloakProvider() {
     }
 
-    public Keycloak getInstance() {
-        if (keycloak == null) {
 
-            return KeycloakBuilder.builder()
-                    .realm(realm)
-                    .serverUrl(serverURL)
-                    .clientId(clientID)
-                    .clientSecret(clientSecret)
-                    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                    .build();
-        }
-        return keycloak;
-    }
-
-
+    //The main Keycloak method we need for now
+    //Called to create an instance of the Keycloak in Spring, in our controllers
     public KeycloakBuilder newKeycloakBuilderWithPasswordCredentials(String username, String password) {
         return KeycloakBuilder.builder() //
                 .realm(realm) //
@@ -53,14 +45,4 @@ public class KeycloakProvider {
                 .password(password);
     }
 
-    public JsonNode refreshToken(String refreshToken) throws UnirestException {
-        String url = serverURL + "/realms/" + realm + "/protocol/openid-connect/token";
-        return Unirest.post(url)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .field("client_id", clientID)
-                .field("client_secret", clientSecret)
-                .field("refresh_token", refreshToken)
-                .field("grant_type", "refresh_token")
-                .asJson().getBody();
-    }
 }
