@@ -1,4 +1,4 @@
-package com.backend.config;
+package io.passport.server.config;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;

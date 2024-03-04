@@ -1,9 +1,9 @@
-package com.backend.controller;
+package io.passport.server.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.backend.config.KeycloakProvider;
-import com.backend.model.LoginRequest;
+import io.passport.server.config.KeycloakProvider;
+import io.passport.server.model.LoginRequest;
 
 
 import org.keycloak.admin.client.Keycloak;

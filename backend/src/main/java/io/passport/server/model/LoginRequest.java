@@ -1,4 +1,4 @@
-package com.backend.model;
+package io.passport.server.model;
 
 
 import lombok.Getter;

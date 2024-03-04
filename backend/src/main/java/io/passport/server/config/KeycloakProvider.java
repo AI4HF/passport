@@ -1,4 +1,4 @@
-package com.backend.config;
+package io.passport.server.config;
 
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
