@@ -1,7 +1,7 @@
 services:
   keycloak:
     container_name: keycloak
-    image: jboss/keycloak:15.0.2
+    image: jboss/keycloak:latest
     restart: always
     env_file: ./keycloak.env
     depends_on:
@@ -10,7 +10,6 @@ services:
       - ./realm-import.json:/tmp/realm.json
     ports:
       - "18080:8080"
-
 
   keycloak_db:
     container_name: keycloak_db
