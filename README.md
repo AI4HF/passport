@@ -12,5 +12,5 @@ To start using the REST methods and the GUI implementation itself, follow the in
 - Should ensure that the Keycloak realm with the provided details is set up properly
 - Will also ensure the proper setting up of other outside dependencies of this project, as the required methods for them are implemented.
 
-- When set up, the Keycloak server will be set up with the provided Keycloak environemnt details, and the provided realm details in the realm-import.json.
+- When set up, the Keycloak server will be set up with the provided Keycloak environment details, and the provided realm details in the realm-import.json.
 - In this step, all the implemented client and its roles are implemented along with the realm.
