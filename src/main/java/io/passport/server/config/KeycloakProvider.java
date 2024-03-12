@@ -18,27 +18,27 @@ public class KeycloakProvider {
      * Values are provided in resources/application.properties
      */
     @Value("${keycloak.auth-server-url}")
-    public String serverURL;
+    private String serverURL;
     @Value("${keycloak.realm}")
-    public String realm;
+    private String realm;
     @Value("${keycloak.resource}")
-    public String clientID;
+    private String clientID;
     @Value("${keycloak.credentials.secret}")
-    public String clientSecret;
+    private String clientSecret;
 
     /**
+     * Called to create an instance of the Keycloak in Spring, in our controllers
      * @param username user Keycloak recorded username
      * @param password user Keycloak recorded password
      * @return The main Keycloak method we need for now
-     * Called to create an instance of the Keycloak in Spring, in our controllers
      */
     public KeycloakBuilder newKeycloakBuilderWithPasswordCredentials(String username, String password) {
-        return KeycloakBuilder.builder() //
-                .realm(realm) //
-                .serverUrl(serverURL)//
-                .clientId(clientID) //
-                .clientSecret(clientSecret) //
-                .username(username) //
+        return KeycloakBuilder.builder()
+                .realm(realm)
+                .serverUrl(serverURL)
+                .clientId(clientID)
+                .clientSecret(clientSecret)
+                .username(username)
                 .password(password);
     }
 }

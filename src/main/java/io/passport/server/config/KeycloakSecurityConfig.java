@@ -24,9 +24,10 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     /**
+     * Method to configure the access rules for different REST endpoints
+     * Will be expanded as new endpoints for different user roles are generated     *
      * @param http
-     * @throws Exception Method to configure the access rules for different REST endpoints
-     *                   Will be expanded as new endpoints for different user roles are generated/
+     * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,8 +40,9 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     }
 
     /**
+     * Keycloak's own Authentication configurations
      * @param auth
-     * @throws Exception Keycloak's own Authentication configurations
+     * @throws Exception
      */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

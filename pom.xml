@@ -8,11 +8,11 @@
         <version>2.5.6</version>
         <relativePath/>
     </parent>
-    <groupId>com.datmt</groupId>
+    <groupId>io.passport</groupId>
     <artifactId>keycloak-springboot-microservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>keycloak-springboot-authentication</name>
-    <description>Spring boot keycloak authen</description>
+    <description>The backend implementation of AI4HF Product Passport</description>
 
     <properties>
         <java.version>11</java.version>
@@ -20,39 +20,44 @@
     </properties>
 
     <dependencies>
+        <!-- JWT Dependency needed to decode and obtain roles from the Keycloak Token -->
         <dependency>
             <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId> <!-- JWT Dependency needed to decode and obtain roles from the Keycloak Token -->
+            <artifactId>java-jwt</artifactId>
             <version>3.18.1</version>
         </dependency>
+        <!-- Dependency needed for managing Keycloak with Spring Boot -->
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId> <!-- Dependency needed for managing Keycloak with Spring Boot -->
+            <artifactId>keycloak-spring-boot-starter</artifactId>
             <version>${keycloak.version}</version>
         </dependency>
+        <!-- Spring Security Package for Security Configurations -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId> <!-- Spring Security Package for Security Configurations -->
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- Spring Boot Web Package for future use -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId> <!-- Spring Boot Web Package for future use -->
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <!-- Main Keycloak Import -->
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId> <!-- Main Keycloak Import -->
+            <artifactId>keycloak-admin-client</artifactId>
             <version>${keycloak.version}</version>
         </dependency>
-
+        <!-- HTTP Request Management Package -->
         <dependency>
             <groupId>com.mashape.unirest</groupId>
-            <artifactId>unirest-java</artifactId> <!-- HTTP Request Management Package -->
+            <artifactId>unirest-java</artifactId>
             <version>1.4.9</version>
         </dependency>
+        <!-- Annotation Package for use in the whole project -->
         <dependency>
             <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId> <!-- Annotation Package for use in the whole project -->
+            <artifactId>lombok</artifactId>
             <version>1.18.30</version>
             <optional>true</optional>
         </dependency>
@@ -60,12 +65,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Dependency needed for Keycloak Adapters -->
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
-                <artifactId>keycloak-adapter-bom</artifactId> <!-- Dependency needed for Keycloak Adapters -->
+                <artifactId>keycloak-adapter-bom</artifactId>
                 <version>${keycloak.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.2.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -74,7 +85,7 @@
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId> <!-- Default Spring Boot - Maven Plugin -->
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
