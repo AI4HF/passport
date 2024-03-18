@@ -29,9 +29,9 @@ public class UserController {
     public UserController(KeycloakProvider kcProvider) {
         this.kcProvider = kcProvider;
     }
+
     /**
-     * Our main login method
-     * Handles the Keycloak Authentication process, access token and resource_access retrieval.
+     * Main login method which handles the Keycloak Authentication process, access token and resource_access retrieval.
      * Extracts the user's roles on the client and returns them in the body to allow the Frontend work based around it.
      */
     @PostMapping("/login")
