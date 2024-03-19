@@ -26,6 +26,7 @@ public class UserController {
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(UserController.class);
     private final KeycloakProvider kcProvider;
 
+
     public UserController(KeycloakProvider kcProvider) {
         this.kcProvider = kcProvider;
     }
@@ -35,16 +36,31 @@ public class UserController {
      * Extracts the user's roles on the client and returns them in the body to allow the Frontend work based around it.
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@NotNull @RequestBody LoginRequest loginRequest) {
-        Keycloak keycloak = kcProvider.newKeycloakBuilderWithPasswordCredentials(loginRequest.getUsername(), loginRequest.getPassword()).build();
-        AccessTokenResponse accessTokenResponse = null;
+    public ResponseEntity<AccessTokenResponseDto> login(@NotNull @RequestBody LoginRequest loginRequest) {
         try {
-            accessTokenResponse = keycloak.tokenManager().getAccessToken();
+            Keycloak keycloak = kcProvider.getKeycloakWithResources(loginRequest.getUsername(), loginRequest.getPassword());
+            AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
             String accessToken = accessTokenResponse.getToken();
-            return ResponseEntity.status(HttpStatus.OK).body(accessToken);
+            AccessTokenResponseDto responseDto = new AccessTokenResponseDto(accessToken);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         } catch (BadRequestException ex) {
             LOG.warn("invalid account creds.", ex);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Returning null or an empty DTO based on your preference
+        }
+    }
+    public class AccessTokenResponseDto {
+        private String accessToken;
+
+        public AccessTokenResponseDto(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
         }
     }
 }

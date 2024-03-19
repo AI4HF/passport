@@ -1,6 +1,7 @@
 package io.passport.server.config;
 
 import lombok.Getter;
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class KeycloakProvider {
     @Value("${keycloak.credentials.secret}")
     private String clientSecret;
 
+
     /**
      * Called to create an instance of the Keycloak in Spring, in our controllers
      * @param username user Keycloak recorded username
@@ -40,5 +42,9 @@ public class KeycloakProvider {
                 .clientSecret(clientSecret)
                 .username(username)
                 .password(password);
+    }
+
+    public Keycloak getKeycloakWithResources(String username, String password) {
+        return newKeycloakBuilderWithPasswordCredentials(username, password).build();
     }
 }
