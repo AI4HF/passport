@@ -15,4 +15,4 @@ To start using the REST methods, follow the instructions below:
 - In this step, all the implemented client and its roles are implemented along with the realm.
 
 # Swagger UI
-- Once the Passport is run, go to http://localhost:8080/swagger-ui/index.html to access the Swagger documentation.
+- Once the Passport is run, go to http://localhost:8080/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config#/ to access the Swagger documentation.
