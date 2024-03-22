@@ -38,10 +38,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http.cors().and().authorizeRequests().antMatchers("/user/login").permitAll();
-                /*.antMatchers("/user/**").permitAll()
-                .anyRequest()
-                .permitAll();*/
-        http.csrf().disable();//TODO: Must be improved
+        http.csrf().disable();//TODO: this is a bad practice, we should enable csrf in the future.
     }
 
     /**
@@ -56,6 +53,9 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         auth.authenticationProvider(keycloakAuthenticationProvider);
     }
 
+    /**
+     * Cors security configuration method to handle the Cors related errors.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
