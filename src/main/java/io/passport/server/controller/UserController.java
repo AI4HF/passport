@@ -36,31 +36,15 @@ public class UserController {
      * Extracts the user's roles on the client and returns them in the body to allow the Frontend work based around it.
      */
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponseDto> login(@NotNull @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<String> login(@NotNull @RequestBody LoginRequest loginRequest) {
         try {
-            Keycloak keycloak = kcProvider.getKeycloakWithResources(loginRequest.getUsername(), loginRequest.getPassword());
+            Keycloak keycloak = kcProvider.newKeycloakBuilderWithPasswordCredentials(loginRequest.getUsername(), loginRequest.getPassword());
             AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
             String accessToken = accessTokenResponse.getToken();
-            AccessTokenResponseDto responseDto = new AccessTokenResponseDto(accessToken);
-            return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(accessToken);
         } catch (BadRequestException ex) {
             LOG.warn("invalid account creds.", ex);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Returning null or an empty DTO based on your preference
-        }
-    }
-    public class AccessTokenResponseDto {
-        private String accessToken;
-
-        public AccessTokenResponseDto(String accessToken) {
-            this.accessToken = accessToken;
-        }
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public void setAccessToken(String accessToken) {
-            this.accessToken = accessToken;
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
     }
 }

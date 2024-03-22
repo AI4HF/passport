@@ -34,17 +34,14 @@ public class KeycloakProvider {
      * @param password user Keycloak recorded password
      * @return The main Keycloak method we need for now
      */
-    public KeycloakBuilder newKeycloakBuilderWithPasswordCredentials(String username, String password) {
-        return KeycloakBuilder.builder()
+    public Keycloak newKeycloakBuilderWithPasswordCredentials(String username, String password) {
+        return (KeycloakBuilder.builder()
                 .realm(realm)
                 .serverUrl(serverURL)
                 .clientId(clientID)
                 .clientSecret(clientSecret)
                 .username(username)
-                .password(password);
+                .password(password)).build();
     }
 
-    public Keycloak getKeycloakWithResources(String username, String password) {
-        return newKeycloakBuilderWithPasswordCredentials(username, password).build();
-    }
 }
