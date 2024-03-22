@@ -20,6 +20,7 @@
     </properties>
 
     <dependencies>
+        <!--Dependency needed for SpringDoc with Open API-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
