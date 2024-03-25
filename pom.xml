@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>io.passport</groupId>
-    <artifactId>keycloak-springboot-microservice</artifactId>
+    <artifactId>passport</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>keycloak-springboot-authentication</name>
+    <name>AI4HF Product Passport</name>
     <description>The backend implementation of AI4HF Product Passport</description>
 
     <properties>
