@@ -3,7 +3,6 @@ package io.passport.server.controller;
 import io.passport.server.config.KeycloakProvider;
 import io.passport.server.model.LoginRequest;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,7 @@ public class UserController {
     }
 
     /**
-     * Main login method which handles the Keycloak Authentication process, access token and resource_access retrieval.
-     * Extracts the user's roles on the client and returns them in the body to allow the Frontend work based around it.
+     * Main login method which handles the Keycloak Authentication process and access token retrieval.
      */
     @PostMapping("/login")
     public ResponseEntity<String> login(@NotNull @RequestBody LoginRequest loginRequest) {
