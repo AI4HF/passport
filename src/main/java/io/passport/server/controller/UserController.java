@@ -39,8 +39,7 @@ public class UserController {
     public ResponseEntity<String> login(@NotNull @RequestBody LoginRequest loginRequest) {
         try {
             Keycloak keycloak = kcProvider.newKeycloakBuilderWithPasswordCredentials(loginRequest.getUsername(), loginRequest.getPassword());
-            AccessTokenResponse accessTokenResponse = keycloak.tokenManager().getAccessToken();
-            String accessToken = accessTokenResponse.getToken();
+            String accessToken = keycloak.tokenManager().getAccessToken().getToken();
             return ResponseEntity.status(HttpStatus.OK).body(accessToken);
         } catch (BadRequestException ex) {
             LOG.warn("invalid account creds.", ex);
