@@ -1,32 +1,48 @@
 services:
-  postgres:
-    image: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
-
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev
     environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8081
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: password
-      KC_HTTP_ENABLED: true
-      KC_HEALTH_ENABLED: true
+      KC_DB_URL: jdbc:postgresql://database_postgres:5432/ai4hf?characterEncoding=UTF-8
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/health/ready" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+    command:
+      - start-dev
+      - --import-realm
     volumes:
-      - ./realm-import.json:/tmp/realm.json
+      - ./realm-import.json:/opt/keycloak/data/import/realm-import.json
     ports:
-      - 8080:8080
-    restart: always
-    depends_on:
-      - postgres
+      - 8081:8080
+    networks:
+      - ai4hf
+
+  database_postgres:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_DB: ai4hf
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "15432:5432"
+    networks:
+      - ai4hf
+
 volumes:
-  postgres_data:
+  postgis_volume:
     driver: local
+
+networks:
+  ai4hf:
+    external: false
