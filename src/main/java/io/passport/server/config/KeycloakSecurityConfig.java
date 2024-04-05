@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
@@ -18,6 +21,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Keycloak Configuration which allows us to determine security conditions for different types of login attempts
@@ -37,8 +42,10 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().and().authorizeRequests().antMatchers("/user/login").permitAll();
-        http.csrf().disable();//TODO: this is a bad practice, we should enable csrf in the future.
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/user/login").permitAll()
+                .antMatchers("/study/*").authenticated();;//TODO: this is a bad practice, we should enable csrf in the future.
     }
 
     /**
@@ -49,7 +56,9 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+
+        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(keycloakGrantedAuthoritiesMapper());
+
         auth.authenticationProvider(keycloakAuthenticationProvider);
     }
 
@@ -79,5 +88,24 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+    }
+
+    /**
+     * Method which is used to provide role based authentication to users.
+     * Currently only works for realm roles. Will change later based on decided design choice.
+     * @return
+     */
+    private GrantedAuthoritiesMapper keycloakGrantedAuthoritiesMapper() {
+        return (authorities) -> {
+            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+            for (GrantedAuthority authority : authorities) {
+                if (authority instanceof SimpleGrantedAuthority) {
+                    SimpleGrantedAuthority simpleGrantedAuthority = (SimpleGrantedAuthority) authority;
+                    mappedAuthorities.add(new SimpleGrantedAuthority(simpleGrantedAuthority.getAuthority()));
+                }
+            }
+
+            return mappedAuthorities;
+        };
     }
 }
