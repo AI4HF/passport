@@ -47,8 +47,8 @@ public class StudyController {
      * @return
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<Object> deleteStudy(@PathVariable String studyId) {
-        return studyRepository.findByStudyId(studyId)
+    public ResponseEntity<Object> deleteStudy(@PathVariable Long studyId) {
+        return studyRepository.findById(studyId)
                 .map(study -> {
                     studyRepository.delete(study);
                     return ResponseEntity.noContent().build();
