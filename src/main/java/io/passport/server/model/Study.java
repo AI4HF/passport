@@ -1,10 +1,11 @@
 package io.passport.server.model;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 
+/**
+ * Study model used for the Study Management tasks.
+ */
 @Entity
 @Table(name = "studies")
 @Getter

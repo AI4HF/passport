@@ -2,9 +2,11 @@ package io.passport.server.model;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 
+/**
+ * Organization model for later use, implemented early to implement Study structure properly.
+ */
 @Entity
 @Table(name = "organizations")
 @Getter

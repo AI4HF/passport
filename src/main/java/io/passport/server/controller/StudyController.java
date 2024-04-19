@@ -10,9 +10,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Class which stores the generated HTTP requests related to study operations.
+ */
 @RestController
 @RequestMapping("/study")
 public class StudyController {
+    /**
+     * Studyo repo access for database management.
+     */
     private final StudyRepository studyRepository;
 
     @Autowired

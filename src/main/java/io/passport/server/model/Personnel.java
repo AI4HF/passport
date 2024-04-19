@@ -1,10 +1,11 @@
 package io.passport.server.model;
-
 import lombok.Getter;
 import lombok.Setter;
-
 import javax.persistence.*;
 
+/**
+ * Personnel model for later use, implemented early to implement Study structure properly.
+ */
 @Entity
 @Table(name = "personnel")
 @Getter
