@@ -34,6 +34,8 @@ services:
       POSTGRES_DB: ai4hf
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - "15432:5432"
     networks:
