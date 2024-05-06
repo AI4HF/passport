@@ -5,6 +5,12 @@
     "username": "admin",
     "enabled": true,
     "email": "admin@gmail.com",
+    "credentials": [
+    {
+    "type": "password",
+    "value": "admin"
+    }
+    ],
     "realmRoles": [
       "offline_access",
       "uma_authorization"
