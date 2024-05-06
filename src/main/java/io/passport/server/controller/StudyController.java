@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/study")
 public class StudyController {
     /**
-     * Studyo repo access for database management.
+     * Study repo access for database management.
      */
     private final StudyRepository studyRepository;
 
