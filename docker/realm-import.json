@@ -1,4 +1,34 @@
 {
+  "users": [
+  {
+    "id": "service-account-admin",
+    "username": "admin",
+    "enabled": true,
+    "email": "admin@gmail.com",
+    "realmRoles": [
+      "offline_access",
+      "uma_authorization"
+    ],
+    "clientRoles": {
+    "account": [
+    "view-profile",
+    "manage-account"
+    ],
+    "realm-management": [
+    "query-groups",
+    "query-users",
+    "view-users",
+    "view-clients",
+    "view-realm"
+    ],
+      "AI4HF-Auth": [
+        "Organization Admin",
+        "Data Engineer",
+        "Data Scientist",
+        "Survey Manager"
+      ]
+    }
+    }],
   "id": "AI4HF-Authorization",
   "realm": "AI4HF-Authorization",
   "notBefore": 0,
