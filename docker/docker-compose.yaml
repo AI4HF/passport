@@ -1,5 +1,6 @@
 services:
   keycloak:
+    container_name: keycloak
     image: quay.io/keycloak/keycloak:latest
     environment:
       KC_HOSTNAME: localhost
@@ -29,6 +30,7 @@ services:
       - ai4hf
 
   database_postgres:
+    container_name: postgres
     image: postgis/postgis:latest
     environment:
       POSTGRES_DB: ai4hf
