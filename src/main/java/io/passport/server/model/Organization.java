@@ -14,12 +14,12 @@ import javax.persistence.*;
 public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "organization_id")
     private Long id;
 
-    @Column(name = "organization_id")
-    private String organizationId;
-
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "address")
     private String address;
 }

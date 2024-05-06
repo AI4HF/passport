@@ -1,4 +1,5 @@
 package io.passport.server.model;
+
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
@@ -13,20 +14,23 @@ import javax.persistence.*;
 public class Study {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "study_id")
     private Long id;
 
-    @Column(name = "study_id")
-    private String studyId;
-
+    @Column(name= "name")
     private String name;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "objectives")
     private String objectives;
 
+    @Column(name = "ethics")
     private String ethics;
 
     @ManyToOne
-    @JoinColumn(name = "owner")
+    @JoinColumn(name = "owner_id", referencedColumnName = "person_id")
     private Personnel owner;
+
 }

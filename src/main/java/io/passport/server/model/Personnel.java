@@ -1,4 +1,5 @@
 package io.passport.server.model;
+
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
@@ -13,10 +14,8 @@ import javax.persistence.*;
 public class Personnel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "person_id")
-    private String personId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
@@ -28,7 +27,9 @@ public class Personnel {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "role")
     private String role;
 
+    @Column(name = "email")
     private String email;
 }
