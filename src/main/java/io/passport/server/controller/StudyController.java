@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,12 +37,17 @@ public class StudyController {
      */
     @GetMapping("/{page}")
     public ResponseEntity<List<Study>> getAllStudies(@PathVariable int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Study> studyPage = studyRepository.findAll(pageable);
 
-            Pageable pageable = PageRequest.of(page, 10);
-            Page<Study> studyPage = studyRepository.findAll(pageable);
+        List<Study> studies = studyPage.getContent();
 
-            List<Study> studies = studyPage.getContent();
-            return ResponseEntity.ok(studies);
+        long totalCount = studyRepository.count(); // Fetch total count from the repository
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(totalCount));
+
+        return ResponseEntity.ok().headers(headers).body(studies);
     }
 
     /**
