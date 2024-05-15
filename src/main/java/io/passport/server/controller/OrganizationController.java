@@ -5,7 +5,6 @@ import io.passport.server.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +26,13 @@ public class OrganizationController {
     }
 
     /**
-     * Read all Studies.
+     * Read all Organizations.
      * @return
      */
     @GetMapping("/")
-    public ResponseEntity<List<Organization>> getAllStudies() {
-        List<Organization> studies = organizationRepository.findAll();
-        return ResponseEntity.ok(studies);
+    public ResponseEntity<List<Organization>> getAllOrganizations() {
+        List<Organization> organizations = organizationRepository.findAll();
+        return ResponseEntity.ok(organizations);
     }
 
     /**
