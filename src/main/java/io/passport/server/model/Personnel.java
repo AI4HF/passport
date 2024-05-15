@@ -18,7 +18,7 @@ public class Personnel {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "organization_id")
+    @JoinColumn(name = "organization_id", referencedColumnName = "organization_id")
     private Organization organization;
 
     @Column(name = "first_name")

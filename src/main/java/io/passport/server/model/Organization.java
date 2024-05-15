@@ -8,7 +8,7 @@ import javax.persistence.*;
  * Organization model for later use, implemented early to implement Study structure properly.
  */
 @Entity
-@Table(name = "organizations")
+@Table(name = "organization")
 @Getter
 @Setter
 public class Organization {

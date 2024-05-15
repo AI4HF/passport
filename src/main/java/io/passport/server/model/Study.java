@@ -8,7 +8,7 @@ import javax.persistence.*;
  * Study model used for the Study Management tasks.
  */
 @Entity
-@Table(name = "studies")
+@Table(name = "study")
 @Getter
 @Setter
 public class Study {
@@ -30,7 +30,7 @@ public class Study {
     private String ethics;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "person_id")
+    @JoinColumn(name = "owner", referencedColumnName = "person_id")
     private Personnel owner;
 
 }
