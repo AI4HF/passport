@@ -3,6 +3,10 @@ package io.passport.server.controller;
 import io.passport.server.model.Personnel;
 import io.passport.server.repository.PersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +29,19 @@ public class PersonnelController {
         this.personnelRepository = personnelRepository;
     }
 
-    /**
-     * Read all Personnel.
-     * @return
-     */
-    @GetMapping("/")
-    public ResponseEntity<List<Personnel>> getAllPersonnel() {
-        List<Personnel> personnel = personnelRepository.findAll();
-        return ResponseEntity.ok(personnel);
+    @GetMapping("/{page}")
+    public ResponseEntity<List<Personnel>> getAllPersonnel(@PathVariable int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Personnel> personnelPage = personnelRepository.findAll(pageable);
+
+        List<Personnel> personnelList = personnelPage.getContent();
+
+        long totalCount = personnelRepository.count();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(totalCount));
+
+        return ResponseEntity.ok().headers(headers).body(personnelList);
     }
 
     /**

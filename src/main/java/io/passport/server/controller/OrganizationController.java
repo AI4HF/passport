@@ -3,6 +3,10 @@ package io.passport.server.controller;
 import io.passport.server.model.Organization;
 import io.passport.server.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +29,19 @@ public class OrganizationController {
         this.organizationRepository = organizationRepository;
     }
 
-    /**
-     * Read all Organizations.
-     * @return
-     */
-    @GetMapping("/")
-    public ResponseEntity<List<Organization>> getAllOrganizations() {
-        List<Organization> organizations = organizationRepository.findAll();
-        return ResponseEntity.ok(organizations);
+    @GetMapping("/{page}")
+    public ResponseEntity<List<Organization>> getAllOrganizations(@PathVariable int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Organization> organizationPage = organizationRepository.findAll(pageable);
+
+        List<Organization> organizations = organizationPage.getContent();
+
+        long totalCount = organizationRepository.count();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(totalCount));
+
+        return ResponseEntity.ok().headers(headers).body(organizations);
     }
 
     /**
