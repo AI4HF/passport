@@ -29,14 +29,16 @@ public class PersonnelController {
         this.personnelRepository = personnelRepository;
     }
 
-    @GetMapping("/{page}")
-    public ResponseEntity<List<Personnel>> getAllPersonnel(@PathVariable int page) {
+    @GetMapping("/")
+    public ResponseEntity<List<Personnel>> getAllPersonnel(
+            @RequestParam Long organizationId,
+            @RequestParam(defaultValue = "0") int page) {
+
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Personnel> personnelPage = personnelRepository.findAll(pageable);
+        Page<Personnel> personnelPage = personnelRepository.findByOrganizationId(organizationId, pageable);
 
         List<Personnel> personnelList = personnelPage.getContent();
-
-        long totalCount = personnelRepository.count();
+        long totalCount = personnelPage.getTotalElements();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
