@@ -1,8 +1,10 @@
 package io.passport.server.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Study model used for the Study Management tasks.
@@ -32,5 +34,9 @@ public class Study {
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "person_id")
     private Personnel owner;
+
+    @OneToMany(mappedBy = "study")
+    @JsonManagedReference
+    private Set<StudyPersonnel> studyPersonnel;
 
 }
