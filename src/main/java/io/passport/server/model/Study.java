@@ -39,4 +39,8 @@ public class Study {
     @JsonManagedReference
     private Set<StudyPersonnel> studyPersonnel;
 
+    @OneToMany(mappedBy = "study")
+    @JsonManagedReference
+    private Set<StudyOrganization> studyOrganizations;
+
 }

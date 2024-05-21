@@ -1,8 +1,10 @@
 package io.passport.server.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Organization model for later use, implemented early to implement Study structure properly.
@@ -22,4 +24,8 @@ public class Organization {
 
     @Column(name = "address")
     private String address;
+
+    @OneToMany(mappedBy = "organization")
+    @JsonManagedReference
+    private Set<StudyOrganization> studyOrganizations;
 }
