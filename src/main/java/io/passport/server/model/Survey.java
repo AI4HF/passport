@@ -1,7 +1,6 @@
 package io.passport.server.model;
 
 import javax.persistence.*;
-import java.net.URL;
 
 public class Survey {
     @Id
