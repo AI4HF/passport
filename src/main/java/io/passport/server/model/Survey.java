@@ -1,7 +1,14 @@
 package io.passport.server.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Entity
+@Table(name = "survey")
+@Getter
+@Setter
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
