@@ -6,18 +6,18 @@ import io.passport.server.model.StudyOrganization;
 import io.passport.server.repository.OrganizationRepository;
 import io.passport.server.repository.StudyRepository;
 import io.passport.server.repository.StudyOrganizationRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -71,5 +71,30 @@ public class StudyOrganizationController {
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(organizationList);
+    }
+
+    /**
+     * Update StudyOrganization.
+     * @param studyId ID of the study that is to be updated.
+     * @param organizationId ID of the organization that is to be updated.
+     * @param studyOrganization StudyOrganization model instance with updated details.
+     * @return
+     */
+    @PutMapping("/study/{studyId}/organization/{organizationId}")
+    public ResponseEntity<StudyOrganization> updateStudyOrganization(
+            @PathVariable Long studyId,
+            @PathVariable Long organizationId,
+            @RequestBody StudyOrganization studyOrganization) {
+
+        Optional<StudyOrganization> optionalStudyOrganization = studyOrganizationRepository.findByStudyIdAndOrganizationId(studyId, organizationId);
+        return optionalStudyOrganization.map(existingStudyOrganization -> {
+            try {
+                Utils.copyNonNullProperties(studyOrganization, existingStudyOrganization);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            StudyOrganization updatedStudyOrganization = studyOrganizationRepository.save(existingStudyOrganization);
+            return ResponseEntity.ok(updatedStudyOrganization);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

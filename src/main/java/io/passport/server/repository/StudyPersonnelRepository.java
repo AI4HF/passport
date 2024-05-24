@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudyPersonnelRepository extends JpaRepository<StudyPersonnel, StudyPersonnelKey> {
     Page<StudyPersonnel> findByPersonnelId(Long personnelId, Pageable pageable);
     Page<StudyPersonnel> findByStudyId(Long studyId, Pageable pageable);
+    Optional<StudyPersonnel> findByStudyIdAndPersonnelId(Long studyId, Long personnelId);
 }

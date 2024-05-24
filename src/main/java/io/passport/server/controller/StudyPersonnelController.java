@@ -6,6 +6,7 @@ import io.passport.server.model.StudyPersonnel;
 import io.passport.server.repository.PersonnelRepository;
 import io.passport.server.repository.StudyRepository;
 import io.passport.server.repository.StudyPersonnelRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -68,6 +71,31 @@ public class StudyPersonnelController {
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(personnelList);
+    }
+
+    /**
+     * Update StudyPersonnel.
+     * @param studyId ID of the study that is to be updated.
+     * @param personnelId ID of the personnel that is to be updated.
+     * @param studyPersonnel StudyPersonnel model instance with updated details.
+     * @return
+     */
+    @PutMapping("/study/{studyId}/personnel/{personnelId}")
+    public ResponseEntity<StudyPersonnel> updateStudyPersonnel(
+            @PathVariable Long studyId,
+            @PathVariable Long personnelId,
+            @RequestBody StudyPersonnel studyPersonnel) {
+
+        Optional<StudyPersonnel> optionalStudyPersonnel = studyPersonnelRepository.findByStudyIdAndPersonnelId(studyId, personnelId);
+        return optionalStudyPersonnel.map(existingStudyPersonnel -> {
+            try {
+                Utils.copyNonNullProperties(studyPersonnel, existingStudyPersonnel);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            StudyPersonnel updatedStudyPersonnel = studyPersonnelRepository.save(existingStudyPersonnel);
+            return ResponseEntity.ok(updatedStudyPersonnel);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
 
