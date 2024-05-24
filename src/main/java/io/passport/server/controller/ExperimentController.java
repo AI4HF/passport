@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Experiment;
 import io.passport.server.repository.ExperimentRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -55,6 +57,29 @@ public class ExperimentController {
     public ResponseEntity<Experiment> createExperiment(@RequestBody Experiment experiment) {
         Experiment savedExperiment = experimentRepository.save(experiment);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedExperiment);
+    }
+
+    /**
+     * Update Experiment.
+     * @param experimentId ID of the experiment that is to be updated.
+     * @param experiment Experiment model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{experimentId}")
+    public ResponseEntity<Experiment> updateExperiment(
+            @PathVariable Long experimentId,
+            @RequestBody Experiment experiment) {
+        return experimentRepository.findById(experimentId)
+                .map(existingExperiment -> {
+                    try {
+                        Utils.copyNonNullProperties(experiment, existingExperiment);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Experiment updatedExperiment = experimentRepository.save(existingExperiment);
+                    return ResponseEntity.ok(updatedExperiment);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

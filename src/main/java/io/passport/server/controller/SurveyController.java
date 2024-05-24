@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Survey;
 import io.passport.server.repository.SurveyRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -55,6 +57,29 @@ public class SurveyController {
     public ResponseEntity<Survey> createSurvey(@RequestBody Survey survey) {
         Survey savedSurvey = surveyRepository.save(survey);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSurvey);
+    }
+
+    /**
+     * Update Survey.
+     * @param surveyId ID of the survey that is to be updated.
+     * @param survey Survey model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{surveyId}")
+    public ResponseEntity<Survey> updateSurvey(
+            @PathVariable Long surveyId,
+            @RequestBody Survey survey) {
+        return surveyRepository.findById(surveyId)
+                .map(existingSurvey -> {
+                    try {
+                        Utils.copyNonNullProperties(survey, existingSurvey);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Survey updatedSurvey = surveyRepository.save(existingSurvey);
+                    return ResponseEntity.ok(updatedSurvey);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

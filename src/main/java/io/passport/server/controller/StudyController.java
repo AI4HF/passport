@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Study;
 import io.passport.server.repository.StudyRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -58,6 +60,29 @@ public class StudyController {
     public ResponseEntity<Study> createStudy(@RequestBody Study study) {
         Study savedStudy = studyRepository.save(study);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
+    }
+
+    /**
+     * Update Study.
+     * @param studyId ID of the study that is to be updated.
+     * @param study Study model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{studyId}")
+    public ResponseEntity<Study> updateStudy(
+            @PathVariable Long studyId,
+            @RequestBody Study study) {
+        return studyRepository.findById(studyId)
+                .map(existingStudy -> {
+                    try {
+                        Utils.copyNonNullProperties(study, existingStudy);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Study updatedStudy = studyRepository.save(existingStudy);
+                    return ResponseEntity.ok(updatedStudy);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

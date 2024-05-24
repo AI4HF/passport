@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Organization;
 import io.passport.server.repository.OrganizationRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -53,6 +55,29 @@ public class OrganizationController {
     public ResponseEntity<Organization> createOrganization(@RequestBody Organization organization) {
         Organization savedOrganization = organizationRepository.save(organization);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrganization);
+    }
+
+    /**
+     * Update Organization.
+     * @param organizationId ID of the organization that is to be updated.
+     * @param organization Organization model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{organizationId}")
+    public ResponseEntity<Organization> updateOrganization(
+            @PathVariable Long organizationId,
+            @RequestBody Organization organization) {
+        return organizationRepository.findById(organizationId)
+                .map(existingOrganization -> {
+                    try {
+                        Utils.copyNonNullProperties(organization, existingOrganization);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Organization updatedOrganization = organizationRepository.save(existingOrganization);
+                    return ResponseEntity.ok(updatedOrganization);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

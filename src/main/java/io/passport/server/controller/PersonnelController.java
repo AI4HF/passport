@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.repository.PersonnelRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -55,6 +57,29 @@ public class PersonnelController {
     public ResponseEntity<Personnel> createPersonnel(@RequestBody Personnel personnel) {
         Personnel savedPersonnel = personnelRepository.save(personnel);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
+    }
+
+    /**
+     * Update Personnel.
+     * @param personnelId ID of the personnel that is to be updated.
+     * @param personnel Personnel model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{personnelId}")
+    public ResponseEntity<Personnel> updatePersonnel(
+            @PathVariable Long personnelId,
+            @RequestBody Personnel personnel) {
+        return personnelRepository.findById(personnelId)
+                .map(existingPersonnel -> {
+                    try {
+                        Utils.copyNonNullProperties(personnel, existingPersonnel);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Personnel updatedPersonnel = personnelRepository.save(existingPersonnel);
+                    return ResponseEntity.ok(updatedPersonnel);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

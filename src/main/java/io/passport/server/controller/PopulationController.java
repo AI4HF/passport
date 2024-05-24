@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Population;
 import io.passport.server.repository.PopulationRepository;
+import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -55,6 +57,29 @@ public class PopulationController {
     public ResponseEntity<Population> createPopulation(@RequestBody Population population) {
         Population savedPopulation = populationRepository.save(population);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
+    }
+
+    /**
+     * Update Population.
+     * @param populationId ID of the population that is to be updated.
+     * @param population Population model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{populationId}")
+    public ResponseEntity<Population> updatePopulation(
+            @PathVariable Long populationId,
+            @RequestBody Population population) {
+        return populationRepository.findById(populationId)
+                .map(existingPopulation -> {
+                    try {
+                        Utils.copyNonNullProperties(population, existingPopulation);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Population updatedPopulation = populationRepository.save(existingPopulation);
+                    return ResponseEntity.ok(updatedPopulation);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
