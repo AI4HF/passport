@@ -84,3 +84,17 @@ CREATE TABLE study_personnel (
 -- Insert dummy study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role) VALUES
     (1, 1, 'Data Scientist');
+
+-- Create study_organization table
+CREATE TABLE study_organization (
+                                 study_id SERIAL REFERENCES study(study_id),
+                                 organization_id SERIAL REFERENCES organization(organization_id),
+                                 role VARCHAR(255),
+                                 responsible_personnel_id SERIAL REFERENCES personnel(person_id),
+                                 population_id SERIAL REFERENCES population(population_id),
+                                 PRIMARY KEY (study_id, organization_id)
+);
+
+-- Insert dummy study_personnel
+INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
+    (1, 1, 'Data Provider', 1, 1);
