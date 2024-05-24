@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,5 +97,16 @@ public class StudyOrganizationController {
             StudyOrganization updatedStudyOrganization = studyOrganizationRepository.save(existingStudyOrganization);
             return ResponseEntity.ok(updatedStudyOrganization);
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Create StudyOrganization.
+     * @param studyOrganization StudyOrganization model instance to be created.
+     * @return
+     */
+    @PostMapping("/")
+    public ResponseEntity<StudyOrganization> createStudyOrganization(@RequestBody StudyOrganization studyOrganization) {
+        StudyOrganization savedStudyOrganization = studyOrganizationRepository.save(studyOrganization);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedStudyOrganization);
     }
 }
