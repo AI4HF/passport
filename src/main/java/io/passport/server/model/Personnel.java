@@ -1,6 +1,7 @@
 package io.passport.server.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
@@ -41,6 +42,6 @@ public class Personnel {
     private String email;
 
     @OneToMany(mappedBy = "personnel")
-    @JsonManagedReference
+    @JsonIgnore
     private Set<StudyPersonnel> studyPersonnel;
 }
