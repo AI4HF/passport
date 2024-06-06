@@ -2,7 +2,6 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Study;
 import io.passport.server.repository.StudyRepository;
-import io.passport.server.service.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,8 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class which stores the generated HTTP requests related to study operations.
@@ -64,25 +63,25 @@ public class StudyController {
 
     /**
      * Update Study.
-     * @param studyId ID of the study that is to be updated.
-     * @param study Study model instance with updated details.
+     * @param id ID of the study that is to be updated.
+     * @param updatedStudy Study model instance with updated details.
      * @return
      */
-    @PutMapping("/{studyId}")
-    public ResponseEntity<Study> updateStudy(
-            @PathVariable Long studyId,
-            @RequestBody Study study) {
-        return studyRepository.findById(studyId)
-                .map(existingStudy -> {
-                    try {
-                        Utils.copyNonNullProperties(study, existingStudy);
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Study updatedStudy = studyRepository.save(existingStudy);
-                    return ResponseEntity.ok(updatedStudy);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}")
+    public ResponseEntity<Study> updateStudy(@PathVariable Long id, @RequestBody Study updatedStudy) {
+        Optional<Study> optionalStudy = studyRepository.findById(id);
+        if (optionalStudy.isPresent()) {
+            Study study = optionalStudy.get();
+            study.setName(updatedStudy.getName());
+            study.setDescription(updatedStudy.getDescription());
+            study.setObjectives(updatedStudy.getObjectives());
+            study.setEthics(updatedStudy.getEthics());
+
+            Study savedStudy = studyRepository.save(study);
+            return ResponseEntity.ok(savedStudy);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
