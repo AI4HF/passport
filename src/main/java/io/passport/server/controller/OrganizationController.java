@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class which stores the generated HTTP requests related to organization operations.
@@ -59,25 +60,22 @@ public class OrganizationController {
 
     /**
      * Update Organization.
-     * @param organizationId ID of the organization that is to be updated.
-     * @param organization Organization model instance with updated details.
+     * @param id ID of the organization that is to be updated.
+     * @param updatedOrganization model instance with updated details.
      * @return
      */
-    @PutMapping("/{organizationId}")
-    public ResponseEntity<Organization> updateOrganization(
-            @PathVariable Long organizationId,
-            @RequestBody Organization organization) {
-        return organizationRepository.findById(organizationId)
-                .map(existingOrganization -> {
-                    try {
-                        Utils.copyNonNullProperties(organization, existingOrganization);
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Organization updatedOrganization = organizationRepository.save(existingOrganization);
-                    return ResponseEntity.ok(updatedOrganization);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}")
+    public ResponseEntity<Organization> updateOrganization(@PathVariable Long id, @RequestBody Organization updatedOrganization) {
+        Optional<Organization> optionalOrganization = organizationRepository.findById(id);
+        if (optionalOrganization.isPresent()) {
+            Organization organization = optionalOrganization.get();
+            organization.setName(updatedOrganization.getName());
+            organization.setAddress(updatedOrganization.getAddress());
+            Organization savedOrganization = organizationRepository.save(organization);
+            return ResponseEntity.ok(savedOrganization);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**

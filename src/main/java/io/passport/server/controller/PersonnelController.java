@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class which stores the generated HTTP requests related to personnel operations.
@@ -32,11 +33,11 @@ public class PersonnelController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Personnel>> getAllPersonnel(
+    public ResponseEntity<List<Personnel>> getAllPersonnelofOrganization(
             @RequestParam Long organizationId,
-            @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize) {
 
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, pageSize);
         Page<Personnel> personnelPage = personnelRepository.findByOrganizationId(organizationId, pageable);
 
         List<Personnel> personnelList = personnelPage.getContent();
@@ -46,6 +47,21 @@ public class PersonnelController {
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(personnelList);
+    }
+
+    @GetMapping("/{page}")
+    public ResponseEntity<List<Personnel>> getAllPersonnel(@PathVariable int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Personnel> personnelPage = personnelRepository.findAll(pageable);
+
+        List<Personnel> personnel = personnelPage.getContent();
+
+        long totalCount = personnelRepository.count();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(totalCount));
+
+        return ResponseEntity.ok().headers(headers).body(personnel);
     }
 
     /**
@@ -61,25 +77,24 @@ public class PersonnelController {
 
     /**
      * Update Personnel.
-     * @param personnelId ID of the personnel that is to be updated.
-     * @param personnel Personnel model instance with updated details.
+     * @param id ID of the personnel that is to be updated.
+     * @param updatedPersonnel Personnel model instance with updated details.
      * @return
      */
-    @PutMapping("/{personnelId}")
-    public ResponseEntity<Personnel> updatePersonnel(
-            @PathVariable Long personnelId,
-            @RequestBody Personnel personnel) {
-        return personnelRepository.findById(personnelId)
-                .map(existingPersonnel -> {
-                    try {
-                        Utils.copyNonNullProperties(personnel, existingPersonnel);
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Personnel updatedPersonnel = personnelRepository.save(existingPersonnel);
-                    return ResponseEntity.ok(updatedPersonnel);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}")
+    public ResponseEntity<Personnel> updatePersonnel(@PathVariable Long id, @RequestBody Personnel updatedPersonnel) {
+        Optional<Personnel> optionalPersonnel = personnelRepository.findById(id);
+        if (optionalPersonnel.isPresent()) {
+            Personnel personnel = optionalPersonnel.get();
+            personnel.setFirstName(updatedPersonnel.getFirstName());
+            personnel.setLastName(updatedPersonnel.getLastName());
+            personnel.setRole(updatedPersonnel.getRole());
+            personnel.setEmail(updatedPersonnel.getEmail());
+            Personnel savedPersonnel = personnelRepository.save(personnel);
+            return ResponseEntity.ok(savedPersonnel);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
