@@ -2,10 +2,9 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Study;
 import io.passport.server.repository.StudyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/study")
 public class StudyController {
+    private static final Logger log = LoggerFactory.getLogger(StudyController.class);
     /**
      * Study repo access for database management.
      */
@@ -31,16 +31,12 @@ public class StudyController {
     }
 
     /**
-     * Read all Studies 10 at a time.
-     * Page counter is used to handle pagination.
+     * Read all studies
      * @return
      */
-    @GetMapping("/{page}")
-    public ResponseEntity<List<Study>> getAllStudies(@PathVariable int page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Study> studyPage = studyRepository.findAll(pageable);
-
-        List<Study> studies = studyPage.getContent();
+    @GetMapping("/")
+    public ResponseEntity<List<Study>> getAllStudies() {
+        List<Study> studies = studyRepository.findAll();
 
         long totalCount = studyRepository.count(); // Fetch total count from the repository
 
@@ -51,34 +47,60 @@ public class StudyController {
     }
 
     /**
+     * Read a study by id
+     * @param studyId ID of the study
+     * @return
+     */
+    @GetMapping("/{studyId}")
+    public ResponseEntity<?> getStudy(@PathVariable Long studyId) {
+        Optional<Study> study = studyRepository.findById(studyId);
+
+        if(study.isPresent()) {
+            return ResponseEntity.ok().body(study);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
      * Create Study.
      * @param study Study model instance to be created.
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<Study> createStudy(@RequestBody Study study) {
-        Study savedStudy = studyRepository.save(study);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
+    public ResponseEntity<?> createStudy(@RequestBody Study study) {
+        try{
+            Study savedStudy = studyRepository.save(study);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     /**
      * Update Study.
-     * @param id ID of the study that is to be updated.
+     * @param studyId ID of the study that is to be updated.
      * @param updatedStudy Study model instance with updated details.
      * @return
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<Study> updateStudy(@PathVariable Long id, @RequestBody Study updatedStudy) {
-        Optional<Study> optionalStudy = studyRepository.findById(id);
+    @PutMapping("/{studyId}")
+    public ResponseEntity<?> updateStudy(@PathVariable Long studyId, @RequestBody Study updatedStudy) {
+        Optional<Study> optionalStudy = studyRepository.findById(studyId);
         if (optionalStudy.isPresent()) {
             Study study = optionalStudy.get();
             study.setName(updatedStudy.getName());
             study.setDescription(updatedStudy.getDescription());
             study.setObjectives(updatedStudy.getObjectives());
             study.setEthics(updatedStudy.getEthics());
-
-            Study savedStudy = studyRepository.save(study);
-            return ResponseEntity.ok(savedStudy);
+            study.setOwner(updatedStudy.getOwner());
+            try{
+                Study savedStudy = studyRepository.save(study);
+                return ResponseEntity.ok(savedStudy);
+            }catch (Exception e){
+             log.error(e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            }
         } else {
             return ResponseEntity.notFound().build();
         }

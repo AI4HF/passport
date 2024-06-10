@@ -30,7 +30,7 @@ CREATE TABLE study (
                        description TEXT,
                        objectives TEXT,
                        ethics TEXT,
-                       owner INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                       owner INTEGER REFERENCES personnel(person_id)
 );
 
 -- Insert dummy study
