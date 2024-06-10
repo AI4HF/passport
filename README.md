@@ -16,3 +16,4 @@ To start using the REST methods, follow the instructions below:
 
 # Swagger UI
 - Once the Passport is run, go to http://localhost:8080/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config#/ to access the Swagger documentation.
+- Authorization token provided by the login task should be set as the Authorization header for non-login requests, along with a ```Bearer``` at the start.
