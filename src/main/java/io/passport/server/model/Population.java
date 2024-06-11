@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.net.URL;
 
 @Entity
 @Table(name = "population")
@@ -14,22 +13,21 @@ import java.net.URL;
 @Setter
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "populationId")
 public class Population {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "population_id")
-    private Long id;
+    private Long populationId;
 
-    @ManyToOne
-    @JoinColumn(name = "study_id", referencedColumnName = "study_id")
-    private Study study;
+    @Column(name = "study_id")
+    private Long studyId;
 
-    @Column(name = "populationURL")
-    private URL populationURL;
+    @Column(name = "population_url")
+    private String populationUrl;
 
     @Column(name = "description")
-    private String researchQuestion;
+    private String description;
 
     @Column(name = "characteristics")
     private String characteristics;

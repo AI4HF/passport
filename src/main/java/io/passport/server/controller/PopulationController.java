@@ -2,24 +2,23 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Population;
 import io.passport.server.repository.PopulationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * Class which stores the generated HTTP requests related to population operations.
  */
 @RestController
-@RequestMapping("/populations")
+@RequestMapping("/population")
 public class PopulationController {
+
+    private static final Logger log = LoggerFactory.getLogger(PopulationController.class);
     /**
      * Population repo access for database management.
      */
@@ -30,21 +29,16 @@ public class PopulationController {
         this.populationRepository = populationRepository;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Population>> getAllPopulations(
-            @RequestParam Long studyId,
-            @RequestParam(defaultValue = "0") int page) {
+    @GetMapping("/{studyId}")
+    public ResponseEntity<?> getPopulationByStudyId(@PathVariable("studyId") Long studyId) {
 
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Population> populationPage = populationRepository.findByStudyId(studyId, pageable);
+        Optional<Population> population = populationRepository.findByStudyId(studyId);
 
-        List<Population> populationList = populationPage.getContent();
-        long totalCount = populationPage.getTotalElements();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(populationList);
+        if(population.isPresent()) {
+            return ResponseEntity.ok().body(population);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -53,9 +47,14 @@ public class PopulationController {
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<Population> createPopulation(@RequestBody Population population) {
-        Population savedPopulation = populationRepository.save(population);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
+    public ResponseEntity<?> createPopulation(@RequestBody Population population) {
+        try{
+            Population savedPopulation = populationRepository.save(population);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     /**
@@ -65,16 +64,20 @@ public class PopulationController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Population> updatePopulation(@PathVariable Long id, @RequestBody Population updatedPopulation) {
+    public ResponseEntity<?> updatePopulation(@PathVariable Long id, @RequestBody Population updatedPopulation) {
         Optional<Population> optionalPopulation = populationRepository.findById(id);
         if (optionalPopulation.isPresent()) {
             Population population = optionalPopulation.get();
-            population.setPopulationURL(updatedPopulation.getPopulationURL());
-            population.setResearchQuestion(updatedPopulation.getResearchQuestion());
+            population.setPopulationUrl(updatedPopulation.getPopulationUrl());
+            population.setDescription(updatedPopulation.getDescription());
             population.setCharacteristics(updatedPopulation.getCharacteristics());
-
-            Population savedPopulation = populationRepository.save(population);
-            return ResponseEntity.ok(savedPopulation);
+            population.setStudyId(updatedPopulation.getStudyId());
+            try{
+                Population savedPopulation = populationRepository.save(population);
+                return ResponseEntity.ok(savedPopulation);
+            }catch(Exception e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            }
         } else {
             return ResponseEntity.notFound().build();
         }

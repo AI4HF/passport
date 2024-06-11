@@ -41,13 +41,13 @@ INSERT INTO study (name, description, objectives, ethics, owner) VALUES
 CREATE TABLE population (
                             population_id SERIAL PRIMARY KEY,
                             study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
-                            populationURL VARCHAR(255),
+                            population_url VARCHAR(255),
                             description TEXT,
                             characteristics TEXT
 );
 
 -- Insert dummy population
-INSERT INTO population (study_id, populationURL, description, characteristics) VALUES
+INSERT INTO population (study_id, population_url, description, characteristics) VALUES
     (1, 'https://datatools4heart.eu/cohorts/study1', 'Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.', 'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.');
 
 -- Create experiment table
