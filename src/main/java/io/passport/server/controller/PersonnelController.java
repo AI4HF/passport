@@ -2,11 +2,9 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.repository.PersonnelRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +18,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/personnel")
 public class PersonnelController {
+
+    private static final Logger log = LoggerFactory.getLogger(PersonnelController.class);
+
     /**
      * Personnel repo access for database management.
      */
@@ -30,37 +31,38 @@ public class PersonnelController {
         this.personnelRepository = personnelRepository;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Personnel>> getAllPersonnelofOrganization(
-            @RequestParam Long organizationId,
-            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "0") int pageSize) {
+    /**
+     * Read personnel by organizationId
+     * @param organizationId ID of the organization related to personnel.
+     * @return
+     */
+    @GetMapping("/organization/{organizationId}")
+    public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(
+            @PathVariable("organizationId") Long organizationId) {
 
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Personnel> personnelPage = personnelRepository.findByOrganizationId(organizationId, pageable);
+        List<Personnel> personnel = personnelRepository.findByOrganizationId(organizationId);
 
-        List<Personnel> personnelList = personnelPage.getContent();
-        long totalCount = personnelPage.getTotalElements();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(personnelList);
+        return ResponseEntity.ok().body(personnel);
     }
 
-    @GetMapping("/{page}")
-    public ResponseEntity<List<Personnel>> getAllPersonnel(@PathVariable int page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Personnel> personnelPage = personnelRepository.findAll(pageable);
+    /**
+     * Read personnel by personId
+     * @param personId ID of the personnel.
+     * @return
+     */
+    @GetMapping("/{personId}")
+    public ResponseEntity<?> getPersonnelByPersonId(
+            @PathVariable("personId") Long personId) {
 
-        List<Personnel> personnel = personnelPage.getContent();
+        Optional<Personnel> personnel = personnelRepository.findById(personId);
 
-        long totalCount = personnelRepository.count();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(personnel);
+        if(personnel.isPresent()) {
+            return ResponseEntity.ok().body(personnel);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     /**
      * Create Personnel.
@@ -68,9 +70,14 @@ public class PersonnelController {
      * @return
      */
     @PostMapping("/")
-    public ResponseEntity<Personnel> createPersonnel(@RequestBody Personnel personnel) {
-        Personnel savedPersonnel = personnelRepository.save(personnel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
+    public ResponseEntity<?> createPersonnel(@RequestBody Personnel personnel) {
+        try{
+            Personnel savedPersonnel = personnelRepository.save(personnel);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     /**
@@ -88,6 +95,7 @@ public class PersonnelController {
             personnel.setLastName(updatedPersonnel.getLastName());
             personnel.setRole(updatedPersonnel.getRole());
             personnel.setEmail(updatedPersonnel.getEmail());
+            personnel.setOrganizationId(updatedPersonnel.getOrganizationId());
             Personnel savedPersonnel = personnelRepository.save(personnel);
             return ResponseEntity.ok(savedPersonnel);
         } else {

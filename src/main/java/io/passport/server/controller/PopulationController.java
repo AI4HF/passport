@@ -29,6 +29,11 @@ public class PopulationController {
         this.populationRepository = populationRepository;
     }
 
+    /**
+     * Read population by studyId
+     * @param studyId ID of the study related to population.
+     * @return
+     */
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getPopulationByStudyId(@PathVariable("studyId") Long studyId) {
 
