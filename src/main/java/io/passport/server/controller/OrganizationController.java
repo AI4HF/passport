@@ -1,11 +1,10 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Organization;
-import io.passport.server.repository.OrganizationRepository;
+import io.passport.server.service.OrganizationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,24 +19,29 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/organization")
 public class OrganizationController {
+
+    private static final Logger log = LoggerFactory.getLogger(OrganizationController.class);
+
     /**
-     * Organization repo access for database management.
+     * Organization service for organization management.
      */
-    private final OrganizationRepository organizationRepository;
+    private final OrganizationService organizationService;
 
     @Autowired
-    public OrganizationController(OrganizationRepository organizationRepository) {
-        this.organizationRepository = organizationRepository;
+    public OrganizationController(OrganizationService organizationService) {
+        this.organizationService = organizationService;
     }
 
-    @GetMapping("/{page}")
-    public ResponseEntity<List<Organization>> getAllOrganizations(@PathVariable int page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Organization> organizationPage = organizationRepository.findAll(pageable);
+    /**
+     * Read all organizations
+     * @return
+     */
+    @GetMapping()
+    public ResponseEntity<List<Organization>> getAllOrganizations() {
 
-        List<Organization> organizations = organizationPage.getContent();
+        List<Organization> organizations = this.organizationService.getAllOrganizations();
 
-        long totalCount = organizationRepository.count();
+        long totalCount = organizations.size();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
@@ -46,48 +50,76 @@ public class OrganizationController {
     }
 
     /**
-     * Create Organization.
-     * @param organization Organization model instance to be created.
+     * Read an organization by id
+     * @param organizationId ID of the organization
      * @return
      */
-    @PostMapping("/")
-    public ResponseEntity<Organization> createOrganization(@RequestBody Organization organization) {
-        Organization savedOrganization = organizationRepository.save(organization);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrganization);
-    }
+    @GetMapping("/{organizationId}")
+    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId) {
+        Optional<Organization> organization = this.organizationService.findOrganizationById(organizationId);
 
-    /**
-     * Update Organization.
-     * @param id ID of the organization that is to be updated.
-     * @param updatedOrganization model instance with updated details.
-     * @return
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<Organization> updateOrganization(@PathVariable Long id, @RequestBody Organization updatedOrganization) {
-        Optional<Organization> optionalOrganization = organizationRepository.findById(id);
-        if (optionalOrganization.isPresent()) {
-            Organization organization = optionalOrganization.get();
-            organization.setName(updatedOrganization.getName());
-            organization.setAddress(updatedOrganization.getAddress());
-            Organization savedOrganization = organizationRepository.save(organization);
-            return ResponseEntity.ok(savedOrganization);
+        if (organization.isPresent()) {
+            return ResponseEntity.ok().body(organization);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
+
+        /**
+         * Create an Organization.
+         * @param organization Organization model instance to be created.
+         * @return
+         */
+    @PostMapping()
+    public ResponseEntity<?> createOrganization(@RequestBody Organization organization) {
+        try{
+            Organization savedOrganization = this.organizationService.saveOrganization(organization);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedOrganization);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     /**
-     * Delete by Organization ID.
+     * Update Organization.
+     * @param organizationId ID of the organization that is to be updated.
+     * @param updatedOrganization model instance with updated details.
+     * @return
+     */
+    @PutMapping("/{organizationId}")
+    public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId, @RequestBody Organization updatedOrganization) {
+        try{
+            Optional<Organization> savedOrganization = this.organizationService.updateOrganization(organizationId, updatedOrganization);
+            if (savedOrganization.isPresent()) {
+                return ResponseEntity.ok().body(savedOrganization.get());
+            }else{
+                return ResponseEntity.notFound().build();
+            }
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Delete an organization by Organization ID.
      * @param organizationId ID of the organization that is to be deleted.
      * @return
      */
     @DeleteMapping("/{organizationId}")
-    public ResponseEntity<Object> deleteOrganization(@PathVariable Long organizationId) {
-        return organizationRepository.findById(organizationId)
-                .map(organization -> {
-                    organizationRepository.delete(organization);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId) {
+        try{
+            boolean isDeleted = this.organizationService.deleteOrganization(organizationId);
+            if(isDeleted) {
+                return ResponseEntity.noContent().build();
+            }else{
+                return ResponseEntity.notFound().build();
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

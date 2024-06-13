@@ -1,7 +1,7 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Population;
-import io.passport.server.repository.PopulationRepository;
+import io.passport.server.service.PopulationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,32 @@ import java.util.Optional;
 public class PopulationController {
 
     private static final Logger log = LoggerFactory.getLogger(PopulationController.class);
+
     /**
-     * Population repo access for database management.
+     * Population service for population management
      */
-    private final PopulationRepository populationRepository;
+    private final PopulationService populationService;
 
     @Autowired
-    public PopulationController(PopulationRepository populationRepository) {
-        this.populationRepository = populationRepository;
+    public PopulationController(PopulationService populationService) {
+        this.populationService = populationService;
+    }
+
+    /**
+     * Read population by populationId
+     * @param populationId ID of the population.
+     * @return
+     */
+    @GetMapping("/{populationId}")
+    public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId) {
+
+        Optional<Population> population = this.populationService.findPopulationById(populationId);
+
+        if(population.isPresent()) {
+            return ResponseEntity.ok().body(population);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -34,10 +52,10 @@ public class PopulationController {
      * @param studyId ID of the study related to population.
      * @return
      */
-    @GetMapping("/{studyId}")
-    public ResponseEntity<?> getPopulationByStudyId(@PathVariable("studyId") Long studyId) {
+    @GetMapping()
+    public ResponseEntity<?> getPopulationByStudyId(@RequestParam("studyId") Long studyId) {
 
-        Optional<Population> population = populationRepository.findByStudyId(studyId);
+        Optional<Population> population = this.populationService.findPopulationByStudyId(studyId);
 
         if(population.isPresent()) {
             return ResponseEntity.ok().body(population);
@@ -51,10 +69,10 @@ public class PopulationController {
      * @param population Population model instance to be created.
      * @return
      */
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> createPopulation(@RequestBody Population population) {
         try{
-            Population savedPopulation = populationRepository.save(population);
+            Population savedPopulation = this.populationService.savePopulation(population);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
         }catch(Exception e){
             log.error(e.getMessage());
@@ -64,28 +82,23 @@ public class PopulationController {
 
     /**
      * Update Population.
-     * @param id ID of the population that is to be updated.
+     * @param populationId ID of the population that is to be updated.
      * @param updatedPopulation model instance with updated details.
      * @return
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePopulation(@PathVariable Long id, @RequestBody Population updatedPopulation) {
-        Optional<Population> optionalPopulation = populationRepository.findById(id);
-        if (optionalPopulation.isPresent()) {
-            Population population = optionalPopulation.get();
-            population.setPopulationUrl(updatedPopulation.getPopulationUrl());
-            population.setDescription(updatedPopulation.getDescription());
-            population.setCharacteristics(updatedPopulation.getCharacteristics());
-            population.setStudyId(updatedPopulation.getStudyId());
-            try{
-                Population savedPopulation = populationRepository.save(population);
-                return ResponseEntity.ok(savedPopulation);
-            }catch(Exception e){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @PutMapping("/{populationId}")
+    public ResponseEntity<?> updatePopulation(@PathVariable Long populationId, @RequestBody Population updatedPopulation) {
+        try{
+            Optional<Population> savedPopulation = this.populationService.updatePopulation(populationId, updatedPopulation);
+            if(savedPopulation.isPresent()) {
+                return ResponseEntity.ok(savedPopulation.get());
+            }else{
+                return ResponseEntity.notFound().build();
             }
-        } else {
-            return ResponseEntity.notFound().build();
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+
     }
 
     /**
@@ -94,12 +107,17 @@ public class PopulationController {
      * @return
      */
     @DeleteMapping("/{populationId}")
-    public ResponseEntity<Object> deletePopulation(@PathVariable Long populationId) {
-        return populationRepository.findById(populationId)
-                .map(population -> {
-                    populationRepository.delete(population);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> deletePopulation(@PathVariable Long populationId) {
+        try{
+            boolean isDeleted = this.populationService.deletePopulation(populationId);
+            if(isDeleted) {
+                return ResponseEntity.noContent().build();
+            }else{
+                return ResponseEntity.notFound().build();
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

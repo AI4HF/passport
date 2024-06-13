@@ -1,7 +1,7 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Study;
-import io.passport.server.repository.StudyRepository;
+import io.passport.server.service.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +21,24 @@ import java.util.Optional;
 public class StudyController {
     private static final Logger log = LoggerFactory.getLogger(StudyController.class);
     /**
-     * Study repo access for database management.
+     * Study service for study management
      */
-    private final StudyRepository studyRepository;
+    private final StudyService studyService;
 
     @Autowired
-    public StudyController(StudyRepository studyRepository) {
-        this.studyRepository = studyRepository;
+    public StudyController(StudyService studyService) {
+        this.studyService = studyService;
     }
 
     /**
      * Read all studies
      * @return
      */
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<Study>> getAllStudies() {
-        List<Study> studies = studyRepository.findAll();
+        List<Study> studies = this.studyService.getAllStudies();
 
-        long totalCount = studyRepository.count(); // Fetch total count from the repository
+        long totalCount = studies.size();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
@@ -53,10 +53,10 @@ public class StudyController {
      */
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudy(@PathVariable Long studyId) {
-        Optional<Study> study = studyRepository.findById(studyId);
+        Optional<Study> study = this.studyService.findStudyByStudyId(studyId);
 
         if(study.isPresent()) {
-            return ResponseEntity.ok().body(study);
+            return ResponseEntity.ok().body(study.get());
         }else{
             return ResponseEntity.notFound().build();
         }
@@ -67,10 +67,10 @@ public class StudyController {
      * @param study Study model instance to be created.
      * @return
      */
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> createStudy(@RequestBody Study study) {
         try{
-            Study savedStudy = studyRepository.save(study);
+            Study savedStudy = this.studyService.saveStudy(study);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
         }catch(Exception e){
             log.error(e.getMessage());
@@ -86,23 +86,16 @@ public class StudyController {
      */
     @PutMapping("/{studyId}")
     public ResponseEntity<?> updateStudy(@PathVariable Long studyId, @RequestBody Study updatedStudy) {
-        Optional<Study> optionalStudy = studyRepository.findById(studyId);
-        if (optionalStudy.isPresent()) {
-            Study study = optionalStudy.get();
-            study.setName(updatedStudy.getName());
-            study.setDescription(updatedStudy.getDescription());
-            study.setObjectives(updatedStudy.getObjectives());
-            study.setEthics(updatedStudy.getEthics());
-            study.setOwner(updatedStudy.getOwner());
-            try{
-                Study savedStudy = studyRepository.save(study);
-                return ResponseEntity.ok(savedStudy);
-            }catch (Exception e){
-             log.error(e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        try{
+            Optional<Study> savedStudy = this.studyService.updateStudy(studyId, updatedStudy);
+            if(savedStudy.isPresent()) {
+                return ResponseEntity.ok().body(savedStudy);
+            }else{
+                return ResponseEntity.notFound().build();
             }
-        } else {
-            return ResponseEntity.notFound().build();
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -112,12 +105,17 @@ public class StudyController {
      * @return
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<Object> deleteStudy(@PathVariable Long studyId) {
-        return studyRepository.findById(studyId)
-                .map(study -> {
-                    studyRepository.delete(study);
-                    return ResponseEntity.noContent().build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId) {
+        try{
+            boolean isDeleted = this.studyService.deleteStudy(studyId);
+            if(isDeleted) {
+                return ResponseEntity.noContent().build();
+            }else{
+                return ResponseEntity.notFound().build();
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }
