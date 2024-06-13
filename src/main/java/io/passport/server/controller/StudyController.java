@@ -105,7 +105,7 @@ public class StudyController {
      * @return
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<Object> deleteStudy(@PathVariable Long studyId) {
+    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId) {
         try{
             boolean isDeleted = this.studyService.deleteStudy(studyId);
             if(isDeleted) {

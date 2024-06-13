@@ -107,7 +107,7 @@ public class PopulationController {
      * @return
      */
     @DeleteMapping("/{populationId}")
-    public ResponseEntity<Object> deletePopulation(@PathVariable Long populationId) {
+    public ResponseEntity<?> deletePopulation(@PathVariable Long populationId) {
         try{
             boolean isDeleted = this.populationService.deletePopulation(populationId);
             if(isDeleted) {

@@ -109,7 +109,7 @@ public class OrganizationController {
      * @return
      */
     @DeleteMapping("/{organizationId}")
-    public ResponseEntity<Object> deleteOrganization(@PathVariable Long organizationId) {
+    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId) {
         try{
             boolean isDeleted = this.organizationService.deleteOrganization(organizationId);
             if(isDeleted) {
