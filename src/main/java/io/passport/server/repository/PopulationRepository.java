@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Population repository for database management.
+ */
 @Repository
 public interface PopulationRepository extends JpaRepository<Population, Long> {
     Optional<Population> findByStudyId(Long studyId);

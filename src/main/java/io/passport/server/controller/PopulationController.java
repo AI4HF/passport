@@ -91,7 +91,7 @@ public class PopulationController {
         try{
             Optional<Population> savedPopulation = this.populationService.updatePopulation(populationId, updatedPopulation);
             if(savedPopulation.isPresent()) {
-                return ResponseEntity.ok(savedPopulation);
+                return ResponseEntity.ok(savedPopulation.get());
             }else{
                 return ResponseEntity.notFound().build();
             }

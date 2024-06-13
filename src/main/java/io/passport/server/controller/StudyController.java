@@ -56,7 +56,7 @@ public class StudyController {
         Optional<Study> study = this.studyService.findStudyByStudyId(studyId);
 
         if(study.isPresent()) {
-            return ResponseEntity.ok().body(study);
+            return ResponseEntity.ok().body(study.get());
         }else{
             return ResponseEntity.notFound().build();
         }
