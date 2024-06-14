@@ -18,7 +18,8 @@ import java.util.List;
 @Repository
 public interface StudyPersonnelRepository extends JpaRepository<StudyPersonnel, StudyPersonnelId> {
     // Join with personnel table and get related personnel for the study
-    @Query("SELECT new Personnel(p.id, p.organizationId, p.firstName, p.lastName, sp.role, p.email)  FROM Personnel p, StudyPersonnel sp WHERE sp.id.personnelId = p.id AND sp.id.studyId = :studyId")
+    @Query("SELECT new Personnel(p.personId, p.organizationId, p.firstName, p.lastName, sp.role, p.email)  " +
+            "FROM Personnel p, StudyPersonnel sp WHERE sp.id.personnelId = p.personId AND sp.id.studyId = :studyId")
     List<Personnel> findPersonnelByStudyId(@Param("studyId") Long studyId);
 
     // Delete StudyPersonnel entries before inserting new ones

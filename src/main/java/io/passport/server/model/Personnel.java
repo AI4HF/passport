@@ -18,12 +18,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+        property = "personId")
 public class Personnel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    private Long id;
+    private Long personId;
 
     @Column(name = "organization_id")
     private Long organizationId;

@@ -60,7 +60,7 @@ public class StudyPersonnelService {
             StudyPersonnel studyPersonnel = new StudyPersonnel();
             StudyPersonnelId studyPersonnelId = new StudyPersonnelId();
             studyPersonnelId.setStudyId(studyId);
-            studyPersonnelId.setPersonnelId(personnel.getId());
+            studyPersonnelId.setPersonnelId(personnel.getPersonId());
             studyPersonnel.setId(studyPersonnelId);
             studyPersonnel.setRole(personnel.getRole());
             return studyPersonnel;
