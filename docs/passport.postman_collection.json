@@ -601,6 +601,66 @@
 			]
 		},
 		{
+			"name": "experiment",
+			"item": [
+				{
+					"name": "get experiments by studyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/experiment?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"experiment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create experiments by studyId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"studyId\": 1,\r\n        \"researchQuestion\": \"research question 1 for test purpose\"\r\n    },\r\n    {\r\n        \"studyId\": 1,\r\n        \"researchQuestion\": \"research question 3 for test purpose\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/experiment?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"experiment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "get keycloak token",
 			"event": [
 				{

@@ -54,11 +54,11 @@ INSERT INTO population (study_id, population_url, description, characteristics) 
 CREATE TABLE experiment (
                             experiment_id SERIAL PRIMARY KEY,
                             study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
-                            researchQuestion TEXT
+                            research_question TEXT
 );
 
 -- Insert dummy experiment
-INSERT INTO experiment (study_id, researchQuestion) VALUES
+INSERT INTO experiment (study_id, research_question) VALUES
     (1, 'A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.');
 
 -- Create survey table

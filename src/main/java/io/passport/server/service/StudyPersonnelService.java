@@ -49,6 +49,7 @@ public class StudyPersonnelService {
     /**
      * Clear all old StudyPersonnel entries related to the study and create new ones.
      * @param studyId ID of the study
+     * @param personnelList list of personnel to be used in StudyPersonnel entries
      * @return
      */
     @Transactional

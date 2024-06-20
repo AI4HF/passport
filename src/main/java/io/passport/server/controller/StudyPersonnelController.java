@@ -49,6 +49,7 @@ public class StudyPersonnelController {
     /**
      * Clear all old StudyPersonnel entries related to the study and create new ones. Return updated personnel list.
      * @param studyId ID of the study.
+     * @param personnel List of personnel to be used in StudyPersonnel entries
      * @return
      */
     @PostMapping("/personnel")

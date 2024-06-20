@@ -96,6 +96,7 @@ public class PopulationController {
                 return ResponseEntity.notFound().build();
             }
         }catch(Exception e){
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
