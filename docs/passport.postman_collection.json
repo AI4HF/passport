@@ -661,6 +661,123 @@
 			]
 		},
 		{
+			"name": "survey",
+			"item": [
+				{
+					"name": "get Survey by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/survey/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get Surveys by studyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/survey?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a Survey",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Test question\",\r\n    \"answer\": \"Test answer\",\r\n    \"category\": \"Testing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/survey",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a Survey",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Test question with update\",\r\n    \"answer\": \"Test answer\",\r\n    \"category\": \"Testing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/survey/2",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a Survey",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/survey/2",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "get keycloak token",
 			"event": [
 				{
