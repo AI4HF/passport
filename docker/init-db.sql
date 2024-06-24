@@ -21,7 +21,7 @@ CREATE TABLE personnel (
 
 -- Insert dummy personnel
 INSERT INTO personnel (organization_id, first_name, last_name, role, email) VALUES
-    (1, 'John', 'Doe', 'Data Scientist', 'John.doe@emailhost.com');
+    (1, 'John', 'Doe', 'STUDY_OWNER', 'John.doe@emailhost.com');
 
 -- Create study table
 CREATE TABLE study (
@@ -84,7 +84,7 @@ CREATE TABLE study_personnel (
 
 -- Insert dummy study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role) VALUES
-    (1, 1, 'Data Scientist');
+    (1, 1, 'STUDY_OWNER');
 
 -- Create study_organization table
 CREATE TABLE study_organization (
@@ -98,4 +98,4 @@ CREATE TABLE study_organization (
 
 -- Insert dummy study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
-    (1, 1, 'Data Provider', 1, 1);
+    (1, 1, 'DATA_PROVIDER', 1, 1);
