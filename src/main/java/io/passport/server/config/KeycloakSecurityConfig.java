@@ -43,8 +43,7 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         super.configure(http);
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/user/login").permitAll()
-                .antMatchers("/study/*").authenticated();;//TODO: this is a bad practice, we should enable csrf in the future.
+                .anyRequest().permitAll();//TODO: this is a bad practice, we should enable csrf in the future.
     }
 
     /**

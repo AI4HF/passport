@@ -1,7 +1,10 @@
 package io.passport.server.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.*;
+import org.checkerframework.checker.units.qual.N;
+
 import javax.persistence.*;
 
 /**
@@ -11,15 +14,19 @@ import javax.persistence.*;
 @Table(name = "personnel")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "personId")
 public class Personnel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    private Long id;
+    private Long personId;
 
-    @ManyToOne
-    @JoinColumn(name = "organization_id", referencedColumnName = "organization_id")
-    private Organization organization;
+    @Column(name = "organization_id")
+    private Long organizationId;
 
     @Column(name = "first_name")
     private String firstName;
@@ -27,9 +34,11 @@ public class Personnel {
     @Column(name = "last_name")
     private String lastName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private Role role;
 
     @Column(name = "email")
     private String email;
+
 }

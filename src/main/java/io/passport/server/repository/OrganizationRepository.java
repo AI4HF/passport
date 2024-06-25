@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Study repository for database management.
+ * Organization repository for database management.
  */
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
+
 }

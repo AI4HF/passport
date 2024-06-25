@@ -29,8 +29,6 @@ public class Study {
     @Column(name = "ethics")
     private String ethics;
 
-    @ManyToOne
-    @JoinColumn(name = "owner", referencedColumnName = "person_id")
-    private Personnel owner;
-
+    @Column(name = "owner")
+    private Long owner;
 }

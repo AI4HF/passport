@@ -4,27 +4,32 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.persistence.*;
 
-/**
- * Organization model for later use, implemented early to implement Study structure properly.
- */
 @Entity
-@Table(name = "organization")
+@Table(name = "survey")
 @Getter
 @Setter
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "organizationId")
-public class Organization {
+        property = "surveyId")
+public class Survey {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @Column(name = "survey_id")
+    private Long surveyId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "study_id")
+    private Long studyId;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "question")
+    private String question;
+
+    @Column(name = "answer")
+    private String answer;
+
+    @Column(name = "category")
+    private String category;
 }
