@@ -6,6 +6,8 @@ package io.passport.server.model;
 public enum Role {
     STUDY_OWNER,
     DATA_SCIENTIST,
-    ORGANIZATION,
-    DATA_PROVIDER
+    SURVEY_MANAGER,
+    DATA_ENGINEER,
+    ML_ENGINEER,
+    QUALITY_ASSURANCE_SPECIALIST
 }
