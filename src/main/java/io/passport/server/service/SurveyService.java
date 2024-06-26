@@ -25,6 +25,12 @@ public class SurveyService {
     }
 
     /**
+     * Find all surveys.
+     * @return
+     */
+    public List<Survey> findAllSurveys() { return surveyRepository.findAll(); }
+
+    /**
      * Find a survey by surveyId
      * @param surveyId ID of the survey
      * @return
