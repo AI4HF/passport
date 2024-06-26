@@ -32,6 +32,18 @@ public class SurveyController {
     }
 
     /**
+     * Read all surveys
+     * @return
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<Survey>> getAllSurveys() {
+
+        List<Survey> surveys = this.surveyService.findAllSurveys();
+
+        return ResponseEntity.ok(surveys);
+    }
+
+    /**
      * Read survey by surveyId
      * @param surveyId ID of the survey.
      * @return
