@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +54,7 @@ class SurveyControllerTest {
         ResponseEntity<List<Survey>> response = surveyController.getAllSurveys();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
         verify(surveyService, times(1)).findAllSurveys();
     }
 
@@ -97,7 +98,7 @@ class SurveyControllerTest {
         ResponseEntity<List<Survey>> response = surveyController.getSurveysByStudyId(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
         verify(surveyService, times(1)).findSurveysByStudyId(1L);
     }
 

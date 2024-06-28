@@ -35,7 +35,7 @@ class PopulationControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        population = new Population(1L, 1L, "http://example.com/population", "Description", "Characteristics");
+        population = new Population(1L, 1L, "https://example.com/population", "Description", "Characteristics");
     }
 
     /**
