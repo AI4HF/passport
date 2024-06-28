@@ -29,4 +29,10 @@ public class Experiment {
 
     @Column(name = "research_question")
     private String researchQuestion;
+    public Experiment() {}
+    public Experiment(Long experimentId, Long studyId, String researchQuestion) {
+        this.experimentId = experimentId;
+        this.studyId = studyId;
+        this.researchQuestion = researchQuestion;
+    }
 }

@@ -31,4 +31,14 @@ public class Study {
 
     @Column(name = "owner")
     private Long owner;
+
+    public Study() {}
+    public Study(Long id, String name, String description, String objectives, String ethics, Long owner) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.objectives = objectives;
+        this.ethics = ethics;
+        this.owner = owner;
+    }
 }
