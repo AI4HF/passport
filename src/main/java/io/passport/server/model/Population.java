@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Population model for Population Table.
+ */
 @Entity
 @Table(name = "population")
 @Getter
@@ -32,5 +35,16 @@ public class Population {
     @Column(name = "characteristics")
     private String characteristics;
 
+    // Constructor
+    public Population(Long populationId, Long studyId, String populationUrl, String description, String characteristics) {
+        this.populationId = populationId;
+        this.studyId = studyId;
+        this.populationUrl = populationUrl;
+        this.description = description;
+        this.characteristics = characteristics;
+    }
 
+    // Default constructor
+    public Population() {}
 }
+

@@ -32,4 +32,15 @@ public class Survey {
 
     @Column(name = "category")
     private String category;
+
+    public Survey() {
+    }
+
+    public Survey(Long surveyId, Long studyId, String question, String answer, String category) {
+        this.surveyId = surveyId;
+        this.studyId = studyId;
+        this.question = question;
+        this.answer = answer;
+        this.category = category;
+    }
 }

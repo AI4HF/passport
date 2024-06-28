@@ -31,4 +31,11 @@ public class Organization {
 
     @Column(name = "address")
     private String address;
+    public Organization() {}
+    public Organization(Long organizationId, String name, String address) {
+        this.organizationId = organizationId;
+        this.name = name;
+        this.address = address;
+    }
 }
+
