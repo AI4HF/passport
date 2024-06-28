@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -52,7 +53,7 @@ class ExperimentControllerTest {
         ResponseEntity<List<Experiment>> response = experimentController.getExperimentsByStudyId(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
         verify(experimentService, times(1)).findExperimentByStudyId(1L);
     }
 
