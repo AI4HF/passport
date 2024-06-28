@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static io.passport.server.model.Role.DATA_ENGINEER;
+import static io.passport.server.model.Role.STUDY_OWNER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -39,8 +41,8 @@ class PersonnelControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        personnel1 = new Personnel(1L, 1L, "John", "Doe", "Role 1", "john.doe@example.com");
-        personnel2 = new Personnel(2L, 1L, "Jane", "Doe", "Role 2", "jane.doe@example.com");
+        personnel1 = new Personnel(1L, 1L, "John", "Doe", STUDY_OWNER, "john.doe@example.com");
+        personnel2 = new Personnel(2L, 1L, "Jane", "Doe", DATA_ENGINEER, "jane.doe@example.com");
     }
 
     /**
