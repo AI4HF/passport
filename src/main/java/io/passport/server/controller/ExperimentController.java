@@ -52,8 +52,7 @@ public class ExperimentController {
     @PostMapping()
     public ResponseEntity<?> createExperiments(@RequestParam Long studyId, @RequestBody List<Experiment> experiments) {
         try{
-            this.experimentService.createExperimentEntries(studyId, experiments);
-            List<Experiment> newExperiments = this.experimentService.findExperimentByStudyId(studyId);
+            List<Experiment> newExperiments = this.experimentService.createExperimentEntries(studyId, experiments);
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiments);
         }catch(Exception e){
             log.error(e.getMessage());

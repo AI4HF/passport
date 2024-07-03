@@ -42,7 +42,7 @@ public class ExperimentService {
      * @return
      */
     @Transactional
-    public void createExperimentEntries(Long studyId, List<Experiment> experimentList) {
+    public List<Experiment> createExperimentEntries(Long studyId, List<Experiment> experimentList) {
         // Clear existing entries
         clearExperimentEntriesByStudyId(studyId);
 
@@ -53,7 +53,7 @@ public class ExperimentService {
             return newExperiment;
         })).collect(Collectors.toList());
 
-        experimentRepository.saveAll(ExperimentEntries);
+        return experimentRepository.saveAll(ExperimentEntries);
     }
 
     /**
