@@ -81,13 +81,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/study/4",
+							"raw": "{{passportBackend}}/study/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"study",
-								"4"
+								"1"
 							]
 						}
 					},
@@ -110,7 +110,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"id\": null,\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -147,7 +147,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 5\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,13 +254,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/population/4",
+							"raw": "{{passportBackend}}/population/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
-								"4"
+								"1"
 							]
 						}
 					},
@@ -272,13 +272,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population/4",
+							"raw": "{{passportBackend}}/population/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
-								"4"
+								"1"
 							]
 						}
 					},
@@ -395,13 +395,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/personnel/2",
+							"raw": "{{passportBackend}}/personnel/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -413,13 +413,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/2",
+							"raw": "{{passportBackend}}/personnel/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -472,7 +472,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"testOrganization\",\r\n    \"address\": \"testAddress\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -498,7 +498,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"testOrganization2\",\r\n    \"address\": \"testAddress\"\r\n}",
+							"raw": "{\r\n    \"name\": \"testOrganization\",\r\n    \"address\": \"testAddress\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -506,13 +506,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/organization/2",
+							"raw": "{{passportBackend}}/organization/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"organization",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -524,75 +524,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/organization/2",
+							"raw": "{{passportBackend}}/organization/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"organization",
-								"2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "studyPersonnel",
-			"item": [
-				{
-					"name": "get all personel by studyId",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"studyPersonnel",
-								"personnel"
-							],
-							"query": [
-								{
-									"key": "studyId",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "crate personnel assignment to a a study",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"John\",\r\n        \"lastName\": \"Doe\",\r\n        \"role\": \"Data Scientist\",\r\n        \"email\": \"John.doe@emailhost.com\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"study owner\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    }\r\n]",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"studyPersonnel",
-								"personnel"
-							],
-							"query": [
-								{
-									"key": "studyId",
-									"value": "1"
-								}
+								"1"
 							]
 						}
 					},
@@ -661,10 +599,72 @@
 			]
 		},
 		{
+			"name": "studyPersonnel",
+			"item": [
+				{
+					"name": "get all personel by studyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyPersonnel",
+								"personnel"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create personnel assignment to a a study",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"John\",\r\n        \"lastName\": \"Doe\",\r\n        \"role\": \"Data Scientist\",\r\n        \"email\": \"John.doe@emailhost.com\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"study owner\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyPersonnel",
+								"personnel"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "survey",
 			"item": [
 				{
-					"name": "get Survey by Id",
+					"name": "get a survey by id",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -682,7 +682,24 @@
 					"response": []
 				},
 				{
-					"name": "get Surveys by studyId",
+					"name": "get all surveys",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/survey",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a survey by studyId",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -705,13 +722,40 @@
 					"response": []
 				},
 				{
-					"name": "create a Survey",
+					"name": "update a survey",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"updateTest\",\r\n    \"answer\": \"updateTest\",\r\n    \"category\": \"updateTest\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/survey/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"survey",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a survey",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Test question\",\r\n    \"answer\": \"Test answer\",\r\n    \"category\": \"Testing\"\r\n}",
+							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Is this service tested by any third party?\",\r\n    \"answer\": \"Yes\",\r\n    \"category\": \"Testing\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -731,45 +775,18 @@
 					"response": []
 				},
 				{
-					"name": "update a Survey",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Test question with update\",\r\n    \"answer\": \"Test answer\",\r\n    \"category\": \"Testing\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{passportBackend}}/survey/2",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"survey",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete a Survey",
+					"name": "delete a survey",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey/2",
+							"raw": "{{passportBackend}}/survey/1",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -820,7 +837,7 @@
 						},
 						{
 							"key": "client_secret",
-							"value": "y6SEg6KjIWXxroULDNV8fhAvq0zPQjN6",
+							"value": "54QZOAippd83KB8oVLWwK1N2yoZClpG0",
 							"type": "text"
 						}
 					]
