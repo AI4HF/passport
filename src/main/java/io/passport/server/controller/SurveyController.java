@@ -49,16 +49,21 @@ public class SurveyController {
     }
 
     /**
-     * Read surveys by surveyId
-     * @param studyId ID of the study.
+     * Read surveys, if studyId is provided, filter by studyId; otherwise, return all surveys.
+     * @param studyId Optional ID of the study.
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Survey>> getSurveysByStudyId(@RequestParam("studyId") Long studyId) {
+    public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId", required = false) Long studyId) {
+        List<Survey> surveys;
 
-        List<Survey> survey = this.surveyService.findSurveysByStudyId(studyId);
+        if (studyId != null) {
+            surveys = surveyService.findSurveysByStudyId(studyId);
+        } else {
+            surveys = surveyService.findAllSurveys();
+        }
 
-        return ResponseEntity.ok(survey);
+        return ResponseEntity.ok(surveys);
     }
 
     /**
