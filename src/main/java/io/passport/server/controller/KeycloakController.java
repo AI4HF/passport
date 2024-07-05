@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Keycloak authorization tools and request.
+ */
 @RestController
 @RequestMapping("/user")
 public class KeycloakController {
@@ -15,6 +18,11 @@ public class KeycloakController {
     @Autowired
     private KeycloakService keycloakService;
 
+    /**
+     * Login request which sends the necessary credentials to Keycloak along with environment variables, and returns the authentication token.
+     * @param user User credentials.
+     * @return Token
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Credentials user) {
         try {
