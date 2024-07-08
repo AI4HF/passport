@@ -34,6 +34,11 @@ public class KeycloakController {
             return ResponseEntity.ok(tokenResponse);
         } catch (NotAuthorizedException e) {
             return ResponseEntity.status(401).body("Invalid credentials.");
+        } catch (IllegalStateException e){
+            return ResponseEntity.status(400).body("Missing credentials.");
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(e);
         }
+
     }
 }
