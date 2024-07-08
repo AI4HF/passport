@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.NotAuthorizedException;
+
 /**
  * Keycloak authorization tools and request.
  */
@@ -30,8 +32,8 @@ public class KeycloakController {
             AccessTokenResponse tokenResponse = keycloak.tokenManager().grantToken();
 
             return ResponseEntity.ok(tokenResponse);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+        } catch (NotAuthorizedException e) {
+            return ResponseEntity.status(401).body("Invalid credentials.");
         }
     }
 }
