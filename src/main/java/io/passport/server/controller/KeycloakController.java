@@ -5,6 +5,7 @@ import io.passport.server.service.KeycloakService;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +34,11 @@ public class KeycloakController {
 
             return ResponseEntity.ok(tokenResponse);
         } catch (NotAuthorizedException e) {
-            return ResponseEntity.status(401).body("Invalid credentials.");
-        } catch (IllegalStateException e){
-            return ResponseEntity.status(400).body("Missing credentials.");
-        } catch (Exception e){
-            return ResponseEntity.status(500).body(e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing credentials.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
-
     }
 }
