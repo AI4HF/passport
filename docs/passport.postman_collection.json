@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "354d918c-57da-4df6-ae8f-9659727ee4aa",
+		"_postman_id": "36c678a6-4866-4559-bd6b-c3a30a5c175d",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19580401",
-		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-354d918c-57da-4df6-ae8f-9659727ee4aa?action=share&source=collection_link&creator=19580401"
+		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-36c678a6-4866-4559-bd6b-c3a30a5c175d?action=share&source=collection_link&creator=19580401"
 	},
 	"item": [
 		{
@@ -787,6 +787,117 @@
 							"path": [
 								"survey",
 								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "parameter",
+			"item": [
+				{
+					"name": "get all parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a parameter by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/parameter/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"parameter",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a parameter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test_parameter_2\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a parameter",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test_parameter_3\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/parameter/2",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"parameter",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a parameter",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/parameter/2",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"parameter",
+								"2"
 							]
 						}
 					},
