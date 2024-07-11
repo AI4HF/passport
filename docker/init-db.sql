@@ -99,3 +99,15 @@ CREATE TABLE study_organization (
 -- Insert dummy study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
     (1, 1, 'DATA_PROVIDER', 1, 1);
+
+-- Create parameter table
+CREATE TABLE parameter (
+                            parameter_id SERIAL PRIMARY KEY,
+                            name VARCHAR(255),
+                            description TEXT,
+                            data_type VARCHAR(255)
+);
+
+-- Insert dummy parameter
+INSERT INTO parameter (parameter_id, name, description, data_type) VALUES
+    (1, 'test_parameter', 'test_description', 'string');
