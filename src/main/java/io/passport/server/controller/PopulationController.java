@@ -1,5 +1,6 @@
 package io.passport.server.controller;
 
+import io.passport.server.model.Experiment;
 import io.passport.server.model.Population;
 import io.passport.server.service.PopulationService;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,15 +55,18 @@ public class PopulationController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<?> getPopulationByStudyId(@RequestParam("studyId") Long studyId) {
+    public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId) {
 
-        Optional<Population> population = this.populationService.findPopulationByStudyId(studyId);
-
-        if(population.isPresent()) {
-            return ResponseEntity.ok().body(population);
-        }else{
-            return ResponseEntity.notFound().build();
+        List<Population> population;
+        if(studyId != null)
+        {
+            population = this.populationService.findPopulationByStudyId(studyId);
         }
+        else {
+            population = this.populationService.findAllPopulations();
+        }
+
+        return ResponseEntity.ok().body(population);
     }
 
     /**

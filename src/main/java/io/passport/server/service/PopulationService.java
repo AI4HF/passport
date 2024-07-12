@@ -5,6 +5,8 @@ import io.passport.server.repository.PopulationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,6 +25,10 @@ public class PopulationService {
         this.populationRepository = populationRepository;
     }
 
+    public List<Population> findAllPopulations() {
+        return populationRepository.findAll();
+    }
+
     /**
      * Find a population by populationId
      * @param populationId ID of the population
@@ -37,7 +43,7 @@ public class PopulationService {
      * @param studyId ID of the study
      * @return
      */
-    public Optional<Population> findPopulationByStudyId(Long studyId) {
+    public List<Population> findPopulationByStudyId(Long studyId) {
         return populationRepository.findByStudyId(studyId);
     }
 
