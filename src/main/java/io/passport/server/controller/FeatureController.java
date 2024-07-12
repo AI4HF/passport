@@ -55,9 +55,6 @@ public class FeatureController {
     @GetMapping("/featureset/{featuresetId}")
     public ResponseEntity<List<Feature>> getFeaturesByFeatureSetId(@PathVariable Long featuresetId) {
         List<Feature> features = this.featureService.findByFeaturesetId(featuresetId);
-        if (features.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(features);
     }
 
