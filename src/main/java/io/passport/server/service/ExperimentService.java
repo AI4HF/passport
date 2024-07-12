@@ -26,6 +26,14 @@ public class ExperimentService {
     }
 
     /**
+     * Find all experiments
+     * @return
+     */
+    public List<Experiment> findAllExperiments() {
+        return this.experimentRepository.findAll();
+    }
+
+    /**
      * Find an experiment by studyId
      * @param studyId ID of the study
      * @return
