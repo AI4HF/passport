@@ -55,9 +55,6 @@ public class DatasetTransformationStepController {
     @GetMapping("/transformation/{dataTransformationId}")
     public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationStepsByTransformationId(@PathVariable Long dataTransformationId) {
         List<DatasetTransformationStep> steps = this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId);
-        if (steps.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(steps);
     }
 

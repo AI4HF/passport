@@ -56,9 +56,6 @@ public class FeatureDatasetCharacteristicController {
     @GetMapping("/dataset/{datasetId}")
     public ResponseEntity<List<FeatureDatasetCharacteristic>> getFeatureDatasetCharacteristicsByDatasetId(@PathVariable Long datasetId) {
         List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
-        if (characteristics.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(characteristics);
     }
 
@@ -70,9 +67,6 @@ public class FeatureDatasetCharacteristicController {
     @GetMapping("/feature/{featureId}")
     public ResponseEntity<List<FeatureDatasetCharacteristic>> getFeatureDatasetCharacteristicsByFeatureId(@PathVariable Long featureId) {
         List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByFeatureId(featureId);
-        if (characteristics.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(characteristics);
     }
 
