@@ -912,6 +912,140 @@
 					"response": []
 				}
 			]
+		}, {
+			"name": "deployment environment",
+			"item": [
+				{
+					"name": "get a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"Production Environment\",\r\n\t\"description\": \"Main Production Environment \",\r\n\t\"hardwareProperties\": \"Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "featureSet",
