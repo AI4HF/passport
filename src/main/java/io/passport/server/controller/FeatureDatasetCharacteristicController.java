@@ -1,5 +1,6 @@
 package io.passport.server.controller;
 
+import io.passport.server.model.FeatureDatasetCharacteristicDTO;
 import io.passport.server.model.FeatureDatasetCharacteristic;
 import io.passport.server.model.FeatureDatasetCharacteristicId;
 import io.passport.server.service.FeatureDatasetCharacteristicService;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Class which stores the generated HTTP requests related to FeatureDatasetCharacteristic operations.
@@ -37,15 +40,19 @@ public class FeatureDatasetCharacteristicController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<FeatureDatasetCharacteristic>> getAllFeatureDatasetCharacteristics() {
+    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getAllFeatureDatasetCharacteristics() {
         List<FeatureDatasetCharacteristic> featureDatasetCharacteristics = this.featureDatasetCharacteristicService.getAllFeatureDatasetCharacteristics();
 
-        long totalCount = featureDatasetCharacteristics.size();
+        List<FeatureDatasetCharacteristicDTO> dtos = featureDatasetCharacteristics.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        long totalCount = dtos.size();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
-        return ResponseEntity.ok().headers(headers).body(featureDatasetCharacteristics);
+        return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
@@ -54,9 +61,14 @@ public class FeatureDatasetCharacteristicController {
      * @return
      */
     @GetMapping("/dataset/{datasetId}")
-    public ResponseEntity<List<FeatureDatasetCharacteristic>> getFeatureDatasetCharacteristicsByDatasetId(@PathVariable Long datasetId) {
+    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristicsByDatasetId(@PathVariable Long datasetId) {
         List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
-        return ResponseEntity.ok().body(characteristics);
+
+        List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(dtos);
     }
 
     /**
@@ -65,9 +77,14 @@ public class FeatureDatasetCharacteristicController {
      * @return
      */
     @GetMapping("/feature/{featureId}")
-    public ResponseEntity<List<FeatureDatasetCharacteristic>> getFeatureDatasetCharacteristicsByFeatureId(@PathVariable Long featureId) {
+    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristicsByFeatureId(@PathVariable Long featureId) {
         List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByFeatureId(featureId);
-        return ResponseEntity.ok().body(characteristics);
+
+        List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(dtos);
     }
 
     /**
@@ -83,28 +100,39 @@ public class FeatureDatasetCharacteristicController {
         featureDatasetCharacteristicId.setFeatureId(featureId);
         Optional<FeatureDatasetCharacteristic> featureDatasetCharacteristic = this.featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(featureDatasetCharacteristicId);
 
-        if(featureDatasetCharacteristic.isPresent()) {
-            return ResponseEntity.ok().body(featureDatasetCharacteristic.get());
+        if (featureDatasetCharacteristic.isPresent()) {
+            FeatureDatasetCharacteristicDTO dto = convertToDTO(featureDatasetCharacteristic.get());
+            return ResponseEntity.ok().body(dto);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    /**
-     * Create FeatureDatasetCharacteristic.
-     * @param featureDatasetCharacteristic FeatureDatasetCharacteristic model instance to be created.
-     * @return
-     */
+
     @PostMapping()
-    public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody FeatureDatasetCharacteristic featureDatasetCharacteristic) {
-        try{
+    public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody Map<String, Object> requestBody) {
+        try {
+            Long datasetId = ((Number) requestBody.get("datasetId")).longValue();
+            Long featureId = ((Number) requestBody.get("featureId")).longValue();
+
+            FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
+            featureDatasetCharacteristicId.setDatasetId(datasetId);
+            featureDatasetCharacteristicId.setFeatureId(featureId);
+
+            FeatureDatasetCharacteristic featureDatasetCharacteristic = new FeatureDatasetCharacteristic();
+            featureDatasetCharacteristic.setId(featureDatasetCharacteristicId);
+            featureDatasetCharacteristic.setCharacteristicName((String) requestBody.get("characteristicName"));
+            featureDatasetCharacteristic.setValue(((Number) requestBody.get("value")).doubleValue());
+            featureDatasetCharacteristic.setValueDataType((String) requestBody.get("valueDataType"));
+
             FeatureDatasetCharacteristic savedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(featureDatasetCharacteristic);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedFeatureDatasetCharacteristic);
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
     /**
      * Update FeatureDatasetCharacteristic.
@@ -153,5 +181,14 @@ public class FeatureDatasetCharacteristicController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+    private FeatureDatasetCharacteristicDTO convertToDTO(FeatureDatasetCharacteristic entity) {
+        FeatureDatasetCharacteristicDTO dto = new FeatureDatasetCharacteristicDTO();
+        dto.setDatasetId(entity.getId().getDatasetId());
+        dto.setFeatureId(entity.getId().getFeatureId());
+        dto.setCharacteristicName(entity.getCharacteristicName());
+        dto.setValue(entity.getValue());
+        dto.setValueDataType(entity.getValueDataType());
+        return dto;
     }
 }
