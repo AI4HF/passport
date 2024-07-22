@@ -3,7 +3,7 @@ package io.passport.server.model;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * FeatureSet model used for the FeatureSet Management tasks.
@@ -31,13 +31,13 @@ public class FeatureSet {
     private String description;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "created_by")
     private Long createdBy;
 
     @Column(name = "last_updated_at")
-    private LocalDateTime lastUpdatedAt;
+    private Instant lastUpdatedAt;
 
     @Column(name = "last_updated_by")
     private Long lastUpdatedBy;
