@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 /**
  * ModelDeployment model used for the Deployment Management tasks.
@@ -36,13 +36,13 @@ public class ModelDeployment {
     private String status;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private Instant createdAt;
 
     @Column(name = "created_by")
     private Long createdBy;
 
     @Column(name = "last_updated_at")
-    private Timestamp lastUpdatedAt;
+    private Instant lastUpdatedAt;
 
     @Column(name = "last_updated_by")
     private Long lastUpdatedBy;
