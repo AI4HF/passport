@@ -5,10 +5,7 @@ import io.passport.server.repository.ModelDeploymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,13 +58,10 @@ public class ModelDeploymentService {
      * @return
      */
     public ModelDeployment saveModelDeployment(ModelDeployment modelDeployment) {
-        // Set the creation and last update timestamps
+        // Set the creation and last update time
         Instant now = Instant.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
-        String formattedTime = formatter.format(now);
-        Timestamp timestamp = Timestamp.valueOf(formattedTime);
-        modelDeployment.setCreatedAt(timestamp);
-        modelDeployment.setLastUpdatedAt(timestamp);
+        modelDeployment.setCreatedAt(now);
+        modelDeployment.setLastUpdatedAt(now);
 
         return modelDeploymentRepository.save(modelDeployment);
     }
@@ -84,11 +78,7 @@ public class ModelDeploymentService {
             ModelDeployment modelDeployment = oldModelDeployment.get();
 
             // set last updated timestamp
-            Instant now = Instant.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
-            String formattedTime = formatter.format(now);
-            Timestamp timestamp = Timestamp.valueOf(formattedTime);
-            modelDeployment.setLastUpdatedAt(timestamp);
+            modelDeployment.setLastUpdatedAt(Instant.now());
 
             // set remaining fields
             modelDeployment.setModelId(updatedModelDeployment.getModelId());
