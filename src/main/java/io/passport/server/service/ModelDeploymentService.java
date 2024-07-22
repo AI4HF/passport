@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -61,11 +62,12 @@ public class ModelDeploymentService {
      */
     public ModelDeployment saveModelDeployment(ModelDeployment modelDeployment) {
         // Set the creation and last update timestamps
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        modelDeployment.setCreatedAt(Timestamp.valueOf(now.format(formatter)));
-        modelDeployment.setLastUpdatedAt(Timestamp.valueOf(now.format(formatter)));
+        Instant now = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+        String formattedTime = formatter.format(now);
+        Timestamp timestamp = Timestamp.valueOf(formattedTime);
+        modelDeployment.setCreatedAt(timestamp);
+        modelDeployment.setLastUpdatedAt(timestamp);
 
         return modelDeploymentRepository.save(modelDeployment);
     }
@@ -81,16 +83,21 @@ public class ModelDeploymentService {
         if (oldModelDeployment.isPresent()) {
             ModelDeployment modelDeployment = oldModelDeployment.get();
 
-            LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            modelDeployment.setLastUpdatedAt(Timestamp.valueOf(now.format(formatter)));
+            // set last updated timestamp
+            Instant now = Instant.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+            String formattedTime = formatter.format(now);
+            Timestamp timestamp = Timestamp.valueOf(formattedTime);
+            modelDeployment.setLastUpdatedAt(timestamp);
 
-            Optional.ofNullable(updatedModelDeployment.getModelId()).ifPresent(modelDeployment::setModelId);
-            Optional.ofNullable(updatedModelDeployment.getEnvironmentId()).ifPresent(modelDeployment::setEnvironmentId);
-            Optional.ofNullable(updatedModelDeployment.getTags()).ifPresent(modelDeployment::setTags);
-            Optional.ofNullable(updatedModelDeployment.getIdentifiedFailures()).ifPresent(modelDeployment::setIdentifiedFailures);
-            Optional.ofNullable(updatedModelDeployment.getStatus()).ifPresent(modelDeployment::setStatus);
-            Optional.ofNullable(updatedModelDeployment.getLastUpdatedBy()).ifPresent(modelDeployment::setLastUpdatedBy);
+            // set remaining fields
+            modelDeployment.setModelId(updatedModelDeployment.getModelId());
+            modelDeployment.setEnvironmentId(updatedModelDeployment.getEnvironmentId());
+            modelDeployment.setTags(updatedModelDeployment.getTags());
+            modelDeployment.setIdentifiedFailures(updatedModelDeployment.getIdentifiedFailures());
+            modelDeployment.setStatus(updatedModelDeployment.getStatus());
+            modelDeployment.setCreatedBy(updatedModelDeployment.getCreatedBy());
+            modelDeployment.setLastUpdatedBy(updatedModelDeployment.getLastUpdatedBy());
 
             ModelDeployment savedModelDeployment = modelDeploymentRepository.save(modelDeployment);
             return Optional.of(savedModelDeployment);
