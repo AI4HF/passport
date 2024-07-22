@@ -5,6 +5,7 @@ import io.passport.server.repository.DatasetTransformationStepRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,8 @@ public class DatasetTransformationStepService {
      * @return
      */
     public DatasetTransformationStep saveDatasetTransformationStep(DatasetTransformationStep datasetTransformationStep) {
+        datasetTransformationStep.setCreatedAt(Instant.now());
+        datasetTransformationStep.setLastUpdatedAt(Instant.now());
         return datasetTransformationStepRepository.save(datasetTransformationStep);
     }
 
@@ -74,9 +77,8 @@ public class DatasetTransformationStepService {
             datasetTransformationStep.setOutputFeatures(updatedDatasetTransformationStep.getOutputFeatures());
             datasetTransformationStep.setMethod(updatedDatasetTransformationStep.getMethod());
             datasetTransformationStep.setExplanation(updatedDatasetTransformationStep.getExplanation());
-            datasetTransformationStep.setCreatedAt(updatedDatasetTransformationStep.getCreatedAt());
             datasetTransformationStep.setCreatedBy(updatedDatasetTransformationStep.getCreatedBy());
-            datasetTransformationStep.setLastUpdatedAt(updatedDatasetTransformationStep.getLastUpdatedAt());
+            datasetTransformationStep.setLastUpdatedAt(Instant.now());
             datasetTransformationStep.setLastUpdatedBy(updatedDatasetTransformationStep.getLastUpdatedBy());
             DatasetTransformationStep savedDatasetTransformationStep = datasetTransformationStepRepository.save(datasetTransformationStep);
             return Optional.of(savedDatasetTransformationStep);

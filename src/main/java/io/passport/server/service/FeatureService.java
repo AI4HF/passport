@@ -5,6 +5,7 @@ import io.passport.server.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +57,8 @@ public class FeatureService {
      * @return
      */
     public Feature saveFeature(Feature feature) {
+        feature.setCreatedAt(Instant.now());
+        feature.setLastUpdatedAt(Instant.now());
         return featureRepository.save(feature);
     }
 
@@ -79,9 +82,8 @@ public class FeatureService {
             feature.setUnits(updatedFeature.getUnits());
             feature.setEquipment(updatedFeature.getEquipment());
             feature.setDataCollection(updatedFeature.getDataCollection());
-            feature.setCreatedAt(updatedFeature.getCreatedAt());
             feature.setCreatedBy(updatedFeature.getCreatedBy());
-            feature.setLastUpdatedAt(updatedFeature.getLastUpdatedAt());
+            feature.setLastUpdatedAt(Instant.now());
             feature.setLastUpdatedBy(updatedFeature.getLastUpdatedBy());
             Feature savedFeature = featureRepository.save(feature);
             return Optional.of(savedFeature);

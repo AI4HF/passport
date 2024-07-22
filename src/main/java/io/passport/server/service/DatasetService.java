@@ -5,6 +5,7 @@ import io.passport.server.repository.DatasetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,8 @@ public class DatasetService {
      * @return
      */
     public Dataset saveDataset(Dataset dataset) {
+        dataset.setCreatedAt(Instant.now());
+        dataset.setLastUpdatedAt(Instant.now());
         return datasetRepository.save(dataset);
     }
 
@@ -69,9 +72,8 @@ public class DatasetService {
             dataset.setReferenceEntity(updatedDataset.getReferenceEntity());
             dataset.setNumOfRecords(updatedDataset.getNumOfRecords());
             dataset.setSynthetic(updatedDataset.getSynthetic());
-            dataset.setCreatedAt(updatedDataset.getCreatedAt());
             dataset.setCreatedBy(updatedDataset.getCreatedBy());
-            dataset.setLastUpdatedAt(updatedDataset.getLastUpdatedAt());
+            dataset.setLastUpdatedAt(Instant.now());
             dataset.setLastUpdatedBy(updatedDataset.getLastUpdatedBy());
             Dataset savedDataset = datasetRepository.save(dataset);
             return Optional.of(savedDataset);

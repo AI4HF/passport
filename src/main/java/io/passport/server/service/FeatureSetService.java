@@ -5,6 +5,7 @@ import io.passport.server.repository.FeatureSetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,8 @@ public class FeatureSetService {
      * @return
      */
     public FeatureSet saveFeatureSet(FeatureSet featureSet) {
+        featureSet.setCreatedAt(Instant.now());
+        featureSet.setLastUpdatedAt(Instant.now());
         return featureSetRepository.save(featureSet);
     }
 
@@ -63,9 +66,8 @@ public class FeatureSetService {
             featureSet.setTitle(updatedFeatureSet.getTitle());
             featureSet.setFeaturesetURL(updatedFeatureSet.getFeaturesetURL());
             featureSet.setDescription(updatedFeatureSet.getDescription());
-            featureSet.setCreatedAt(updatedFeatureSet.getCreatedAt());
             featureSet.setCreatedBy(updatedFeatureSet.getCreatedBy());
-            featureSet.setLastUpdatedAt(updatedFeatureSet.getLastUpdatedAt());
+            featureSet.setLastUpdatedAt(Instant.now());
             featureSet.setLastUpdatedBy(updatedFeatureSet.getLastUpdatedBy());
             FeatureSet savedFeatureSet = featureSetRepository.save(featureSet);
             return Optional.of(savedFeatureSet);
