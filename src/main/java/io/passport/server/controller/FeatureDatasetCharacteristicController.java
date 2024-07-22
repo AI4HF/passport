@@ -36,15 +36,34 @@ public class FeatureDatasetCharacteristicController {
     }
 
     /**
-     * Read all FeatureDatasetCharacteristics
+     * Read all FeatureDatasetCharacteristics or filtered by datasetId and/or featureId
+     * @param datasetId ID of the Dataset (optional)
+     * @param featureId ID of the Feature (optional)
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getAllFeatureDatasetCharacteristics() {
-        List<FeatureDatasetCharacteristic> featureDatasetCharacteristics = this.featureDatasetCharacteristicService.getAllFeatureDatasetCharacteristics();
+    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristics(
+            @RequestParam(required = false) Long datasetId,
+            @RequestParam(required = false) Long featureId) {
 
-        List<FeatureDatasetCharacteristicDTO> dtos = featureDatasetCharacteristics.stream()
-                .map(this::convertToDTO)
+        List<FeatureDatasetCharacteristic> characteristics;
+
+        if (datasetId != null && featureId != null) {
+            FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
+            id.setDatasetId(datasetId);
+            id.setFeatureId(featureId);
+            Optional<FeatureDatasetCharacteristic> characteristic = this.featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(id);
+            characteristics = characteristic.map(List::of).orElseGet(List::of);
+        } else if (datasetId != null) {
+            characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
+        } else if (featureId != null) {
+            characteristics = this.featureDatasetCharacteristicService.findByFeatureId(featureId);
+        } else {
+            characteristics = this.featureDatasetCharacteristicService.getAllFeatureDatasetCharacteristics();
+        }
+
+        List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
+                .map(entity -> new FeatureDatasetCharacteristicDTO(entity))
                 .collect(Collectors.toList());
 
         long totalCount = dtos.size();
@@ -54,60 +73,6 @@ public class FeatureDatasetCharacteristicController {
 
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
-
-    /**
-     * Read FeatureDatasetCharacteristics by datasetId
-     * @param datasetId ID of the Dataset
-     * @return
-     */
-    @GetMapping("/dataset/{datasetId}")
-    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristicsByDatasetId(@PathVariable Long datasetId) {
-        List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
-
-        List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(dtos);
-    }
-
-    /**
-     * Read FeatureDatasetCharacteristics by featureId
-     * @param featureId ID of the Feature
-     * @return
-     */
-    @GetMapping("/feature/{featureId}")
-    public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristicsByFeatureId(@PathVariable Long featureId) {
-        List<FeatureDatasetCharacteristic> characteristics = this.featureDatasetCharacteristicService.findByFeatureId(featureId);
-
-        List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(dtos);
-    }
-
-    /**
-     * Read a FeatureDatasetCharacteristic by composite id
-     * @param datasetId ID of the Dataset
-     * @param featureId ID of the Feature
-     * @return
-     */
-    @GetMapping("/dataset/{datasetId}/feature/{featureId}")
-    public ResponseEntity<?> getFeatureDatasetCharacteristic(@PathVariable Long datasetId, @PathVariable Long featureId) {
-        FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
-        featureDatasetCharacteristicId.setDatasetId(datasetId);
-        featureDatasetCharacteristicId.setFeatureId(featureId);
-        Optional<FeatureDatasetCharacteristic> featureDatasetCharacteristic = this.featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(featureDatasetCharacteristicId);
-
-        if (featureDatasetCharacteristic.isPresent()) {
-            FeatureDatasetCharacteristicDTO dto = convertToDTO(featureDatasetCharacteristic.get());
-            return ResponseEntity.ok().body(dto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 
     @PostMapping()
     public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody Map<String, Object> requestBody) {
@@ -122,7 +87,7 @@ public class FeatureDatasetCharacteristicController {
             FeatureDatasetCharacteristic featureDatasetCharacteristic = new FeatureDatasetCharacteristic();
             featureDatasetCharacteristic.setId(featureDatasetCharacteristicId);
             featureDatasetCharacteristic.setCharacteristicName((String) requestBody.get("characteristicName"));
-            featureDatasetCharacteristic.setValue(((Number) requestBody.get("value")).doubleValue());
+            featureDatasetCharacteristic.setValue(((String) requestBody.get("value")));
             featureDatasetCharacteristic.setValueDataType((String) requestBody.get("valueDataType"));
 
             FeatureDatasetCharacteristic savedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(featureDatasetCharacteristic);
@@ -133,62 +98,62 @@ public class FeatureDatasetCharacteristicController {
         }
     }
 
-
     /**
-     * Update FeatureDatasetCharacteristic.
+     * Update FeatureDatasetCharacteristic using query parameters.
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
      * @param updatedFeatureDatasetCharacteristic FeatureDatasetCharacteristic model instance with updated details.
      * @return
      */
-    @PutMapping("/dataset/{datasetId}/feature/{featureId}")
-    public ResponseEntity<?> updateFeatureDatasetCharacteristic(@PathVariable Long datasetId, @PathVariable Long featureId, @RequestBody FeatureDatasetCharacteristic updatedFeatureDatasetCharacteristic) {
+    @PutMapping()
+    public ResponseEntity<?> updateFeatureDatasetCharacteristic(
+            @RequestParam Long datasetId,
+            @RequestParam Long featureId,
+            @RequestBody FeatureDatasetCharacteristic updatedFeatureDatasetCharacteristic) {
+
         FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
         featureDatasetCharacteristicId.setDatasetId(datasetId);
         featureDatasetCharacteristicId.setFeatureId(featureId);
-        try{
+
+        try {
             Optional<FeatureDatasetCharacteristic> savedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.updateFeatureDatasetCharacteristic(featureDatasetCharacteristicId, updatedFeatureDatasetCharacteristic);
-            if(savedFeatureDatasetCharacteristic.isPresent()) {
+            if (savedFeatureDatasetCharacteristic.isPresent()) {
                 return ResponseEntity.ok().body(savedFeatureDatasetCharacteristic);
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete by FeatureDatasetCharacteristic composite ID.
+     * Delete by FeatureDatasetCharacteristic composite ID using query parameters.
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
      * @return
      */
-    @DeleteMapping("/dataset/{datasetId}/feature/{featureId}")
-    public ResponseEntity<?> deleteFeatureDatasetCharacteristic(@PathVariable Long datasetId, @PathVariable Long featureId) {
+    @DeleteMapping()
+    public ResponseEntity<?> deleteFeatureDatasetCharacteristic(
+            @RequestParam Long datasetId,
+            @RequestParam Long featureId) {
+
         FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
         featureDatasetCharacteristicId.setDatasetId(datasetId);
         featureDatasetCharacteristicId.setFeatureId(featureId);
-        try{
+
+        try {
             boolean isDeleted = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(featureDatasetCharacteristicId);
-            if(isDeleted) {
+            if (isDeleted) {
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    private FeatureDatasetCharacteristicDTO convertToDTO(FeatureDatasetCharacteristic entity) {
-        FeatureDatasetCharacteristicDTO dto = new FeatureDatasetCharacteristicDTO();
-        dto.setDatasetId(entity.getId().getDatasetId());
-        dto.setFeatureId(entity.getId().getFeatureId());
-        dto.setCharacteristicName(entity.getCharacteristicName());
-        dto.setValue(entity.getValue());
-        dto.setValueDataType(entity.getValueDataType());
-        return dto;
-    }
 }
+

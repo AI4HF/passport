@@ -5,7 +5,6 @@ import io.passport.server.service.LearningDatasetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,50 +31,6 @@ public class LearningDatasetController {
     }
 
     /**
-     * Read all LearningDatasets
-     * @return
-     */
-    @GetMapping()
-    public ResponseEntity<List<LearningDataset>> getAllLearningDatasets() {
-        List<LearningDataset> learningDatasets = this.learningDatasetService.getAllLearningDatasets();
-
-        long totalCount = learningDatasets.size();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(learningDatasets);
-    }
-
-    /**
-     * Read LearningDatasets by dataTransformationId
-     * @param dataTransformationId ID of the DataTransformation
-     * @return
-     */
-    @GetMapping("/transformation/{dataTransformationId}")
-    public ResponseEntity<List<LearningDataset>> getLearningDatasetsByTransformationId(@PathVariable Long dataTransformationId) {
-        List<LearningDataset> datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
-        if (datasets.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(datasets);
-    }
-
-    /**
-     * Read LearningDatasets by datasetId
-     * @param datasetId ID of the Dataset
-     * @return
-     */
-    @GetMapping("/dataset/{datasetId}")
-    public ResponseEntity<List<LearningDataset>> getLearningDatasetsByDatasetId(@PathVariable Long datasetId) {
-        List<LearningDataset> datasets = this.learningDatasetService.findByDatasetId(datasetId);
-        if (datasets.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().body(datasets);
-    }
-
-    /**
      * Read a LearningDataset by id
      * @param learningDatasetId ID of the LearningDataset
      * @return
@@ -90,6 +45,37 @@ public class LearningDatasetController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * Read all LearningDatasets or filtered by dataTransformationId and/or datasetId
+     * @param dataTransformationId ID of the DataTransformation (optional)
+     * @param datasetId ID of the Dataset (optional)
+     * @return
+     */
+    @GetMapping()
+    public ResponseEntity<List<LearningDataset>> getLearningDatasets(
+            @RequestParam(required = false) Long dataTransformationId,
+            @RequestParam(required = false) Long datasetId) {
+
+        List<LearningDataset> datasets;
+
+        if (dataTransformationId != null && datasetId != null) {
+            return ResponseEntity.badRequest().build();
+        } else if (dataTransformationId != null) {
+            datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
+        } else if (datasetId != null) {
+            datasets = this.learningDatasetService.findByDatasetId(datasetId);
+        } else {
+            datasets = this.learningDatasetService.getAllLearningDatasets();
+        }
+
+        if (datasets.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().body(datasets);
+    }
+
 
     /**
      * Create LearningDataset.
