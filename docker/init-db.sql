@@ -208,7 +208,7 @@ CREATE TABLE feature_dataset_characteristic (
                                                 dataset_id INTEGER REFERENCES dataset(dataset_id) ON DELETE CASCADE,
                                                 feature_id INTEGER REFERENCES feature(feature_id) ON DELETE CASCADE,
                                                 characteristic_name VARCHAR(255),
-                                                value DECIMAL,
+                                                value VARCHAR(255),
                                                 value_data_type VARCHAR(255),
                                                 PRIMARY KEY (dataset_id, feature_id)
 );

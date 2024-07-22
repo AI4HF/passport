@@ -22,7 +22,7 @@ public class FeatureDatasetCharacteristic implements Serializable {
     private String characteristicName;
 
     @Column(name = "value")
-    private Double value;
+    private String value;
 
     @Column(name = "value_data_type")
     private String valueDataType;
