@@ -1,5 +1,6 @@
 package io.passport.server.controller;
 
+
 import io.passport.server.model.ModelDeployment;
 import io.passport.server.service.ModelDeploymentService;
 import org.slf4j.Logger;
@@ -47,6 +48,24 @@ public class ModelDeploymentController {
 
         return ResponseEntity.ok().headers(headers).body(modelDeployments);
     }
+
+
+    /**
+     * Read a model deployment by environment id
+     * @param environmentId ID of the FeatureSet
+     * @return
+     */
+    @GetMapping("/environment/{environmentId}")
+    public ResponseEntity<?> getModelDeploymentByEnvironmentId(@PathVariable Long environmentId) {
+        Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
+
+        if(modelDeployment.isPresent()) {
+            return ResponseEntity.ok().body(modelDeployment.get());
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
     /**
