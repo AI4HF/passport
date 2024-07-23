@@ -1105,6 +1105,34 @@
 					"response": []
 				},
 				{
+					"name": "get a model deployment by environment id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/environment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment/environment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "delete a model deployment",
 					"request": {
 						"auth": {

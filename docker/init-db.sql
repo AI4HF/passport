@@ -319,6 +319,21 @@ INSERT INTO deployment_environment (environment_id, title, description, hardware
     (1, 'Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
 
 
+-- Create deployment_environment table
+CREATE TABLE deployment_environment (
+                                        environment_id SERIAL PRIMARY KEY,
+                                        title VARCHAR(255),
+                                        description TEXT,
+                                        hardware_properties TEXT,
+                                        software_properties TEXT,
+                                        connectivity_details TEXT
+);
+
+-- Insert dummy deployment_environment
+INSERT INTO deployment_environment (environment_id, title, description, hardware_properties, software_properties, connectivity_details) VALUES
+    (1, 'Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
+
+
 
 -- Create model_deployment table
 CREATE TABLE model_deployment (
