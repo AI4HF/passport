@@ -346,94 +346,6 @@ CREATE TABLE parameter (
 INSERT INTO parameter (parameter_id, name, description, data_type) VALUES
     (1, 'test_parameter', 'test_description', 'string');
 
--- Create algorithm table
-CREATE TABLE algorithm (
-                       algorithm_id SERIAL PRIMARY KEY,
-                       name VARCHAR(255),
-                       objective_function TEXT,
-                       type VARCHAR(255),
-                       subtype VARCHAR(255)
-);
-
--- Insert dummy algorithm
-INSERT INTO algorithm (algorithm_id, name, objective_function, type, subtype) VALUES
-    (1, 'test_algorithm', 'test_objective_function', 'test_type', 'test_subtype');
-
--- Create model implementation table
-CREATE TABLE implementation (
-                       implementation_id SERIAL PRIMARY KEY,
-                       algorithm_id INTEGER REFERENCES algorithm(algorithm_id) ON DELETE CASCADE,
-                       software TEXT,
-                       name VARCHAR(255),
-                       description TEXT
-);
-
--- Insert dummy implementation
-INSERT INTO implementation (implementation_id, algorithm_id, software, name, description) VALUES
-    (1, 1, 'test_software', 'test_name', 'test_description');
-
--- Create model LearningProcess table
-CREATE TABLE learning_process (
-                                learning_process_id SERIAL PRIMARY KEY,
-                                implementation_id INTEGER REFERENCES implementation(implementation_id) ON DELETE CASCADE,
-                                description TEXT
-);
-
--- Insert dummy LearningProcess
-INSERT INTO learning_process (learning_process_id, implementation_id, description) VALUES
-    (1, 1, 'test_description');
-
--- Create model table
-CREATE TABLE model (
-                           model_id SERIAL PRIMARY KEY,
-                           learning_process_id INTEGER REFERENCES learning_process(learning_process_id) ON DELETE CASCADE,
-                           study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
-                           name VARCHAR(255),
-                           version VARCHAR(255),
-                           tag VARCHAR(255),
-                           model_type VARCHAR(255),
-                           product_identifier VARCHAR(255),
-                           owner INTEGER REFERENCES organization(organization_id) ON DELETE CASCADE,
-                           trt_level VARCHAR(255),
-                           license TEXT,
-                           primary_use TEXT,
-                           secondary_use TEXT,
-                           intended_users TEXT,
-                           counter_indications TEXT,
-                           ethical_considerations TEXT,
-                           limitations TEXT,
-                           fairness_constraints TEXT,
-                           created_at TIMESTAMP,
-                           created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
-                           last_updated_at TIMESTAMP,
-                           last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
-);
-
--- Insert dummy model
-INSERT INTO model (model_id, learning_process_id, study_id, name, version, tag, model_type, product_identifier,
-                   owner, trl_level, license, primary_use, secondary_use, intended_users, counter_indications,
-                   ethical_considerations, limitations, fairness_constraints, created_at, created_by,
-                   last_updated_at, last_updated_by) VALUES
-    (1, 1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
-     'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
-     'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
-     '2023-01-01 00:00:00', 1, '2023-01-02 00:00:00', 1);
-
-
--- Create deployment_environment table
-CREATE TABLE deployment_environment (
-                                        environment_id SERIAL PRIMARY KEY,
-                                        title VARCHAR(255),
-                                        description TEXT,
-                                        hardware_properties TEXT,
-                                        software_properties TEXT,
-                                        connectivity_details TEXT
-);
-
--- Insert dummy deployment_environment
-INSERT INTO deployment_environment (environment_id, title, description, hardware_properties, software_properties, connectivity_details) VALUES
-    (1, 'Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
-
 
 -- Create algorithm table
 CREATE TABLE algorithm (
@@ -507,6 +419,21 @@ INSERT INTO model (model_id, learning_process_id, study_id, name, version, tag, 
      'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
      'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
      '2023-01-01 00:00:00', 1, '2023-01-02 00:00:00', 1);
+
+
+-- Create deployment_environment table
+CREATE TABLE deployment_environment (
+                                        environment_id SERIAL PRIMARY KEY,
+                                        title VARCHAR(255),
+                                        description TEXT,
+                                        hardware_properties TEXT,
+                                        software_properties TEXT,
+                                        connectivity_details TEXT
+);
+
+-- Insert dummy deployment_environment
+INSERT INTO deployment_environment (environment_id, title, description, hardware_properties, software_properties, connectivity_details) VALUES
+    (1, 'Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
 
 
 
