@@ -43,6 +43,16 @@ public class ModelDeploymentService {
 
 
     /**
+     * Find a model deployment by environmentId
+     * @param environmentId ID of the deployment environment
+     * @return
+     */
+    public Optional<ModelDeployment> findModelDeploymentByEnvironmentId(Long environmentId) {
+        return modelDeploymentRepository.findByEnvironmentId(environmentId);
+    }
+
+
+    /**
      * Find a model deployment by deploymentId
      * @param deploymentId ID of the model deployment
      * @return
