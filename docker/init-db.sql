@@ -548,3 +548,18 @@ CREATE TABLE model_deployment (
 -- Insert dummy model_deployment
 INSERT INTO model_deployment (deployment_id, model_id, environment_id, tags, identified_failures, status, created_at, created_by, last_updated_at, last_updated_by) VALUES
     (1, 1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+
+
+-- Create passport table
+CREATE TABLE passport (
+                                  passport_id SERIAL PRIMARY KEY,
+                                  deployment_id INTEGER REFERENCES model_deployment(deployment_id) ON DELETE CASCADE,
+                                  created_at TIMESTAMP,
+                                  created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                                  approved_at TIMESTAMP,
+                                  approved_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+);
+
+-- Insert dummy passport
+INSERT INTO passport (passport_id, deployment_id, created_at, created_by, approved_at, approved_by) VALUES
+    (1, 1, '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
