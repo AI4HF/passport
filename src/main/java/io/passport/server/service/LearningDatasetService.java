@@ -65,27 +65,6 @@ public class LearningDatasetService {
         return learningDatasetRepository.findById(learningDatasetId);
     }
 
-
-    /**
-     * Update a LearningDataset
-     * @param learningDatasetId ID of the LearningDataset
-     * @param updatedLearningDataset LearningDataset to be updated
-     * @return
-     */
-    public Optional<LearningDataset> updateLearningDataset(Long learningDatasetId, LearningDataset updatedLearningDataset) {
-        Optional<LearningDataset> oldLearningDataset = learningDatasetRepository.findById(learningDatasetId);
-        if (oldLearningDataset.isPresent()) {
-            LearningDataset learningDataset = oldLearningDataset.get();
-            learningDataset.setDatasetId(updatedLearningDataset.getDatasetId());
-            learningDataset.setDataTransformationId(updatedLearningDataset.getDataTransformationId());
-            learningDataset.setDescription(updatedLearningDataset.getDescription());
-            LearningDataset savedLearningDataset = learningDatasetRepository.save(learningDataset);
-            return Optional.of(savedLearningDataset);
-        } else {
-            return Optional.empty();
-        }
-    }
-
     /**
      * Delete a LearningDataset
      * @param learningDatasetId ID of LearningDataset to be deleted
