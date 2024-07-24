@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Class which allows the Keycloak methods to be called on Spring.
- * //Additional methods for Keycloak can be implemented here if needed.
  */
 @Configuration
 @Getter
@@ -29,10 +28,10 @@ public class KeycloakProvider {
 
 
     /**
-     * Called to create an instance of the Keycloak in Spring, in our controllers
+     * Called to create an instance of the Keycloak in Spring
      * @param username user Keycloak recorded username
      * @param password user Keycloak recorded password
-     * @return The main Keycloak method we need for now
+     * @return
      */
     public Keycloak newKeycloakBuilderWithPasswordCredentials(String username, String password) {
         return (KeycloakBuilder.builder()

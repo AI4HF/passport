@@ -18,8 +18,15 @@ import javax.ws.rs.NotAuthorizedException;
 @RequestMapping("/user")
 public class KeycloakController {
 
-    @Autowired
+    /**
+     * Keycloak service for keycloak management
+     */
     private KeycloakService keycloakService;
+
+    @Autowired
+    public KeycloakController(KeycloakService keycloakService) {
+        this.keycloakService = keycloakService;
+    }
 
     /**
      * Login request which sends the necessary credentials to Keycloak along with environment variables, and returns the authentication token.
@@ -29,8 +36,7 @@ public class KeycloakController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Credentials user) {
         try {
-            Keycloak keycloak = keycloakService.newKeycloakBuilderWithPasswordCredentials(user.username, user.password);
-            AccessTokenResponse tokenResponse = keycloak.tokenManager().grantToken();
+            AccessTokenResponse tokenResponse = keycloakService.getAccessToken(user.username, user.password);
 
             return ResponseEntity.ok(tokenResponse);
         } catch (NotAuthorizedException e) {

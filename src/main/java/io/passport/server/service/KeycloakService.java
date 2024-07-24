@@ -1,47 +1,42 @@
 package io.passport.server.service;
 
+import io.passport.server.config.KeycloakProvider;
 import lombok.Getter;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Class which allows the Keycloak methods to be called on Spring.
- * Additional methods for Keycloak can be implemented here if needed.
+ * Service class for Keycloak.
  */
 @Configuration
 @Getter
 public class KeycloakService {
 
     /**
-     * Keycloak variables that are necessary to access the desired Keycloak Realm and Client.
-     * Values are provided in resources/application.properties
+     * Provider class for the Keycloak.
      */
-    @Value("${keycloak.auth-server-url}")
-    private String serverURL;
-    @Value("${keycloak.realm}")
-    private String realm;
-    @Value("${keycloak.resource}")
-    private String clientID;
-    @Value("${keycloak.credentials.secret}")
-    private String clientSecret;
+    private final KeycloakProvider keycloakProvider;
 
+
+    @Autowired
+    public KeycloakService(KeycloakProvider keycloakProvider) {
+        this.keycloakProvider = keycloakProvider;
+    }
 
     /**
-     * Called to create an instance of the Keycloak in Spring, in our controllers
+     * Login with user credentials and acquire an access token.
      * @param username user Keycloak recorded username
      * @param password user Keycloak recorded password
-     * @return The main Keycloak method we need for now
+     * @return
      */
-    public Keycloak newKeycloakBuilderWithPasswordCredentials(String username, String password) {
-        return (KeycloakBuilder.builder()
-                .realm(realm)
-                .serverUrl(serverURL)
-                .clientId(clientID)
-                .clientSecret(clientSecret)
-                .username(username)
-                .password(password)).build();
+    public AccessTokenResponse getAccessToken(String username, String password) {
+        Keycloak keycloak = this.keycloakProvider.newKeycloakBuilderWithPasswordCredentials(username, password);
+        AccessTokenResponse tokenResponse = keycloak.tokenManager().grantToken();
+        keycloak.close();
+        return tokenResponse;
     }
 
 }
