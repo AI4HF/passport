@@ -1,10 +1,14 @@
 package io.passport.server.service;
 
+import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.LearningDataset;
+import io.passport.server.model.LearningDatasetandTransformationDTO;
+import io.passport.server.repository.DatasetTransformationRepository;
 import io.passport.server.repository.LearningDatasetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,13 +19,15 @@ import java.util.Optional;
 public class LearningDatasetService {
 
     /**
-     * LearningDataset repo access for database management.
+     * LearningDataset and DatasetTransformation repo access for database management.
      */
     private final LearningDatasetRepository learningDatasetRepository;
+    private final DatasetTransformationRepository datasetTransformationRepository;
 
     @Autowired
-    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository) {
+    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository, DatasetTransformationRepository datasetTransformationRepository) {
         this.learningDatasetRepository = learningDatasetRepository;
+        this.datasetTransformationRepository = datasetTransformationRepository;
     }
 
     /**
@@ -59,14 +65,6 @@ public class LearningDatasetService {
         return learningDatasetRepository.findById(learningDatasetId);
     }
 
-    /**
-     * Save a LearningDataset
-     * @param learningDataset LearningDataset to be saved
-     * @return
-     */
-    public LearningDataset saveLearningDataset(LearningDataset learningDataset) {
-        return learningDatasetRepository.save(learningDataset);
-    }
 
     /**
      * Update a LearningDataset
@@ -100,5 +98,46 @@ public class LearningDatasetService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Transactional Service method used to create both Transformations and Learning Datasets at the same time to avoid duplicating instances.
+     * @param request Input request body in the form of a DTO.
+     * @return
+     */
+    @Transactional
+    public LearningDatasetandTransformationDTO createLearningDatasetAndTransformation(LearningDatasetandTransformationDTO request) {
+        DatasetTransformation savedTransformation = datasetTransformationRepository.save(request.getDatasetTransformation());
+        request.getLearningDataset().setDataTransformationId(savedTransformation.getDataTransformationId());
+        LearningDataset savedLearningDataset = learningDatasetRepository.save(request.getLearningDataset());
+
+        return new LearningDatasetandTransformationDTO(savedTransformation, savedLearningDataset);
+    }
+
+    /**
+     * Updates both DatasetTransformation and LearningDataset in a single transaction.
+     * @param transformation The updated DatasetTransformation
+     * @param learningDataset The updated LearningDataset
+     * @return An optional containing the updated LearningDataset and DatasetTransformation
+     */
+    @Transactional
+    public Optional<LearningDatasetandTransformationDTO> updateLearningDatasetWithTransformation(
+            DatasetTransformation transformation,
+            LearningDataset learningDataset
+    ) {
+        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(transformation.getDataTransformationId());
+
+        if (existingTransformation.isPresent()) {
+            datasetTransformationRepository.save(transformation);
+
+            learningDataset.setDataTransformationId(transformation.getDataTransformationId());
+            Optional<LearningDataset> existingLearningDataset = learningDatasetRepository.findById(learningDataset.getLearningDatasetId());
+
+            if (existingLearningDataset.isPresent()) {
+                learningDatasetRepository.save(learningDataset);
+                return Optional.of(new LearningDatasetandTransformationDTO(transformation, learningDataset));
+            }
+        }
+        return Optional.empty();
     }
 }

@@ -1,6 +1,8 @@
 package io.passport.server.controller;
 
+import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.LearningDataset;
+import io.passport.server.model.LearningDatasetandTransformationDTO;
 import io.passport.server.service.LearningDatasetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,38 +80,46 @@ public class LearningDatasetController {
 
 
     /**
-     * Create LearningDataset.
-     * @param learningDataset LearningDataset model instance to be created.
+     * Create LearningDataset with corresponding Dataset Transformation.
+     * @param request LearningDataset and Transformation model instance to be created.
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningDataset(@RequestBody LearningDataset learningDataset) {
-        try{
-            LearningDataset savedLearningDataset = this.learningDatasetService.saveLearningDataset(learningDataset);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningDataset);
-        } catch(Exception e){
-            log.error(e.getMessage());
+    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestBody LearningDatasetandTransformationDTO request) {
+        try {
+            LearningDatasetandTransformationDTO response = learningDatasetService.createLearningDatasetAndTransformation(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update LearningDataset.
-     * @param learningDatasetId ID of the LearningDataset that is to be updated.
-     * @param updatedLearningDataset LearningDataset model instance with updated details.
-     * @return
+     * Update both DatasetTransformation and LearningDataset in a single transaction.
+     * @param learningDatasetId ID of the LearningDataset to be updated.
+     * @param request LearningDatasetAndTransformationRequest containing updated DatasetTransformation and LearningDataset.
+     * @return ResponseEntity with updated LearningDataset and DatasetTransformation
      */
     @PutMapping("/{learningDatasetId}")
-    public ResponseEntity<?> updateLearningDataset(@PathVariable Long learningDatasetId, @RequestBody LearningDataset updatedLearningDataset) {
-        try{
-            Optional<LearningDataset> savedLearningDataset = this.learningDatasetService.updateLearningDataset(learningDatasetId, updatedLearningDataset);
-            if(savedLearningDataset.isPresent()) {
-                return ResponseEntity.ok().body(savedLearningDataset);
+    public ResponseEntity<?> updateLearningDatasetWithTransformation(
+            @PathVariable Long learningDatasetId,
+            @RequestBody LearningDatasetandTransformationDTO request
+    ) {
+        try {
+            DatasetTransformation transformation = request.getDatasetTransformation();
+            LearningDataset learningDataset = request.getLearningDataset();
+            learningDataset.setLearningDatasetId(learningDatasetId);
+
+            Optional<LearningDatasetandTransformationDTO> updatedEntities = learningDatasetService.updateLearningDatasetWithTransformation(transformation, learningDataset);
+
+            if (updatedEntities.isPresent()) {
+                return ResponseEntity.ok().body(updatedEntities.get());
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("LearningDataset or DatasetTransformation not found");
             }
-        } catch (Exception e){
-            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
