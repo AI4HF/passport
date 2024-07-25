@@ -10,7 +10,7 @@ import java.util.List;
  * Personnel repository for database management.
  */
 @Repository
-public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
+public interface PersonnelRepository extends JpaRepository<Personnel, String> {
 
     List<Personnel> findByOrganizationId(Long organizationId);
 }

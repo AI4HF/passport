@@ -15,5 +15,5 @@ public class StudyPersonnelId implements Serializable {
     private Long studyId;
 
     @Column(name = "personnel_id")
-    private Long personnelId;
+    private String personnelId;
 }

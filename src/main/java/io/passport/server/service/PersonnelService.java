@@ -1,6 +1,7 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Personnel;
+import io.passport.server.model.PersonnelDTO;
 import io.passport.server.repository.PersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,15 @@ public class PersonnelService {
      */
     private final PersonnelRepository personnelRepository;
 
+    /**
+     * Keycloak service for keycloak user management.
+     */
+    private final KeycloakService keycloakService;
+
     @Autowired
-    public PersonnelService(PersonnelRepository personnelRepository) {
+    public PersonnelService(PersonnelRepository personnelRepository, KeycloakService keycloakService) {
         this.personnelRepository = personnelRepository;
+        this.keycloakService = keycloakService;
     }
 
     /**
@@ -36,7 +43,7 @@ public class PersonnelService {
      * @param personnelId ID of the personnel
      * @return
      */
-    public Optional<Personnel> findPersonnelById(Long personnelId) {
+    public Optional<Personnel> findPersonnelById(String personnelId) {
         return personnelRepository.findById(personnelId);
     }
 
@@ -51,11 +58,20 @@ public class PersonnelService {
 
     /**
      * Save a personnel
-     * @param personnel personnel to be saved
+     * @param personnelDTO personnel to be saved
      * @return
      */
-    public Personnel savePersonnel(Personnel personnel) {
-        return personnelRepository.save(personnel);
+    public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
+        Optional<String> keycloakUserId = this.keycloakService
+                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password);
+        if(keycloakUserId.isPresent()) {
+            Personnel personnel = personnelDTO.getPersonnel();
+            personnel.setPersonId(keycloakUserId.get());
+            Personnel savedPersonnel = personnelRepository.save(personnel);
+            return Optional.of(savedPersonnel);
+        }else{
+            return Optional.empty();
+        }
     }
 
     /**
@@ -64,7 +80,7 @@ public class PersonnelService {
      * @param updatedPersonnel personnel to be updated
      * @return
      */
-    public Optional<Personnel> updatePersonnel(Long personnelId, Personnel updatedPersonnel) {
+    public Optional<Personnel> updatePersonnel(String personnelId, Personnel updatedPersonnel) {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(personnelId);
         if (oldPersonnel.isPresent()) {
             Personnel personnel = oldPersonnel.get();
@@ -85,7 +101,7 @@ public class PersonnelService {
      * @param personnelId ID of personnel to be deleted
      * @return
      */
-    public boolean deletePersonnel(Long personnelId) {
+    public boolean deletePersonnel(String personnelId) {
         if(personnelRepository.existsById(personnelId)) {
             personnelRepository.deleteById(personnelId);
             return true;

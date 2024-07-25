@@ -11,7 +11,7 @@ INSERT INTO organization (name, address) VALUES
 
 -- Create personnel table
 CREATE TABLE personnel (
-                           person_id SERIAL PRIMARY KEY,
+                           person_id VARCHAR(255) PRIMARY KEY,
                            organization_id INTEGER REFERENCES organization(organization_id) ON DELETE CASCADE,
                            first_name VARCHAR(255),
                            last_name VARCHAR(255),
@@ -20,8 +20,8 @@ CREATE TABLE personnel (
 );
 
 -- Insert dummy personnel
-INSERT INTO personnel (organization_id, first_name, last_name, role, email) VALUES
-    (1, 'John', 'Doe', 'STUDY_OWNER', 'John.doe@emailhost.com');
+INSERT INTO personnel (person_id, organization_id, first_name, last_name, role, email) VALUES
+    ('e2795ee1-88c2-4b5d-b4df-0347cab26061', 1, 'John', 'Doe', 'STUDY_OWNER', 'John.doe@emailhost.com');
 
 -- Create study table
 CREATE TABLE study (
@@ -30,12 +30,12 @@ CREATE TABLE study (
                        description TEXT,
                        objectives TEXT,
                        ethics TEXT,
-                       owner INTEGER REFERENCES personnel(person_id)
+                       owner VARCHAR(255) REFERENCES personnel(person_id)
 );
 
 -- Insert dummy study
 INSERT INTO study (name, description, objectives, ethics, owner) VALUES
-    ('Risk score for acute HF in the emergency department', 'Predicting risk factors for acute HF…', 'Evaluating the risk prediction for acute HF', 'Approved by Ethical Board on 2023-01-15, Application Number: 123', 1);
+    ('Risk score for acute HF in the emergency department', 'Predicting risk factors for acute HF…', 'Evaluating the risk prediction for acute HF', 'Approved by Ethical Board on 2023-01-15, Application Number: 123', 'e2795ee1-88c2-4b5d-b4df-0347cab26061');
 
 -- Create population table
 CREATE TABLE population (
@@ -77,7 +77,7 @@ INSERT INTO survey (study_id, question, answer, category) VALUES
 -- Create study_personnel table
 CREATE TABLE study_personnel (
                                  study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
-                                 personnel_id INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                                 personnel_id VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                                  role VARCHAR(255),
                                  PRIMARY KEY (study_id, personnel_id)
 );
@@ -91,7 +91,7 @@ CREATE TABLE study_organization (
                                     study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
                                     organization_id INTEGER REFERENCES organization(organization_id) ON DELETE CASCADE,
                                     role VARCHAR(255),
-                                    responsible_personnel_id INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                                    responsible_personnel_id VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                                     population_id INTEGER REFERENCES population(population_id) ON DELETE CASCADE,
                                     PRIMARY KEY (study_id, organization_id)
 );
