@@ -215,7 +215,7 @@ CREATE TABLE feature_dataset_characteristic (
 
 -- Insert dummy FeatureDatasetCharacteristic
 INSERT INTO feature_dataset_characteristic (dataset_id, feature_id, characteristic_name, value, value_data_type) VALUES
-    (1, 1, 'variance', 11.2, 'decimal');
+    (1, 1, 'variance', '11.2', 'decimal');
 
 -- Create parameter table
 CREATE TABLE parameter (

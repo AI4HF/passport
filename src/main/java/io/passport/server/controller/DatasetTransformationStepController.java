@@ -32,31 +32,29 @@ public class DatasetTransformationStepController {
     }
 
     /**
-     * Read all DatasetTransformationSteps
+     * Read all DatasetTransformationSteps or filtered by dataTransformationId
+     * @param dataTransformationId ID of the DatasetTransformation (optional)
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<DatasetTransformationStep>> getAllDatasetTransformationSteps() {
-        List<DatasetTransformationStep> datasetTransformationSteps = this.datasetTransformationStepService.getAllDatasetTransformationSteps();
+    public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationSteps(
+            @RequestParam(required = false) Long dataTransformationId) {
 
-        long totalCount = datasetTransformationSteps.size();
+        List<DatasetTransformationStep> steps;
 
+        if (dataTransformationId != null) {
+            steps = this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId);
+        } else {
+            steps = this.datasetTransformationStepService.getAllDatasetTransformationSteps();
+        }
+
+        long totalCount = steps.size();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
-        return ResponseEntity.ok().headers(headers).body(datasetTransformationSteps);
+        return ResponseEntity.ok().headers(headers).body(steps);
     }
 
-    /**
-     * Read DatasetTransformationSteps by dataTransformationId
-     * @param dataTransformationId ID of the DatasetTransformation
-     * @return
-     */
-    @GetMapping("/transformation/{dataTransformationId}")
-    public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationStepsByTransformationId(@PathVariable Long dataTransformationId) {
-        List<DatasetTransformationStep> steps = this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId);
-        return ResponseEntity.ok().body(steps);
-    }
 
     /**
      * Read a DatasetTransformationStep by id

@@ -32,31 +32,29 @@ public class FeatureController {
     }
 
     /**
-     * Read all Features
+     * Read all Features or filtered by featuresetId
+     * @param featuresetId ID of the FeatureSet (optional)
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Feature>> getAllFeatures() {
-        List<Feature> features = this.featureService.getAllFeatures();
+    public ResponseEntity<List<Feature>> getFeatures(
+            @RequestParam(required = false) Long featuresetId) {
+
+        List<Feature> features;
+
+        if (featuresetId != null) {
+            features = this.featureService.findByFeaturesetId(featuresetId);
+        } else {
+            features = this.featureService.getAllFeatures();
+        }
 
         long totalCount = features.size();
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(features);
     }
 
-    /**
-     * Read Features by FeatureSet id
-     * @param featuresetId ID of the FeatureSet
-     * @return
-     */
-    @GetMapping("/featureset/{featuresetId}")
-    public ResponseEntity<List<Feature>> getFeaturesByFeatureSetId(@PathVariable Long featuresetId) {
-        List<Feature> features = this.featureService.findByFeaturesetId(featuresetId);
-        return ResponseEntity.ok().body(features);
-    }
 
     /**
      * Read a Feature by id
