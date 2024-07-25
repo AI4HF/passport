@@ -1,12 +1,10 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Model;
-import io.passport.server.model.ModelDto;
 import io.passport.server.service.ModelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,39 +47,6 @@ public class ModelController {
         }
 
         return ResponseEntity.ok(models);
-    }
-
-
-    /**
-     * Read models that are deployed.
-     * @return
-     */
-    @GetMapping("/deployment")
-    public ResponseEntity<List<ModelDto>> getAllModelsInDeployments() {
-        List<ModelDto> models = this.modelService.getAllModelsInDeployments();
-
-        long totalCount = models.size();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(models);
-    }
-
-    /**
-     * Read models in passports.
-     * @return
-     */
-    @GetMapping("/passport")
-    public ResponseEntity<List<ModelDto>> getAllModelsInPassports() {
-        List<ModelDto> models = this.modelService.getAllModelsInPassports();
-
-        long totalCount = models.size();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(models);
     }
 
 
