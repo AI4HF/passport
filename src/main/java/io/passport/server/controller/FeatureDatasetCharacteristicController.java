@@ -74,22 +74,15 @@ public class FeatureDatasetCharacteristicController {
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
+    /**
+     * Create a new FeatureDatasetCharacteristic entity.
+     * @param featureDatasetCharacteristicDTO the DTO containing data for the new FeatureDatasetCharacteristic with input structure
+     * @return
+     */
     @PostMapping()
-    public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody FeatureDatasetCharacteristicDTO featureDatasetCharacteristicDTO) {
         try {
-            Long datasetId = ((Number) requestBody.get("datasetId")).longValue();
-            Long featureId = ((Number) requestBody.get("featureId")).longValue();
-
-            FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
-            featureDatasetCharacteristicId.setDatasetId(datasetId);
-            featureDatasetCharacteristicId.setFeatureId(featureId);
-
-            FeatureDatasetCharacteristic featureDatasetCharacteristic = new FeatureDatasetCharacteristic();
-            featureDatasetCharacteristic.setId(featureDatasetCharacteristicId);
-            featureDatasetCharacteristic.setCharacteristicName((String) requestBody.get("characteristicName"));
-            featureDatasetCharacteristic.setValue(((String) requestBody.get("value")));
-            featureDatasetCharacteristic.setValueDataType((String) requestBody.get("valueDataType"));
-
+            FeatureDatasetCharacteristic featureDatasetCharacteristic = new FeatureDatasetCharacteristic(featureDatasetCharacteristicDTO);
             FeatureDatasetCharacteristic savedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(featureDatasetCharacteristic);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedFeatureDatasetCharacteristic);
         } catch (Exception e) {

@@ -26,4 +26,22 @@ public class FeatureDatasetCharacteristic implements Serializable {
 
     @Column(name = "value_data_type")
     private String valueDataType;
+
+    /**
+     * Constructs a new FeatureDatasetCharacteristic from a FeatureDatasetCharacteristicDTO entity.
+     * @param dto the FeatureDatasetCharacteristicDTO entity
+     */
+    public FeatureDatasetCharacteristic(FeatureDatasetCharacteristicDTO dto) {
+        this.id = new FeatureDatasetCharacteristicId();
+        this.id.setDatasetId(dto.getDatasetId());
+        this.id.setFeatureId(dto.getFeatureId());
+        this.characteristicName = dto.getCharacteristicName();
+        this.value = dto.getValue();
+        this.valueDataType = dto.getValueDataType();
+    }
+
+    /**
+     * Default constructor for the entity.
+     */
+    public FeatureDatasetCharacteristic() {}
 }
