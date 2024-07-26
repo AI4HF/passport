@@ -21,7 +21,7 @@ CREATE TABLE personnel (
 
 -- Insert dummy personnel
 INSERT INTO personnel (person_id, organization_id, first_name, last_name, role, email) VALUES
-    ('e2795ee1-88c2-4b5d-b4df-0347cab26061', 1, 'John', 'Doe', 'STUDY_OWNER', 'John.doe@emailhost.com');
+    ('service-account-admin', 1, 'John', 'Doe', 'STUDY_OWNER', 'John.doe@emailhost.com');
 
 -- Create study table
 CREATE TABLE study (
@@ -35,7 +35,7 @@ CREATE TABLE study (
 
 -- Insert dummy study
 INSERT INTO study (name, description, objectives, ethics, owner) VALUES
-    ('Risk score for acute HF in the emergency department', 'Predicting risk factors for acute HF…', 'Evaluating the risk prediction for acute HF', 'Approved by Ethical Board on 2023-01-15, Application Number: 123', 'e2795ee1-88c2-4b5d-b4df-0347cab26061');
+    ('Risk score for acute HF in the emergency department', 'Predicting risk factors for acute HF…', 'Evaluating the risk prediction for acute HF', 'Approved by Ethical Board on 2023-01-15, Application Number: 123', 'service-account-admin');
 
 -- Create population table
 CREATE TABLE population (
@@ -84,7 +84,7 @@ CREATE TABLE study_personnel (
 
 -- Insert dummy study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role) VALUES
-    (1, 1, 'STUDY_OWNER');
+    (1, 'service-account-admin', 'STUDY_OWNER');
 
 -- Create study_organization table
 CREATE TABLE study_organization (
@@ -98,7 +98,7 @@ CREATE TABLE study_organization (
 
 -- Insert dummy study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
-    (1, 1, 'DATA_PROVIDER', 1, 1);
+    (1, 1, 'DATA_PROVIDER', 'service-account-admin', 1);
 
 -- Create parameter table
 CREATE TABLE parameter (

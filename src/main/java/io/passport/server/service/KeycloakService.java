@@ -1,10 +1,9 @@
 package io.passport.server.service;
 
 import io.passport.server.config.KeycloakProvider;
-import io.passport.server.controller.ExperimentController;
+import io.passport.server.model.LoginResponse;
 import lombok.Getter;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -50,11 +49,16 @@ public class KeycloakService {
      * @param password user Keycloak recorded password
      * @return
      */
-    public AccessTokenResponse getAccessToken(String username, String password) {
+    public LoginResponse getAccessToken(String username, String password) {
         Keycloak keycloak = this.keycloakProvider.newKeycloakBuilderWithPasswordCredentials(username, password);
+        String userId = this.usersResource.search(username).get(0).getId();
         AccessTokenResponse tokenResponse = keycloak.tokenManager().grantToken();
         keycloak.close();
-        return tokenResponse;
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAuthResponse(tokenResponse);
+        loginResponse.setUserId(userId);
+
+        return loginResponse;
     }
 
     /**
