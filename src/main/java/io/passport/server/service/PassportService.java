@@ -34,7 +34,6 @@ public class PassportService {
         return passportRepository.findAll();
     }
 
-
     /**
      * Find a passport by passportId
      * @param passportId ID of the passport
@@ -43,7 +42,6 @@ public class PassportService {
     public Optional<Passport> findPassportByPassportId(Long passportId) {
         return passportRepository.findById(passportId);
     }
-
 
     /**
      * Save a passport
@@ -58,8 +56,6 @@ public class PassportService {
 
         return passportRepository.save(passport);
     }
-
-
 
     /**
      * Delete a passport

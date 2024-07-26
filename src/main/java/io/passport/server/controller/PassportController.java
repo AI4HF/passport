@@ -20,7 +20,6 @@ import java.util.Optional;
 @RequestMapping("/passport")
 public class PassportController {
 
-
     private static final Logger log = LoggerFactory.getLogger(PassportController.class);
     /**
      * Passport service for passport management
@@ -31,7 +30,6 @@ public class PassportController {
     public PassportController(PassportService passportService) {
         this.passportService = passportService;
     }
-
 
     /**
      * Read all passports
@@ -49,8 +47,6 @@ public class PassportController {
         return ResponseEntity.ok().headers(headers).body(passports);
     }
 
-
-
     /**
      * Read a passport by passportId
      * @param passportId ID of the passport
@@ -67,7 +63,6 @@ public class PassportController {
         }
     }
 
-
     /**
      * Create Passport.
      * @param passport Passport model instance to be created.
@@ -83,7 +78,6 @@ public class PassportController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 
     /**
      * Delete passport by passportID.

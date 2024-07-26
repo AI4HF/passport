@@ -32,7 +32,6 @@ public class ModelService {
         return modelRepository.findAll();
     }
 
-
     /**
      * Get all models by studyId
      * @param studyId ID of the study
@@ -108,5 +107,4 @@ public class ModelService {
             return false;
         }
     }
-
 }
