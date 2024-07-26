@@ -49,7 +49,6 @@ public class ModelController {
         return ResponseEntity.ok(models);
     }
 
-
     /**
      * Read a model by id
      * @param modelId ID of the model
