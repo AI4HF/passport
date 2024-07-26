@@ -4,6 +4,7 @@ import io.passport.server.config.KeycloakProvider;
 import io.passport.server.controller.ExperimentController;
 import lombok.Getter;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -76,14 +77,36 @@ public class KeycloakService {
         try{
             Response response = usersResource.create(user);
             if(!response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                response.close();
                 throw new Exception("Keycloak does not return successful response!");
             }
             String[] path = response.getLocation().getPath().split("/");
+            response.close();
             return Optional.of(path[path.length - 1]);
 
         }catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Delete a Keycloak user by userId
+     * @param userId ID of Keycloak user
+     * @return
+     */
+    public boolean deleteUser(String userId) {
+        try{
+            Response response = usersResource.delete(userId);
+            if(!response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                response.close();
+                throw new Exception("Keycloak does not return successful response!");
+            }
+            response.close();
+            return true;
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return false;
         }
     }
 }

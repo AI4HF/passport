@@ -103,8 +103,13 @@ public class PersonnelService {
      */
     public boolean deletePersonnel(String personnelId) {
         if(personnelRepository.existsById(personnelId)) {
-            personnelRepository.deleteById(personnelId);
-            return true;
+            boolean isKeycloakUserDeleted = keycloakService.deleteUser(personnelId);
+            if(isKeycloakUserDeleted) {
+                personnelRepository.deleteById(personnelId);
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
