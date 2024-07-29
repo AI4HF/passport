@@ -1,8 +1,8 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Credentials;
-import io.passport.server.model.LoginResponse;
 import io.passport.server.service.KeycloakService;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class KeycloakController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Credentials user) {
         try {
-            LoginResponse loginResponse = keycloakService.getAccessToken(user.username, user.password);
+            AccessTokenResponse loginResponse = keycloakService.getAccessToken(user.username, user.password);
 
             return ResponseEntity.ok(loginResponse);
         } catch (NotAuthorizedException e) {
