@@ -11,8 +11,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -27,7 +30,8 @@ class PopulationControllerTest {
     @InjectMocks
     private PopulationController populationController;
 
-    private Population population;
+    private Population population1;
+    private Population population2;
 
     /**
      * Sets up test data and initializes mocks before each test.
@@ -35,7 +39,8 @@ class PopulationControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        population = new Population(1L, 1L, "https://example.com/population", "Description", "Characteristics");
+        population1 = new Population(1L, 1L, "https://example.com/population1", "Description 1", "Characteristics 1");
+        population2 = new Population(2L, 1L, "https://example.com/population2", "Description 2", "Characteristics 2");
     }
 
     /**
@@ -44,12 +49,12 @@ class PopulationControllerTest {
      */
     @Test
     void testGetPopulationByIdFound() {
-        when(populationService.findPopulationById(1L)).thenReturn(Optional.of(population));
+        when(populationService.findPopulationById(1L)).thenReturn(Optional.of(population1));
 
         ResponseEntity<?> response = populationController.getPopulationById(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(Optional.of(population), response.getBody());
+        assertEquals(Optional.of(population1), response.getBody());
         verify(populationService, times(1)).findPopulationById(1L);
     }
 
@@ -69,30 +74,35 @@ class PopulationControllerTest {
 
     /**
      * Tests the {@link PopulationController#getPopulationByStudyId(Long)} method.
-     * Verifies that population is returned with a status of 200 OK when found.
+     * Verifies that all populations are returned with a status of 200 OK when studyId param is not given.
      */
     @Test
-    void testGetPopulationByStudyIdFound() {
-        when(populationService.findPopulationByStudyId(1L)).thenReturn(Optional.of(population));
+    void testGetPopulationByStudyIdNoParam() {
+        when(populationService.findAllPopulations()).thenReturn(Arrays.asList(population1, population2));
 
-        ResponseEntity<?> response = populationController.getPopulationByStudyId(1L);
+        ResponseEntity<?> response = populationController.getPopulationByStudyId(null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(Optional.of(population), response.getBody());
-        verify(populationService, times(1)).findPopulationByStudyId(1L);
+        assertTrue(response.getBody() instanceof List<?>);
+        List<?> responseBody = (List<?>) response.getBody();
+        assertEquals(2, responseBody.size());
+        verify(populationService, times(1)).findAllPopulations();
     }
 
     /**
      * Tests the {@link PopulationController#getPopulationByStudyId(Long)} method.
-     * Verifies that a status of 404 Not Found is returned when the population is not found.
+     * Verifies that all populations with the given studyId is returned with a status of 200 OK when found.
      */
     @Test
-    void testGetPopulationByStudyIdNotFound() {
-        when(populationService.findPopulationByStudyId(1L)).thenReturn(Optional.empty());
+    void testGetPopulationByStudyIdWithParam() {
+        when(populationService.findPopulationByStudyId(1L)).thenReturn(Arrays.asList(population1, population2));
 
         ResponseEntity<?> response = populationController.getPopulationByStudyId(1L);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof List<?>);
+        List<?> responseBody = (List<?>) response.getBody();
+        assertEquals(2, responseBody.size());
         verify(populationService, times(1)).findPopulationByStudyId(1L);
     }
 
@@ -102,13 +112,13 @@ class PopulationControllerTest {
      */
     @Test
     void testCreatePopulationSuccess() {
-        when(populationService.savePopulation(population)).thenReturn(population);
+        when(populationService.savePopulation(population1)).thenReturn(population1);
 
-        ResponseEntity<?> response = populationController.createPopulation(population);
+        ResponseEntity<?> response = populationController.createPopulation(population1);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(population, response.getBody());
-        verify(populationService, times(1)).savePopulation(population);
+        assertEquals(population1, response.getBody());
+        verify(populationService, times(1)).savePopulation(population1);
     }
 
     /**
@@ -117,12 +127,12 @@ class PopulationControllerTest {
      */
     @Test
     void testCreatePopulationFailure() {
-        when(populationService.savePopulation(population)).thenThrow(new RuntimeException("Error"));
+        when(populationService.savePopulation(population1)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = populationController.createPopulation(population);
+        ResponseEntity<?> response = populationController.createPopulation(population1);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(populationService, times(1)).savePopulation(population);
+        verify(populationService, times(1)).savePopulation(population1);
     }
 
     /**
@@ -131,13 +141,13 @@ class PopulationControllerTest {
      */
     @Test
     void testUpdatePopulationFound() {
-        when(populationService.updatePopulation(1L, population)).thenReturn(Optional.of(population));
+        when(populationService.updatePopulation(1L, population1)).thenReturn(Optional.of(population1));
 
-        ResponseEntity<?> response = populationController.updatePopulation(1L, population);
+        ResponseEntity<?> response = populationController.updatePopulation(1L, population1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(population, response.getBody());
-        verify(populationService, times(1)).updatePopulation(1L, population);
+        assertEquals(population1, response.getBody());
+        verify(populationService, times(1)).updatePopulation(1L, population1);
     }
 
     /**
@@ -146,12 +156,12 @@ class PopulationControllerTest {
      */
     @Test
     void testUpdatePopulationNotFound() {
-        when(populationService.updatePopulation(1L, population)).thenReturn(Optional.empty());
+        when(populationService.updatePopulation(1L, population1)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = populationController.updatePopulation(1L, population);
+        ResponseEntity<?> response = populationController.updatePopulation(1L, population1);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(populationService, times(1)).updatePopulation(1L, population);
+        verify(populationService, times(1)).updatePopulation(1L, population1);
     }
 
     /**
@@ -160,12 +170,12 @@ class PopulationControllerTest {
      */
     @Test
     void testUpdatePopulationFailure() {
-        when(populationService.updatePopulation(1L, population)).thenThrow(new RuntimeException("Error"));
+        when(populationService.updatePopulation(1L, population1)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = populationController.updatePopulation(1L, population);
+        ResponseEntity<?> response = populationController.updatePopulation(1L, population1);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(populationService, times(1)).updatePopulation(1L, population);
+        verify(populationService, times(1)).updatePopulation(1L, population1);
     }
 
     /**

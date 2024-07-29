@@ -1,6 +1,8 @@
 package io.passport.server.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.Instant;
@@ -12,6 +14,8 @@ import java.time.Instant;
 @Table(name = "featureset")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FeatureSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

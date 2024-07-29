@@ -44,10 +44,25 @@ class ExperimentControllerTest {
 
     /**
      * Tests the {@link ExperimentController#getExperimentsByStudyId(Long)} method.
+     * Verifies that all experiments are returned with a status of 200 OK when studyId is not given.
+     */
+    @Test
+    void testGetExperimentsByStudyIdNoParam() {
+        when(experimentService.findAllExperiments()).thenReturn(Arrays.asList(experiment1, experiment2));
+
+        ResponseEntity<List<Experiment>> response = experimentController.getExperimentsByStudyId(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        verify(experimentService, times(1)).findAllExperiments();
+    }
+
+    /**
+     * Tests the {@link ExperimentController#getExperimentsByStudyId(Long)} method.
      * Verifies that all experiments for a study are returned with a status of 200 OK.
      */
     @Test
-    void testGetExperimentsByStudyId() {
+    void testGetExperimentsByStudyIdWithParam() {
         when(experimentService.findExperimentByStudyId(1L)).thenReturn(Arrays.asList(experiment1, experiment2));
 
         ResponseEntity<List<Experiment>> response = experimentController.getExperimentsByStudyId(1L);
@@ -64,7 +79,7 @@ class ExperimentControllerTest {
     @Test
     void testCreateExperimentsSuccess() {
         List<Experiment> experiments = Arrays.asList(experiment1, experiment2);
-        doNothing().when(experimentService).createExperimentEntries(1L, experiments);
+        when(experimentService.createExperimentEntries(1L, experiments)).thenReturn(experiments);
         when(experimentService.findExperimentByStudyId(1L)).thenReturn(experiments);
 
         ResponseEntity<?> response = experimentController.createExperiments(1L, experiments);
@@ -72,7 +87,6 @@ class ExperimentControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(experiments, response.getBody());
         verify(experimentService, times(1)).createExperimentEntries(1L, experiments);
-        verify(experimentService, times(1)).findExperimentByStudyId(1L);
     }
 
     /**

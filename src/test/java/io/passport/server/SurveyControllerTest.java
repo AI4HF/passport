@@ -44,21 +44,6 @@ class SurveyControllerTest {
     }
 
     /**
-     * Tests the {@link SurveyController#getAllSurveys()} method.
-     * Verifies that all surveys are returned with a status of 200 OK.
-     */
-    @Test
-    void testGetAllSurveys() {
-        when(surveyService.findAllSurveys()).thenReturn(Arrays.asList(survey1, survey2));
-
-        ResponseEntity<List<Survey>> response = surveyController.getAllSurveys();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
-        verify(surveyService, times(1)).findAllSurveys();
-    }
-
-    /**
      * Tests the {@link SurveyController#getSurveyById(Long)} method.
      * Verifies that a survey is returned with a status of 200 OK when found.
      */
@@ -88,14 +73,29 @@ class SurveyControllerTest {
     }
 
     /**
-     * Tests the {@link SurveyController#getSurveysByStudyId(Long)} method.
-     * Verifies that surveys are returned with a status of 200 OK.
+     * Tests the {@link SurveyController#getSurveys(Long)} method.
+     * Verifies that all surveys are returned with a status of 200 OK when no studyId is given.
      */
     @Test
-    void testGetSurveysByStudyId() {
+    void testGetSurveysNoParam() {
+        when(surveyService.findAllSurveys()).thenReturn(Arrays.asList(survey1, survey2));
+
+        ResponseEntity<List<Survey>> response = surveyController.getSurveys(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        verify(surveyService, times(1)).findAllSurveys();
+    }
+
+    /**
+     * Tests the {@link SurveyController#getSurveys(Long)} method.
+     * Verifies that all surveys with given studyId are returned with a status of 200 OK.
+     */
+    @Test
+    void testGetSurveysWithParam() {
         when(surveyService.findSurveysByStudyId(1L)).thenReturn(Arrays.asList(survey1, survey2));
 
-        ResponseEntity<List<Survey>> response = surveyController.getSurveysByStudyId(1L);
+        ResponseEntity<List<Survey>> response = surveyController.getSurveys(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());

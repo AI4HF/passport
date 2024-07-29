@@ -1,6 +1,8 @@
 package io.passport.server.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.io.Serializable;
 @Table(name = "feature_dataset_characteristic")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FeatureDatasetCharacteristic implements Serializable {
 
     @EmbeddedId

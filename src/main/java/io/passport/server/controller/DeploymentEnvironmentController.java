@@ -97,7 +97,7 @@ public class DeploymentEnvironmentController {
      * @return
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
-    public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId) {
+    public ResponseEntity<?> deleteDeploymentEnvironment(@PathVariable Long deploymentEnvironmentId) {
         try{
             boolean isDeleted = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
             if(isDeleted) {
