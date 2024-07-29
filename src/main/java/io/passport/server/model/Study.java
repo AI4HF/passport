@@ -30,5 +30,5 @@ public class Study {
     private String ethics;
 
     @Column(name = "owner")
-    private Long owner;
+    private String owner;
 }

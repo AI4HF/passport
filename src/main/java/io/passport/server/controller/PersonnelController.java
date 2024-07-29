@@ -1,6 +1,7 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Personnel;
+import io.passport.server.model.PersonnelDTO;
 import io.passport.server.service.PersonnelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class PersonnelController {
      */
     @GetMapping("/{personId}")
     public ResponseEntity<?> getPersonnelByPersonId(
-            @PathVariable("personId") Long personId) {
+            @PathVariable("personId") String personId) {
 
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personId);
 
@@ -74,14 +75,18 @@ public class PersonnelController {
 
     /**
      * Create a Personnel.
-     * @param personnel Personnel model instance to be created.
+     * @param personnelDTO Personnel model instance to be created.
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createPersonnel(@RequestBody Personnel personnel) {
+    public ResponseEntity<?> createPersonnel(@RequestBody PersonnelDTO personnelDTO) {
         try{
-            Personnel savedPersonnel = this.personnelService.savePersonnel(personnel);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
+            Optional<Personnel> savedPersonnel = this.personnelService.savePersonnel(personnelDTO);
+            if(savedPersonnel.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
+            }else{
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         }catch(Exception e){
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -95,7 +100,7 @@ public class PersonnelController {
      * @return
      */
     @PutMapping("/{personId}")
-    public ResponseEntity<?> updatePersonnel(@PathVariable Long personId, @RequestBody Personnel updatedPersonnel) {
+    public ResponseEntity<?> updatePersonnel(@PathVariable String personId, @RequestBody Personnel updatedPersonnel) {
         try{
             Optional<Personnel> savedPersonnel = this.personnelService.updatePersonnel(personId, updatedPersonnel);
             if(savedPersonnel.isPresent()) {
@@ -115,7 +120,7 @@ public class PersonnelController {
      * @return
      */
     @DeleteMapping("/{personId}")
-    public ResponseEntity<?> deletePersonnel(@PathVariable Long personId) {
+    public ResponseEntity<?> deletePersonnel(@PathVariable String personId) {
         try{
             boolean isDeleted = this.personnelService.deletePersonnel(personId);
             if(isDeleted) {

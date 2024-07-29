@@ -3,7 +3,6 @@ package io.passport.server.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
-import org.checkerframework.checker.units.qual.N;
 
 import javax.persistence.*;
 
@@ -21,9 +20,8 @@ import javax.persistence.*;
         property = "personId")
 public class Personnel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    private Long personId;
+    private String personId;
 
     @Column(name = "organization_id")
     private Long organizationId;
