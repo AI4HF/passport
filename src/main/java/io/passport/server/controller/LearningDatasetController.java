@@ -71,10 +71,6 @@ public class LearningDatasetController {
             datasets = this.learningDatasetService.getAllLearningDatasets();
         }
 
-        if (datasets.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok().body(datasets);
     }
 
