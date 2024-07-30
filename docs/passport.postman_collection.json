@@ -109,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -146,7 +146,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -318,13 +318,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -360,7 +360,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"study owner\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"STUDY_OWNER\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -386,7 +386,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan2\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"study owner\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan2\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"STUDY_OWNER\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -394,13 +394,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -412,13 +412,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -1817,7 +1817,7 @@
 						},
 						{
 							"key": "client_secret",
-							"value": "54QZOAippd83KB8oVLWwK1N2yoZClpG0",
+							"value": "zCCeccmEE81i4V6bNiMOb4b4mbDFOacV",
 							"type": "text"
 						}
 					]
