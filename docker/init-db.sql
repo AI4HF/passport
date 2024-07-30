@@ -108,9 +108,9 @@ CREATE TABLE featureset (
                             featureset_url VARCHAR(255),
                             description TEXT,
                             created_at TIMESTAMP,
-                            created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                            created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                             last_updated_at TIMESTAMP,
-                            last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                            last_updated_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE
 );
 
 -- Insert dummy FeatureSet
@@ -131,9 +131,9 @@ CREATE TABLE feature (
                          equipment VARCHAR(255),
                          data_collection VARCHAR(255),
                          created_at TIMESTAMP,
-                         created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                         created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                          last_updated_at TIMESTAMP,
-                         last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                         last_updated_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE
 );
 
 -- Insert dummy Feature
@@ -153,9 +153,9 @@ CREATE TABLE dataset (
                          num_of_records INTEGER,
                          synthetic BOOLEAN,
                          created_at TIMESTAMP,
-                         created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                         created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                          last_updated_at TIMESTAMP,
-                         last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                         last_updated_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE
 );
 
 -- Insert dummy Dataset
@@ -182,9 +182,9 @@ CREATE TABLE dataset_transformation_step (
                                              method VARCHAR(255),
                                              explanation TEXT,
                                              created_at TIMESTAMP,
-                                             created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                                             created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                                              last_updated_at TIMESTAMP,
-                                             last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                                             last_updated_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE
 );
 
 -- Insert dummy DatasetTransformationStep
