@@ -1,7 +1,9 @@
 package io.passport.server;
 
 import io.passport.server.controller.PersonnelController;
+import io.passport.server.model.Credentials;
 import io.passport.server.model.Personnel;
+import io.passport.server.model.PersonnelDTO;
 import io.passport.server.service.PersonnelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ class PersonnelControllerTest {
 
     private Personnel personnel1;
     private Personnel personnel2;
+    private PersonnelDTO personnelDTO1;
 
     /**
      * Sets up test data and initializes mocks before each test.
@@ -42,8 +45,9 @@ class PersonnelControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        personnel1 = new Personnel(1L, 1L, "John", "Doe", STUDY_OWNER, "john.doe@example.com");
-        personnel2 = new Personnel(2L, 1L, "Jane", "Doe", DATA_ENGINEER, "jane.doe@example.com");
+        personnel1 = new Personnel("1", 1L, "John", "Doe", STUDY_OWNER, "john.doe@example.com");
+        personnel2 = new Personnel("2", 1L, "Jane", "Doe", DATA_ENGINEER, "jane.doe@example.com");
+        personnelDTO1 = new PersonnelDTO(personnel1, new Credentials());
     }
 
     /**
@@ -64,145 +68,145 @@ class PersonnelControllerTest {
     }
 
     /**
-     * Tests the {@link PersonnelController#getPersonnelByPersonId(Long)} method.
+     * Tests the {@link PersonnelController#getPersonnelByPersonId(String)} method.
      * Verifies that personnel is returned with a status of 200 OK when found.
      */
     @Test
     void testGetPersonnelByPersonIdFound() {
-        when(personnelService.findPersonnelById(1L)).thenReturn(Optional.of(personnel1));
+        when(personnelService.findPersonnelById("1")).thenReturn(Optional.of(personnel1));
 
-        ResponseEntity<?> response = personnelController.getPersonnelByPersonId(1L);
+        ResponseEntity<?> response = personnelController.getPersonnelByPersonId("1");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(Optional.of(personnel1), response.getBody());
-        verify(personnelService, times(1)).findPersonnelById(1L);
+        verify(personnelService, times(1)).findPersonnelById("1");
     }
 
     /**
-     * Tests the {@link PersonnelController#getPersonnelByPersonId(Long)} method.
+     * Tests the {@link PersonnelController#getPersonnelByPersonId(String)} method.
      * Verifies that a status of 404 Not Found is returned when personnel is not found.
      */
     @Test
     void testGetPersonnelByPersonIdNotFound() {
-        when(personnelService.findPersonnelById(1L)).thenReturn(Optional.empty());
+        when(personnelService.findPersonnelById("1")).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = personnelController.getPersonnelByPersonId(1L);
+        ResponseEntity<?> response = personnelController.getPersonnelByPersonId("1");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(personnelService, times(1)).findPersonnelById(1L);
+        verify(personnelService, times(1)).findPersonnelById("1");
     }
 
     /**
-     * Tests the {@link PersonnelController#createPersonnel(Personnel)} method.
+     * Tests the {@link PersonnelController#createPersonnel(PersonnelDTO)} method.
      * Verifies that personnel is created successfully with a status of 201 Created.
      */
     @Test
     void testCreatePersonnelSuccess() {
-        when(personnelService.savePersonnel(personnel1)).thenReturn(personnel1);
+        when(personnelService.savePersonnel(personnelDTO1)).thenReturn(Optional.of(personnel1));
 
-        ResponseEntity<?> response = personnelController.createPersonnel(personnel1);
+        ResponseEntity<?> response = personnelController.createPersonnel(personnelDTO1);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(personnel1, response.getBody());
-        verify(personnelService, times(1)).savePersonnel(personnel1);
+        assertEquals(Optional.of(personnel1), response.getBody());
+        verify(personnelService, times(1)).savePersonnel(personnelDTO1);
     }
 
     /**
-     * Tests the {@link PersonnelController#createPersonnel(Personnel)} method.
+     * Tests the {@link PersonnelController#createPersonnel(PersonnelDTO)} method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testCreatePersonnelFailure() {
-        when(personnelService.savePersonnel(personnel1)).thenThrow(new RuntimeException("Error"));
+        when(personnelService.savePersonnel(personnelDTO1)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = personnelController.createPersonnel(personnel1);
+        ResponseEntity<?> response = personnelController.createPersonnel(personnelDTO1);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(personnelService, times(1)).savePersonnel(personnel1);
+        verify(personnelService, times(1)).savePersonnel(personnelDTO1);
     }
 
     /**
-     * Tests the {@link PersonnelController#updatePersonnel(Long, Personnel)} method.
+     * Tests the {@link PersonnelController#updatePersonnel(String, Personnel)} method.
      * Verifies that personnel is updated successfully with a status of 200 OK when found.
      */
     @Test
     void testUpdatePersonnelFound() {
-        when(personnelService.updatePersonnel(1L, personnel1)).thenReturn(Optional.of(personnel1));
+        when(personnelService.updatePersonnel("1", personnel1)).thenReturn(Optional.of(personnel1));
 
-        ResponseEntity<?> response = personnelController.updatePersonnel(1L, personnel1);
+        ResponseEntity<?> response = personnelController.updatePersonnel("1", personnel1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(personnel1, response.getBody());
-        verify(personnelService, times(1)).updatePersonnel(1L, personnel1);
+        verify(personnelService, times(1)).updatePersonnel("1", personnel1);
     }
 
     /**
-     * Tests the {@link PersonnelController#updatePersonnel(Long, Personnel)} method.
+     * Tests the {@link PersonnelController#updatePersonnel(String, Personnel)} method.
      * Verifies that a status of 404 Not Found is returned when the personnel to update is not found.
      */
     @Test
     void testUpdatePersonnelNotFound() {
-        when(personnelService.updatePersonnel(1L, personnel1)).thenReturn(Optional.empty());
+        when(personnelService.updatePersonnel("1", personnel1)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = personnelController.updatePersonnel(1L, personnel1);
+        ResponseEntity<?> response = personnelController.updatePersonnel("1", personnel1);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(personnelService, times(1)).updatePersonnel(1L, personnel1);
+        verify(personnelService, times(1)).updatePersonnel("1", personnel1);
     }
 
     /**
-     * Tests the {@link PersonnelController#updatePersonnel(Long, Personnel)} method.
+     * Tests the {@link PersonnelController#updatePersonnel(String, Personnel)} method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testUpdatePersonnelFailure() {
-        when(personnelService.updatePersonnel(1L, personnel1)).thenThrow(new RuntimeException("Error"));
+        when(personnelService.updatePersonnel("1", personnel1)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = personnelController.updatePersonnel(1L, personnel1);
+        ResponseEntity<?> response = personnelController.updatePersonnel("1", personnel1);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(personnelService, times(1)).updatePersonnel(1L, personnel1);
+        verify(personnelService, times(1)).updatePersonnel("1", personnel1);
     }
 
     /**
-     * Tests the {@link PersonnelController#deletePersonnel(Long)} method.
+     * Tests the {@link PersonnelController#deletePersonnel(String)} method.
      * Verifies that personnel is deleted successfully with a status of 204 No Content when found.
      */
     @Test
     void testDeletePersonnelFound() {
-        when(personnelService.deletePersonnel(1L)).thenReturn(true);
+        when(personnelService.deletePersonnel("1")).thenReturn(true);
 
-        ResponseEntity<?> response = personnelController.deletePersonnel(1L);
+        ResponseEntity<?> response = personnelController.deletePersonnel("1");
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(personnelService, times(1)).deletePersonnel(1L);
+        verify(personnelService, times(1)).deletePersonnel("1");
     }
 
     /**
-     * Tests the {@link PersonnelController#deletePersonnel(Long)} method.
+     * Tests the {@link PersonnelController#deletePersonnel(String)} method.
      * Verifies that a status of 404 Not Found is returned when the personnel to delete is not found.
      */
     @Test
     void testDeletePersonnelNotFound() {
-        when(personnelService.deletePersonnel(1L)).thenReturn(false);
+        when(personnelService.deletePersonnel("1")).thenReturn(false);
 
-        ResponseEntity<?> response = personnelController.deletePersonnel(1L);
+        ResponseEntity<?> response = personnelController.deletePersonnel("1");
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(personnelService, times(1)).deletePersonnel(1L);
+        verify(personnelService, times(1)).deletePersonnel("1");
     }
 
     /**
-     * Tests the {@link PersonnelController#deletePersonnel(Long)} method.
+     * Tests the {@link PersonnelController#deletePersonnel(String)} method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testDeletePersonnelFailure() {
-        when(personnelService.deletePersonnel(1L)).thenThrow(new RuntimeException("Error"));
+        when(personnelService.deletePersonnel("1")).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = personnelController.deletePersonnel(1L);
+        ResponseEntity<?> response = personnelController.deletePersonnel("1");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(personnelService, times(1)).deletePersonnel(1L);
+        verify(personnelService, times(1)).deletePersonnel("1");
     }
 }

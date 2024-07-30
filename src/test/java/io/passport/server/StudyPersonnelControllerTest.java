@@ -39,8 +39,8 @@ class StudyPersonnelControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        personnel1 = new Personnel(1L, 1L, "John", "Doe", STUDY_OWNER, "john.doe@example.com");
-        personnel2 = new Personnel(2L, 1L, "Jane", "Doe", DATA_ENGINEER, "jane.doe@example.com");
+        personnel1 = new Personnel("1", 1L, "John", "Doe", STUDY_OWNER, "john.doe@example.com");
+        personnel2 = new Personnel("2", 1L, "Jane", "Doe", DATA_ENGINEER, "jane.doe@example.com");
     }
 
     /**

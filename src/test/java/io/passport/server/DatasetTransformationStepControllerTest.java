@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,19 +37,19 @@ public class DatasetTransformationStepControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        datasetTransformationStep1 = new DatasetTransformationStep(1L, 1L,"input_features_example 1","output_features_example 2", "method_example 1","explanation_example 1", LocalDateTime.now(),1L, LocalDateTime.now(),1L);
-        datasetTransformationStep2 = new DatasetTransformationStep(2L, 1L,"input_features_example 1","output_features_example 2", "method_example 2","explanation_example 2", LocalDateTime.now(),1L, LocalDateTime.now(),1L);
+        datasetTransformationStep1 = new DatasetTransformationStep(1L, 1L,"input_features_example 1","output_features_example 2", "method_example 1","explanation_example 1", Instant.now(),"1", Instant.now(),"1");
+        datasetTransformationStep2 = new DatasetTransformationStep(2L, 1L,"input_features_example 1","output_features_example 2", "method_example 2","explanation_example 2", Instant.now(),"1", Instant.now(),"1");
     }
 
     /**
-     * Tests the {@link DatasetTransformationStepController#getAllDatasetTransformationSteps()} method.
+     * Tests the {@link DatasetTransformationStepController#getDatasetTransformationSteps(Long)} method.
      * Verifies that all datasetTransformationSteps are returned with a status of 200 OK.
      */
     @Test
-    void testGetAllDatasetTransformationSteps() {
+    void testGetDatasetTransformationStepsNoParam() {
         when(datasetTransformationStepService.getAllDatasetTransformationSteps()).thenReturn(Arrays.asList(datasetTransformationStep1, datasetTransformationStep2));
 
-        ResponseEntity<List<DatasetTransformationStep>> response = datasetTransformationStepController.getAllDatasetTransformationSteps();
+        ResponseEntity<List<DatasetTransformationStep>> response = datasetTransformationStepController.getDatasetTransformationSteps(null);
 
         HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -59,17 +59,19 @@ public class DatasetTransformationStepControllerTest {
     }
 
     /**
-     * Tests the {@link DatasetTransformationStepController#getDatasetTransformationStepsByTransformationId(Long)} method.
+     * Tests the {@link DatasetTransformationStepController#getDatasetTransformationSteps(Long)} method.
      * Verifies that all datasetTransformationSteps with given transformationId are returned with a status of 200 OK.
      */
     @Test
-    void testGetDatasetTransformationStepsByTransformationId() {
+    void testGetDatasetTransformationStepsWithParam() {
         when(datasetTransformationStepService.findByDataTransformationId(1L)).thenReturn(Arrays.asList(datasetTransformationStep1, datasetTransformationStep2));
 
-        ResponseEntity<List<DatasetTransformationStep>> response = datasetTransformationStepController.getDatasetTransformationStepsByTransformationId(1L);
+        ResponseEntity<List<DatasetTransformationStep>> response = datasetTransformationStepController.getDatasetTransformationSteps(1L);
 
+        HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals("2", headers.getFirst("X-Total-Count"));
         verify(datasetTransformationStepService, times(1)).findByDataTransformationId(1L);
     }
 

@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +41,8 @@ class DatasetControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dataset1 = new Dataset(1L, 1L, 1L, 1L, "Title 1", "Description 1", "Version 1", "Ref Entity 1", 100, true, LocalDateTime.now(), 1L, LocalDateTime.now(), 1L);
-        dataset2 = new Dataset(2L, 1L, 1L, 1L, "Title 2", "Description 2", "Version 2", "Ref Entity 2", 100, true, LocalDateTime.now(), 1L, LocalDateTime.now(), 1L);
+        dataset1 = new Dataset(1L, 1L, 1L, 1L, "Title 1", "Description 1", "Version 1", "Ref Entity 1", 100, true, Instant.now(), "1", Instant.now(), "1");
+        dataset2 = new Dataset(2L, 1L, 1L, 1L, "Title 2", "Description 2", "Version 2", "Ref Entity 2", 100, true, Instant.now(), "1", Instant.now(), "1");
     }
 
     /**

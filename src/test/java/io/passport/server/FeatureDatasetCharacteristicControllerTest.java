@@ -2,6 +2,7 @@ package io.passport.server;
 
 import io.passport.server.controller.FeatureDatasetCharacteristicController;
 import io.passport.server.model.FeatureDatasetCharacteristic;
+import io.passport.server.model.FeatureDatasetCharacteristicDTO;
 import io.passport.server.model.FeatureDatasetCharacteristicId;
 import io.passport.server.service.FeatureDatasetCharacteristicService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ public class FeatureDatasetCharacteristicControllerTest {
     private FeatureDatasetCharacteristicId featureDatasetCharacteristicId;
     private FeatureDatasetCharacteristic featureDatasetCharacteristic1;
     private FeatureDatasetCharacteristic featureDatasetCharacteristic2;
+    private FeatureDatasetCharacteristicDTO featureDatasetCharacteristicDTO;
     
     /**
      * Sets up test data and initializes mocks before each test.
@@ -39,19 +41,20 @@ public class FeatureDatasetCharacteristicControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId(1L, 1L);
-        featureDatasetCharacteristic1 = new FeatureDatasetCharacteristic(featureDatasetCharacteristicId, "Characteristic Name 1", 10.0, "Double");
-        featureDatasetCharacteristic2 = new FeatureDatasetCharacteristic(featureDatasetCharacteristicId, "Characteristic Name 2", 20.0, "Double");
+        featureDatasetCharacteristic1 = new FeatureDatasetCharacteristic(featureDatasetCharacteristicId, "Characteristic Name 1", "1", "Double");
+        featureDatasetCharacteristic2 = new FeatureDatasetCharacteristic(featureDatasetCharacteristicId, "Characteristic Name 2", "1", "Double");
+        featureDatasetCharacteristicDTO = new FeatureDatasetCharacteristicDTO(featureDatasetCharacteristic1);
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#getAllFeatureDatasetCharacteristics()} method.
+     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristics(Long, Long)} method.
      * Verifies that all featureDatasetCharacteristics are returned with a status of 200 OK.
      */
     @Test
-    void testGetAllFeatureDatasetCharacteristics() {
+    void testGetFeatureDatasetCharacteristicsNoParam() {
         when(featureDatasetCharacteristicService.getAllFeatureDatasetCharacteristics()).thenReturn(Arrays.asList(featureDatasetCharacteristic1, featureDatasetCharacteristic2));
 
-        ResponseEntity<List<FeatureDatasetCharacteristic>> response = featureDatasetCharacteristicController.getAllFeatureDatasetCharacteristics();
+        ResponseEntity<List<FeatureDatasetCharacteristicDTO>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristics(null, null);
 
         HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -61,97 +64,93 @@ public class FeatureDatasetCharacteristicControllerTest {
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristicsByDatasetId(Long)} method.
+     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristics(Long, Long)} method.
      * Verifies that a featureDatasetCharacteristic list for the given datasetId is returned with a status of 200 OK when found.
      */
     @Test
-    void testGetFeatureDatasetCharacteristicsByDatasetId() {
+    void testGetFeatureDatasetCharacteristicsWithDatasetId() {
         when(featureDatasetCharacteristicService.findByDatasetId(1L)).thenReturn(Arrays.asList(featureDatasetCharacteristic1, featureDatasetCharacteristic2));
 
-        ResponseEntity<List<FeatureDatasetCharacteristic>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristicsByDatasetId(1L);
+        ResponseEntity<List<FeatureDatasetCharacteristicDTO>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristics(1L, null);
 
+        HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals("2", headers.getFirst("X-Total-Count"));
         verify(featureDatasetCharacteristicService, times(1)).findByDatasetId(1L);
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristicsByFeatureId(Long)} method.
+     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristics(Long, Long)} method.
      * Verifies that a featureDatasetCharacteristic list for the given featureId is returned with a status of 200 OK when found.
      */
     @Test
-    void testGetFeatureDatasetCharacteristicsByFeatureId() {
+    void testGetFeatureDatasetCharacteristicsWithFeatureId() {
         when(featureDatasetCharacteristicService.findByFeatureId(1L)).thenReturn(Arrays.asList(featureDatasetCharacteristic1, featureDatasetCharacteristic2));
 
-        ResponseEntity<List<FeatureDatasetCharacteristic>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristicsByFeatureId(1L);
+        ResponseEntity<List<FeatureDatasetCharacteristicDTO>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristics(null, 1L);
 
+        HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals("2", headers.getFirst("X-Total-Count"));
         verify(featureDatasetCharacteristicService, times(1)).findByFeatureId(1L);
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristic(Long, Long)} method.
-     * Verifies that a featureDatasetCharacteristic is returned for the given datasetId and featureId with a status of 200 OK when found.
+     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristics(Long, Long)} method.
+     * Verifies that a featureDatasetCharacteristic for the given datasetId and featureId is returned with a status of 200 OK when found.
      */
     @Test
-    void testGetFeatureDatasetCharacteristicFound() {
-        when(featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(argThat(id ->
-                id.getDatasetId().equals(1L) && id.getFeatureId().equals(1L))))
+    void testGetFeatureDatasetCharacteristicsWithDatasetIdAndFeatureId() {
+        when(featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(argThat(argument ->
+                argument.getDatasetId().equals(1L) && argument.getFeatureId().equals(1L))))
                 .thenReturn(Optional.of(featureDatasetCharacteristic1));
 
-        ResponseEntity<?> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristic(1L, 1L);
+        ResponseEntity<List<FeatureDatasetCharacteristicDTO>> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristics(1L, 1L);
 
+        HttpHeaders headers = response.getHeaders();
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(featureDatasetCharacteristic1, response.getBody());
+        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
+        assertEquals("1", headers.getFirst("X-Total-Count"));
         verify(featureDatasetCharacteristicService, times(1))
-                .findFeatureDatasetCharacteristicById(argThat(id ->
-                        id.getDatasetId().equals(1L) && id.getFeatureId().equals(1L)));
+                .findFeatureDatasetCharacteristicById(argThat(argument ->
+                        argument.getDatasetId().equals(1L) && argument.getFeatureId().equals(1L)));
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#getFeatureDatasetCharacteristic(Long, Long)} method.
-     * Verifies that a status of 404 Not Found is returned when featureDatasetCharacteristic is not found.
-     */
-    @Test
-    void testGetFeatureDatasetCharacteristicNotFound() {
-        when(featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(featureDatasetCharacteristicId)).thenReturn(Optional.empty());
-
-        ResponseEntity<?> response = featureDatasetCharacteristicController.getFeatureDatasetCharacteristic(1L, 1L);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(featureDatasetCharacteristicService, times(1))
-                .findFeatureDatasetCharacteristicById(argThat(id ->
-                        id.getDatasetId().equals(1L) && id.getFeatureId().equals(1L)));
-    }
-
-    /**
-     * Tests the {@link FeatureDatasetCharacteristicController#createFeatureDatasetCharacteristic(FeatureDatasetCharacteristic)} method.
+     * Tests the {@link FeatureDatasetCharacteristicController#createFeatureDatasetCharacteristic(FeatureDatasetCharacteristicDTO)} method.
      * Verifies that a featureDatasetCharacteristic is created successfully with a status of 201 Created.
      */
     @Test
     void testCreateFeatureDatasetCharacteristicSuccess() {
-        when(featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(featureDatasetCharacteristic1)).thenReturn(featureDatasetCharacteristic1);
+        when(featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(argThat(argument ->
+                argument.getId().getDatasetId().equals(1L) && argument.getId().getFeatureId().equals(1L))))
+                .thenReturn(featureDatasetCharacteristic1);
 
-        ResponseEntity<?> response = featureDatasetCharacteristicController.createFeatureDatasetCharacteristic(featureDatasetCharacteristic1);
+        ResponseEntity<?> response = featureDatasetCharacteristicController.createFeatureDatasetCharacteristic(featureDatasetCharacteristicDTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(featureDatasetCharacteristic1, response.getBody());
-        verify(featureDatasetCharacteristicService, times(1)).saveFeatureDatasetCharacteristic(featureDatasetCharacteristic1);
+        verify(featureDatasetCharacteristicService, times(1)).saveFeatureDatasetCharacteristic(argThat(argument ->
+                argument.getId().getDatasetId().equals(1L) && argument.getId().getFeatureId().equals(1L)));
     }
 
     /**
-     * Tests the {@link FeatureDatasetCharacteristicController#createFeatureDatasetCharacteristic(FeatureDatasetCharacteristic)} method.
+     * Tests the {@link FeatureDatasetCharacteristicController#createFeatureDatasetCharacteristic(FeatureDatasetCharacteristicDTO)}  method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testCreateFeatureDatasetCharacteristicFailure() {
-        when(featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(featureDatasetCharacteristic1)).thenThrow(new RuntimeException("Error"));
+        when(featureDatasetCharacteristicService.saveFeatureDatasetCharacteristic(argThat(argument ->
+                argument.getId().getDatasetId().equals(1L) && argument.getId().getFeatureId().equals(1L))))
+                .thenThrow(new RuntimeException("error"));
 
-        ResponseEntity<?> response = featureDatasetCharacteristicController.createFeatureDatasetCharacteristic(featureDatasetCharacteristic1);
+        ResponseEntity<?> response = featureDatasetCharacteristicController.createFeatureDatasetCharacteristic(featureDatasetCharacteristicDTO);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(featureDatasetCharacteristicService, times(1)).saveFeatureDatasetCharacteristic(featureDatasetCharacteristic1);
+        verify(featureDatasetCharacteristicService, times(1)).saveFeatureDatasetCharacteristic(argThat(argument ->
+                argument.getId().getDatasetId().equals(1L) && argument.getId().getFeatureId().equals(1L)));
     }
 
     /**

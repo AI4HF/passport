@@ -1,7 +1,9 @@
 package io.passport.server;
 
 import io.passport.server.controller.LearningDatasetController;
+import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.LearningDataset;
+import io.passport.server.model.LearningDatasetandTransformationDTO;
 import io.passport.server.service.LearningDatasetService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,8 @@ public class LearningDatasetControllerTest {
 
     private LearningDataset learningDataset1;
     private LearningDataset learningDataset2;
+    private DatasetTransformation datasetTransformation;
+    private LearningDatasetandTransformationDTO learningDatasetandTransformationDTO;
 
     /**
      * Sets up test data and initializes mocks before each test.
@@ -38,81 +42,8 @@ public class LearningDatasetControllerTest {
         MockitoAnnotations.openMocks(this);
         learningDataset1 = new LearningDataset(1L, 1L, 1L, "Learning Dataset Description 1");
         learningDataset2 = new LearningDataset(2L, 1L, 1L, "Learning Dataset Description 2");
-    }
-
-    /**
-     * Tests the {@link LearningDatasetController#getAllLearningDatasets()} method.
-     * Verifies that all learningDatasets are returned with a status of 200 OK.
-     */
-    @Test
-    void testGetAllLearningDatasets() {
-        when(learningDatasetService.getAllLearningDatasets()).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
-
-        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getAllLearningDatasets();
-
-        HttpHeaders headers = response.getHeaders();
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
-        assertEquals("2", headers.getFirst("X-Total-Count"));
-        verify(learningDatasetService, times(1)).getAllLearningDatasets();
-    }
-
-    /**
-     * Tests the {@link LearningDatasetController#getLearningDatasetsByTransformationId(Long)} method.
-     * Verifies that all learningDatasets with given transformationId is returned with a status of 200 OK when found.
-     */
-    @Test
-    void testGetLearningDatasetsByTransformationIdFound() {
-        when(learningDatasetService.findByDataTransformationId(1L)).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
-
-        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasetsByTransformationId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
-        verify(learningDatasetService, times(1)).findByDataTransformationId(1L);
-    }
-
-    /**
-     * Tests the {@link LearningDatasetController#getLearningDatasetsByTransformationId(Long)} method.
-     * Verifies that a status of 404 Not Found is returned when no learning dataset with given transformationId is found.
-     */
-    @Test
-    void testGetLearningDatasetsByTransformationIdNotFound() {
-        when(learningDatasetService.findByDataTransformationId(1L)).thenReturn(Collections.emptyList());
-
-        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasetsByTransformationId(1L);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(learningDatasetService, times(1)).findByDataTransformationId(1L);
-    }
-
-    /**
-     * Tests the {@link LearningDatasetController#getLearningDatasetsByDatasetId(Long)} method.
-     * Verifies that all learningDatasets with given datasetId is returned with a status of 200 OK when found.
-     */
-    @Test
-    void testGetLearningDatasetsByDatasetIdFound() {
-        when(learningDatasetService.findByDatasetId(1L)).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
-
-        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasetsByDatasetId(1L);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
-        verify(learningDatasetService, times(1)).findByDatasetId(1L);
-    }
-
-    /**
-     * Tests the {@link LearningDatasetController#getLearningDatasetsByDatasetId(Long)} method.
-     * Verifies that a status of 404 Not Found is returned when no learning dataset with given datasetId is found.
-     */
-    @Test
-    void testGetLearningDatasetsByDatasetIdNotFound() {
-        when(learningDatasetService.findByDatasetId(1L)).thenReturn(Collections.emptyList());
-
-        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasetsByDatasetId(1L);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(learningDatasetService, times(1)).findByDatasetId(1L);
+        datasetTransformation = new DatasetTransformation(1L, "Title", "Description");
+        learningDatasetandTransformationDTO = new LearningDatasetandTransformationDTO(datasetTransformation, learningDataset1);
     }
 
     /**
@@ -145,75 +76,137 @@ public class LearningDatasetControllerTest {
     }
 
     /**
-     * Tests the {@link LearningDatasetController#createLearningDataset(LearningDataset)} method.
+     * Tests the {@link LearningDatasetController#getLearningDatasets(Long, Long)} method.
+     * Verifies that all learningDatasets are returned with a status of 200 OK.
+     */
+    @Test
+    void testGetLearningDatasetsNoParam() {
+        when(learningDatasetService.getAllLearningDatasets()).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
+
+        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasets(null, null);
+
+        HttpHeaders headers = response.getHeaders();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        verify(learningDatasetService, times(1)).getAllLearningDatasets();
+    }
+
+    /**
+     * Tests the {@link LearningDatasetController#getLearningDatasets(Long, Long)} method.
+     * Verifies that all learningDatasets with given transformationId is returned with a status of 200 OK.
+     */
+    @Test
+    void testGetLearningDatasetsWithDataTransformationId() {
+        when(learningDatasetService.findByDataTransformationId(1L)).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
+
+        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasets(1L, null);
+
+        HttpHeaders headers = response.getHeaders();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        verify(learningDatasetService, times(1)).findByDataTransformationId(1L);
+    }
+
+    /**
+     * Tests the {@link LearningDatasetController#getLearningDatasets(Long, Long)} method.
+     * Verifies that all learningDatasets with given datasetId is returned with a status of 200 OK.
+     */
+    @Test
+    void testGetLearningDatasetsWithDatasetId() {
+        when(learningDatasetService.findByDatasetId(1L)).thenReturn(Arrays.asList(learningDataset1, learningDataset2));
+
+        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasets(null, 1L);
+
+        HttpHeaders headers = response.getHeaders();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        verify(learningDatasetService, times(1)).findByDatasetId(1L);
+    }
+
+    /**
+     * Tests the {@link LearningDatasetController#getLearningDatasets(Long, Long)} method.
+     * Verifies that a bad request status is returned when both dataTransformationId and datasetId are provided.
+     */
+    @Test
+    void testGetAllLearningDatasetsWithDataTransformationIdAndDatasetId() {
+        ResponseEntity<List<LearningDataset>> response = learningDatasetController.getLearningDatasets(1L, 1L);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(learningDatasetService, times(0)).findByDataTransformationId(anyLong());
+        verify(learningDatasetService, times(0)).findByDatasetId(anyLong());
+        verify(learningDatasetService, times(0)).getAllLearningDatasets();
+    }
+
+    /**
+     * Tests the {@link LearningDatasetController#createLearningDatasetWithTransformation(LearningDatasetandTransformationDTO)} method.
      * Verifies that a learningDataset is created successfully with a status of 201 Created.
      */
     @Test
-    void testCreateLearningDatasetSuccess() {
-        when(learningDatasetService.saveLearningDataset(learningDataset1)).thenReturn(learningDataset1);
+    void testCreateLearningDatasetWithTransformationSuccess() {
+        when(learningDatasetService.createLearningDatasetAndTransformation(learningDatasetandTransformationDTO)).thenReturn(learningDatasetandTransformationDTO);
 
-        ResponseEntity<?> response = learningDatasetController.createLearningDataset(learningDataset1);
+        ResponseEntity<?> result = learningDatasetController.createLearningDatasetWithTransformation(learningDatasetandTransformationDTO);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(learningDataset1, response.getBody());
-        verify(learningDatasetService, times(1)).saveLearningDataset(learningDataset1);
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertEquals(learningDatasetandTransformationDTO, result.getBody());
+        verify(learningDatasetService, times(1)).createLearningDatasetAndTransformation(learningDatasetandTransformationDTO);
     }
 
     /**
-     * Tests the {@link LearningDatasetController#createLearningDataset(LearningDataset)} method.
+     * Tests the {@link LearningDatasetController#createLearningDatasetWithTransformation(LearningDatasetandTransformationDTO)}  method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
-    void testCreateLearningDatasetFailure() {
-        when(learningDatasetService.saveLearningDataset(learningDataset1)).thenThrow(new RuntimeException("Error"));
+    void testCreateLearningDatasetWithTransformationFailure() {
+        when(learningDatasetService.createLearningDatasetAndTransformation(learningDatasetandTransformationDTO)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = learningDatasetController.createLearningDataset(learningDataset1);
+        ResponseEntity<?> response = learningDatasetController.createLearningDatasetWithTransformation(learningDatasetandTransformationDTO);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(learningDatasetService, times(1)).saveLearningDataset(learningDataset1);
+        verify(learningDatasetService, times(1)).createLearningDatasetAndTransformation(learningDatasetandTransformationDTO);
     }
 
     /**
-     * Tests the {@link LearningDatasetController#updateLearningDataset(Long, LearningDataset)} method.
+     * Tests the {@link LearningDatasetController#updateLearningDatasetWithTransformation(Long, LearningDatasetandTransformationDTO)}  method.
      * Verifies that a learningDataset is updated successfully with a status of 200 OK when found.
      */
     @Test
-    void testUpdateLearningDatasetFound() {
-        when(learningDatasetService.updateLearningDataset(1L, learningDataset1)).thenReturn(Optional.of(learningDataset1));
+    void testUpdateLearningDatasetWithTransformationFound() {
+        when(learningDatasetService.updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1)).thenReturn(Optional.of(learningDatasetandTransformationDTO));
 
-        ResponseEntity<?> response = learningDatasetController.updateLearningDataset(1L, learningDataset1);
+        ResponseEntity<?> response = learningDatasetController.updateLearningDatasetWithTransformation(1L, learningDatasetandTransformationDTO);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(Optional.of(learningDataset1), response.getBody());
-        verify(learningDatasetService, times(1)).updateLearningDataset(1L, learningDataset1);
+        assertEquals(learningDatasetandTransformationDTO, response.getBody());
+        verify(learningDatasetService, times(1)).updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1);
     }
 
     /**
-     * Tests the {@link LearningDatasetController#updateLearningDataset(Long, LearningDataset)} method.
+     * Tests the {@link LearningDatasetController#updateLearningDatasetWithTransformation(Long, LearningDatasetandTransformationDTO)}  method.
      * Verifies that a status of 404 Not Found is returned when the learningDataset to update is not found.
      */
     @Test
-    void testUpdateLearningDatasetNotFound() {
-        when(learningDatasetService.updateLearningDataset(1L, learningDataset1)).thenReturn(Optional.empty());
+    void testUpdateLearningDatasetWithTransformationNotFound() {
+        when(learningDatasetService.updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = learningDatasetController.updateLearningDataset(1L, learningDataset1);
+        ResponseEntity<?> response = learningDatasetController.updateLearningDatasetWithTransformation(1L, learningDatasetandTransformationDTO);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(learningDatasetService, times(1)).updateLearningDataset(1L, learningDataset1);
+        verify(learningDatasetService, times(1)).updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1);
     }
 
     /**
-     * Tests the {@link LearningDatasetController#updateLearningDataset(Long, LearningDataset)} method.
+     * Tests the {@link LearningDatasetController#updateLearningDatasetWithTransformation(Long, LearningDatasetandTransformationDTO)}  method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
-    void testUpdateLearningDatasetFailure() {
-        when(learningDatasetService.updateLearningDataset(1L, learningDataset1)).thenThrow(new RuntimeException("Error"));
+    void testUpdateLearningDatasetWithTransformationFailure() {
+        when(learningDatasetService.updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = learningDatasetController.updateLearningDataset(1L, learningDataset1);
+        ResponseEntity<?> response = learningDatasetController.updateLearningDatasetWithTransformation(1L, learningDatasetandTransformationDTO);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(learningDatasetService, times(1)).updateLearningDataset(1L, learningDataset1);
+        verify(learningDatasetService, times(1)).updateLearningDatasetWithTransformation(datasetTransformation, learningDataset1);
     }
 
     /**

@@ -40,8 +40,8 @@ class StudyControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        study1 = new Study(1L, "Study 1", "Description 1", "Objectives 1", "Ethics 1", 1L);
-        study2 = new Study(2L, "Study 2", "Description 2", "Objectives 2", "Ethics 2", 2L);
+        study1 = new Study(1L, "Study 1", "Description 1", "Objectives 1", "Ethics 1", "1");
+        study2 = new Study(2L, "Study 2", "Description 2", "Objectives 2", "Ethics 2", "1");
     }
 
     /**

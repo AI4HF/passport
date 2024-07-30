@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -40,8 +40,8 @@ public class FeatureSetControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        featureSet1 = new FeatureSet(1L, 1L, "FeatureSet Title 1", "http://featureset1.url", "FeatureSet Description 1", LocalDateTime.now(), 1L, LocalDateTime.now(), 1L);
-        featureSet2 = new FeatureSet(2L, 1L, "FeatureSet Title 2", "http://featureset2.url", "FeatureSet Description 2", LocalDateTime.now(), 1L, LocalDateTime.now(), 1L);
+        featureSet1 = new FeatureSet(1L, 1L, "FeatureSet Title 1", "http://featureset1.url", "FeatureSet Description 1", Instant.now(), "1", Instant.now(), "1");
+        featureSet2 = new FeatureSet(2L, 1L, "FeatureSet Title 2", "http://featureset2.url", "FeatureSet Description 2", Instant.now(), "1", Instant.now(), "1");
     }
 
     /**

@@ -5,8 +5,6 @@ import io.passport.server.model.Credentials;
 import io.passport.server.service.KeycloakService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.token.TokenManager;
 import org.keycloak.representations.AccessTokenResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,12 +23,6 @@ import static org.mockito.Mockito.*;
 public class KeycloakControllerTest {
     @Mock
     private KeycloakService keycloakService;
-
-    @Mock
-    private Keycloak keycloak;
-
-    @Mock
-    private TokenManager tokenManager;
 
     @Mock
     private AccessTokenResponse accessTokenResponse;
@@ -55,15 +47,13 @@ public class KeycloakControllerTest {
      */
     @Test
     void testLoginSuccess() {
-        when(keycloakService.newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password)).thenReturn(keycloak);
-        when(keycloak.tokenManager()).thenReturn(tokenManager);
-        when(keycloak.tokenManager().grantToken()).thenReturn(accessTokenResponse);
+        when(keycloakService.getAccessToken(credentials.username, credentials.password)).thenReturn(accessTokenResponse);
 
         ResponseEntity<?> response = keycloakController.login(credentials);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(accessTokenResponse, response.getBody());
-        verify(keycloakService, times(1)).newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password);
+        verify(keycloakService, times(1)).getAccessToken(credentials.username, credentials.password);
     }
 
     /**
@@ -72,13 +62,13 @@ public class KeycloakControllerTest {
      */
     @Test
     void testLoginUnauthorized() {
-        when(keycloakService.newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password)).thenThrow(new NotAuthorizedException("Invalid credentials"));
+        when(keycloakService.getAccessToken(credentials.username, credentials.password)).thenThrow(new NotAuthorizedException("Invalid credentials"));
 
         ResponseEntity<?> response = keycloakController.login(credentials);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("Invalid credentials.", response.getBody());
-        verify(keycloakService, times(1)).newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password);
+        verify(keycloakService, times(1)).getAccessToken(credentials.username, credentials.password);
     }
 
     /**
@@ -87,13 +77,13 @@ public class KeycloakControllerTest {
      */
     @Test
     void testLoginBadRequest() {
-        when(keycloakService.newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password)).thenThrow(new IllegalStateException("Missing credentials"));
+        when(keycloakService.getAccessToken(credentials.username, credentials.password)).thenThrow(new IllegalStateException("Missing credentials"));
 
         ResponseEntity<?> response = keycloakController.login(credentials);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Missing credentials.", response.getBody());
-        verify(keycloakService, times(1)).newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password);
+        verify(keycloakService, times(1)).getAccessToken(credentials.username, credentials.password);
     }
 
     /**
@@ -102,11 +92,11 @@ public class KeycloakControllerTest {
      */
     @Test
     void testLoginInternalServerError() {
-        when(keycloakService.newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password)).thenThrow(new RuntimeException("Error"));
+        when(keycloakService.getAccessToken(credentials.username, credentials.password)).thenThrow(new RuntimeException("Error"));
 
         ResponseEntity<?> response = keycloakController.login(credentials);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(keycloakService, times(1)).newKeycloakBuilderWithPasswordCredentials(credentials.username, credentials.password);
+        verify(keycloakService, times(1)).getAccessToken(credentials.username, credentials.password);
     }
 }
