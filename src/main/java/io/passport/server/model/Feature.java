@@ -52,11 +52,11 @@ public class Feature {
     private Instant createdAt;
 
     @Column(name = "created_by")
-    private Long createdBy;
+    private String createdBy;
 
     @Column(name = "last_updated_at")
     private Instant lastUpdatedAt;
 
     @Column(name = "last_updated_by")
-    private Long lastUpdatedBy;
+    private String lastUpdatedBy;
 }
