@@ -32,13 +32,21 @@ public class ExperimentController {
 
     /**
      * Read experiments by studyId
+     * Read all experiments if no studyId is provided
      * @param studyId ID of the study related to experiment.
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam("studyId") Long studyId) {
+    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId", required = false) Long studyId) {
 
-        List<Experiment> experiment = this.experimentService.findExperimentByStudyId(studyId);
+        List<Experiment> experiment;
+        if(studyId != null)
+        {
+            experiment = this.experimentService.findExperimentByStudyId(studyId);
+        }
+        else {
+            experiment = this.experimentService.findAllExperiments();
+        }
 
         return ResponseEntity.ok().body(experiment);
     }

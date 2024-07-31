@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "36c678a6-4866-4559-bd6b-c3a30a5c175d",
+		"_postman_id": "47639d21-28aa-4b36-b136-9e875a46fcc9",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19580401",
-		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-36c678a6-4866-4559-bd6b-c3a30a5c175d?action=share&source=collection_link&creator=19580401"
+		"_exporter_id": "28433228"
 	},
 	"item": [
 		{
@@ -110,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -147,7 +146,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": 1\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -319,13 +318,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -361,7 +360,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"study owner\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"STUDY_OWNER\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -387,7 +386,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan2\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"study owner\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan2\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"STUDY_OWNER\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -395,13 +394,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -413,13 +412,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/1",
+							"raw": "{{passportBackend}}/personnel/service-account-admin",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"1"
+								"service-account-admin"
 							]
 						}
 					},
@@ -906,6 +905,876 @@
 			]
 		},
 		{
+			"name": "featureSet",
+			"item": [
+				{
+					"name": "get all featuresets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/featureset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"featureset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a featureset by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/featureset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"featureset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a featureset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"experimentId\": 1,\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/featureset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"featureset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a featureset",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"experimentId\": 1,\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department. 2\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features 2\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department. 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/featureset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"featureset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a featureset",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/featureset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"featureset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dataset",
+			"item": [
+				{
+					"name": "get all datasets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a dataset by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a dataset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"populationId\": 1,\r\n    \"organizationId\": 1,\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a dataset",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"populationId\": 1,\r\n    \"organizationId\": 1,\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/dataset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a dataset",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "featureDatasetCharacteristic",
+			"item": [
+				{
+					"name": "get all characteristics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all characteristics by featureId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?featureId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "featureId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all characteristics by datasetId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "datasetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a characteristic by datasetID and featureId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "datasetId",
+									"value": "1"
+								},
+								{
+									"key": "featureId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a characteristic",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a characteristic",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "datasetId",
+									"value": "1"
+								},
+								{
+									"key": "featureId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a characteristic",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "datasetId",
+									"value": "1"
+								},
+								{
+									"key": "featureId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "transformationStep",
+			"item": [
+				{
+					"name": "get all steps",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a step by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a step by dataTransformationId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step"
+							],
+							"query": [
+								{
+									"key": "dataTransformationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a step",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a step",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a step",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation-step"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "datasetTransformation",
+			"item": [
+				{
+					"name": "get all transformations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a transformation by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a transformation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset-transformation/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset-transformation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learningDataset",
+			"item": [
+				{
+					"name": "get learning dataset by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all learning datasets by datasetId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset?datasetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "datasetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all learningDatasets by dataTransformationId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset?dataTransformationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "dataTransformationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all learningDatasets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learningDataset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": 1,\r\n        \"dataTransformationId\": 1,\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learningDataset",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": 1,\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": 1,\r\n        \"dataTransformationId\": 1,\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-dataset/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-dataset",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "feature",
+			"item": [
+				{
+					"name": "get all features",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a feature by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a feature by featureset id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature?featureSetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature"
+							],
+							"query": [
+								{
+									"key": "featureSetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a feature",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/feature",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a feature",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/feature/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a feature",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/feature/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"feature",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "get keycloak token",
 			"event": [
 				{
@@ -948,7 +1817,7 @@
 						},
 						{
 							"key": "client_secret",
-							"value": "54QZOAippd83KB8oVLWwK1N2yoZClpG0",
+							"value": "zCCeccmEE81i4V6bNiMOb4b4mbDFOacV",
 							"type": "text"
 						}
 					]
