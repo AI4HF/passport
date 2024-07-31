@@ -98,7 +98,7 @@ CREATE TABLE study_organization (
 
 -- Insert dummy study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
-    (1, 1, 'DATA_PROVIDER', 'service-account-admin', 1);
+    (1, 1, 'STUDY_OWNER,DATA_SCIENTIST', 'service-account-admin', 1);
 
 -- Create FeatureSet table
 CREATE TABLE featureset (

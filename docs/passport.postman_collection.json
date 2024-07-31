@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "47639d21-28aa-4b36-b136-9e875a46fcc9",
+		"_postman_id": "e455bb4e-5544-4573-be0d-6a0fe8e7a998",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "28433228"
+		"_exporter_id": "19580401",
+		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-e455bb4e-5544-4573-be0d-6a0fe8e7a998?action=share&source=collection_link&creator=19580401"
 	},
 	"item": [
 		{
@@ -606,7 +607,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1&organizationId=1",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -617,6 +618,10 @@
 							"query": [
 								{
 									"key": "studyId",
+									"value": "1"
+								},
+								{
+									"key": "organizationId",
 									"value": "1"
 								}
 							]
@@ -639,7 +644,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1",
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1&organizationId=1",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -650,6 +655,10 @@
 							"query": [
 								{
 									"key": "studyId",
+									"value": "1"
+								},
+								{
+									"key": "organizationId",
 									"value": "1"
 								}
 							]
@@ -1436,6 +1445,175 @@
 							],
 							"path": [
 								"dataset-transformation-step"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "studyOrganization",
+			"item": [
+				{
+					"name": "get organizations by studyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization/organizations?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization",
+								"organizations"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get organizations by studyId Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								},
+								{
+									"key": "organizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get studies by organizationId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization/studies?organizationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization",
+								"studies"
+							],
+							"query": [
+								{
+									"key": "organizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create study organization",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"studyId\": 1,\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"],\r\n    \"populationId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a  study organization",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"studyId\": 1,\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\", \"DATA_ENGINEER\"],\r\n    \"populationId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								},
+								{
+									"key": "organizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a study organization",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"studyOrganization"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								},
+								{
+									"key": "organizationId",
+									"value": "1"
+								}
 							]
 						}
 					},
