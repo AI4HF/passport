@@ -5,8 +5,10 @@ import io.passport.server.repository.StudyOrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service class for StudyOrganization management.
@@ -15,13 +17,19 @@ import java.util.Optional;
 public class StudyOrganizationService {
 
     /**
-     * StudyPersonnel repo access for database management.
+     * StudyOrganization repo access for database management.
      */
     private final StudyOrganizationRepository studyOrganizationRepository;
 
+    /**
+     * StudyPersonnel service for StudyPersonnel related operations.
+     */
+    private final StudyPersonnelService studyPersonnelService;
+
     @Autowired
-    public StudyOrganizationService(StudyOrganizationRepository studyOrganizationRepository) {
+    public StudyOrganizationService(StudyOrganizationRepository studyOrganizationRepository, StudyPersonnelService studyPersonnelService) {
         this.studyOrganizationRepository = studyOrganizationRepository;
+        this.studyPersonnelService = studyPersonnelService;
     }
 
     /**
@@ -66,7 +74,9 @@ public class StudyOrganizationService {
      * @param updatedStudyOrganization studyOrganization to be updated
      * @return
      */
+    @Transactional
     public Optional<StudyOrganization> updateStudyOrganization(StudyOrganizationId studyOrganizationId, StudyOrganization updatedStudyOrganization) {
+        this.clearStudyPersonnelWithForbiddenRoles(studyOrganizationId, updatedStudyOrganization);
         Optional<StudyOrganization> oldStudyOrganization = this.studyOrganizationRepository.findById(studyOrganizationId);
         if (oldStudyOrganization.isPresent()) {
             StudyOrganization studyOrganization = oldStudyOrganization.get();
@@ -92,5 +102,24 @@ public class StudyOrganizationService {
         }else{
             return false;
         }
+    }
+
+    /**
+     * Delete studyPersonnel entries that role of studyPersonnel is not in allowed role list
+     * @param studyOrganizationId ID of study organization that contains studyId
+     * @param updatedStudyOrganization studyOrganization object that contains allowed roles information
+     * @return
+     */
+    @Transactional
+    public void clearStudyPersonnelWithForbiddenRoles(StudyOrganizationId studyOrganizationId, StudyOrganization updatedStudyOrganization){
+        StudyOrganizationDTO studyOrganizationDTO = new StudyOrganizationDTO(updatedStudyOrganization);
+        List<Personnel> oldStudyPersonnelList = this.studyPersonnelService
+                .findPersonnelByStudyIdAndOrganizationId(studyOrganizationId.getStudyId(),
+                        studyOrganizationId.getOrganizationId());
+        List<String> personnelIdWithRemovedRoles = oldStudyPersonnelList.stream()
+                .filter(personnel -> !studyOrganizationDTO.getRoles().contains(personnel.getRole()))
+                .map(Personnel::getPersonId)
+                .collect(Collectors.toList());
+        this.studyPersonnelService.clearStudyPersonnelEntriesByStudyIdAndPersonnelId(studyOrganizationId.getStudyId(), personnelIdWithRemovedRoles);
     }
 }
