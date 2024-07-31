@@ -31,14 +31,15 @@ public class StudyPersonnelController {
     }
 
     /**
-     * Get all personnel related to a study.
+     * Get all personnel related to a study and an organization.
      * @param studyId ID of the study.
+     * @param organizationId ID of the organization
      * @return
      */
     @GetMapping("/personnel")
-    public ResponseEntity<?> getPersonnelByStudyId(@RequestParam Long studyId) {
+    public ResponseEntity<?> getPersonnelByStudyId(@RequestParam Long studyId, @RequestParam Long organizationId) {
         try{
-            List<Personnel> personnel = this.studyPersonnelService.findPersonnelByStudyId(studyId);
+            List<Personnel> personnel = this.studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
             return ResponseEntity.ok(personnel);
         }catch(Exception e){
             log.error(e.getMessage());
@@ -47,16 +48,17 @@ public class StudyPersonnelController {
     }
 
     /**
-     * Clear all old StudyPersonnel entries related to the study and create new ones. Return updated personnel list.
+     * Clear all old StudyPersonnel entries related to both the study and the organization then create new ones. Return updated personnel list.
      * @param studyId ID of the study.
+     * @param organizationId ID of the organization.
      * @param personnel List of personnel to be used in StudyPersonnel entries
      * @return
      */
     @PostMapping("/personnel")
-    public ResponseEntity<?> createStudyPersonnelEntries(@RequestParam Long studyId, @RequestBody List<Personnel> personnel) {
+    public ResponseEntity<?> createStudyPersonnelEntries(@RequestParam Long studyId, @RequestParam Long organizationId, @RequestBody List<Personnel> personnel) {
         try{
-            this.studyPersonnelService.createStudyPersonnelEntries(studyId, personnel);
-            List<Personnel> updatedPersonnel = this.studyPersonnelService.findPersonnelByStudyId(studyId);
+            this.studyPersonnelService.createStudyPersonnelEntries(studyId, organizationId, personnel);
+            List<Personnel> updatedPersonnel = this.studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
             return ResponseEntity.ok(updatedPersonnel);
         }catch(Exception e){
             log.error(e.getMessage());
