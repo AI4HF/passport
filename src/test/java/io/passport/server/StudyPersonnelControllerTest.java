@@ -44,64 +44,64 @@ class StudyPersonnelControllerTest {
     }
 
     /**
-     * Tests the {@link StudyPersonnelController#getPersonnelByStudyId(Long)} method.
-     * Verifies that all personnel for a study are returned with a status of 200 OK.
+     * Tests the {@link StudyPersonnelController#getPersonnelByStudyId(Long, Long)}  method.
+     * Verifies that all personnel for a study and an organization are returned with a status of 200 OK.
      */
     @Test
     void testGetPersonnelByStudyIdSuccess() {
-        when(studyPersonnelService.findPersonnelByStudyId(1L)).thenReturn(Arrays.asList(personnel1, personnel2));
+        when(studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(1L, 1L)).thenReturn(Arrays.asList(personnel1, personnel2));
 
-        ResponseEntity<?> response = studyPersonnelController.getPersonnelByStudyId(1L);
+        ResponseEntity<?> response = studyPersonnelController.getPersonnelByStudyId(1L, 1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(Arrays.asList(personnel1, personnel2), response.getBody());
-        verify(studyPersonnelService, times(1)).findPersonnelByStudyId(1L);
+        verify(studyPersonnelService, times(1)).findPersonnelByStudyIdAndOrganizationId(1L, 1L);
     }
 
     /**
-     * Tests the {@link StudyPersonnelController#getPersonnelByStudyId(Long)} method.
+     * Tests the {@link StudyPersonnelController#getPersonnelByStudyId(Long, Long)}  method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testGetPersonnelByStudyIdFailure() {
-        when(studyPersonnelService.findPersonnelByStudyId(1L)).thenThrow(new RuntimeException("Error"));
+        when(studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(1L,1L)).thenThrow(new RuntimeException("Error"));
 
-        ResponseEntity<?> response = studyPersonnelController.getPersonnelByStudyId(1L);
+        ResponseEntity<?> response = studyPersonnelController.getPersonnelByStudyId(1L, 1L);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(studyPersonnelService, times(1)).findPersonnelByStudyId(1L);
+        verify(studyPersonnelService, times(1)).findPersonnelByStudyIdAndOrganizationId(1L, 1L);
     }
 
     /**
-     * Tests the {@link StudyPersonnelController#createStudyPersonnelEntries(Long, List)} method.
+     * Tests the {@link StudyPersonnelController#createStudyPersonnelEntries(Long, Long, List)} method.
      * Verifies that study personnel entries are created successfully with a status of 200 OK.
      */
     @Test
     void testCreateStudyPersonnelEntriesSuccess() {
         List<Personnel> personnel = Arrays.asList(personnel1, personnel2);
-        doNothing().when(studyPersonnelService).createStudyPersonnelEntries(1L, personnel);
-        when(studyPersonnelService.findPersonnelByStudyId(1L)).thenReturn(personnel);
+        doNothing().when(studyPersonnelService).createStudyPersonnelEntries(1L, 1L, personnel);
+        when(studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(1L, 1L)).thenReturn(personnel);
 
-        ResponseEntity<?> response = studyPersonnelController.createStudyPersonnelEntries(1L, personnel);
+        ResponseEntity<?> response = studyPersonnelController.createStudyPersonnelEntries(1L, 1L, personnel);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(personnel, response.getBody());
-        verify(studyPersonnelService, times(1)).createStudyPersonnelEntries(1L, personnel);
-        verify(studyPersonnelService, times(1)).findPersonnelByStudyId(1L);
+        verify(studyPersonnelService, times(1)).createStudyPersonnelEntries(1L, 1L, personnel);
+        verify(studyPersonnelService, times(1)).findPersonnelByStudyIdAndOrganizationId(1L, 1L);
     }
 
     /**
-     * Tests the {@link StudyPersonnelController#createStudyPersonnelEntries(Long, List)} method.
+     * Tests the {@link StudyPersonnelController#createStudyPersonnelEntries(Long, Long, List)}  method.
      * Verifies that a status of 400 Bad Request is returned when an exception occurs.
      */
     @Test
     void testCreateStudyPersonnelEntriesFailure() {
         List<Personnel> personnel = Arrays.asList(personnel1, personnel2);
-        doThrow(new RuntimeException("Error")).when(studyPersonnelService).createStudyPersonnelEntries(1L, personnel);
+        doThrow(new RuntimeException("Error")).when(studyPersonnelService).createStudyPersonnelEntries(1L, 1L, personnel);
 
-        ResponseEntity<?> response = studyPersonnelController.createStudyPersonnelEntries(1L, personnel);
+        ResponseEntity<?> response = studyPersonnelController.createStudyPersonnelEntries(1L, 1L, personnel);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        verify(studyPersonnelService, times(1)).createStudyPersonnelEntries(1L, personnel);
+        verify(studyPersonnelService, times(1)).createStudyPersonnelEntries(1L, 1L, personnel);
     }
 }
