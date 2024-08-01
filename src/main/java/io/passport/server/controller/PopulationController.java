@@ -57,16 +57,18 @@ public class PopulationController {
     @GetMapping()
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId) {
 
-        List<Population> population;
+
         if(studyId != null)
         {
+            Population population;
             population = this.populationService.findPopulationByStudyId(studyId);
+            return ResponseEntity.ok().body(population);
         }
         else {
-            population = this.populationService.findAllPopulations();
+            List<Population> populations;
+            populations = this.populationService.findAllPopulations();
+            return ResponseEntity.ok().body(populations);
         }
-
-        return ResponseEntity.ok().body(population);
     }
 
     /**
