@@ -232,7 +232,7 @@ CREATE TABLE featureset (
 
 -- Insert dummy FeatureSet
 INSERT INTO featureset (experiment_id, title, featureset_url, description, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 'Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.', 'https://datatools4heart.eu/feature-sets/study1-features', 'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.', '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+    (1, 'Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.', 'https://datatools4heart.eu/feature-sets/study1-features', 'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
 
 -- Create Feature table
 CREATE TABLE feature (
@@ -255,7 +255,7 @@ CREATE TABLE feature (
 
 -- Insert dummy Feature
 INSERT INTO feature (featureset_id, title, description, data_type, feature_type, mandatory, isUnique, units, equipment, data_collection, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 'age', 'Age of the patient at reference point (at the time of admission)', 'integer', 'numerical', true, false, 'years', '', 'Automatic Collection from Government Database', '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+    (1, 'age', 'Age of the patient at reference point (at the time of admission)', 'integer', 'numerical', true, false, 'years', '', 'Automatic Collection from Government Database', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
 
 -- Create Dataset table
 CREATE TABLE dataset (
@@ -277,7 +277,7 @@ CREATE TABLE dataset (
 
 -- Insert dummy Dataset
 INSERT INTO dataset (featureset_id, population_id, organization_id, title, description, version, reference_entity, num_of_records, synthetic, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 1, 1, 'HF Risk Dataset', 'Dataset for HF Risk Prediction factors', '0.1', 'Encounter', 1562, false, '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+    (1, 1, 1, 'HF Risk Dataset', 'Dataset for HF Risk Prediction factors', '0.1', 'Encounter', 1562, false, '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
 
 -- Create DatasetTransformation table
 CREATE TABLE dataset_transformation (
@@ -306,7 +306,7 @@ CREATE TABLE dataset_transformation_step (
 
 -- Insert dummy DatasetTransformationStep
 INSERT INTO dataset_transformation_step (data_transformation_id, input_features, output_features, method, explanation, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 'feature1', 'feature1_1', 'Normalization', 'Decimal values are normalized between 0 and 1.', '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+    (1, 'feature1', 'feature1_1', 'Normalization', 'Decimal values are normalized between 0 and 1.', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
 
 -- Create LearningDataset table
 CREATE TABLE learning_dataset (
@@ -418,7 +418,7 @@ INSERT INTO model (model_id, learning_process_id, study_id, name, version, tag, 
     (1, 1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
      'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
      'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
-     '2023-01-01 00:00:00', 1, '2023-01-02 00:00:00', 1);
+     '2023-01-01 00:00:00', 'service-account-admin', '2023-01-02 00:00:00', 'service-account-admin');
 
 
 -- Create deployment_environment table
@@ -453,4 +453,4 @@ CREATE TABLE model_deployment (
 
 -- Insert dummy model_deployment
 INSERT INTO model_deployment (deployment_id, model_id, environment_id, tags, identified_failures, status, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 1, '2023-01-01 00:00:00', 1);
+    (1, 1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
