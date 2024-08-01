@@ -288,9 +288,9 @@ CREATE TABLE model (
                        limitations TEXT,
                        fairness_constraints TEXT,
                        created_at TIMESTAMP,
-                       created_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE,
+                       created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                        last_updated_at TIMESTAMP,
-                       last_updated_by INTEGER REFERENCES personnel(person_id) ON DELETE CASCADE
+                       last_updated_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE
 );
 
 -- Insert dummy model
@@ -329,9 +329,9 @@ CREATE TABLE model_deployment (
                                   identified_failures TEXT,
                                   status VARCHAR(255),
                                   created_at TIMESTAMP,
-                                  created_by INTEGER REFERENCES personnel(person_id),
+                                  created_by VARCHAR(255) REFERENCES personnel(person_id),
                                   last_updated_at TIMESTAMP,
-                                  last_updated_by INTEGER REFERENCES personnel(person_id)
+                                  last_updated_by VARCHAR(255) REFERENCES personnel(person_id)
 );
 
 -- Insert dummy model_deployment
