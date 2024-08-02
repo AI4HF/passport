@@ -95,14 +95,12 @@ class PopulationControllerTest {
      */
     @Test
     void testGetPopulationByStudyIdWithParam() {
-        when(populationService.findPopulationByStudyId(1L)).thenReturn(Arrays.asList(population1, population2));
+        when(populationService.findPopulationByStudyId(1L)).thenReturn(population1);
 
         ResponseEntity<?> response = populationController.getPopulationByStudyId(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof List<?>);
-        List<?> responseBody = (List<?>) response.getBody();
-        assertEquals(2, responseBody.size());
+        assertEquals(population1, response.getBody());
         verify(populationService, times(1)).findPopulationByStudyId(1L);
     }
 
