@@ -2,12 +2,13 @@
 CREATE TABLE organization (
                               organization_id SERIAL PRIMARY KEY,
                               name VARCHAR(255),
-                              address VARCHAR(255)
+                              address VARCHAR(255),
+                              organization_admin_id VARCHAR(255)
 );
 
 -- Insert dummy organization
-INSERT INTO organization (name, address) VALUES
-    ('Amsterdam UMC', 'Address of Amsterdam UMC');
+INSERT INTO organization (name, address, organization_admin_id) VALUES
+    ('Amsterdam UMC', 'Address of Amsterdam UMC', 'service-account-admin');
 
 -- Create personnel table
 CREATE TABLE personnel (

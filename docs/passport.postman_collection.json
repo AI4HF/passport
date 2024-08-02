@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "e455bb4e-5544-4573-be0d-6a0fe8e7a998",
+		"_postman_id": "d3344b9c-d566-41e4-a178-a68874596239",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19580401",
-		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-e455bb4e-5544-4573-be0d-6a0fe8e7a998?action=share&source=collection_link&creator=19580401"
+		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-d3344b9c-d566-41e4-a178-a68874596239?action=share&source=collection_link&creator=19580401"
 	},
 	"item": [
 		{
@@ -442,6 +442,29 @@
 							],
 							"path": [
 								"organization"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get organization by organizationAdminId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/organization?organizationAdminId=service-account-admin",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"organization"
+							],
+							"query": [
+								{
+									"key": "organizationAdminId",
+									"value": "service-account-admin"
+								}
 							]
 						}
 					},
@@ -1985,17 +2008,17 @@
 						},
 						{
 							"key": "username",
-							"value": "admin",
+							"value": "okan",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "admin",
+							"value": "okan",
 							"type": "text"
 						},
 						{
 							"key": "client_secret",
-							"value": "zCCeccmEE81i4V6bNiMOb4b4mbDFOacV",
+							"value": "o8RUmSVIEYZCy8kT9eT3XYdujEyeGtoe",
 							"type": "text"
 						}
 					]

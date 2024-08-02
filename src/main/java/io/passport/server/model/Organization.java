@@ -31,4 +31,7 @@ public class Organization {
 
     @Column(name = "address")
     private String address;
+
+    @Column(name = "organization_admin_id")
+    private String organizationAdminId;
 }

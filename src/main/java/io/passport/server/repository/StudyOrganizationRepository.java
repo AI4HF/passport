@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface StudyOrganizationRepository extends JpaRepository<StudyOrganization, StudyOrganizationId> {
 
     // Join with organization table and get related organizations for the study
-    @Query("SELECT new Organization(o.organizationId, o.name, o.address)  " +
+    @Query("SELECT new Organization(o.organizationId, o.name, o.address, o.organizationAdminId)  " +
             "FROM Organization o, StudyOrganization so WHERE so.id.organizationId = o.organizationId AND so.id.studyId = :studyId")
     List<Organization> findOrganizationsByStudyId(@Param("studyId") Long studyId);
 
