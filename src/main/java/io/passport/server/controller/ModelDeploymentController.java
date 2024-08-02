@@ -52,7 +52,7 @@ public class ModelDeploymentController {
 
     /**
      * Read a model deployment by environment id
-     * @param environmentId ID of the FeatureSet
+     * @param environmentId ID of the Environment
      * @return
      */
     @GetMapping("/environment/{environmentId}")

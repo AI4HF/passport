@@ -1,7 +1,6 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Model;
-import io.passport.server.model.ModelDto;
 import io.passport.server.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,21 +30,6 @@ public class ModelService {
      */
     public List<Model> getAllModels(){
         return modelRepository.findAll();
-    }
-
-
-    /**
-     * Get all models that are deployed
-     */
-    public List<ModelDto> getAllModelsInDeployments() {
-        return modelRepository.findAllModelsInDeployments();
-    }
-
-    /**
-     * Get all models in passports
-     */
-    public List<ModelDto> getAllModelsInPassports() {
-        return modelRepository.findAllModelsInPassports();
     }
 
     /**
@@ -123,5 +107,4 @@ public class ModelService {
             return false;
         }
     }
-
 }

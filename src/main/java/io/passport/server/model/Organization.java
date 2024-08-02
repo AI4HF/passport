@@ -15,8 +15,6 @@ import javax.persistence.*;
 @Table(name = "organization")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "organizationId")

@@ -39,8 +39,8 @@ public class ModelControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        model1 = new Model(1L, 1L, 1L, "Model Name 1", "1.0", "Tag1", "Type1", "Product1", 1L, "TRL1", "License1", "Primary Use 1", "Secondary Use 1", "Intended Users 1", "Counter Indications 1", "Ethical Considerations 1", "Limitations 1", "Fairness Constraints 1", Instant.now(), 1L, Instant.now(), 1L);
-        model2 = new Model(2L, 1L, 1L, "Model Name 2", "2.0", "Tag2", "Type2", "Product2", 1L, "TRL2", "License2", "Primary Use 2", "Secondary Use 2", "Intended Users 2", "Counter Indications 2", "Ethical Considerations 2", "Limitations 2", "Fairness Constraints 2", Instant.now(), 1L, Instant.now(), 1L);
+        model1 = new Model(1L, 1L, 1L, "Model Name 1", "1.0", "Tag1", "Type1", "Product1", 1L, "TRL1", "License1", "Primary Use 1", "Secondary Use 1", "Intended Users 1", "Counter Indications 1", "Ethical Considerations 1", "Limitations 1", "Fairness Constraints 1", Instant.now(), "1", Instant.now(), "1");
+        model2 = new Model(2L, 1L, 1L, "Model Name 2", "2.0", "Tag2", "Type2", "Product2", 1L, "TRL2", "License2", "Primary Use 2", "Secondary Use 2", "Intended Users 2", "Counter Indications 2", "Ethical Considerations 2", "Limitations 2", "Fairness Constraints 2", Instant.now(), "1", Instant.now(), "1");
     }
 
     /**

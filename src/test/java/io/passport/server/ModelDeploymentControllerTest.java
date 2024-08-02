@@ -40,8 +40,8 @@ public class ModelDeploymentControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        modelDeployment1 = new ModelDeployment(1L, 1L, 1L, "Tag1", "Identified Failures 1", "Status1", Instant.now(), 1L, Instant.now(), 1L);
-        modelDeployment2 = new ModelDeployment(2L, 1L, 1L, "Tag2", "Identified Failures 2", "Status2", Instant.now(), 1L, Instant.now(), 1L);
+        modelDeployment1 = new ModelDeployment(1L, 1L, 1L, "Tag1", "Identified Failures 1", "Status1", Instant.now(), "1", Instant.now(), "1");
+        modelDeployment2 = new ModelDeployment(2L, 1L, 1L, "Tag2", "Identified Failures 2", "Status2", Instant.now(), "1", Instant.now(), "1");
     }
 
     /**
