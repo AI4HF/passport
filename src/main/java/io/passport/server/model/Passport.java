@@ -27,13 +27,13 @@ public class Passport {
     private Instant createdAt;
 
     @Column(name = "created_by")
-    private Long createdBy;
+    private String createdBy;
 
     @Column(name = "approved_at")
     private Instant approvedAt;
 
     @Column(name = "approved_by")
-    private Long approvedBy;
+    private String approvedBy;
 
 }
 
