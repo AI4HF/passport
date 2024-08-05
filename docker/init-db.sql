@@ -227,8 +227,8 @@ CREATE TABLE parameter (
 );
 
 -- Insert dummy parameter
-INSERT INTO parameter (parameter_id, name, description, data_type) VALUES
-    (1, 'test_parameter', 'test_description', 'string');
+INSERT INTO parameter (name, description, data_type) VALUES
+    ('test_parameter', 'test_description', 'string');
 
 
 -- Create algorithm table
@@ -241,8 +241,8 @@ CREATE TABLE algorithm (
 );
 
 -- Insert dummy algorithm
-INSERT INTO algorithm (algorithm_id, name, objective_function, type, subtype) VALUES
-    (1, 'test_algorithm', 'test_objective_function', 'test_type', 'test_subtype');
+INSERT INTO algorithm (name, objective_function, type, subtype) VALUES
+    ('test_algorithm', 'test_objective_function', 'test_type', 'test_subtype');
 
 -- Create model implementation table
 CREATE TABLE implementation (
@@ -254,8 +254,8 @@ CREATE TABLE implementation (
 );
 
 -- Insert dummy implementation
-INSERT INTO implementation (implementation_id, algorithm_id, software, name, description) VALUES
-    (1, 1, 'test_software', 'test_name', 'test_description');
+INSERT INTO implementation (algorithm_id, software, name, description) VALUES
+    (1, 'test_software', 'test_name', 'test_description');
 
 -- Create model LearningProcess table
 CREATE TABLE learning_process (
@@ -265,8 +265,8 @@ CREATE TABLE learning_process (
 );
 
 -- Insert dummy LearningProcess
-INSERT INTO learning_process (learning_process_id, implementation_id, description) VALUES
-    (1, 1, 'test_description');
+INSERT INTO learning_process (implementation_id, description) VALUES
+    (1, 'test_description');
 
 -- Create model table
 CREATE TABLE model (
@@ -295,11 +295,11 @@ CREATE TABLE model (
 );
 
 -- Insert dummy model
-INSERT INTO model (model_id, learning_process_id, study_id, name, version, tag, model_type, product_identifier,
+INSERT INTO model (learning_process_id, study_id, name, version, tag, model_type, product_identifier,
                    owner, trl_level, license, primary_use, secondary_use, intended_users, counter_indications,
                    ethical_considerations, limitations, fairness_constraints, created_at, created_by,
                    last_updated_at, last_updated_by) VALUES
-    (1, 1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
+    (1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
      'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
      'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
      '2023-01-01 00:00:00', 'service-account-admin', '2023-01-02 00:00:00', 'service-account-admin');
@@ -316,8 +316,8 @@ CREATE TABLE deployment_environment (
 );
 
 -- Insert dummy deployment_environment
-INSERT INTO deployment_environment (environment_id, title, description, hardware_properties, software_properties, connectivity_details) VALUES
-    (1, 'Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
+INSERT INTO deployment_environment (title, description, hardware_properties, software_properties, connectivity_details) VALUES
+    ('Production Environment', 'Main Production Environment', 'Disk: 512 GB, RAM: 32 GB', 'OS: Windows, Cloud Services: Google Cloud Platform', 'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
 
 -- Create model_deployment table
 CREATE TABLE model_deployment (
@@ -334,8 +334,8 @@ CREATE TABLE model_deployment (
 );
 
 -- Insert dummy model_deployment
-INSERT INTO model_deployment (deployment_id, model_id, environment_id, tags, identified_failures, status, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
+INSERT INTO model_deployment (model_id, environment_id, tags, identified_failures, status, created_at, created_by, last_updated_at, last_updated_by) VALUES
+    (1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
 
 -- Create passport table
 CREATE TABLE passport (
@@ -348,5 +348,5 @@ CREATE TABLE passport (
 );
 
 -- Insert dummy passport
-INSERT INTO passport (passport_id, deployment_id, created_at, created_by, approved_at, approved_by) VALUES
-    (1, 1, '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
+INSERT INTO passport (deployment_id, created_at, created_by, approved_at, approved_by) VALUES
+    (1, '2023-01-01 00:00:00', 'service-account-admin', '2023-01-01 00:00:00', 'service-account-admin');
