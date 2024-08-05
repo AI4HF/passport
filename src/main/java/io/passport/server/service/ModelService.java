@@ -56,6 +56,7 @@ public class ModelService {
      */
     public Model saveModel(Model model) {
         model.setCreatedAt(Instant.now());
+        model.setLastUpdatedAt(Instant.now());
         return modelRepository.save(model);
     }
 
