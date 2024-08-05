@@ -33,13 +33,20 @@ public class OrganizationController {
     }
 
     /**
-     * Read all organizations
+     * Read all organizations or filter by organization admin id
+     * @param organizationAdminId ID of the organization admin
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Organization>> getAllOrganizations() {
+    public ResponseEntity<List<Organization>> getAllOrganizations(@RequestParam(required = false) String organizationAdminId) {
 
-        List<Organization> organizations = this.organizationService.getAllOrganizations();
+        List<Organization> organizations;
+
+        if(organizationAdminId != null) {
+            organizations = this.organizationService.findOrganizationByOrganizationAdminId(organizationAdminId);
+        }else{
+            organizations = this.organizationService.getAllOrganizations();
+        }
 
         long totalCount = organizations.size();
 

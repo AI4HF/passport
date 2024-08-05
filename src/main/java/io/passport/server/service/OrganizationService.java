@@ -41,6 +41,15 @@ public class OrganizationService {
     }
 
     /**
+     * Find an organization by organizationAdminId
+     * @param organizationAdminId ID of the organization admin
+     * @return
+     */
+    public List<Organization> findOrganizationByOrganizationAdminId(String organizationAdminId) {
+        return organizationRepository.findByOrganizationAdminId(organizationAdminId);
+    }
+
+    /**
      * Save an organization
      * @param organization organization to be saved
      * @return
