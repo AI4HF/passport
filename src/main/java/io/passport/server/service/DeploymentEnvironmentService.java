@@ -49,8 +49,8 @@ public class DeploymentEnvironmentService {
 
     /**
      * Update a deployment environment
-     * @param deploymentEnvironmentId ID of the personnel
-     * @param updatedDeploymentEnvironment personnel to be updated
+     * @param deploymentEnvironmentId ID of the environment
+     * @param updatedDeploymentEnvironment environment to be updated
      * @return
      */
     public Optional<DeploymentEnvironment> updateDeploymentEnvironment(Long deploymentEnvironmentId, DeploymentEnvironment updatedDeploymentEnvironment) {

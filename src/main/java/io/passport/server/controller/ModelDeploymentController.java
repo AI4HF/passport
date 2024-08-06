@@ -34,36 +34,28 @@ public class ModelDeploymentController {
 
 
     /**
-     * Read all model deployments
-     * @return
+     * Retrieves all model deployments or a specific model deployment by environment ID if provided.
+     * @param environmentId Optional ID of the environment to filter model deployments.
+     * @return A response entity containing a list of model deployments and the total count in the headers.
      */
     @GetMapping()
-    public ResponseEntity<List<ModelDeployment>> getAllModelDeployments() {
-        List<ModelDeployment> modelDeployments = this.modelDeploymentService.getAllModelDeployments();
+    public ResponseEntity<List<ModelDeployment>> getModelDeployments(
+            @RequestParam(required = false) Long environmentId) {
+
+        List<ModelDeployment> modelDeployments;
+
+        if (environmentId != null) {
+            Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
+            modelDeployments = modelDeployment.map(List::of).orElseGet(List::of);
+        } else {
+            modelDeployments = this.modelDeploymentService.getAllModelDeployments();
+        }
 
         long totalCount = modelDeployments.size();
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(modelDeployments);
-    }
-
-
-    /**
-     * Read a model deployment by environment id
-     * @param environmentId ID of the FeatureSet
-     * @return
-     */
-    @GetMapping("/environment/{environmentId}")
-    public ResponseEntity<?> getModelDeploymentByEnvironmentId(@PathVariable Long environmentId) {
-        Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
-
-        if(modelDeployment.isPresent()) {
-            return ResponseEntity.ok().body(modelDeployment.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
     }
 
 
