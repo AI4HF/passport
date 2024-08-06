@@ -47,6 +47,60 @@
   "roles": {
     "realm": [
       {
+        "id": "2d5ab47b-3aa6-4de8-b187-ff135c83717d",
+        "name": "ML_ENGINEER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "29e5ae2c-0ea8-459e-a8a0-26954cff0a1f",
+        "name": "QUALITY_ASSURANCE_SPECIALIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "e67fb1b3-dd12-4a31-aa84-8c1fedf21075",
+        "name": "DATA_SCIENTIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "1a0922fe-f596-41de-a1cc-55861ebf4dfd",
+        "name": "STUDY_OWNER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "5b5f986b-f378-4d1d-bf57-aceb4bd15939",
+        "name": "SURVEY_MANAGER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "6721c6cc-ac6f-447b-b621-7b688f648a50",
+        "name": "DATA_ENGINEER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "89cdc2ae-1f92-42f6-a503-1baa806074dc",
         "name": "offline_access",
         "description": "${role_offline-access}",
