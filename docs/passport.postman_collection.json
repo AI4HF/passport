@@ -1976,6 +1976,723 @@
 			]
 		},
 		{
+			"name": "model",
+			"item": [
+				{
+					"name": "get all models",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/model",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a model by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/model/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a model by study id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/model?studyId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a model",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"studyId\": 1,\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"service-account-admin\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/model",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a model",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"studyId\": 1,\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"service-account-admin\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/model/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a model",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/model/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"model",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "deployment environment",
+			"item": [
+				{
+					"name": "get a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"Production Environment\",\r\n\t\"description\": \"Main Production Environment \",\r\n\t\"hardwareProperties\": \"Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}, {
+			"name": "deployment environment",
+			"item": [
+				{
+					"name": "get a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"Production Environment\",\r\n\t\"description\": \"Main Production Environment \",\r\n\t\"hardwareProperties\": \"Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a deployment environment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"deploymentEnvironment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}, {
+			"name": "model deployment",
+			"item": [
+				{
+					"name": "get all model deployments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a model deployment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a model deployment by environment id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/environment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment/environment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a model deployment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a model deployment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"modelId\": 1,\r\n\t\"environmentId\": 1,\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a model deployment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"modelId\": 1,\r\n\t\"environmentId\": 1,\r\n\t\"tags\": \"UPDATED - Production\",\r\n\t\"identifiedFailures\": \"UPDATED - Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"UPDATED - RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/modelDeployment/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"modelDeployment",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "passport",
+			"item": [
+				{
+					"name": "get all passports",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/passport",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"passport"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a passport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/passport/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"passport",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a passport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/passport/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"passport",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a passport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"passportId\": 1,\r\n\t\"deploymentId\": 1,\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"approvedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"approvedBy\": \"service-account-admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/passport/",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"passport",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "get keycloak token",
 			"event": [
 				{
