@@ -1,13 +1,17 @@
 package io.passport.server.controller;
 
+import io.passport.server.model.Role;
 import io.passport.server.model.Study;
+import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,17 +29,29 @@ public class StudyController {
      */
     private final StudyService studyService;
 
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public StudyController(StudyService studyService) {
+    public StudyController(StudyService studyService, RoleCheckerService roleCheckerService) {
         this.studyService = studyService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
      * Read all studies
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Study>> getAllStudies() {
+    public ResponseEntity<List<Study>> getAllStudies(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         List<Study> studies = this.studyService.getAllStudies();
 
         long totalCount = studies.size();
@@ -49,10 +65,19 @@ public class StudyController {
     /**
      * Read a study by id
      * @param studyId ID of the study
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudy(@PathVariable Long studyId) {
+    public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<Study> study = this.studyService.findStudyByStudyId(studyId);
 
         if(study.isPresent()) {
@@ -65,11 +90,20 @@ public class StudyController {
     /**
      * Create Study.
      * @param study Study model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createStudy(@RequestBody Study study) {
+    public ResponseEntity<?> createStudy(@RequestBody Study study, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Study savedStudy = this.studyService.saveStudy(study);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
         }catch(Exception e){
@@ -82,11 +116,20 @@ public class StudyController {
      * Update Study.
      * @param studyId ID of the study that is to be updated.
      * @param updatedStudy Study model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{studyId}")
-    public ResponseEntity<?> updateStudy(@PathVariable Long studyId, @RequestBody Study updatedStudy) {
+    public ResponseEntity<?> updateStudy(@PathVariable Long studyId, @RequestBody Study updatedStudy, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<Study> savedStudy = this.studyService.updateStudy(studyId, updatedStudy);
             if(savedStudy.isPresent()) {
                 return ResponseEntity.ok().body(savedStudy);
@@ -102,11 +145,20 @@ public class StudyController {
     /**
      * Delete by Study ID.
      * @param studyId ID of the study that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId) {
+    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.studyService.deleteStudy(studyId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();
