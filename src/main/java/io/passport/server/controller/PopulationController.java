@@ -2,12 +2,16 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Experiment;
 import io.passport.server.model.Population;
+import io.passport.server.model.Role;
 import io.passport.server.service.PopulationService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +31,15 @@ public class PopulationController {
      */
     private final PopulationService populationService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public PopulationController(PopulationService populationService) {
+    public PopulationController(PopulationService populationService, RoleCheckerService roleCheckerService) {
         this.populationService = populationService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
@@ -38,7 +48,15 @@ public class PopulationController {
      * @return
      */
     @GetMapping("/{populationId}")
-    public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId) {
+    public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
+                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         Optional<Population> population = this.populationService.findPopulationById(populationId);
 
@@ -55,7 +73,15 @@ public class PopulationController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId) {
+    public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId,
+                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
 
         if(studyId != null)
@@ -77,8 +103,17 @@ public class PopulationController {
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createPopulation(@RequestBody Population population) {
+    public ResponseEntity<?> createPopulation(@RequestBody Population population,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Population savedPopulation = this.populationService.savePopulation(population);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
         }catch(Exception e){
@@ -94,8 +129,17 @@ public class PopulationController {
      * @return
      */
     @PutMapping("/{populationId}")
-    public ResponseEntity<?> updatePopulation(@PathVariable Long populationId, @RequestBody Population updatedPopulation) {
+    public ResponseEntity<?> updatePopulation(@PathVariable Long populationId,
+                                              @RequestBody Population updatedPopulation,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<Population> savedPopulation = this.populationService.updatePopulation(populationId, updatedPopulation);
             if(savedPopulation.isPresent()) {
                 return ResponseEntity.ok(savedPopulation.get());
@@ -115,8 +159,17 @@ public class PopulationController {
      * @return
      */
     @DeleteMapping("/{populationId}")
-    public ResponseEntity<?> deletePopulation(@PathVariable Long populationId) {
+    public ResponseEntity<?> deletePopulation(@PathVariable Long populationId,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.populationService.deletePopulation(populationId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();

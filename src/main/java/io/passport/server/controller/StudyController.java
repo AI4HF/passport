@@ -29,6 +29,9 @@ public class StudyController {
      */
     private final StudyService studyService;
 
+    /**
+     * Role checker service for authorization
+     */
     private final RoleCheckerService roleCheckerService;
 
     @Autowired
