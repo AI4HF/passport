@@ -3,12 +3,16 @@ package io.passport.server.controller;
 import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.LearningDataset;
 import io.passport.server.model.LearningDatasetandTransformationDTO;
+import io.passport.server.model.Role;
 import io.passport.server.service.LearningDatasetService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +31,15 @@ public class LearningDatasetController {
      */
     private final LearningDatasetService learningDatasetService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public LearningDatasetController(LearningDatasetService learningDatasetService) {
+    public LearningDatasetController(LearningDatasetService learningDatasetService, RoleCheckerService roleCheckerService) {
         this.learningDatasetService = learningDatasetService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
@@ -38,7 +48,16 @@ public class LearningDatasetController {
      * @return
      */
     @GetMapping("/{learningDatasetId}")
-    public ResponseEntity<?> getLearningDataset(@PathVariable Long learningDatasetId) {
+    public ResponseEntity<?> getLearningDataset(@PathVariable Long learningDatasetId,
+                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<LearningDataset> learningDataset = this.learningDatasetService.findLearningDatasetByLearningDatasetId(learningDatasetId);
 
         if(learningDataset.isPresent()) {
@@ -57,7 +76,15 @@ public class LearningDatasetController {
     @GetMapping()
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
             @RequestParam(required = false) Long dataTransformationId,
-            @RequestParam(required = false) Long datasetId) {
+            @RequestParam(required = false) Long datasetId,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         List<LearningDataset> datasets;
 
@@ -81,8 +108,17 @@ public class LearningDatasetController {
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestBody LearningDatasetandTransformationDTO request) {
+    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestBody LearningDatasetandTransformationDTO request,
+                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             LearningDatasetandTransformationDTO response = learningDatasetService.createLearningDatasetAndTransformation(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
@@ -100,9 +136,18 @@ public class LearningDatasetController {
     @PutMapping("/{learningDatasetId}")
     public ResponseEntity<?> updateLearningDatasetWithTransformation(
             @PathVariable Long learningDatasetId,
-            @RequestBody LearningDatasetandTransformationDTO request
+            @RequestBody LearningDatasetandTransformationDTO request,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal
     ) {
         try {
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             DatasetTransformation transformation = request.getDatasetTransformation();
             LearningDataset learningDataset = request.getLearningDataset();
             learningDataset.setLearningDatasetId(learningDatasetId);
@@ -126,8 +171,17 @@ public class LearningDatasetController {
      * @return
      */
     @DeleteMapping("/{learningDatasetId}")
-    public ResponseEntity<?> deleteLearningDataset(@PathVariable Long learningDatasetId) {
+    public ResponseEntity<?> deleteLearningDataset(@PathVariable Long learningDatasetId,
+                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();
