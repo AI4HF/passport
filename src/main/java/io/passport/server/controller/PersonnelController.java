@@ -2,13 +2,17 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.model.PersonnelDTO;
+import io.passport.server.model.Role;
 import io.passport.server.service.PersonnelService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +32,15 @@ public class PersonnelController {
      */
     private final PersonnelService personnelService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public PersonnelController(PersonnelService personnelService) {
+    public PersonnelController(PersonnelService personnelService, RoleCheckerService roleCheckerService) {
         this.personnelService = personnelService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
@@ -39,7 +49,17 @@ public class PersonnelController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<Long> organizationId) {
+    public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<Long> organizationId,
+                                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER ,
+                Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST,
+                Role.SURVEY_MANAGER, Role.ORGANIZATION_ADMIN);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         List<Personnel> personnel = organizationId
                 .map(this.personnelService::findPersonnelByOrganizationId)
@@ -61,7 +81,17 @@ public class PersonnelController {
      */
     @GetMapping("/{personId}")
     public ResponseEntity<?> getPersonnelByPersonId(
-            @PathVariable("personId") String personId) {
+            @PathVariable("personId") String personId,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.STUDY_OWNER,
+                Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST,
+                Role.SURVEY_MANAGER, Role.ORGANIZATION_ADMIN);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personId);
 
@@ -79,8 +109,17 @@ public class PersonnelController {
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createPersonnel(@RequestBody PersonnelDTO personnelDTO) {
+    public ResponseEntity<?> createPersonnel(@RequestBody PersonnelDTO personnelDTO,
+                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<Personnel> savedPersonnel = this.personnelService.savePersonnel(personnelDTO);
             if(savedPersonnel.isPresent()) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
@@ -100,8 +139,18 @@ public class PersonnelController {
      * @return
      */
     @PutMapping("/{personId}")
-    public ResponseEntity<?> updatePersonnel(@PathVariable String personId, @RequestBody Personnel updatedPersonnel) {
+    public ResponseEntity<?> updatePersonnel(@PathVariable String personId,
+                                             @RequestBody Personnel updatedPersonnel,
+                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<Personnel> savedPersonnel = this.personnelService.updatePersonnel(personId, updatedPersonnel);
             if(savedPersonnel.isPresent()) {
                 return ResponseEntity.ok().body(savedPersonnel.get());
@@ -120,8 +169,17 @@ public class PersonnelController {
      * @return
      */
     @DeleteMapping("/{personId}")
-    public ResponseEntity<?> deletePersonnel(@PathVariable String personId) {
+    public ResponseEntity<?> deletePersonnel(@PathVariable String personId ,
+                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.personnelService.deletePersonnel(personId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();
