@@ -45,6 +45,7 @@ public class PopulationController {
     /**
      * Read population by populationId
      * @param populationId ID of the population.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{populationId}")
@@ -70,6 +71,7 @@ public class PopulationController {
     /**
      * Read population by studyId
      * @param studyId ID of the study related to population.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
@@ -100,6 +102,7 @@ public class PopulationController {
     /**
      * Create Population.
      * @param population Population model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
@@ -126,6 +129,7 @@ public class PopulationController {
      * Update Population.
      * @param populationId ID of the population that is to be updated.
      * @param updatedPopulation model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{populationId}")
@@ -156,6 +160,7 @@ public class PopulationController {
     /**
      * Delete by Population ID.
      * @param populationId ID of the population that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{populationId}")

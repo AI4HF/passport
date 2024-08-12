@@ -46,6 +46,7 @@ public class PersonnelController {
     /**
      * If organizationId exists, get all personnel related to this organizationId otherwise get all personnel.
      * @param organizationId ID of the organization related to personnel.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
@@ -77,6 +78,7 @@ public class PersonnelController {
     /**
      * Read personnel by personId
      * @param personId ID of the personnel.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{personId}")
@@ -106,6 +108,7 @@ public class PersonnelController {
     /**
      * Create a Personnel.
      * @param personnelDTO Personnel model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
@@ -136,6 +139,7 @@ public class PersonnelController {
      * Update Personnel.
      * @param personId ID of the personnel that is to be updated.
      * @param updatedPersonnel Personnel model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{personId}")
@@ -166,6 +170,7 @@ public class PersonnelController {
     /**
      * Delete a personnel by Personnel ID.
      * @param personId ID of the personnel that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{personId}")
