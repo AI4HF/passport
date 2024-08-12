@@ -92,6 +92,15 @@
         "attributes": {}
       },
       {
+        "id": "6e3979bc-b461-4574-9926-1546c0341d8f",
+        "name": "ORGANIZATION_ADMIN",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "6721c6cc-ac6f-447b-b621-7b688f648a50",
         "name": "DATA_ENGINEER",
         "description": "",
@@ -589,7 +598,8 @@
       ],
       "realmRoles": [
         "offline_access",
-        "uma_authorization"
+        "uma_authorization",
+        "ORGANIZATION_ADMIN"
       ],
       "clientRoles": {
         "account": [

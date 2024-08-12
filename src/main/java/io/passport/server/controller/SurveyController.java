@@ -78,7 +78,7 @@ public class SurveyController {
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER);
+        List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER, Role.STUDY_OWNER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
