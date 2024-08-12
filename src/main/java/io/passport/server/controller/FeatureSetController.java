@@ -1,13 +1,17 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.FeatureSet;
+import io.passport.server.model.Role;
 import io.passport.server.service.FeatureSetService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,17 +30,32 @@ public class FeatureSetController {
      */
     private final FeatureSetService featureSetService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public FeatureSetController(FeatureSetService featureSetService) {
+    public FeatureSetController(FeatureSetService featureSetService, RoleCheckerService roleCheckerService) {
         this.featureSetService = featureSetService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
      * Read all FeatureSets
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<FeatureSet>> getAllFeatureSets() {
+    public ResponseEntity<List<FeatureSet>> getAllFeatureSets(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         List<FeatureSet> featureSets = this.featureSetService.getAllFeatureSets();
 
         long totalCount = featureSets.size();
@@ -50,10 +69,20 @@ public class FeatureSetController {
     /**
      * Read a FeatureSet by id
      * @param featureSetId ID of the FeatureSet
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{featureSetId}")
-    public ResponseEntity<?> getFeatureSet(@PathVariable Long featureSetId) {
+    public ResponseEntity<?> getFeatureSet(@PathVariable Long featureSetId,
+                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<FeatureSet> featureSet = this.featureSetService.findFeatureSetByFeatureSetId(featureSetId);
 
         if(featureSet.isPresent()) {
@@ -66,11 +95,21 @@ public class FeatureSetController {
     /**
      * Create FeatureSet.
      * @param featureSet FeatureSet model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createFeatureSet(@RequestBody FeatureSet featureSet) {
+    public ResponseEntity<?> createFeatureSet(@RequestBody FeatureSet featureSet,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             FeatureSet savedFeatureSet = this.featureSetService.saveFeatureSet(featureSet);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedFeatureSet);
         } catch(Exception e){
@@ -83,11 +122,22 @@ public class FeatureSetController {
      * Update FeatureSet.
      * @param featureSetId ID of the FeatureSet that is to be updated.
      * @param updatedFeatureSet FeatureSet model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{featureSetId}")
-    public ResponseEntity<?> updateFeatureSet(@PathVariable Long featureSetId, @RequestBody FeatureSet updatedFeatureSet) {
+    public ResponseEntity<?> updateFeatureSet(@PathVariable Long featureSetId,
+                                              @RequestBody FeatureSet updatedFeatureSet,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<FeatureSet> savedFeatureSet = this.featureSetService.updateFeatureSet(featureSetId, updatedFeatureSet);
             if(savedFeatureSet.isPresent()) {
                 return ResponseEntity.ok().body(savedFeatureSet);
@@ -103,11 +153,21 @@ public class FeatureSetController {
     /**
      * Delete by FeatureSet ID.
      * @param featureSetId ID of the FeatureSet that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{featureSetId}")
-    public ResponseEntity<?> deleteFeatureSet(@PathVariable Long featureSetId) {
+    public ResponseEntity<?> deleteFeatureSet(@PathVariable Long featureSetId,
+                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.featureSetService.deleteFeatureSet(featureSetId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();
