@@ -268,6 +268,57 @@ CREATE TABLE learning_process (
 INSERT INTO learning_process (implementation_id, description) VALUES
     (1, 'test_description');
 
+-- Create model LearningStage table
+CREATE TABLE learning_stage
+(
+    learning_stage_id   SERIAL PRIMARY KEY,
+    learning_process_id INTEGER REFERENCES learning_process (learning_process_id) ON DELETE CASCADE,
+    learning_stage_name VARCHAR(255),
+    description TEXT,
+    dataset_percentage INTEGER
+);
+
+-- Insert dummy LearningStage
+INSERT INTO learning_stage (learning_process_id, learning_stage_name, description, dataset_percentage) VALUES (1, 'test_name', 'test_description', 50);
+
+-- Create LearningProcessDataset table
+CREATE TABLE learning_process_dataset (
+                                          learning_process_id INTEGER REFERENCES learning_process(learning_process_id) ON DELETE CASCADE,
+                                          learning_dataset_id INTEGER REFERENCES learning_dataset(learning_dataset_id) ON DELETE CASCADE,
+                                          description TEXT,
+                                          PRIMARY KEY (learning_process_id, learning_dataset_id)
+);
+
+-- Insert dummy LearningProcessDataset
+INSERT INTO learning_process_dataset (learning_process_id, learning_dataset_id, description) VALUES
+    (1, 1, 'This is a dummy description for the Learning Process Dataset relation.');
+
+-- Create LearningProcessParameter table
+CREATE TABLE learning_process_parameter (
+                                            learning_process_id INTEGER REFERENCES learning_process(learning_process_id) ON DELETE CASCADE,
+                                            parameter_id INTEGER REFERENCES parameter(parameter_id) ON DELETE CASCADE,
+                                            type VARCHAR(255),
+                                            value VARCHAR(255),
+                                            PRIMARY KEY (learning_process_id, parameter_id)
+);
+
+-- Insert dummy LearningProcessParameter
+INSERT INTO learning_process_parameter (learning_process_id, parameter_id, type, value) VALUES
+    (1, 1, 'string', 'Dummy value for Learning Process Parameter');
+
+-- Create LearningStageParameter table
+CREATE TABLE learning_stage_parameter (
+                                          learning_stage_id INTEGER REFERENCES learning_stage(learning_stage_id) ON DELETE CASCADE,
+                                          parameter_id INTEGER REFERENCES parameter(parameter_id) ON DELETE CASCADE,
+                                          type VARCHAR(255),
+                                          value VARCHAR(255),
+                                          PRIMARY KEY (learning_stage_id, parameter_id)
+);
+
+-- Insert dummy LearningStageParameter
+INSERT INTO learning_stage_parameter (learning_stage_id, parameter_id, type, value) VALUES
+    (1, 1, 'string', 'Dummy value for Learning Stage Parameter');
+
 -- Create model table
 CREATE TABLE model (
                        model_id SERIAL PRIMARY KEY,
