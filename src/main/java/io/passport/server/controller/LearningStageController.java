@@ -31,20 +31,24 @@ public class LearningStageController {
     }
 
     /**
-     * Read all learning stages
-     * @return
+     * Retrieves learning stages. If a learningProcessId is provided, it filters by that process ID; otherwise, it retrieves all learning stages.
+     * @param learningProcessId the ID of the learning process (optional)
+     * @return a list of learning stages
      */
-    @GetMapping()
-    public ResponseEntity<List<LearningStage>> getAllLearningStages() {
-        List<LearningStage> learningStages = this.learningStageService.getAllLearningStages();
+    @GetMapping
+    public ResponseEntity<List<LearningStage>> getLearningStages(
+            @RequestParam(required = false) Long learningProcessId) {
+        List<LearningStage> learningStages;
 
-        long totalCount = learningStages.size();
+        if (learningProcessId != null) {
+            learningStages = learningStageService.findLearningStagesByProcessId(learningProcessId);
+        } else {
+            learningStages = learningStageService.getAllLearningStages();
+        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
-
-        return ResponseEntity.ok().headers(headers).body(learningStages);
+        return ResponseEntity.ok(learningStages);
     }
+
 
     /**
      * Read a learning stage by id
@@ -52,7 +56,7 @@ public class LearningStageController {
      * @return
      */
     @GetMapping("/{learningStageId}")
-    public ResponseEntity<?> getLearningStage(@PathVariable String learningStageId) {
+    public ResponseEntity<?> getLearningStage(@PathVariable Long learningStageId) {
         Optional<LearningStage> learningStage = this.learningStageService.findLearningStageById(learningStageId);
 
         if(learningStage.isPresent()) {
@@ -85,7 +89,7 @@ public class LearningStageController {
      * @return
      */
     @PutMapping("/{learningStageId}")
-    public ResponseEntity<?> updateLearningStage(@PathVariable String learningStageId, @RequestBody LearningStage updatedLearningStage) {
+    public ResponseEntity<?> updateLearningStage(@PathVariable Long learningStageId, @RequestBody LearningStage updatedLearningStage) {
         try{
             Optional<LearningStage> savedLearningStage = this.learningStageService.updateLearningStage(learningStageId, updatedLearningStage);
             if(savedLearningStage.isPresent()) {
@@ -105,7 +109,7 @@ public class LearningStageController {
      * @return
      */
     @DeleteMapping("/{learningStageId}")
-    public ResponseEntity<?> deleteLearningStage(@PathVariable String learningStageId) {
+    public ResponseEntity<?> deleteLearningStage(@PathVariable Long learningStageId) {
         try{
             boolean isDeleted = this.learningStageService.deleteLearningStage(learningStageId);
             if(isDeleted) {
