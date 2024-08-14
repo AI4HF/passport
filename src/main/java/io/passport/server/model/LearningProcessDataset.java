@@ -20,4 +20,20 @@ public class LearningProcessDataset implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    /**
+     * Constructs a new LearningProcessDataset from a LearningProcessDatasetDTO entity.
+     * @param dto the LearningProcessDatasetDTO entity
+     */
+    public LearningProcessDataset(LearningProcessDatasetDTO dto) {
+        this.id = new LearningProcessDatasetId();
+        this.id.setLearningProcessId(dto.getLearningProcessId());
+        this.id.setLearningDatasetId(dto.getLearningDatasetId());
+        this.description = dto.getDescription();
+    }
+
+    /**
+     * Default constructor for the entity.
+     */
+    public LearningProcessDataset() {}
 }

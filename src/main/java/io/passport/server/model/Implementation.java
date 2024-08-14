@@ -15,7 +15,7 @@ public class Implementation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "implementation_id")
-    private Long id;
+    private Long implementationId;
 
     @Column(name = "algorithm_id")
     private Long algorithmId;

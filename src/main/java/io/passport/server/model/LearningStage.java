@@ -15,10 +15,10 @@ public class LearningStage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "learning_stage_id")
-    private String id;
+    private Long learningStageId;
 
     @Column(name = "learning_process_id")
-    private String learningProcessId;
+    private Long learningProcessId;
 
     @Column(name = "learning_stage_name")
     private String learningStageName;
