@@ -1976,6 +1976,887 @@
 			]
 		},
 		{
+			"name": "algorithm",
+			"item": [
+				{
+					"name": "get all algorithms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/algorithm",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"algorithm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get an algorithm by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/algorithm/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"algorithm",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create an algorithm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"New Algorithm\",\r\n    \"description\": \"Description of the algorithm\",\r\n    \"type\": \"Type of the algorithm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/algorithm",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"algorithm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update an algorithm by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Algorithm\",\r\n    \"description\": \"Updated description of the algorithm\",\r\n    \"type\": \"Updated type of the algorithm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/algorithm/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"algorithm",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete an algorithm by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/algorithm/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"algorithm",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "implementation",
+			"item": [
+				{
+					"name": "get all implementations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/implementation",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"implementation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get an implementation by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/implementation/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"implementation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create an implementation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"New Implementation\",\r\n    \"description\": \"Description of the implementation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/implementation",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"implementation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update an implementation by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Implementation\",\r\n    \"description\": \"Updated description of the implementation\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/implementation/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"implementation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete an implementation by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/implementation/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"implementation",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learning-process",
+			"item": [
+				{
+					"name": "get all learning processes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a learning process by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learning process",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"New Learning Process\",\r\n    \"description\": \"Description of the learning process\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learning process by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Learning Process\",\r\n    \"description\": \"Updated description of the learning process\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a learning process by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learning-process-dataset",
+			"item": [
+				{
+					"name": "get all learning process datasets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get learning process datasets by IDs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "learningDatasetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learning process dataset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"learningDatasetId\": 1,\r\n    \"data\": \"New Dataset\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-dataset",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learning process dataset",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"learningDatasetId\": 1,\r\n    \"data\": \"Updated Dataset\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "learningDatasetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a learning process dataset by IDs",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "learningDatasetId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learning-process-parameter",
+			"item": [
+				{
+					"name": "get all learning process parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get learning process parameters by IDs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learning process parameter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learning process parameter",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a learning process parameter by IDs",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learning-stage",
+			"item": [
+				{
+					"name": "get all learning stages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get learning stages by process ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage?learningProcessId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage"
+							],
+							"query": [
+								{
+									"key": "learningProcessId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a learning stage by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learning stage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"stageName\": \"New Learning Stage\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learning stage by ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"stageName\": \"Updated Learning Stage\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a learning stage by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage/1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "learning-stage-parameter",
+			"item": [
+				{
+					"name": "get all learning stage parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage-parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get learning stage parameters by IDs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "learningStageId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a learning stage parameter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningStageId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage-parameter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a learning stage parameter",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"learningStageId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "learningStageId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a learning stage parameter by IDs",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "learningStageId",
+									"value": "1"
+								},
+								{
+									"key": "parameterId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "model",
 			"item": [
 				{
