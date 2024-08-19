@@ -45,6 +45,7 @@ public class LearningDatasetController {
     /**
      * Read a LearningDataset by id
      * @param learningDatasetId ID of the LearningDataset
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{learningDatasetId}")
@@ -52,7 +53,7 @@ public class LearningDatasetController {
                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,6 +72,7 @@ public class LearningDatasetController {
      * Read all LearningDatasets or filtered by dataTransformationId and/or datasetId
      * @param dataTransformationId ID of the DataTransformation (optional)
      * @param datasetId ID of the Dataset (optional)
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
@@ -80,7 +82,7 @@ public class LearningDatasetController {
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -105,6 +107,7 @@ public class LearningDatasetController {
     /**
      * Create LearningDataset with corresponding Dataset Transformation.
      * @param request LearningDataset and Transformation model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
@@ -131,6 +134,7 @@ public class LearningDatasetController {
      * Update both DatasetTransformation and LearningDataset in a single transaction.
      * @param learningDatasetId ID of the LearningDataset to be updated.
      * @param request LearningDatasetAndTransformationRequest containing updated DatasetTransformation and LearningDataset.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return ResponseEntity with updated LearningDataset and DatasetTransformation
      */
     @PutMapping("/{learningDatasetId}")
@@ -168,6 +172,7 @@ public class LearningDatasetController {
     /**
      * Delete by LearningDataset ID.
      * @param learningDatasetId ID of the LearningDataset that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{learningDatasetId}")

@@ -50,7 +50,7 @@ public class DatasetController {
     public ResponseEntity<List<Dataset>> getAllDatasets(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -77,7 +77,7 @@ public class DatasetController {
                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
