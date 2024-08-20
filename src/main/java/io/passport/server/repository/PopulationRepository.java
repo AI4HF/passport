@@ -12,5 +12,5 @@ import java.util.Optional;
  */
 @Repository
 public interface PopulationRepository extends JpaRepository<Population, Long> {
-    Population findByStudyId(Long studyId);
+    List<Population> findByStudyId(Long studyId);
 }

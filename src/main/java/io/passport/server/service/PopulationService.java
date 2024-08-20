@@ -43,7 +43,7 @@ public class PopulationService {
      * @param studyId ID of the study
      * @return
      */
-    public Population findPopulationByStudyId(Long studyId) {
+    public List<Population> findPopulationByStudyId(Long studyId) {
         return populationRepository.findByStudyId(studyId);
     }
 

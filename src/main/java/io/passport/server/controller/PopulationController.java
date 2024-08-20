@@ -85,18 +85,15 @@ public class PopulationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-
+        List<Population> populations;
         if(studyId != null)
         {
-            Population population;
-            population = this.populationService.findPopulationByStudyId(studyId);
-            return ResponseEntity.ok().body(population);
+            populations = this.populationService.findPopulationByStudyId(studyId);
         }
         else {
-            List<Population> populations;
             populations = this.populationService.findAllPopulations();
-            return ResponseEntity.ok().body(populations);
         }
+        return ResponseEntity.ok().body(populations);
     }
 
     /**
