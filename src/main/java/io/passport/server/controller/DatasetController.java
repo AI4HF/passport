@@ -56,7 +56,8 @@ public class DatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Dataset> datasets = this.datasetService.getAllDatasets();
+        String personnelId = this.roleCheckerService.getPersonnelId(principal);
+        List<Dataset> datasets = this.datasetService.getAllDatasets(personnelId);
 
         long totalCount = datasets.size();
 
@@ -83,7 +84,8 @@ public class DatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId);
+        String personnelId = this.roleCheckerService.getPersonnelId(principal);
+        Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId, personnelId);
 
         if(dataset.isPresent()) {
             return ResponseEntity.ok().body(dataset.get());
@@ -110,8 +112,14 @@ public class DatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Dataset savedDataset = this.datasetService.saveDataset(dataset);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedDataset);
+            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            Optional<Dataset> savedDataset = this.datasetService.saveDataset(dataset, personnelId);
+
+            if(savedDataset.isPresent()) {
+                return ResponseEntity.ok().body(savedDataset.get());
+            }else{
+                return ResponseEntity.notFound().build();
+            }
         } catch(Exception e){
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -138,7 +146,8 @@ public class DatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<Dataset> savedDataset = this.datasetService.updateDataset(datasetId, updatedDataset);
+            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            Optional<Dataset> savedDataset = this.datasetService.updateDataset(datasetId, updatedDataset, personnelId);
             if(savedDataset.isPresent()) {
                 return ResponseEntity.ok().body(savedDataset);
             } else {

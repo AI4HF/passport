@@ -91,4 +91,13 @@ public class PopulationService {
         }
     }
 
+    /**
+     * Find a population by FeatureSetId
+     * @param featureSetId ID of the featureSet
+     * @return
+     */
+    public Optional<Population> getPopulationByFeatureSetId(Long featureSetId) {
+        return this.populationRepository.findByFeatureSetId(featureSetId);
+    }
+
 }
