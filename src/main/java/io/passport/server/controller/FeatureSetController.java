@@ -56,7 +56,8 @@ public class FeatureSetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<FeatureSet> featureSets = this.featureSetService.getAllFeatureSets();
+        String personnelId = this.roleCheckerService.getPersonnelId(principal);
+        List<FeatureSet> featureSets = this.featureSetService.getAllFeatureSets(personnelId);
 
         long totalCount = featureSets.size();
 
@@ -83,7 +84,8 @@ public class FeatureSetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<FeatureSet> featureSet = this.featureSetService.findFeatureSetByFeatureSetId(featureSetId);
+        String personnelId = this.roleCheckerService.getPersonnelId(principal);
+        Optional<FeatureSet> featureSet = this.featureSetService.findFeatureSetByFeatureSetId(featureSetId, personnelId);
 
         if(featureSet.isPresent()) {
             return ResponseEntity.ok().body(featureSet.get());

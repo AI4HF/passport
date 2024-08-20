@@ -64,7 +64,8 @@ public class ExperimentController {
             experiment = this.experimentService.findExperimentByStudyId(studyId);
         }
         else {
-            experiment = this.experimentService.findAllExperiments();
+            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            experiment = this.experimentService.findAllExperiments(personnelId);
         }
 
         return ResponseEntity.ok().body(experiment);

@@ -620,6 +620,36 @@
           "Survey Manager"
         ]
       }
+    },
+    {
+      "id": "study_owner",
+      "username": "study_owner",
+      "enabled": true,
+      "email": "study_owner@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "study_owner"
+        }
+      ],
+      "realmRoles": [
+        "STUDY_OWNER"
+      ]
+    },
+    {
+      "id": "data_engineer",
+      "username": "data_engineer",
+      "enabled": true,
+      "email": "data_engineer@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_engineer"
+        }
+      ],
+      "realmRoles": [
+        "DATA_ENGINEER"
+      ]
     }
   ],
   "scopeMappings": [

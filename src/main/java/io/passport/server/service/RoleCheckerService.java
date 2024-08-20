@@ -38,4 +38,14 @@ public class RoleCheckerService {
 
         return false;
     }
+
+    /**
+     * Extract personnel id from access token
+     * @param principal KeycloakPrincipal object that contains access token
+     */
+    public String getPersonnelId(KeycloakPrincipal<?> principal) {
+        KeycloakSecurityContext keycloakSecurityContext = principal.getKeycloakSecurityContext();
+        AccessToken token = keycloakSecurityContext.getToken();
+        return token.getOtherClaims().get("user_id").toString();
+    }
 }

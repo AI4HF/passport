@@ -26,11 +26,12 @@ public class ExperimentService {
     }
 
     /**
-     * Find all experiments
+     * Find all experiments for an assigned personnel
+     * @param personnelId ID of the personnel
      * @return
      */
-    public List<Experiment> findAllExperiments() {
-        return this.experimentRepository.findAll();
+    public List<Experiment> findAllExperiments(String personnelId) {
+        return this.experimentRepository.findExperimentsByPersonnelId(personnelId);
     }
 
     /**
