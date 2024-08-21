@@ -24,10 +24,13 @@ public class LearningDatasetService {
     private final LearningDatasetRepository learningDatasetRepository;
     private final DatasetTransformationRepository datasetTransformationRepository;
 
+    private final StudyService studyService;
+
     @Autowired
-    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository, DatasetTransformationRepository datasetTransformationRepository) {
+    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository, DatasetTransformationRepository datasetTransformationRepository, StudyService studyService) {
         this.learningDatasetRepository = learningDatasetRepository;
         this.datasetTransformationRepository = datasetTransformationRepository;
+        this.studyService = studyService;
     }
 
     /**
@@ -88,6 +91,11 @@ public class LearningDatasetService {
     public LearningDatasetandTransformationDTO createLearningDatasetAndTransformation(LearningDatasetandTransformationDTO request) {
         DatasetTransformation savedTransformation = datasetTransformationRepository.save(request.getDatasetTransformation());
         request.getLearningDataset().setDataTransformationId(savedTransformation.getDataTransformationId());
+
+        // Find related study and set studyId field of the learning dataset
+        Long relatedStudyId = this.studyService.findRelatedStudyByDatasetId(request.getLearningDataset().getDatasetId()).getId();
+        request.getLearningDataset().setStudyId(relatedStudyId);
+
         LearningDataset savedLearningDataset = learningDatasetRepository.save(request.getLearningDataset());
 
         return new LearningDatasetandTransformationDTO(savedTransformation, savedLearningDataset);

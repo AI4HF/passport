@@ -86,4 +86,13 @@ public class StudyService {
             return false;
         }
     }
+
+    /**
+     * Find a Study by datasetId
+     * @param datasetId ID of the Dataset
+     * @return
+     */
+    public Study findRelatedStudyByDatasetId(Long datasetId) {
+        return studyRepository.findByDatasetId(datasetId);
+    }
 }

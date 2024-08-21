@@ -198,13 +198,14 @@ INSERT INTO dataset_transformation_step (data_transformation_id, input_features,
 CREATE TABLE learning_dataset (
                                   learning_dataset_id SERIAL PRIMARY KEY,
                                   dataset_id INTEGER REFERENCES dataset(dataset_id) ON DELETE CASCADE,
+                                  study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
                                   data_transformation_id INTEGER REFERENCES dataset_transformation(data_transformation_id) ON DELETE CASCADE,
                                   description TEXT
 );
 
 -- Insert dummy LearningDataset
-INSERT INTO learning_dataset (dataset_id, data_transformation_id, description) VALUES
-    (1, 1, 'Finalized learning dataset for HF Risk Prediction Model Teaching');
+INSERT INTO learning_dataset (dataset_id, study_id, data_transformation_id, description) VALUES
+    (1, 1, 1, 'Finalized learning dataset for HF Risk Prediction Model Teaching');
 
 -- Create FeatureDatasetCharacteristic table
 CREATE TABLE feature_dataset_characteristic (
