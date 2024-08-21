@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.model.Role;
+import io.passport.server.model.Study;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyPersonnelService;
 import org.keycloak.KeycloakPrincipal;
@@ -62,6 +63,31 @@ public class StudyPersonnelController {
 
             List<Personnel> personnel = this.studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
             return ResponseEntity.ok(personnel);
+        }catch(Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Get all studies related to a personnel.
+     * @param principal KeycloakPrincipal object that holds access token
+     * @return
+     */
+    @GetMapping("/studies")
+    public ResponseEntity<?> getPersonnelByStudyId(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        try{
+
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            List<Study> studies = this.studyPersonnelService.findStudiesByPersonnelId(personnelId);
+            return ResponseEntity.ok(studies);
         }catch(Exception e){
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

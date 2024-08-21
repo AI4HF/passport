@@ -1,6 +1,7 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Personnel;
+import io.passport.server.model.Study;
 import io.passport.server.model.StudyPersonnel;
 import io.passport.server.model.StudyPersonnelId;
 import io.passport.server.repository.StudyPersonnelRepository;
@@ -41,6 +42,15 @@ public class StudyPersonnelService {
      */
     public List<Personnel> findPersonnelByStudyIdAndOrganizationId(Long studyId, Long organizationId){
         return this.studyPersonnelRepository.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
+    }
+
+    /**
+     * Get all studies related to the personnel.
+     * @param personnelId ID of the personnel
+     * @return
+     */
+    public List<Study> findStudiesByPersonnelId(String personnelId){
+        return this.studyPersonnelRepository.findStudiesByPersonnelId(personnelId);
     }
 
     /**
