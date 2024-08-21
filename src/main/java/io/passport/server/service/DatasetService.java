@@ -40,22 +40,29 @@ public class DatasetService {
     }
 
     /**
-     * Return all Datasets for an assigned personnel
-     * @param personnelId ID of the personnel
+     * Return all Datasets
      * @return
      */
-    public List<Dataset> getAllDatasets(String personnelId) {
-        return datasetRepository.findDatasetByPersonnelId(personnelId);
+    public List<Dataset> getAllDatasets() {
+        return datasetRepository.findAll();
     }
 
     /**
-     * Find a Dataset by datasetId for an assigned personnel
-     * @param datasetId ID of the Dataset
-     * @param personnelId ID of the personnel
+     * Return all Datasets by studyId
+     * @param studyId ID of the study
      * @return
      */
-    public Optional<Dataset> findDatasetByDatasetId(Long datasetId, String personnelId) {
-        return datasetRepository.findByIdAndPersonnelId(datasetId, personnelId);
+    public List<Dataset> getAllDatasetsByStudyId(Long studyId) {
+        return datasetRepository.findDatasetByStudyId(studyId);
+    }
+
+    /**
+     * Find a Dataset by datasetId
+     * @param datasetId ID of the Dataset
+     * @return
+     */
+    public Optional<Dataset> findDatasetByDatasetId(Long datasetId) {
+        return datasetRepository.findById(datasetId);
     }
 
     /**

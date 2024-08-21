@@ -26,22 +26,29 @@ public class FeatureSetService {
     }
 
     /**
-     * Return all FeatureSets for an assigned personnel
-     * @param personnelId ID of the personnel
+     * Return all FeatureSets
      * @return
      */
-    public List<FeatureSet> getAllFeatureSets(String personnelId) {
-        return featureSetRepository.findFeatureSetByPersonnelId(personnelId);
+    public List<FeatureSet> getAllFeatureSets() {
+        return featureSetRepository.findAll();
     }
 
     /**
-     * Find a FeatureSet by featureSetId for an assigned personnel
-     * @param featureSetId ID of the FeatureSet
-     * @param personnelId ID of the personnel
+     * Return all FeatureSets by studyId
+     * @param studyId ID of the study
      * @return
      */
-    public Optional<FeatureSet> findFeatureSetByFeatureSetId(Long featureSetId, String personnelId) {
-        return featureSetRepository.findByIdAndPersonnelId(featureSetId, personnelId);
+    public List<FeatureSet> getAllFeatureSetsByStudyId(Long studyId) {
+        return featureSetRepository.findFeatureSetByStudyId(studyId);
+    }
+
+    /**
+     * Find a FeatureSet by featureSetId
+     * @param featureSetId ID of the FeatureSet
+     * @return
+     */
+    public Optional<FeatureSet> findFeatureSetByFeatureSetId(Long featureSetId) {
+        return featureSetRepository.findById(featureSetId);
     }
 
     /**

@@ -42,12 +42,14 @@ public class DatasetController {
     }
 
     /**
-     * Read all Datasets
+     * Read all Datasets by studyId
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Dataset>> getAllDatasets(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
+                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
@@ -56,8 +58,7 @@ public class DatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        String personnelId = this.roleCheckerService.getPersonnelId(principal);
-        List<Dataset> datasets = this.datasetService.getAllDatasets(personnelId);
+        List<Dataset> datasets = this.datasetService.getAllDatasetsByStudyId(studyId);
 
         long totalCount = datasets.size();
 
@@ -84,8 +85,7 @@ public class DatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        String personnelId = this.roleCheckerService.getPersonnelId(principal);
-        Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId, personnelId);
+        Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId);
 
         if(dataset.isPresent()) {
             return ResponseEntity.ok().body(dataset.get());

@@ -42,12 +42,14 @@ public class FeatureSetController {
     }
 
     /**
-     * Read all FeatureSets
+     * Read all FeatureSets by studyId
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<FeatureSet>> getAllFeatureSets(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<FeatureSet>> getAllFeatureSetsByStudyId(@RequestParam Long studyId,
+                                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
@@ -56,8 +58,7 @@ public class FeatureSetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        String personnelId = this.roleCheckerService.getPersonnelId(principal);
-        List<FeatureSet> featureSets = this.featureSetService.getAllFeatureSets(personnelId);
+        List<FeatureSet> featureSets = this.featureSetService.getAllFeatureSetsByStudyId(studyId);
 
         long totalCount = featureSets.size();
 
@@ -84,8 +85,7 @@ public class FeatureSetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        String personnelId = this.roleCheckerService.getPersonnelId(principal);
-        Optional<FeatureSet> featureSet = this.featureSetService.findFeatureSetByFeatureSetId(featureSetId, personnelId);
+        Optional<FeatureSet> featureSet = this.featureSetService.findFeatureSetByFeatureSetId(featureSetId);
 
         if(featureSet.isPresent()) {
             return ResponseEntity.ok().body(featureSet.get());
