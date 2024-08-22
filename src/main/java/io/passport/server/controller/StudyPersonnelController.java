@@ -79,7 +79,7 @@ public class StudyPersonnelController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER);
+            List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
