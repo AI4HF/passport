@@ -34,11 +34,12 @@ public class LearningDatasetService {
     }
 
     /**
-     * Return all LearningDatasets
+     * Return all LearningDatasets by studyId
+     * @param studyId ID of the study
      * @return
      */
-    public List<LearningDataset> getAllLearningDatasets() {
-        return learningDatasetRepository.findAll();
+    public List<LearningDataset> getAllLearningDatasetsByStudyId(Long studyId) {
+        return learningDatasetRepository.findAllByStudyId(studyId);
     }
 
     /**

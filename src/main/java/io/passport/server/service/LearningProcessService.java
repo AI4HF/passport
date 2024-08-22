@@ -33,6 +33,15 @@ public class LearningProcessService {
     }
 
     /**
+     * Return all LearningProcess by studyId
+     * @param studyId ID of the study
+     * @return
+     */
+    public List<LearningProcess> getAllLearningProcessByStudyId(Long studyId) {
+        return learningProcessRepository.findAllByStudyId(studyId);
+    }
+
+    /**
      * Find a learning process by learningProcessId
      * @param learningProcessId ID of the learning process
      * @return

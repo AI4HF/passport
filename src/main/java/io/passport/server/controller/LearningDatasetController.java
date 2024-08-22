@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.DatasetTransformation;
-import io.passport.server.model.LearningDataset;
-import io.passport.server.model.LearningDatasetandTransformationDTO;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.LearningDatasetService;
 import io.passport.server.service.RoleCheckerService;
 import org.keycloak.KeycloakPrincipal;
@@ -72,6 +69,7 @@ public class LearningDatasetController {
      * Read all LearningDatasets or filtered by dataTransformationId and/or datasetId
      * @param dataTransformationId ID of the DataTransformation (optional)
      * @param datasetId ID of the Dataset (optional)
+     * @param studyId ID of the study                 
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
@@ -79,6 +77,7 @@ public class LearningDatasetController {
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
             @RequestParam(required = false) Long dataTransformationId,
             @RequestParam(required = false) Long datasetId,
+            @RequestParam(required = false) Long studyId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
@@ -88,7 +87,7 @@ public class LearningDatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<LearningDataset> datasets;
+        List<LearningDataset> datasets = List.of();
 
         if (dataTransformationId != null && datasetId != null) {
             return ResponseEntity.badRequest().build();
@@ -96,8 +95,8 @@ public class LearningDatasetController {
             datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
         } else if (datasetId != null) {
             datasets = this.learningDatasetService.findByDatasetId(datasetId);
-        } else {
-            datasets = this.learningDatasetService.getAllLearningDatasets();
+        } else if (studyId != null) {
+            datasets = this.learningDatasetService.getAllLearningDatasetsByStudyId(studyId);
         }
 
         return ResponseEntity.ok().body(datasets);

@@ -263,13 +263,14 @@ INSERT INTO implementation (algorithm_id, software, name, description) VALUES
 -- Create model LearningProcess table
 CREATE TABLE learning_process (
                                   learning_process_id SERIAL PRIMARY KEY,
+                                  study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
                                   implementation_id INTEGER REFERENCES implementation(implementation_id) ON DELETE CASCADE,
                                   description TEXT
 );
 
 -- Insert dummy LearningProcess
-INSERT INTO learning_process (implementation_id, description) VALUES
-    (1, 'test_description');
+INSERT INTO learning_process (study_id, implementation_id, description) VALUES
+    (1, 1, 'test_description');
 
 -- Create model LearningStage table
 CREATE TABLE learning_stage

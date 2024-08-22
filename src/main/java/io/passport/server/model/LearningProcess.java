@@ -17,6 +17,9 @@ public class LearningProcess {
     @Column(name = "learning_process_id")
     private Long learningProcessId;
 
+    @Column(name = "study_id")
+    private Long studyId;
+
     @Column(name = "implementation_id")
     private Long implementationId;
 

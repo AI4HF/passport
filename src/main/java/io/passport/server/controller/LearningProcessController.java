@@ -41,12 +41,14 @@ public class LearningProcessController {
     }
 
     /**
-     * Read all learning processes
+     * Read all learning processes by studyId
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<LearningProcess>> getAllLearningProcesses(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
+                                                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
@@ -55,7 +57,7 @@ public class LearningProcessController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<LearningProcess> learningProcesses = this.learningProcessService.getAllLearningProcesses();
+        List<LearningProcess> learningProcesses = this.learningProcessService.getAllLearningProcessByStudyId(studyId);
 
         long totalCount = learningProcesses.size();
 
