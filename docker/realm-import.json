@@ -650,6 +650,51 @@
       "realmRoles": [
         "DATA_ENGINEER"
       ]
+    },
+    {
+      "id": "data_scientist",
+      "username": "data_scientist",
+      "enabled": true,
+      "email": "data_scientist@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_scientist"
+        }
+      ],
+      "realmRoles": [
+        "DATA_SCIENTIST"
+      ]
+    },
+    {
+      "id": "survey_manager",
+      "username": "survey_manager",
+      "enabled": true,
+      "email": "survey_manager@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "survey_manager"
+        }
+      ],
+      "realmRoles": [
+        "SURVEY_MANAGER"
+      ]
+    },
+    {
+      "id": "quality_assurance_specialist",
+      "username": "quality_assurance_specialist",
+      "enabled": true,
+      "email": "quality_assurance_specialist@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "quality_assurance_specialist"
+        }
+      ],
+      "realmRoles": [
+        "QUALITY_ASSURANCE_SPECIALIST"
+      ]
     }
   ],
   "scopeMappings": [

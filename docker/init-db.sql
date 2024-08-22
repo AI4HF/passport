@@ -23,7 +23,10 @@ CREATE TABLE personnel (
 -- Insert dummy personnel
 INSERT INTO personnel (person_id, organization_id, first_name, last_name, role, email) VALUES
     ('study_owner', 1, 'John', 'Doe', 'STUDY_OWNER', 'study_owner@gmail.com'),
-    ('data_engineer', 1, 'Okan', 'Mercan', 'DATA_ENGINEER', 'data_engineer@gmail.com');
+    ('data_engineer', 1, 'Okan', 'Mercan', 'DATA_ENGINEER', 'data_engineer@gmail.com'),
+    ('data_scientist', 1, 'Kerem', 'Yilmaz', 'DATA_SCIENTIST', 'data_scientist@gmail.com'),
+    ('quality_assurance_specialist', 1, 'Anil', 'Sinaci', 'QUALITY_ASSURANCE_SPECIALIST', 'quality_assurance_specialist@gmail.com'),
+    ('survey_manager', 1, 'Senan', 'Postaci', 'SURVEY_MANAGER', 'survey_manager@gmail.com');
 
 -- Create study table
 CREATE TABLE study (
@@ -87,6 +90,9 @@ CREATE TABLE study_personnel (
 -- Insert dummy study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role) VALUES
     (1, 'study_owner', 'STUDY_OWNER'),
+    (1, 'data_scientist', 'DATA_SCIENTIST'),
+    (1, 'survey_manager', 'SURVEY_MANAGER'),
+    (1, 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
     (1, 'data_engineer', 'DATA_ENGINEER');
 
 -- Create study_organization table
@@ -101,7 +107,7 @@ CREATE TABLE study_organization (
 
 -- Insert dummy study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id) VALUES
-    (1, 1, 'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER', 'study_owner', 1);
+    (1, 1, 'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST', 'study_owner', 1);
 
 -- Create FeatureSet table
 CREATE TABLE featureset (
@@ -357,7 +363,7 @@ INSERT INTO model (learning_process_id, study_id, name, version, tag, model_type
     (1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
      'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
      'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
-     '2023-01-01 00:00:00', 'study_owner', '2023-01-02 00:00:00', 'study_owner');
+     '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist');
 
 
 -- Create deployment_environment table
@@ -390,7 +396,7 @@ CREATE TABLE model_deployment (
 
 -- Insert dummy model_deployment
 INSERT INTO model_deployment (model_id, environment_id, tags, identified_failures, status, created_at, created_by, last_updated_at, last_updated_by) VALUES
-    (1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 'study_owner', '2023-01-01 00:00:00', 'study_owner');
+    (1, 1, 'Production', 'Instances of false positives in predicting rare events.', 'RUNNING', '2023-01-01 00:00:00', 'data_scientist', '2023-01-01 00:00:00', 'data_scientist');
 
 -- Create passport table
 CREATE TABLE passport (
@@ -404,4 +410,4 @@ CREATE TABLE passport (
 
 -- Insert dummy passport
 INSERT INTO passport (deployment_id, created_at, created_by, approved_at, approved_by) VALUES
-    (1, '2023-01-01 00:00:00', 'study_owner', '2023-01-01 00:00:00', 'study_owner');
+    (1, '2023-01-01 00:00:00', 'quality_assurance_specialist', '2023-01-01 00:00:00', 'quality_assurance_specialist');
