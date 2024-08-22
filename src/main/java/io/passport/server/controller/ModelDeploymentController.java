@@ -44,14 +44,16 @@ public class ModelDeploymentController {
 
 
     /**
-     * Retrieves all model deployments or a specific model deployment by environment ID if provided.
+     * Retrieves all model deployments or a specific model deployment by environment ID or studyId if provided.
      * @param environmentId Optional ID of the environment to filter model deployments.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return A response entity containing a list of model deployments and the total count in the headers.
      */
     @GetMapping()
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
             @RequestParam(required = false) Long environmentId,
+            @RequestParam(required = false) Long studyId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
@@ -61,13 +63,13 @@ public class ModelDeploymentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<ModelDeployment> modelDeployments;
+        List<ModelDeployment> modelDeployments = List.of();
 
         if (environmentId != null) {
             Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
             modelDeployments = modelDeployment.map(List::of).orElseGet(List::of);
-        } else {
-            modelDeployments = this.modelDeploymentService.getAllModelDeployments();
+        } else if(studyId != null) {
+            modelDeployments = this.modelDeploymentService.getAllModelDeploymentsByStudyId(studyId);
         }
 
         long totalCount = modelDeployments.size();

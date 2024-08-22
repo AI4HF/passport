@@ -33,11 +33,12 @@ public class ModelDeploymentService {
     }
 
     /**
-     * Return all model deployments
+     * Return all model deployments by studyId
+     * @param studyId ID of the study
      * @return
      */
-    public List<ModelDeployment> getAllModelDeployments() {
-        return modelDeploymentRepository.findAll();
+    public List<ModelDeployment> getAllModelDeploymentsByStudyId(Long studyId) {
+        return modelDeploymentRepository.findAllByStudyId(studyId);
     }
 
 
