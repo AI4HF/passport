@@ -24,11 +24,15 @@ public class Parameter {
     @Column(name = "parameter_id")
     private Long parameterId;
 
+    @Column(name = "study_id")
+    private Long studyId;
+
     @Column(name = "name")
     private String name;
 
     @Column(name = "data_type")
     private String dataType;
+
 
     @Column(name = "description")
     private String description;

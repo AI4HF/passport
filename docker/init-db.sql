@@ -231,13 +231,14 @@ INSERT INTO feature_dataset_characteristic (dataset_id, feature_id, characterist
 CREATE TABLE parameter (
                             parameter_id SERIAL PRIMARY KEY,
                             name VARCHAR(255),
+                            study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
                             description TEXT,
                             data_type VARCHAR(255)
 );
 
 -- Insert dummy parameter
-INSERT INTO parameter (name, description, data_type) VALUES
-    ('test_parameter', 'test_description', 'string');
+INSERT INTO parameter (name, study_id, description, data_type) VALUES
+    ('test_parameter', 1, 'test_description', 'string');
 
 
 -- Create algorithm table

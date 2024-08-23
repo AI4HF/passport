@@ -43,12 +43,14 @@ public class ParameterController {
     }
 
     /**
-     * Read all parameters
+     * Read all parameters by StudyId
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Parameter>> getAllParameters(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam Long studyId,
+                                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
@@ -57,7 +59,7 @@ public class ParameterController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Parameter> parameters = this.parameterService.getAllParameters();
+        List<Parameter> parameters = this.parameterService.findParametersByStudyId(studyId);
 
         long totalCount = parameters.size();
 
