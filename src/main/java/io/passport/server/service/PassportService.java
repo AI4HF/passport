@@ -44,12 +44,20 @@ public class PassportService {
     }
 
     /**
+     * Find a passport by studyId
+     * @param studyId ID of the related study
+     * @return
+     */
+    public List<Passport> findPassportsByStudyId(Long studyId) {
+        return passportRepository.findAllByStudyId(studyId);
+    }
+
+    /**
      * Save a passport
      * @param passport passport to be saved
      * @return
      */
     public Passport savePassport(Passport passport) {
-        // Set the creation and approval time
         Instant now = Instant.now();
         passport.setCreatedAt(now);
         passport.setApprovedAt(now);

@@ -47,7 +47,7 @@ public class PassportController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Passport>> getAllPassports(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
@@ -56,7 +56,7 @@ public class PassportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Passport> passports = this.passportService.getAllPassports();
+        List<Passport> passports = this.passportService.findPassportsByStudyId(studyId);
 
         long totalCount = passports.size();
 

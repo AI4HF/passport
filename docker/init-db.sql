@@ -403,6 +403,7 @@ INSERT INTO model_deployment (model_id, environment_id, tags, identified_failure
 CREATE TABLE passport (
                                   passport_id SERIAL PRIMARY KEY,
                                   deployment_id INTEGER REFERENCES model_deployment(deployment_id) ON DELETE CASCADE,
+                                  study_id INTEGER REFERENCES study(study_id) ON DELETE CASCADE,
                                   created_at TIMESTAMP,
                                   created_by VARCHAR(255) REFERENCES personnel(person_id) ON DELETE CASCADE,
                                   approved_at TIMESTAMP,
@@ -410,5 +411,5 @@ CREATE TABLE passport (
 );
 
 -- Insert dummy passport
-INSERT INTO passport (deployment_id, created_at, created_by, approved_at, approved_by) VALUES
-    (1, '2023-01-01 00:00:00', 'quality_assurance_specialist', '2023-01-01 00:00:00', 'quality_assurance_specialist');
+INSERT INTO passport (deployment_id, study_id, created_at, created_by, approved_at, approved_by) VALUES
+    (1, 1, '2023-01-01 00:00:00', 'quality_assurance_specialist', '2023-01-01 00:00:00', 'quality_assurance_specialist');

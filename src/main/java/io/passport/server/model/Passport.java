@@ -20,6 +20,9 @@ public class Passport {
     @Column(name = "passport_id")
     private Long passportId;
 
+    @Column(name = "study_id")
+    private Long studyId;
+
     @Column(name= "deployment_id")
     private Long deploymentId;
 
