@@ -41,12 +41,12 @@ public class StudyController {
     }
 
     /**
-     * Read all studies
+     * Read all studies or studies with a specific owner.
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Study>> getAllStudies(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) String owner,@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER, Role.DATA_SCIENTIST);
@@ -55,7 +55,14 @@ public class StudyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Study> studies = this.studyService.getAllStudies();
+        List<Study> studies;
+
+        if (owner != null) {
+            studies = this.studyService.findStudyByOwner(owner);
+        } else {
+            studies = this.studyService.getAllStudies();
+        }
+
 
         long totalCount = studies.size();
 
