@@ -82,7 +82,6 @@ public class FeatureService {
             feature.setUnits(updatedFeature.getUnits());
             feature.setEquipment(updatedFeature.getEquipment());
             feature.setDataCollection(updatedFeature.getDataCollection());
-            feature.setCreatedBy(updatedFeature.getCreatedBy());
             feature.setLastUpdatedAt(Instant.now());
             feature.setLastUpdatedBy(updatedFeature.getLastUpdatedBy());
             Feature savedFeature = featureRepository.save(feature);

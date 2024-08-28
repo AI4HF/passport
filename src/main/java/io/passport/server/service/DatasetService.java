@@ -107,7 +107,6 @@ public class DatasetService {
             dataset.setReferenceEntity(updatedDataset.getReferenceEntity());
             dataset.setNumOfRecords(updatedDataset.getNumOfRecords());
             dataset.setSynthetic(updatedDataset.getSynthetic());
-            dataset.setCreatedBy(updatedDataset.getCreatedBy());
             dataset.setLastUpdatedAt(Instant.now());
             dataset.setLastUpdatedBy(updatedDataset.getLastUpdatedBy());
             Dataset savedDataset = datasetRepository.save(dataset);

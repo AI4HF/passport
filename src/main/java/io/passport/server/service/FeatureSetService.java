@@ -75,7 +75,6 @@ public class FeatureSetService {
             featureSet.setTitle(updatedFeatureSet.getTitle());
             featureSet.setFeaturesetURL(updatedFeatureSet.getFeaturesetURL());
             featureSet.setDescription(updatedFeatureSet.getDescription());
-            featureSet.setCreatedBy(updatedFeatureSet.getCreatedBy());
             featureSet.setLastUpdatedAt(Instant.now());
             featureSet.setLastUpdatedBy(updatedFeatureSet.getLastUpdatedBy());
             FeatureSet savedFeatureSet = featureSetRepository.save(featureSet);
