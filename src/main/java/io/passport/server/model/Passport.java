@@ -2,9 +2,11 @@ package io.passport.server.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Map;
 
 /**
  * Passport model used for the Passport Management tasks.
@@ -23,7 +25,7 @@ public class Passport {
     @Column(name = "study_id")
     private Long studyId;
 
-    @Column(name= "deployment_id")
+    @Column(name = "deployment_id")
     private Long deploymentId;
 
     @Column(name = "created_at")
@@ -38,5 +40,8 @@ public class Passport {
     @Column(name = "approved_by")
     private String approvedBy;
 
+    @Column(name = "details_json", columnDefinition = "jsonb")
+    @Convert(converter = JsonConverter.class)
+    @ColumnTransformer(write = "?::jsonb")
+    private Map<String, Object> detailsJson;
 }
-

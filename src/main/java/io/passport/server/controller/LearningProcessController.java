@@ -51,7 +51,7 @@ public class LearningProcessController {
                                                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
