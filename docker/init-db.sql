@@ -490,8 +490,10 @@ CREATE TABLE passport
     created_at    TIMESTAMP,
     created_by    VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     approved_at   TIMESTAMP,
-    approved_by   VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
+    approved_by   VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    details_json  JSONB
 );
+
 
 -- Insert dummy passport
 INSERT INTO passport (deployment_id, study_id, created_at, created_by, approved_at, approved_by)
