@@ -1,7 +1,6 @@
 package io.passport.server.service;
 
 import io.passport.server.model.*;
-import io.passport.server.repository.PassportDetailsRepository;
 import io.passport.server.repository.PassportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +21,10 @@ public class PassportService {
      * Passport repo access for database management.
      */
     private final PassportRepository passportRepository;
-    private PassportDetailsRepository passportDetailsRepository;
+
+    /**
+     * Passport pdf generation data.
+     */
     @Autowired
     private ModelDeploymentService deploymentService;
 
@@ -73,42 +74,12 @@ public class PassportService {
     }
 
     /**
-     * Return all passports
-     * @return
-     */
-    public List<Passport> getAllPassports() {
-        return passportRepository.findAll();
-    }
-
-    /**
-     * Find a passport by passportId
-     * @param passportId ID of the passport
-     * @return
-     */
-    public Optional<Passport> findPassportByPassportId(Long passportId) {
-        return passportRepository.findById(passportId);
-    }
-
-    /**
      * Find a passport by studyId
      * @param studyId ID of the related study
      * @return
      */
     public List<Passport> findPassportsByStudyId(Long studyId) {
         return passportRepository.findAllByStudyId(studyId);
-    }
-
-    /**
-     * Save a passport
-     * @param passport passport to be saved
-     * @return
-     */
-    public Passport savePassport(Passport passport) {
-        Instant now = Instant.now();
-        passport.setCreatedAt(now);
-        passport.setApprovedAt(now);
-
-        return passportRepository.save(passport);
     }
 
     /**
@@ -123,14 +94,6 @@ public class PassportService {
         }else{
             return false;
         }
-    }
-
-    public void savePassportDetails(PassportDetailsDTO passportDetailsDTO) {
-        passportDetailsRepository.save(passportDetailsDTO);
-    }
-
-    public Optional<PassportDetailsDTO> findPassportDetailsByPassportId(Long passportId) {
-        return passportDetailsRepository.findByPassport_PassportId(passportId);
     }
 
     /**
@@ -172,7 +135,9 @@ public class PassportService {
                 .orElseThrow(() -> new RuntimeException("Passport not found"));
     }
 
-
+    /**
+     * Fetch methods to obtain pdf generation data
+     */
     private ModelDeployment fetchDeploymentDetails(Passport passport) {
         return deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId()).orElseThrow(() -> new RuntimeException("Study not found"));
     }
