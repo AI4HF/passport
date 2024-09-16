@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Passport repository for database management.
+ */
 @Repository
 public interface PassportRepository extends JpaRepository<Passport, Long> {
     List<Passport> findAllByStudyId(Long studyId);

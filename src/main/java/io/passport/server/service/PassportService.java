@@ -139,20 +139,49 @@ public class PassportService {
      * Fetch methods to obtain pdf generation data
      */
     private ModelDeployment fetchDeploymentDetails(Passport passport) {
-        return deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId()).orElseThrow(() -> new RuntimeException("Study not found"));
+        try {
+            return deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
+                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
+        } catch (RuntimeException e) {
+            System.err.println("Error fetching Model Deployment: " + e.getMessage());
+            throw e;
+        }
     }
 
     private DeploymentEnvironment fetchEnvironmentDetails(Passport passport) {
-        return environmentService.findDeploymentEnvironmentById(deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId()).orElseThrow(() -> new RuntimeException("Study not found")).getEnvironmentId()).orElseThrow(()->new RuntimeException("Study not found"));
+        try {
+            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
+                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
+            return environmentService.findDeploymentEnvironmentById(deployment.getEnvironmentId())
+                    .orElseThrow(() -> new RuntimeException("Deployment Environment not found"));
+        } catch (RuntimeException e) {
+            System.err.println("Error fetching Deployment Environment: " + e.getMessage());
+            throw e;
+        }
     }
 
     private Model fetchModelDetails(Passport passport) {
-        return modelService.findModelById(deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId()).orElseThrow(() -> new RuntimeException("Study not found")).getModelId()).orElseThrow(()->new RuntimeException("Study not found"));
+        try {
+            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
+                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
+            return modelService.findModelById(deployment.getModelId())
+                    .orElseThrow(() -> new RuntimeException("Model not found"));
+        } catch (RuntimeException e) {
+            System.err.println("Error fetching Model: " + e.getMessage());
+            throw e;
+        }
     }
 
     private Study fetchStudyDetails(Passport passport) {
-        return studyService.findStudyByStudyId(passport.getStudyId()).orElseThrow(() -> new RuntimeException("Study not found"));
+        try {
+            return studyService.findStudyByStudyId(passport.getStudyId())
+                    .orElseThrow(() -> new RuntimeException("Study not found"));
+        } catch (RuntimeException e) {
+            System.err.println("Error fetching Study: " + e.getMessage());
+            throw e;
+        }
     }
+
 
     private List<Parameter> fetchParameters(Passport passport) {
         return parameterService.findParametersByStudyId(passport.getStudyId());

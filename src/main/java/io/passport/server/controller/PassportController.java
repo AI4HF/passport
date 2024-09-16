@@ -100,7 +100,15 @@ public class PassportController {
      * @return The created Passport.
      */
     @PostMapping
-    public ResponseEntity<Passport> createPassport(@RequestBody Passport passport) {
+    public ResponseEntity<Passport> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Passport savedPassport = passportService.createPassport(passport);
         return ResponseEntity.status(201).body(savedPassport);
     }
@@ -112,7 +120,15 @@ public class PassportController {
      * @return The Passport object.
      */
     @GetMapping("/{passportId}")
-    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId) {
+    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Passport passport = passportService.getPassportById(passportId);
         return ResponseEntity.ok(passport);
     }
