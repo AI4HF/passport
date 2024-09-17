@@ -494,8 +494,110 @@ CREATE TABLE passport
     details_json  JSONB
 );
 
-
--- Insert dummy passport
-INSERT INTO passport (deployment_id, study_id, created_at, created_by, approved_at, approved_by)
-VALUES (1, 1, '2023-01-01 00:00:00', 'quality_assurance_specialist', '2023-01-01 00:00:00',
-        'quality_assurance_specialist');
+-- Insert dummy passport with proper example data in details_json
+INSERT INTO passport (deployment_id, study_id, created_at, created_by, approved_at, approved_by, details_json)
+VALUES
+    (1, 1, '2023-01-01 00:00:00', 'quality_assurance_specialist', '2023-01-01 00:00:00', 'quality_assurance_specialist',
+     '{
+       "deploymentDetails": {
+         "tags": "Production",
+         "identifiedFailures": "Instances of false positives in predicting rare events.",
+         "status": "RUNNING"
+       },
+       "environmentDetails": {
+         "title": "Production Environment",
+         "description": "Main Production Environment",
+         "hardwareProperties": "Disk: 512 GB, RAM: 32 GB",
+         "softwareProperties": "OS: Windows, Cloud Services: Google Cloud Platform",
+         "connectivityDetails": "Secure HTTPS communication is established using TLS/SSL protocols."
+       },
+       "modelDetails": {
+         "name": "test_name",
+         "version": "test_version",
+         "modelType": "test_model_type",
+         "productIdentifier": "test_product_identifier"
+       },
+       "studyDetails": {
+         "name": "Risk score for acute HF in the emergency department",
+         "description": "Predicting risk factors for acute HF…",
+         "objectives": "Evaluating the risk prediction for acute HF",
+         "ethics": "Approved by Ethical Board on 2023-01-15, Application Number: 123"
+       },
+       "parameters": [
+         {
+           "name": "test_parameter",
+           "description": "test_description",
+           "dataType": "string"
+         }
+       ],
+       "populationDetails": [
+         {
+           "populationUrl": "https://datatools4heart.eu/cohorts/study1",
+           "description": "Patients hospitalized with a primary discharge diagnosis of heart failure.",
+           "characteristics": "500 participants, 70% aged 20-30 years."
+         }
+       ],
+       "surveys": [
+         {
+           "question": "Is this service tested by any third party?",
+           "answer": "Yes",
+           "category": "Testing"
+         }
+       ],
+       "experiments": [
+         {
+           "researchQuestion": "A risk score prediction on subsequent HF rehospitalization within 7 days after discharge."
+         }
+       ],
+       "datasetsWithLearningDatasets": [
+         {
+           "dataset": {
+             "title": "HF Risk Dataset",
+             "description": "Dataset for HF Risk Prediction factors",
+             "version": "0.1",
+             "referenceEntity": "Encounter",
+             "numOfRecords": 1562,
+             "synthetic": false
+           },
+           "learningDatasets": [
+             {
+               "description": "Finalized learning dataset for HF Risk Prediction Model Teaching"
+             }
+           ]
+         }
+       ],
+       "featureSetsWithFeatures": [
+         {
+           "featureSet": {
+             "title": "Feature set for AI4HFsubstudy 2",
+             "description": "Feature set containing feature information used in risk score prediction for acute HF."
+           },
+           "features": [
+             {
+               "title": "age",
+               "description": "Age of the patient at the time of admission",
+               "dataType": "integer",
+               "featureType": "numerical",
+               "mandatory": true,
+               "isUnique": false,
+               "units": "years",
+               "dataCollection": "Automatic Collection"
+             }
+           ]
+         }
+       ],
+       "learningProcessesWithStages": [
+         {
+           "learningProcess": {
+             "description": "test_description"
+           },
+           "learningStages": [
+             {
+               "learningStageName": "test_name",
+               "description": "test_description",
+               "datasetPercentage": 50
+             }
+           ]
+         }
+       ]
+     }');
