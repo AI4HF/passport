@@ -103,29 +103,30 @@ public class PassportService {
      * @return The saved Passport.
      */
     public Passport createPassport(Passport passport) {
-        // Populate the detailsJson field with the additional information
-        Map<String, Object> detailsJson = new HashMap<>();
-        detailsJson.put("deploymentDetails", fetchDeploymentDetails(passport));
-        detailsJson.put("environmentDetails", fetchEnvironmentDetails(passport));
-        detailsJson.put("modelDetails", fetchModelDetails(passport));
-        detailsJson.put("studyDetails", fetchStudyDetails(passport));
-        detailsJson.put("parameters", fetchParameters(passport));
-        detailsJson.put("populationDetails", fetchPopulationDetails(passport));
-        detailsJson.put("surveys", fetchSurveys(passport));
-        detailsJson.put("experiments", fetchExperiments(passport));
-        detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passport));
-        detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passport));
-        detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passport));
+        try {
+            Map<String, Object> detailsJson = new HashMap<>();
+            detailsJson.put("deploymentDetails", fetchDeploymentDetails(passport));
+            detailsJson.put("environmentDetails", fetchEnvironmentDetails(passport));
+            detailsJson.put("modelDetails", fetchModelDetails(passport));
+            detailsJson.put("studyDetails", fetchStudyDetails(passport));
+            detailsJson.put("parameters", fetchParameters(passport));
+            detailsJson.put("populationDetails", fetchPopulationDetails(passport));
+            detailsJson.put("surveys", fetchSurveys(passport));
+            detailsJson.put("experiments", fetchExperiments(passport));
+            detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passport));
+            detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passport));
+            detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passport));
 
-        // Set the detailsJson in the passport entity
-        passport.setDetailsJson(detailsJson);
+            passport.setDetailsJson(detailsJson);
+            passport.setCreatedAt(Instant.now());
+            passport.setApprovedAt(Instant.now());
 
-        // Set timestamps and save passport
-        passport.setCreatedAt(Instant.now());
-        passport.setApprovedAt(Instant.now());
-
-        return passportRepository.save(passport);
+            return passportRepository.save(passport);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error creating passport: " + e.getMessage());
+        }
     }
+
 
     /**
      * Fetch Passport by ID.
@@ -167,8 +168,7 @@ public class PassportService {
             return modelService.findModelById(deployment.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
         } catch (RuntimeException e) {
-            System.err.println("Error fetching Model: " + e.getMessage());
-            throw e;
+            throw new RuntimeException("Error fetching Model: " + e.getMessage());
         }
     }
 
@@ -177,61 +177,88 @@ public class PassportService {
             return studyService.findStudyByStudyId(passport.getStudyId())
                     .orElseThrow(() -> new RuntimeException("Study not found"));
         } catch (RuntimeException e) {
-            System.err.println("Error fetching Study: " + e.getMessage());
-            throw e;
+            throw new RuntimeException("Error fetching Study: " + e.getMessage());
         }
     }
 
-
     private List<Parameter> fetchParameters(Passport passport) {
-        return parameterService.findParametersByStudyId(passport.getStudyId());
+        try {
+            return parameterService.findParametersByStudyId(passport.getStudyId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Parameters: " + e.getMessage());
+        }
     }
 
     private List<Population> fetchPopulationDetails(Passport passport) {
-        return populationService.findPopulationByStudyId(passport.getStudyId());
+        try {
+            return populationService.findPopulationByStudyId(passport.getStudyId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Population details: " + e.getMessage());
+        }
     }
 
     private List<Survey> fetchSurveys(Passport passport) {
-        return surveyService.findSurveysByStudyId(passport.getStudyId());
+        try {
+            return surveyService.findSurveysByStudyId(passport.getStudyId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Surveys: " + e.getMessage());
+        }
     }
 
     private List<Experiment> fetchExperiments(Passport passport) {
-        return experimentService.findExperimentByStudyId(passport.getStudyId());
+        try {
+            return experimentService.findExperimentByStudyId(passport.getStudyId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
+        }
     }
 
     private List<Map<String, Object>> fetchFeatureSetsWithFeatures(Passport passport) {
-        List<FeatureSet> featureSets = featureSetService.getAllFeatureSetsByStudyId(passport.getStudyId());
-        return featureSets.stream()
-                .map(featureSet -> {
-                    Map<String, Object> featureSetWithFeatures = new HashMap<>();
-                    featureSetWithFeatures.put("featureSet", featureSet);
-                    featureSetWithFeatures.put("features", featureService.findByFeaturesetId(featureSet.getFeaturesetId()));
-                    return featureSetWithFeatures;
-                })
-                .collect(Collectors.toList());
+        try {
+            List<FeatureSet> featureSets = featureSetService.getAllFeatureSetsByStudyId(passport.getStudyId());
+            return featureSets.stream()
+                    .map(featureSet -> {
+                        Map<String, Object> featureSetWithFeatures = new HashMap<>();
+                        featureSetWithFeatures.put("featureSet", featureSet);
+                        featureSetWithFeatures.put("features", featureService.findByFeaturesetId(featureSet.getFeaturesetId()));
+                        return featureSetWithFeatures;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Feature Sets and Features: " + e.getMessage());
+        }
     }
 
     private List<Map<String, Object>> fetchDatasetsWithLearningDatasets(Passport passport) {
-        List<Dataset> datasets = datasetService.getAllDatasetsByStudyId(passport.getStudyId());
-        return datasets.stream()
-                .map(dataset -> {
-                    Map<String, Object> datasetWithLearningDatasets = new HashMap<>();
-                    datasetWithLearningDatasets.put("dataset", dataset);
-                    datasetWithLearningDatasets.put("learningDatasets", learningDatasetService.findByDatasetId(dataset.getDatasetId()));
-                    return datasetWithLearningDatasets;
-                })
-                .collect(Collectors.toList());
+        try {
+            List<Dataset> datasets = datasetService.getAllDatasetsByStudyId(passport.getStudyId());
+            return datasets.stream()
+                    .map(dataset -> {
+                        Map<String, Object> datasetWithLearningDatasets = new HashMap<>();
+                        datasetWithLearningDatasets.put("dataset", dataset);
+                        datasetWithLearningDatasets.put("learningDatasets", learningDatasetService.findByDatasetId(dataset.getDatasetId()));
+                        return datasetWithLearningDatasets;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Datasets and Learning Datasets: " + e.getMessage());
+        }
     }
 
     private List<Map<String, Object>> fetchLearningProcessesWithStages(Passport passport) {
-        List<LearningProcess> learningProcesses = learningProcessService.getAllLearningProcessByStudyId(passport.getStudyId());
-        return learningProcesses.stream()
-                .map(learningProcess -> {
-                    Map<String, Object> learningProcessWithStages = new HashMap<>();
-                    learningProcessWithStages.put("learningProcess", learningProcess);
-                    learningProcessWithStages.put("learningStages", learningStageService.findLearningStagesByProcessId(learningProcess.getLearningProcessId()));
-                    return learningProcessWithStages;
-                })
-                .collect(Collectors.toList());
+        try {
+            List<LearningProcess> learningProcesses = learningProcessService.getAllLearningProcessByStudyId(passport.getStudyId());
+            return learningProcesses.stream()
+                    .map(learningProcess -> {
+                        Map<String, Object> learningProcessWithStages = new HashMap<>();
+                        learningProcessWithStages.put("learningProcess", learningProcess);
+                        learningProcessWithStages.put("learningStages", learningStageService.findLearningStagesByProcessId(learningProcess.getLearningProcessId()));
+                        return learningProcessWithStages;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Learning Processes and Stages: " + e.getMessage());
+        }
     }
+
 }

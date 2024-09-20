@@ -100,18 +100,24 @@ public class PassportController {
      * @return The created Passport.
      */
     @PostMapping
-    public ResponseEntity<Passport> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        try {
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+            // Check role of the user
+            if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            Passport savedPassport = passportService.createPassport(passport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
+        } catch (RuntimeException e) {
+            log.error("Error while creating passport: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while creating passport: " + e.getMessage());
         }
-
-        Passport savedPassport = passportService.createPassport(passport);
-        return ResponseEntity.status(201).body(savedPassport);
     }
+
 
     /**
      * Endpoint to retrieve Passport by passportId.
