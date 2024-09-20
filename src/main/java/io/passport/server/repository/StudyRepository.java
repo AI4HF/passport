@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * Study repository for database management.
@@ -17,4 +17,6 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
     @Query("SELECT new Study(s.id, s.name, s.description, s.objectives, s.ethics, s.owner)  " +
             "FROM Dataset d, Study s, Population p WHERE d.populationId = p.populationId AND p.studyId = s.id AND d.datasetId = :datasetId")
     Study findByDatasetId(@Param("datasetId") Long datasetId);
+
+    List<Study> findByOwner(String owner);
 }

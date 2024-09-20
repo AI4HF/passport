@@ -52,7 +52,7 @@ public class ExperimentController {
                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER);
+        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

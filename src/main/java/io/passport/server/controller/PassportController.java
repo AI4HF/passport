@@ -1,9 +1,7 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Passport;
-import io.passport.server.model.Role;
-import io.passport.server.service.PassportService;
-import io.passport.server.service.RoleCheckerService;
+import io.passport.server.model.*;
+import io.passport.server.service.*;
 import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class which stores the generated HTTP requests related to passport operations.
@@ -47,7 +44,7 @@ public class PassportController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Passport>> getAllPassports(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
         List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
@@ -56,7 +53,7 @@ public class PassportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Passport> passports = this.passportService.getAllPassports();
+        List<Passport> passports = this.passportService.findPassportsByStudyId(studyId);
 
         long totalCount = passports.size();
 
@@ -64,58 +61,6 @@ public class PassportController {
         headers.add("X-Total-Count", String.valueOf(totalCount));
 
         return ResponseEntity.ok().headers(headers).body(passports);
-    }
-
-    /**
-     * Read a passport by passportId
-     * @param passportId ID of the passport
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
-    @GetMapping("/{passportId}")
-    public ResponseEntity<?> getPassport(@PathVariable Long passportId,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        Optional<Passport> passport = this.passportService.findPassportByPassportId(passportId);
-
-        if(passport.isPresent()) {
-            return ResponseEntity.ok().body(passport.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
-     * Create Passport.
-     * @param passport Passport model instance to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
-    @PostMapping()
-    public ResponseEntity<?> createPassport(@RequestBody Passport passport,
-                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
-            Passport savedPassport = this.passportService.savePassport(passport);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
-        }catch(Exception e){
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
     }
 
     /**
@@ -147,4 +92,52 @@ public class PassportController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    /**
+     * Endpoint to create a Passport and populate detailsJson field.
+     *
+     * @param passport The passport object with basic info (deploymentId, studyId, etc.).
+     * @return The created Passport.
+     */
+    @PostMapping
+    public ResponseEntity<?> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        try {
+            // Allowed roles for this endpoint
+            List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+            // Check role of the user
+            if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            Passport savedPassport = passportService.createPassport(passport);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
+        } catch (RuntimeException e) {
+            log.error("Error while creating passport: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while creating passport: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Endpoint to retrieve Passport by passportId.
+     *
+     * @param passportId The ID of the passport.
+     * @return The Passport object.
+     */
+    @GetMapping("/{passportId}")
+    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Allowed roles for this endpoint
+        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Passport passport = passportService.getPassportById(passportId);
+        return ResponseEntity.ok(passport);
+    }
+
+
 }

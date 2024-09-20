@@ -103,7 +103,7 @@ public class AlgorithmController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of();
+            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -131,7 +131,7 @@ public class AlgorithmController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of();
+            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -161,7 +161,7 @@ public class AlgorithmController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of();
+            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
