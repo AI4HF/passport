@@ -40,6 +40,7 @@ public class Passport {
     @Column(name = "approved_by")
     private String approvedBy;
 
+    // TODO: Bad practice. Reflect on the method of storing passport details data. Think about storing it using the file system and providing a reference.
     @Column(name = "details_json", columnDefinition = "jsonb")
     @Convert(converter = JsonConverter.class)
     @ColumnTransformer(write = "?::jsonb")
