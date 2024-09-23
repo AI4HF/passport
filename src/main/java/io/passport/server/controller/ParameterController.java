@@ -36,6 +36,11 @@ public class ParameterController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+
     @Autowired
     public ParameterController(ParameterService parameterService, RoleCheckerService roleCheckerService) {
         this.parameterService = parameterService;
@@ -52,8 +57,6 @@ public class ParameterController {
     public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam Long studyId,
                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -79,8 +82,6 @@ public class ParameterController {
     public ResponseEntity<?> getParameterById(@PathVariable Long parameterId,
                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -107,8 +108,6 @@ public class ParameterController {
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -135,8 +134,6 @@ public class ParameterController {
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -165,8 +162,6 @@ public class ParameterController {
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

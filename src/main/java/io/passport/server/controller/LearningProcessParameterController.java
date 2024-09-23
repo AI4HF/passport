@@ -38,6 +38,11 @@ public class LearningProcessParameterController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+
     @Autowired
     public LearningProcessParameterController(LearningProcessParameterService learningProcessParameterService, RoleCheckerService roleCheckerService) {
         this.learningProcessParameterService = learningProcessParameterService;
@@ -57,8 +62,6 @@ public class LearningProcessParameterController {
             @RequestParam(required = false) Long parameterId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -103,8 +106,6 @@ public class LearningProcessParameterController {
                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -134,8 +135,6 @@ public class LearningProcessParameterController {
             @RequestBody LearningProcessParameter updatedLearningProcessParameter,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -171,8 +170,6 @@ public class LearningProcessParameterController {
             @RequestParam Long parameterId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

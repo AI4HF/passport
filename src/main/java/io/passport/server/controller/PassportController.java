@@ -32,6 +32,11 @@ public class PassportController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+
     @Autowired
     public PassportController(PassportService passportService, RoleCheckerService roleCheckerService) {
         this.passportService = passportService;
@@ -46,8 +51,6 @@ public class PassportController {
     @GetMapping()
     public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -74,8 +77,6 @@ public class PassportController {
                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -102,8 +103,7 @@ public class PassportController {
     @PostMapping
     public ResponseEntity<?> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
+
             // Check role of the user
             if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -128,8 +128,6 @@ public class PassportController {
     @GetMapping("/{passportId}")
     public ResponseEntity<Passport> getPassport(@PathVariable Long passportId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

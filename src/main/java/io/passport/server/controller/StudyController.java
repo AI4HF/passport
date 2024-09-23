@@ -34,6 +34,11 @@ public class StudyController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST, Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+
     @Autowired
     public StudyController(StudyService studyService, RoleCheckerService roleCheckerService) {
         this.studyService = studyService;
@@ -48,8 +53,6 @@ public class StudyController {
     @GetMapping()
     public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) String owner,@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -81,8 +84,6 @@ public class StudyController {
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER, Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -108,9 +109,9 @@ public class StudyController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -134,9 +135,9 @@ public class StudyController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -163,9 +164,9 @@ public class StudyController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 

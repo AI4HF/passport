@@ -35,6 +35,11 @@ public class FeatureController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+
     @Autowired
     public FeatureController(FeatureService featureService, RoleCheckerService roleCheckerService) {
         this.featureService = featureService;
@@ -52,8 +57,6 @@ public class FeatureController {
             @RequestParam(required = false) Long featuresetId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -85,8 +88,6 @@ public class FeatureController {
     public ResponseEntity<?> getFeature(@PathVariable Long featureId,
                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -112,8 +113,6 @@ public class FeatureController {
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -140,8 +139,6 @@ public class FeatureController {
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -170,8 +167,6 @@ public class FeatureController {
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -35,6 +35,11 @@ public class SurveyController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+
     @Autowired
     public SurveyController(SurveyService surveyService, RoleCheckerService roleCheckerService) {
         this.surveyService = surveyService;
@@ -51,8 +56,6 @@ public class SurveyController {
     public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") Long surveyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER, Role.STUDY_OWNER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -77,8 +80,6 @@ public class SurveyController {
     public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId", required = false) Long studyId,
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER, Role.STUDY_OWNER, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -106,9 +107,9 @@ public class SurveyController {
                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
         // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER);
+        List<Role> lesserAllowedRoles = List.of(Role.SURVEY_MANAGER);
         // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -135,9 +136,9 @@ public class SurveyController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER);
+            List<Role> lesserAllowedRoles = List.of(Role.SURVEY_MANAGER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -165,9 +166,9 @@ public class SurveyController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.SURVEY_MANAGER);
+            List<Role> lesserAllowedRoles = List.of(Role.SURVEY_MANAGER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 

@@ -33,6 +33,11 @@ public class LearningDatasetController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
+
     @Autowired
     public LearningDatasetController(LearningDatasetService learningDatasetService, RoleCheckerService roleCheckerService) {
         this.learningDatasetService = learningDatasetService;
@@ -49,8 +54,6 @@ public class LearningDatasetController {
     public ResponseEntity<?> getLearningDataset(@PathVariable Long learningDatasetId,
                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -80,8 +83,6 @@ public class LearningDatasetController {
             @RequestParam(required = false) Long studyId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -114,8 +115,6 @@ public class LearningDatasetController {
                                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -144,8 +143,6 @@ public class LearningDatasetController {
     ) {
         try {
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -179,8 +176,6 @@ public class LearningDatasetController {
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

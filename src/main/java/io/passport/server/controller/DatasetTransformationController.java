@@ -35,6 +35,11 @@ public class DatasetTransformationController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+
     @Autowired
     public DatasetTransformationController(DatasetTransformationService datasetTransformationService, RoleCheckerService roleCheckerService) {
         this.datasetTransformationService = datasetTransformationService;
@@ -49,8 +54,6 @@ public class DatasetTransformationController {
     @GetMapping()
     public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -76,8 +79,6 @@ public class DatasetTransformationController {
     public ResponseEntity<?> getDatasetTransformation(@PathVariable Long dataTransformationId,
                                                       @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -131,8 +132,6 @@ public class DatasetTransformationController {
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -161,8 +160,6 @@ public class DatasetTransformationController {
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -34,6 +34,11 @@ public class ExperimentController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER);
+
     @Autowired
     public ExperimentController(ExperimentService experimentService, RoleCheckerService roleCheckerService) {
         this.experimentService = experimentService;
@@ -51,8 +56,6 @@ public class ExperimentController {
     public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId", required = false) Long studyId,
                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -83,8 +86,6 @@ public class ExperimentController {
                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
 
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

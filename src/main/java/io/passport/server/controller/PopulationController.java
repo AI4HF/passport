@@ -36,6 +36,11 @@ public class PopulationController {
      */
     private final RoleCheckerService roleCheckerService;
 
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
+
     @Autowired
     public PopulationController(PopulationService populationService, RoleCheckerService roleCheckerService) {
         this.populationService = populationService;
@@ -52,8 +57,6 @@ public class PopulationController {
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -78,8 +81,6 @@ public class PopulationController {
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId,
                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Allowed roles for this endpoint
-        List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST);
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -108,9 +109,9 @@ public class PopulationController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -135,9 +136,9 @@ public class PopulationController {
                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -166,9 +167,9 @@ public class PopulationController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
             // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
