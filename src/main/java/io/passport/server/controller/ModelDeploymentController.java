@@ -2,13 +2,17 @@ package io.passport.server.controller;
 
 
 import io.passport.server.model.ModelDeployment;
+import io.passport.server.model.Role;
 import io.passport.server.service.ModelDeploymentService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -27,28 +31,48 @@ public class ModelDeploymentController {
      */
     private final ModelDeploymentService modelDeploymentService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+
     @Autowired
-    public ModelDeploymentController(ModelDeploymentService modelDeploymentService) {
+    public ModelDeploymentController(ModelDeploymentService modelDeploymentService, RoleCheckerService roleCheckerService) {
         this.modelDeploymentService = modelDeploymentService;
+        this.roleCheckerService = roleCheckerService;
     }
 
 
     /**
-     * Retrieves all model deployments or a specific model deployment by environment ID if provided.
+     * Retrieves all model deployments or a specific model deployment by environment ID or studyId if provided.
      * @param environmentId Optional ID of the environment to filter model deployments.
+     * @param studyId ID of the study
+     * @param principal KeycloakPrincipal object that holds access token
      * @return A response entity containing a list of model deployments and the total count in the headers.
      */
     @GetMapping()
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
-            @RequestParam(required = false) Long environmentId) {
+            @RequestParam(required = false) Long environmentId,
+            @RequestParam(required = false) Long studyId,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        List<ModelDeployment> modelDeployments;
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<ModelDeployment> modelDeployments = List.of();
 
         if (environmentId != null) {
             Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
             modelDeployments = modelDeployment.map(List::of).orElseGet(List::of);
-        } else {
-            modelDeployments = this.modelDeploymentService.getAllModelDeployments();
+        } else if(studyId != null) {
+            modelDeployments = this.modelDeploymentService.getAllModelDeploymentsByStudyId(studyId);
         }
 
         long totalCount = modelDeployments.size();
@@ -63,10 +87,18 @@ public class ModelDeploymentController {
     /**
      * Read a model deployment by deploymentId
      * @param deploymentId ID of the model deployment
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{deploymentId}")
-    public ResponseEntity<?> getModelDeployment(@PathVariable Long deploymentId) {
+    public ResponseEntity<?> getModelDeployment(@PathVariable Long deploymentId,
+                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByDeploymentId(deploymentId);
 
         if(modelDeployment.isPresent()) {
@@ -80,11 +112,19 @@ public class ModelDeploymentController {
     /**
      * Create ModelDeployment.
      * @param modelDeployment ModelDeployment model instance to be created.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createModelDeployment(@RequestBody ModelDeployment modelDeployment) {
+    public ResponseEntity<?> createModelDeployment(@RequestBody ModelDeployment modelDeployment,
+                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             ModelDeployment savedModelDeployment = this.modelDeploymentService.saveModelDeployment(modelDeployment);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedModelDeployment);
         }catch(Exception e){
@@ -98,11 +138,20 @@ public class ModelDeploymentController {
      * Update ModelDeployment.
      * @param deploymentId ID of the model deployment that is to be updated.
      * @param updatedModelDeployment ModelDeployment model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{deploymentId}")
-    public ResponseEntity<?> updateModelDeployment(@PathVariable Long deploymentId, @RequestBody ModelDeployment updatedModelDeployment) {
+    public ResponseEntity<?> updateModelDeployment(@PathVariable Long deploymentId,
+                                                   @RequestBody ModelDeployment updatedModelDeployment,
+                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<ModelDeployment> savedModelDeployment = this.modelDeploymentService.updateModelDeployment(deploymentId, updatedModelDeployment);
             if(savedModelDeployment.isPresent()) {
                 return ResponseEntity.ok().body(savedModelDeployment);
@@ -119,11 +168,19 @@ public class ModelDeploymentController {
     /**
      * Delete by deployment ID.
      * @param deploymentId ID of the model deployment that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{deploymentId}")
-    public ResponseEntity<?> deleteModelDeployment(@PathVariable Long deploymentId) {
+    public ResponseEntity<?> deleteModelDeployment(@PathVariable Long deploymentId,
+                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.modelDeploymentService.deleteModelDeployment(deploymentId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();

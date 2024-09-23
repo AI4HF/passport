@@ -47,6 +47,69 @@
   "roles": {
     "realm": [
       {
+        "id": "2d5ab47b-3aa6-4de8-b187-ff135c83717d",
+        "name": "ML_ENGINEER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "29e5ae2c-0ea8-459e-a8a0-26954cff0a1f",
+        "name": "QUALITY_ASSURANCE_SPECIALIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "e67fb1b3-dd12-4a31-aa84-8c1fedf21075",
+        "name": "DATA_SCIENTIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "1a0922fe-f596-41de-a1cc-55861ebf4dfd",
+        "name": "STUDY_OWNER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "5b5f986b-f378-4d1d-bf57-aceb4bd15939",
+        "name": "SURVEY_MANAGER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "6e3979bc-b461-4574-9926-1546c0341d8f",
+        "name": "ORGANIZATION_ADMIN",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "6721c6cc-ac6f-447b-b621-7b688f648a50",
+        "name": "DATA_ENGINEER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "89cdc2ae-1f92-42f6-a503-1baa806074dc",
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -535,7 +598,8 @@
       ],
       "realmRoles": [
         "offline_access",
-        "uma_authorization"
+        "uma_authorization",
+        "ORGANIZATION_ADMIN"
       ],
       "clientRoles": {
         "account": [
@@ -556,6 +620,81 @@
           "Survey Manager"
         ]
       }
+    },
+    {
+      "id": "study_owner",
+      "username": "study_owner",
+      "enabled": true,
+      "email": "study_owner@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "study_owner"
+        }
+      ],
+      "realmRoles": [
+        "STUDY_OWNER"
+      ]
+    },
+    {
+      "id": "data_engineer",
+      "username": "data_engineer",
+      "enabled": true,
+      "email": "data_engineer@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_engineer"
+        }
+      ],
+      "realmRoles": [
+        "DATA_ENGINEER"
+      ]
+    },
+    {
+      "id": "data_scientist",
+      "username": "data_scientist",
+      "enabled": true,
+      "email": "data_scientist@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_scientist"
+        }
+      ],
+      "realmRoles": [
+        "DATA_SCIENTIST"
+      ]
+    },
+    {
+      "id": "survey_manager",
+      "username": "survey_manager",
+      "enabled": true,
+      "email": "survey_manager@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "survey_manager"
+        }
+      ],
+      "realmRoles": [
+        "SURVEY_MANAGER"
+      ]
+    },
+    {
+      "id": "quality_assurance_specialist",
+      "username": "quality_assurance_specialist",
+      "enabled": true,
+      "email": "quality_assurance_specialist@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "quality_assurance_specialist"
+        }
+      ],
+      "realmRoles": [
+        "QUALITY_ASSURANCE_SPECIALIST"
+      ]
     }
   ],
   "scopeMappings": [

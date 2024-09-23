@@ -20,6 +20,9 @@ public class LearningDataset {
     @Column(name = "dataset_id")
     private Long datasetId;
 
+    @Column(name = "study_id")
+    private Long studyId;
+
     @Column(name = "data_transformation_id")
     private Long dataTransformationId;
 

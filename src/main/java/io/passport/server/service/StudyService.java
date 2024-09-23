@@ -43,6 +43,15 @@ public class StudyService {
     }
 
     /**
+     * Find studies by owner
+     * @param owner ID of the owner
+     * @return
+     */
+    public List<Study> findStudyByOwner(String owner) {
+        return studyRepository.findByOwner(owner);
+    }
+
+    /**
      * Save a study
      * @param study study to be saved
      * @return
@@ -85,5 +94,14 @@ public class StudyService {
         }else{
             return false;
         }
+    }
+
+    /**
+     * Find a Study by datasetId
+     * @param datasetId ID of the Dataset
+     * @return
+     */
+    public Study findRelatedStudyByDatasetId(Long datasetId) {
+        return studyRepository.findByDatasetId(datasetId);
     }
 }

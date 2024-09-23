@@ -43,7 +43,7 @@ public class PopulationService {
      * @param studyId ID of the study
      * @return
      */
-    public Population findPopulationByStudyId(Long studyId) {
+    public List<Population> findPopulationByStudyId(Long studyId) {
         return populationRepository.findByStudyId(studyId);
     }
 
@@ -89,6 +89,15 @@ public class PopulationService {
         }else{
             return false;
         }
+    }
+
+    /**
+     * Find a population by FeatureSetId
+     * @param featureSetId ID of the featureSet
+     * @return
+     */
+    public Optional<Population> getPopulationByFeatureSetId(Long featureSetId) {
+        return this.populationRepository.findByFeatureSetId(featureSetId);
     }
 
 }

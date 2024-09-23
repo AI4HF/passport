@@ -33,11 +33,12 @@ public class ModelDeploymentService {
     }
 
     /**
-     * Return all model deployments
+     * Return all model deployments by studyId
+     * @param studyId ID of the study
      * @return
      */
-    public List<ModelDeployment> getAllModelDeployments() {
-        return modelDeploymentRepository.findAll();
+    public List<ModelDeployment> getAllModelDeploymentsByStudyId(Long studyId) {
+        return modelDeploymentRepository.findAllByStudyId(studyId);
     }
 
 
@@ -87,16 +88,12 @@ public class ModelDeploymentService {
         if (oldModelDeployment.isPresent()) {
             ModelDeployment modelDeployment = oldModelDeployment.get();
 
-            // set last updated timestamp
             modelDeployment.setLastUpdatedAt(Instant.now());
-
-            // set remaining fields
             modelDeployment.setModelId(updatedModelDeployment.getModelId());
             modelDeployment.setEnvironmentId(updatedModelDeployment.getEnvironmentId());
             modelDeployment.setTags(updatedModelDeployment.getTags());
             modelDeployment.setIdentifiedFailures(updatedModelDeployment.getIdentifiedFailures());
             modelDeployment.setStatus(updatedModelDeployment.getStatus());
-            modelDeployment.setCreatedBy(updatedModelDeployment.getCreatedBy());
             modelDeployment.setLastUpdatedBy(updatedModelDeployment.getLastUpdatedBy());
 
             ModelDeployment savedModelDeployment = modelDeploymentRepository.save(modelDeployment);

@@ -63,7 +63,7 @@ public class PersonnelService {
      */
     public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
         Optional<String> keycloakUserId = this.keycloakService
-                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password);
+                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, personnelDTO.getPersonnel().getRole());
         if(keycloakUserId.isPresent()) {
             Personnel personnel = personnelDTO.getPersonnel();
             personnel.setPersonId(keycloakUserId.get());
@@ -83,14 +83,19 @@ public class PersonnelService {
     public Optional<Personnel> updatePersonnel(String personnelId, Personnel updatedPersonnel) {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(personnelId);
         if (oldPersonnel.isPresent()) {
-            Personnel personnel = oldPersonnel.get();
-            personnel.setFirstName(updatedPersonnel.getFirstName());
-            personnel.setLastName(updatedPersonnel.getLastName());
-            personnel.setEmail(updatedPersonnel.getEmail());
-            personnel.setRole(updatedPersonnel.getRole());
-            personnel.setOrganizationId(updatedPersonnel.getOrganizationId());
-            Personnel savedPersonnel = personnelRepository.save(personnel);
-            return Optional.of(savedPersonnel);
+            boolean changeKeycloakRole = this.keycloakService.updateRole(personnelId, updatedPersonnel.getRole());
+            if (changeKeycloakRole) {
+                Personnel personnel = oldPersonnel.get();
+                personnel.setFirstName(updatedPersonnel.getFirstName());
+                personnel.setLastName(updatedPersonnel.getLastName());
+                personnel.setEmail(updatedPersonnel.getEmail());
+                personnel.setRole(updatedPersonnel.getRole());
+                personnel.setOrganizationId(updatedPersonnel.getOrganizationId());
+                Personnel savedPersonnel = personnelRepository.save(personnel);
+                return Optional.of(savedPersonnel);
+            }else{
+             return Optional.empty();
+            }
         } else {
             return Optional.empty();
         }

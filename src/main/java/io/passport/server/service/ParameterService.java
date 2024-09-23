@@ -32,6 +32,15 @@ public class ParameterService {
     }
 
     /**
+     * Find parameters by studyId
+     * @param studyId The ID of the study
+     * @return
+     */
+    public List<Parameter> findParametersByStudyId(Long studyId) {
+        return parameterRepository.findAllByStudyId(studyId);
+    }
+
+    /**
      * Find a parameter by parameterId
      * @param parameterId ID of the parameter
      * @return

@@ -1,13 +1,17 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.Organization;
+import io.passport.server.model.Role;
 import io.passport.server.service.OrganizationService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,18 +31,37 @@ public class OrganizationController {
      */
     private final OrganizationService organizationService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.ML_ENGINEER,
+            Role.ORGANIZATION_ADMIN, Role.QUALITY_ASSURANCE_SPECIALIST, Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+
     @Autowired
-    public OrganizationController(OrganizationService organizationService) {
+    public OrganizationController(OrganizationService organizationService, RoleCheckerService roleCheckerService) {
         this.organizationService = organizationService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
      * Read all organizations or filter by organization admin id
      * @param organizationAdminId ID of the organization admin
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Organization>> getAllOrganizations(@RequestParam(required = false) String organizationAdminId) {
+    public ResponseEntity<List<Organization>> getAllOrganizations(@RequestParam(required = false) String organizationAdminId,
+                                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         List<Organization> organizations;
 
@@ -59,10 +82,17 @@ public class OrganizationController {
     /**
      * Read an organization by id
      * @param organizationId ID of the organization
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId) {
+    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         Optional<Organization> organization = this.organizationService.findOrganizationById(organizationId);
 
         if (organization.isPresent()) {
@@ -76,11 +106,20 @@ public class OrganizationController {
         /**
          * Create an Organization.
          * @param organization Organization model instance to be created.
+         * @param principal KeycloakPrincipal object that holds access token
          * @return
          */
     @PostMapping()
-    public ResponseEntity<?> createOrganization(@RequestBody Organization organization) {
+    public ResponseEntity<?> createOrganization(@RequestBody Organization organization, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Organization savedOrganization = this.organizationService.saveOrganization(organization);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedOrganization);
         }catch(Exception e){
@@ -93,11 +132,22 @@ public class OrganizationController {
      * Update Organization.
      * @param organizationId ID of the organization that is to be updated.
      * @param updatedOrganization model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{organizationId}")
-    public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId, @RequestBody Organization updatedOrganization) {
+    public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId,
+                                                @RequestBody Organization updatedOrganization,
+                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             Optional<Organization> savedOrganization = this.organizationService.updateOrganization(organizationId, updatedOrganization);
             if (savedOrganization.isPresent()) {
                 return ResponseEntity.ok().body(savedOrganization.get());
@@ -113,11 +163,21 @@ public class OrganizationController {
     /**
      * Delete an organization by Organization ID.
      * @param organizationId ID of the organization that is to be deleted.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{organizationId}")
-    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId) {
+    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId,
+                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try{
+
+            // Allowed roles for this endpoint
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             boolean isDeleted = this.organizationService.deleteOrganization(organizationId);
             if(isDeleted) {
                 return ResponseEntity.noContent().build();

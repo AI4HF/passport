@@ -3,13 +3,17 @@ package io.passport.server.controller;
 import io.passport.server.model.LearningStageParameterDTO;
 import io.passport.server.model.LearningStageParameter;
 import io.passport.server.model.LearningStageParameterId;
+import io.passport.server.model.Role;
 import io.passport.server.service.LearningStageParameterService;
+import io.passport.server.service.RoleCheckerService;
+import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,21 +33,39 @@ public class LearningStageParameterController {
      */
     private final LearningStageParameterService learningStageParameterService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * List of authorized roles for this endpoint
+     */
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+
     @Autowired
-    public LearningStageParameterController(LearningStageParameterService learningStageParameterService) {
+    public LearningStageParameterController(LearningStageParameterService learningStageParameterService, RoleCheckerService roleCheckerService) {
         this.learningStageParameterService = learningStageParameterService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
      * Read all LearningStageParameters or filtered by learningStageId and/or parameterId
      * @param learningStageId ID of the LearningStage (optional)
      * @param parameterId ID of the Parameter (optional)
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
     public ResponseEntity<List<LearningStageParameterDTO>> getLearningStageParameters(
             @RequestParam(required = false) Long learningStageId,
-            @RequestParam(required = false) Long parameterId) {
+            @RequestParam(required = false) Long parameterId,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         List<LearningStageParameter> parameters;
 
@@ -76,11 +98,19 @@ public class LearningStageParameterController {
     /**
      * Create a new LearningStageParameter entity.
      * @param learningStageParameterDTO the DTO containing data for the new LearningStageParameter
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningStageParameter(@RequestBody LearningStageParameterDTO learningStageParameterDTO) {
+    public ResponseEntity<?> createLearningStageParameter(@RequestBody LearningStageParameterDTO learningStageParameterDTO,
+                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
+
+            // Check role of the user
+            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
             LearningStageParameter learningStageParameter = new LearningStageParameter(learningStageParameterDTO);
             LearningStageParameter savedLearningStageParameter = this.learningStageParameterService.saveLearningStageParameter(learningStageParameter);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningStageParameter);
@@ -95,13 +125,20 @@ public class LearningStageParameterController {
      * @param learningStageId ID of the LearningStage
      * @param parameterId ID of the Parameter
      * @param updatedLearningStageParameter LearningStageParameter model instance with updated details.
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping()
     public ResponseEntity<?> updateLearningStageParameter(
             @RequestParam Long learningStageId,
             @RequestParam Long parameterId,
-            @RequestBody LearningStageParameter updatedLearningStageParameter) {
+            @RequestBody LearningStageParameter updatedLearningStageParameter,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         LearningStageParameterId learningStageParameterId = new LearningStageParameterId();
         learningStageParameterId.setLearningStageId(learningStageId);
@@ -124,12 +161,19 @@ public class LearningStageParameterController {
      * Delete by LearningStageParameter composite ID using query parameters.
      * @param learningStageId ID of the LearningStage
      * @param parameterId ID of the Parameter
+     * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping()
     public ResponseEntity<?> deleteLearningStageParameter(
             @RequestParam Long learningStageId,
-            @RequestParam Long parameterId) {
+            @RequestParam Long parameterId,
+            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+
+        // Check role of the user
+        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         LearningStageParameterId learningStageParameterId = new LearningStageParameterId();
         learningStageParameterId.setLearningStageId(learningStageId);

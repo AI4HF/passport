@@ -34,6 +34,15 @@ public class FeatureSetService {
     }
 
     /**
+     * Return all FeatureSets by studyId
+     * @param studyId ID of the study
+     * @return
+     */
+    public List<FeatureSet> getAllFeatureSetsByStudyId(Long studyId) {
+        return featureSetRepository.findFeatureSetByStudyId(studyId);
+    }
+
+    /**
      * Find a FeatureSet by featureSetId
      * @param featureSetId ID of the FeatureSet
      * @return
@@ -66,7 +75,6 @@ public class FeatureSetService {
             featureSet.setTitle(updatedFeatureSet.getTitle());
             featureSet.setFeaturesetURL(updatedFeatureSet.getFeaturesetURL());
             featureSet.setDescription(updatedFeatureSet.getDescription());
-            featureSet.setCreatedBy(updatedFeatureSet.getCreatedBy());
             featureSet.setLastUpdatedAt(Instant.now());
             featureSet.setLastUpdatedBy(updatedFeatureSet.getLastUpdatedBy());
             FeatureSet savedFeatureSet = featureSetRepository.save(featureSet);
