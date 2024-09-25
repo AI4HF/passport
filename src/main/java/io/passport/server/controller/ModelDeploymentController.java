@@ -39,7 +39,7 @@ public class ModelDeploymentController {
     /**
      * List of authorized roles for this endpoint
      */
-    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
     public ModelDeploymentController(ModelDeploymentService modelDeploymentService, RoleCheckerService roleCheckerService) {

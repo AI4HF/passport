@@ -38,7 +38,7 @@ public class ModelController {
     /**
      * List of authorized roles for this endpoint
      */
-    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
     public ModelController(ModelService modelService, RoleCheckerService roleCheckerService) {

@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "d3344b9c-d566-41e4-a178-a68874596239",
+		"_postman_id": "59b6399f-5ee0-4618-881f-6ab704943bd4",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19580401",
-		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-d3344b9c-d566-41e4-a178-a68874596239?action=share&source=collection_link&creator=19580401"
+		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-59b6399f-5ee0-4618-881f-6ab704943bd4?action=share&source=collection_link&creator=19580401"
 	},
 	"item": [
 		{
@@ -3124,7 +3124,8 @@
 					"response": []
 				}
 			]
-		}, {
+		},
+		{
 			"name": "deployment environment",
 			"item": [
 				{
@@ -3258,7 +3259,8 @@
 					"response": []
 				}
 			]
-		}, {
+		},
+		{
 			"name": "model deployment",
 			"item": [
 				{
@@ -3337,7 +3339,8 @@
 								"{{passportBackend}}"
 							],
 							"path": [
-								"modelDeployment/environment",
+								"modelDeployment",
+								"environment",
 								"1"
 							]
 						}
@@ -3551,7 +3554,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"passportId\": 1,\r\n\t\"deploymentId\": 1,\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"approvedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"approvedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n    \"passport\": {\r\n        \"deploymentId\": 1,\r\n        \"studyId\": 1,\r\n        \"createdBy\": \"quality_assurance_specialist\",\r\n        \"approvedBy\": \"quality_assurance_specialist\"\r\n    },\r\n    \"passportDetailsSelection\": {\r\n        \"modelDetails\": true,\r\n        \"modelDeploymentDetails\": true,\r\n        \"environmentDetails\": true,\r\n        \"datasets\": true,\r\n        \"featureSets\": false,\r\n        \"learningProcessDetails\": true,\r\n        \"parameterDetails\": false,\r\n        \"populationDetails\": false,\r\n        \"experimentDetails\": true,\r\n        \"surveyDetails\": true,\r\n        \"studyDetails\": true\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
