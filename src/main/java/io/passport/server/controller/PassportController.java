@@ -97,11 +97,12 @@ public class PassportController {
     /**
      * Endpoint to create a Passport and populate detailsJson field.
      *
-     * @param passport The passport object with basic info (deploymentId, studyId, etc.).
+     * @param passportWithDetailSelection The passport object with basic info (deploymentId, studyId, etc.) and selected details of the passport.
      * @return The created Passport.
      */
     @PostMapping
-    public ResponseEntity<?> createPassport(@RequestBody Passport passport, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createPassport(@RequestBody PassportWithDetailSelection passportWithDetailSelection,
+                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
 
             // Check role of the user
@@ -109,7 +110,7 @@ public class PassportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Passport savedPassport = passportService.createPassport(passport);
+            Passport savedPassport = passportService.createPassport(passportWithDetailSelection);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
         } catch (RuntimeException e) {
             log.error("Error while creating passport: " + e.getMessage());

@@ -99,29 +99,50 @@ public class PassportService {
     /**
      * Creates and stores Passport with detailsJson populated.
      *
-     * @param passport The passport object with basic info (deploymentId, studyId, etc.).
+     * @param passportWithDetailSelection The passport object with basic info (deploymentId, studyId, etc.) and selected details of the passport.
      * @return The saved Passport.
      */
-    public Passport createPassport(Passport passport) {
+    public Passport createPassport(PassportWithDetailSelection passportWithDetailSelection) {
         try {
             Map<String, Object> detailsJson = new HashMap<>();
-            detailsJson.put("deploymentDetails", fetchDeploymentDetails(passport));
-            detailsJson.put("environmentDetails", fetchEnvironmentDetails(passport));
-            detailsJson.put("modelDetails", fetchModelDetails(passport));
-            detailsJson.put("studyDetails", fetchStudyDetails(passport));
-            detailsJson.put("parameters", fetchParameters(passport));
-            detailsJson.put("populationDetails", fetchPopulationDetails(passport));
-            detailsJson.put("surveys", fetchSurveys(passport));
-            detailsJson.put("experiments", fetchExperiments(passport));
-            detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passport));
-            detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passport));
-            detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passport));
+            if(passportWithDetailSelection.getPassportDetailsSelection().isModelDeploymentDetails()){
+                detailsJson.put("deploymentDetails", fetchDeploymentDetails(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isEnvironmentDetails()){
+                detailsJson.put("environmentDetails", fetchEnvironmentDetails(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isModelDetails()){
+                detailsJson.put("modelDetails", fetchModelDetails(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isStudyDetails()){
+                detailsJson.put("studyDetails", fetchStudyDetails(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
+                detailsJson.put("parameters", fetchParameters(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isPopulationDetails()){
+                detailsJson.put("populationDetails", fetchPopulationDetails(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isSurveyDetails()){
+                detailsJson.put("surveys", fetchSurveys(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isExperimentDetails()){
+                detailsJson.put("experiments", fetchExperiments(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isFeatureSets()){
+                detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isDatasets()){
+                detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isLearningProcessDetails()){
+                detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
+            }
+            passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
+            passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
+            passportWithDetailSelection.getPassport().setApprovedAt(Instant.now());
 
-            passport.setDetailsJson(detailsJson);
-            passport.setCreatedAt(Instant.now());
-            passport.setApprovedAt(Instant.now());
-
-            return passportRepository.save(passport);
+            return passportRepository.save(passportWithDetailSelection.getPassport());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating passport: " + e.getMessage());
         }
