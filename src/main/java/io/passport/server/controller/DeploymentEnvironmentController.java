@@ -25,19 +25,8 @@ public class DeploymentEnvironmentController {
 
     private static final Logger log = LoggerFactory.getLogger(DeploymentEnvironmentController.class);
 
-    /**
-     * DeploymentEnvironment service for deploymentEnvironment management.
-     */
     private final DeploymentEnvironmentService deploymentEnvironmentService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -49,113 +38,97 @@ public class DeploymentEnvironmentController {
     /**
      * Read DeploymentEnvironment by environmentId
      * @param environmentId ID of the deployment environment.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{environmentId}")
     public ResponseEntity<?> getDeploymentEnvironmentByEnvironmentId(
             @PathVariable("environmentId") Long environmentId,
+            @RequestParam Long studyId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<DeploymentEnvironment> deploymentEnvironment = this.deploymentEnvironmentService.findDeploymentEnvironmentById(environmentId);
-
-        if(deploymentEnvironment.isPresent()) {
-            return ResponseEntity.ok().body(deploymentEnvironment);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return deploymentEnvironment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
     /**
      * Create a Deployment environment.
      * @param deploymentEnvironment DeploymentEnvironment model instance to be created.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
     public ResponseEntity<?> createDeploymentEnvironment(@RequestBody DeploymentEnvironment deploymentEnvironment,
+                                                         @RequestParam Long studyId,
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             DeploymentEnvironment savedDevelopmentEnvironment = this.deploymentEnvironmentService
-                                                .saveDevelopmentEnvironment(deploymentEnvironment);
+                    .saveDevelopmentEnvironment(deploymentEnvironment);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedDevelopmentEnvironment);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-
     /**
      * Update Deployment environment.
      * @param deploymentEnvironmentId ID of the deployment environment that is to be updated.
      * @param updatedDeploymentEnvironment DeploymentEnvironment model instance with updated details.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> updateDeploymentEnvironment(@PathVariable Long deploymentEnvironmentId,
                                                          @RequestBody DeploymentEnvironment updatedDeploymentEnvironment,
+                                                         @RequestParam Long studyId,
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<DeploymentEnvironment> savedDeploymentEnvironment = this.deploymentEnvironmentService.updateDeploymentEnvironment(deploymentEnvironmentId, updatedDeploymentEnvironment);
-            if(savedDeploymentEnvironment.isPresent()) {
-                return ResponseEntity.ok().body(savedDeploymentEnvironment.get());
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch(Exception e){
+            return savedDeploymentEnvironment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-
     /**
      * Delete a deployment environment by DeploymentEnvironment ID.
      * @param deploymentEnvironmentId ID of the deployment environment that is to be deleted.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId,
+                                             @RequestParam Long studyId,
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch(Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-
 }
+

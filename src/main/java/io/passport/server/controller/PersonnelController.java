@@ -59,11 +59,6 @@ public class PersonnelController {
     public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<Long> organizationId,
                                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         List<Personnel> personnel = organizationId
                 .map(this.personnelService::findPersonnelByOrganizationId)
                 .orElseGet(this.personnelService::getAllPersonnel);
@@ -88,11 +83,6 @@ public class PersonnelController {
             @PathVariable("personId") String personId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personId);
 
         if(personnel.isPresent()) {
@@ -115,7 +105,7 @@ public class PersonnelController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -147,7 +137,7 @@ public class PersonnelController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -177,7 +167,7 @@ public class PersonnelController {
         try{
 
             // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER, Role.ORGANIZATION_ADMIN);
+            List<Role> lesserAllowedRoles = List.of(Role.ORGANIZATION_ADMIN);
             // Check role of the user
             if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

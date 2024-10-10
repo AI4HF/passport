@@ -24,19 +24,8 @@ import java.util.Optional;
 @RequestMapping("/implementation")
 public class ImplementationController {
     private static final Logger log = LoggerFactory.getLogger(ImplementationController.class);
-    /**
-     * Implementation service for implementation management
-     */
     private final ImplementationService implementationService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -47,70 +36,64 @@ public class ImplementationController {
 
     /**
      * Read all implementations
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with a list of implementations
      */
     @GetMapping()
-    public ResponseEntity<List<Implementation>> getAllImplementations(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Implementation>> getAllImplementations(@RequestParam Long studyId,
+                                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Implementation> implementations = this.implementationService.getAllImplementations();
-
-        long totalCount = implementations.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(implementations.size()));
 
         return ResponseEntity.ok().headers(headers).body(implementations);
     }
 
     /**
      * Read an implementation by id
+     * @param studyId ID of the study for authorization
      * @param implementationId ID of the implementation
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with implementation
      */
     @GetMapping("/{implementationId}")
-    public ResponseEntity<?> getImplementation(@PathVariable Long implementationId,
+    public ResponseEntity<?> getImplementation(@RequestParam Long studyId,
+                                               @PathVariable Long implementationId,
                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Implementation> implementation = this.implementationService.findImplementationById(implementationId);
-
-        if(implementation.isPresent()) {
-            return ResponseEntity.ok().body(implementation.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return implementation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
      * Create Implementation.
-     * @param implementation Implementation model instance to be created.
+     * @param studyId ID of the study for authorization
+     * @param implementation Implementation model instance to be created
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created implementation
      */
     @PostMapping()
-    public ResponseEntity<?> createImplementation(@RequestBody Implementation implementation,
+    public ResponseEntity<?> createImplementation(@RequestParam Long studyId,
+                                                  @RequestBody Implementation implementation,
                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Implementation savedImplementation = this.implementationService.saveImplementation(implementation);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedImplementation);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -118,29 +101,25 @@ public class ImplementationController {
 
     /**
      * Update Implementation.
-     * @param implementationId ID of the implementation that is to be updated.
-     * @param updatedImplementation Implementation model instance with updated details.
+     * @param studyId ID of the study for authorization
+     * @param implementationId ID of the implementation that is to be updated
+     * @param updatedImplementation Implementation model instance with updated details
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated implementation
      */
     @PutMapping("/{implementationId}")
-    public ResponseEntity<?> updateImplementation(@PathVariable Long implementationId,
+    public ResponseEntity<?> updateImplementation(@RequestParam Long studyId,
+                                                  @PathVariable Long implementationId,
                                                   @RequestBody Implementation updatedImplementation,
                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<Implementation> savedImplementation = this.implementationService.updateImplementation(implementationId, updatedImplementation);
-            if(savedImplementation.isPresent()) {
-                return ResponseEntity.ok().body(savedImplementation);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return savedImplementation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -148,27 +127,23 @@ public class ImplementationController {
 
     /**
      * Delete by Implementation ID.
-     * @param implementationId ID of the implementation that is to be deleted.
+     * @param studyId ID of the study for authorization
+     * @param implementationId ID of the implementation that is to be deleted
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity
      */
     @DeleteMapping("/{implementationId}")
-    public ResponseEntity<?> deleteImplementation(@PathVariable Long implementationId,
+    public ResponseEntity<?> deleteImplementation(@RequestParam Long studyId,
+                                                  @PathVariable Long implementationId,
                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.implementationService.deleteImplementation(implementationId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

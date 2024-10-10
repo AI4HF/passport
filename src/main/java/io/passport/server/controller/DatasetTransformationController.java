@@ -24,154 +24,94 @@ import java.util.Optional;
 @RequestMapping("/dataset-transformation")
 public class DatasetTransformationController {
     private static final Logger log = LoggerFactory.getLogger(DatasetTransformationController.class);
-
-    /**
-     * DatasetTransformation service for DatasetTransformation management
-     */
     private final DatasetTransformationService datasetTransformationService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
     @Autowired
-    public DatasetTransformationController(DatasetTransformationService datasetTransformationService, RoleCheckerService roleCheckerService) {
+    public DatasetTransformationController(DatasetTransformationService datasetTransformationService,
+                                           RoleCheckerService roleCheckerService) {
         this.datasetTransformationService = datasetTransformationService;
         this.roleCheckerService = roleCheckerService;
     }
 
-    /**
-     * Read all DatasetTransformations
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping()
-    public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam Long studyId,
+                                                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<DatasetTransformation> datasetTransformations = this.datasetTransformationService.getAllDatasetTransformations();
-
-        long totalCount = datasetTransformations.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(datasetTransformations.size()));
 
         return ResponseEntity.ok().headers(headers).body(datasetTransformations);
     }
 
-    /**
-     * Read a DatasetTransformation by id
-     * @param dataTransformationId ID of the DatasetTransformation
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping("/{dataTransformationId}")
     public ResponseEntity<?> getDatasetTransformation(@PathVariable Long dataTransformationId,
+                                                      @RequestParam Long studyId,
                                                       @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<DatasetTransformation> datasetTransformation = this.datasetTransformationService.findDatasetTransformationByDataTransformationId(dataTransformationId);
+        Optional<DatasetTransformation> datasetTransformation = this.datasetTransformationService
+                .findDatasetTransformationByDataTransformationId(dataTransformationId);
 
-        if(datasetTransformation.isPresent()) {
-            return ResponseEntity.ok().body(datasetTransformation.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return datasetTransformation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /**
-     * Create DatasetTransformation.
-     * @param datasetTransformation DatasetTransformation model instance to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PostMapping()
     public ResponseEntity<?> createDatasetTransformation(@RequestBody DatasetTransformation datasetTransformation,
+                                                         @RequestParam Long studyId,
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Allowed roles for this endpoint
-            List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            DatasetTransformation savedDatasetTransformation = this.datasetTransformationService.saveDatasetTransformation(datasetTransformation);
+            DatasetTransformation savedDatasetTransformation = this.datasetTransformationService
+                    .saveDatasetTransformation(datasetTransformation);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedDatasetTransformation);
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Update DatasetTransformation.
-     * @param dataTransformationId ID of the DatasetTransformation that is to be updated.
-     * @param updatedDatasetTransformation DatasetTransformation model instance with updated details.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PutMapping("/{dataTransformationId}")
     public ResponseEntity<?> updateDatasetTransformation(@PathVariable Long dataTransformationId,
                                                          @RequestBody DatasetTransformation updatedDatasetTransformation,
+                                                         @RequestParam Long studyId,
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<DatasetTransformation> savedDatasetTransformation = this.datasetTransformationService.updateDatasetTransformation(dataTransformationId, updatedDatasetTransformation);
-            if(savedDatasetTransformation.isPresent()) {
-                return ResponseEntity.ok().body(savedDatasetTransformation);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            Optional<DatasetTransformation> savedDatasetTransformation = this.datasetTransformationService
+                    .updateDatasetTransformation(dataTransformationId, updatedDatasetTransformation);
+            return savedDatasetTransformation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Delete by DatasetTransformation ID.
-     * @param dataTransformationId ID of the DatasetTransformation that is to be deleted.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @DeleteMapping("/{dataTransformationId}")
     public ResponseEntity<?> deleteDatasetTransformation(@PathVariable Long dataTransformationId,
+                                                         @RequestParam Long studyId,
                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.datasetTransformationService.deleteDatasetTransformation(dataTransformationId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

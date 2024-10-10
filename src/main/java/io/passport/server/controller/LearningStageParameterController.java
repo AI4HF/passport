@@ -26,21 +26,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/learning-stage-parameter")
 public class LearningStageParameterController {
+
     private static final Logger log = LoggerFactory.getLogger(LearningStageParameterController.class);
 
-    /**
-     * LearningStageParameter service for LearningStageParameter management
-     */
     private final LearningStageParameterService learningStageParameterService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -50,20 +40,21 @@ public class LearningStageParameterController {
     }
 
     /**
-     * Read all LearningStageParameters or filtered by learningStageId and/or parameterId
+     * Retrieve LearningStageParameters filtered by learningStageId and/or parameterId.
+     * @param studyId ID of the study for authorization
      * @param learningStageId ID of the LearningStage (optional)
      * @param parameterId ID of the Parameter (optional)
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return List of LearningStageParameters
      */
     @GetMapping()
     public ResponseEntity<List<LearningStageParameterDTO>> getLearningStageParameters(
+            @RequestParam Long studyId,
             @RequestParam(required = false) Long learningStageId,
             @RequestParam(required = false) Long parameterId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -84,30 +75,28 @@ public class LearningStageParameterController {
         }
 
         List<LearningStageParameterDTO> dtos = parameters.stream()
-                .map(entity -> new LearningStageParameterDTO(entity))
+                .map(LearningStageParameterDTO::new)
                 .collect(Collectors.toList());
 
-        long totalCount = dtos.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(dtos.size()));
 
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
-     * Create a new LearningStageParameter entity.
-     * @param learningStageParameterDTO the DTO containing data for the new LearningStageParameter
+     * Create a new LearningStageParameter.
+     * @param studyId ID of the study for authorization
+     * @param learningStageParameterDTO DTO containing LearningStageParameter data
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created LearningStageParameter
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningStageParameter(@RequestBody LearningStageParameterDTO learningStageParameterDTO,
+    public ResponseEntity<?> createLearningStageParameter(@RequestParam Long studyId,
+                                                          @RequestBody LearningStageParameterDTO learningStageParameterDTO,
                                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -121,36 +110,33 @@ public class LearningStageParameterController {
     }
 
     /**
-     * Update LearningStageParameter using query parameters.
+     * Update LearningStageParameter using composite ID.
+     * @param studyId ID of the study for authorization
      * @param learningStageId ID of the LearningStage
      * @param parameterId ID of the Parameter
-     * @param updatedLearningStageParameter LearningStageParameter model instance with updated details.
+     * @param updatedLearningStageParameter LearningStageParameter model instance with updated details
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated LearningStageParameter or not found status
      */
     @PutMapping()
     public ResponseEntity<?> updateLearningStageParameter(
+            @RequestParam Long studyId,
             @RequestParam Long learningStageId,
             @RequestParam Long parameterId,
             @RequestBody LearningStageParameter updatedLearningStageParameter,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningStageParameterId learningStageParameterId = new LearningStageParameterId();
-        learningStageParameterId.setLearningStageId(learningStageId);
-        learningStageParameterId.setParameterId(parameterId);
+        LearningStageParameterId id = new LearningStageParameterId();
+        id.setParameterId(parameterId);
+        id.setLearningStageId(learningStageId);
 
         try {
-            Optional<LearningStageParameter> savedLearningStageParameter = this.learningStageParameterService.updateLearningStageParameter(learningStageParameterId, updatedLearningStageParameter);
-            if (savedLearningStageParameter.isPresent()) {
-                return ResponseEntity.ok().body(savedLearningStageParameter);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            Optional<LearningStageParameter> savedLearningStageParameter = this.learningStageParameterService.updateLearningStageParameter(id, updatedLearningStageParameter);
+            return savedLearningStageParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -158,38 +144,33 @@ public class LearningStageParameterController {
     }
 
     /**
-     * Delete by LearningStageParameter composite ID using query parameters.
+     * Delete LearningStageParameter by composite ID.
+     * @param studyId ID of the study for authorization
      * @param learningStageId ID of the LearningStage
      * @param parameterId ID of the Parameter
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with no content status or not found status
      */
     @DeleteMapping()
-    public ResponseEntity<?> deleteLearningStageParameter(
-            @RequestParam Long learningStageId,
-            @RequestParam Long parameterId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> deleteLearningStageParameter(@RequestParam Long studyId,
+                                                          @RequestParam Long learningStageId,
+                                                          @RequestParam Long parameterId,
+                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningStageParameterId learningStageParameterId = new LearningStageParameterId();
-        learningStageParameterId.setLearningStageId(learningStageId);
-        learningStageParameterId.setParameterId(parameterId);
+        LearningStageParameterId id = new LearningStageParameterId();
+        id.setLearningStageId(learningStageId);
+        id.setParameterId(parameterId);
 
         try {
-            boolean isDeleted = this.learningStageParameterService.deleteLearningStageParameter(learningStageParameterId);
-            if (isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            boolean isDeleted = this.learningStageParameterService.deleteLearningStageParameter(id);
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
-

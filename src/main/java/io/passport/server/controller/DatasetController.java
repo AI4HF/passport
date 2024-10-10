@@ -24,160 +24,91 @@ import java.util.Optional;
 @RequestMapping("/dataset")
 public class DatasetController {
     private static final Logger log = LoggerFactory.getLogger(DatasetController.class);
-
-    /**
-     * Dataset service for Dataset management
-     */
     private final DatasetService datasetService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
+
     @Autowired
     public DatasetController(DatasetService datasetService, RoleCheckerService roleCheckerService) {
         this.datasetService = datasetService;
         this.roleCheckerService = roleCheckerService;
     }
 
-    /**
-     * Read all Datasets by studyId
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping()
     public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
-                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Dataset> datasets = this.datasetService.getAllDatasetsByStudyId(studyId);
-
-        long totalCount = datasets.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(datasets.size()));
 
         return ResponseEntity.ok().headers(headers).body(datasets);
     }
 
-    /**
-     * Read a Dataset by id
-     * @param datasetId ID of the Dataset
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping("/{datasetId}")
     public ResponseEntity<?> getDataset(@PathVariable Long datasetId,
+                                        @RequestParam Long studyId,
                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId);
-
-        if(dataset.isPresent()) {
-            return ResponseEntity.ok().body(dataset.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return dataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /**
-     * Create Dataset.
-     * @param dataset Dataset model instance to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PostMapping()
     public ResponseEntity<?> createDataset(@RequestBody Dataset dataset,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             String personnelId = this.roleCheckerService.getPersonnelId(principal);
             Optional<Dataset> savedDataset = this.datasetService.saveDataset(dataset, personnelId);
-
-            if(savedDataset.isPresent()) {
-                return ResponseEntity.ok().body(savedDataset.get());
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        } catch(Exception e){
+            return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Update Dataset.
-     * @param datasetId ID of the Dataset that is to be updated.
-     * @param updatedDataset Dataset model instance with updated details.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PutMapping("/{datasetId}")
     public ResponseEntity<?> updateDataset(@PathVariable Long datasetId,
                                            @RequestBody Dataset updatedDataset,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             String personnelId = this.roleCheckerService.getPersonnelId(principal);
             Optional<Dataset> savedDataset = this.datasetService.updateDataset(datasetId, updatedDataset, personnelId);
-            if(savedDataset.isPresent()) {
-                return ResponseEntity.ok().body(savedDataset);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Delete by Dataset ID.
-     * @param datasetId ID of the Dataset that is to be deleted.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @DeleteMapping("/{datasetId}")
     public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.datasetService.deleteDataset(datasetId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

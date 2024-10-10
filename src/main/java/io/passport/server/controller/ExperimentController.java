@@ -24,19 +24,9 @@ public class ExperimentController {
 
     private static final Logger log = LoggerFactory.getLogger(ExperimentController.class);
 
-    /**
-     * Experiment service for experiment management
-     */
     private final ExperimentService experimentService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
 
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER);
 
     @Autowired
@@ -45,58 +35,33 @@ public class ExperimentController {
         this.roleCheckerService = roleCheckerService;
     }
 
-    /**
-     * Read experiments by studyId
-     * Read all experiments if no studyId is provided
-     * @param studyId ID of the study related to experiment.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping()
-    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId", required = false) Long studyId,
+    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") Long studyId,
                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
-        List<Experiment> experiment;
-        if(studyId != null)
-        {
-            experiment = this.experimentService.findExperimentByStudyId(studyId);
-        }
-        else {
-            String personnelId = this.roleCheckerService.getPersonnelId(principal);
-            experiment = this.experimentService.findAllExperiments(personnelId);
-        }
-
+        List<Experiment> experiment = this.experimentService.findExperimentByStudyId(studyId);
         return ResponseEntity.ok().body(experiment);
     }
 
-    /**
-     * Clear all old Experiment entries related to the study and create new ones. Return updated experiment list.
-     * @param studyId ID of the study.
-     * @param experiments List of experiment to be used in experiment entries
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PostMapping()
-    public ResponseEntity<?> createExperiments(@RequestParam Long studyId, @RequestBody List<Experiment> experiments,
+    public ResponseEntity<?> createExperiments(@RequestParam Long studyId,
+                                               @RequestBody List<Experiment> experiments,
                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             List<Experiment> newExperiments = this.experimentService.createExperimentEntries(studyId, experiments);
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiments);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 }
+

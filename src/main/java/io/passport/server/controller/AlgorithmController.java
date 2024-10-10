@@ -24,19 +24,8 @@ import java.util.Optional;
 @RequestMapping("/algorithm")
 public class AlgorithmController {
     private static final Logger log = LoggerFactory.getLogger(AlgorithmController.class);
-    /**
-     * Algorithm service for algorithm management
-     */
     private final AlgorithmService algorithmService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -45,132 +34,82 @@ public class AlgorithmController {
         this.roleCheckerService = roleCheckerService;
     }
 
-    /**
-     * Read all algorithms
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping()
-    public ResponseEntity<List<Algorithm>> getAllAlgorithms(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<List<Algorithm>> getAllAlgorithms(@RequestParam Long studyId,
+                                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Algorithm> algorithms = this.algorithmService.getAllAlgorithms();
-
-        long totalCount = algorithms.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(algorithms.size()));
 
         return ResponseEntity.ok().headers(headers).body(algorithms);
     }
 
-    /**
-     * Read an algorithm by id
-     * @param algorithmId ID of the algorithm
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @GetMapping("/{algorithmId}")
     public ResponseEntity<?> getAlgorithm(@PathVariable Long algorithmId,
+                                          @RequestParam Long studyId,
                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Algorithm> algorithm = this.algorithmService.findAlgorithmById(algorithmId);
-
-        if(algorithm.isPresent()) {
-            return ResponseEntity.ok().body(algorithm.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return algorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /**
-     * Create Algorithm.
-     * @param algorithm Algorithm model instance to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PostMapping()
     public ResponseEntity<?> createAlgorithm(@RequestBody Algorithm algorithm,
+                                             @RequestParam Long studyId,
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Algorithm savedAlgorithm = this.algorithmService.saveAlgorithm(algorithm);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedAlgorithm);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Update Algorithm.
-     * @param algorithmId ID of the algorithm that is to be updated.
-     * @param updatedAlgorithm Algorithm model instance with updated details.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @PutMapping("/{algorithmId}")
     public ResponseEntity<?> updateAlgorithm(@PathVariable Long algorithmId,
                                              @RequestBody Algorithm updatedAlgorithm,
+                                             @RequestParam Long studyId,
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<Algorithm> savedAlgorithm = this.algorithmService.updateAlgorithm(algorithmId, updatedAlgorithm);
-            if(savedAlgorithm.isPresent()) {
-                return ResponseEntity.ok().body(savedAlgorithm);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return savedAlgorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Delete by Algorithm ID.
-     * @param algorithmId ID of the algorithm that is to be deleted.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
-     */
     @DeleteMapping("/{algorithmId}")
     public ResponseEntity<?> deleteAlgorithm(@PathVariable Long algorithmId,
+                                             @RequestParam Long studyId,
                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.algorithmService.deleteAlgorithm(algorithmId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
+

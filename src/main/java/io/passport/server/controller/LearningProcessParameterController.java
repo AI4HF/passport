@@ -27,20 +27,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/learning-process-parameter")
 public class LearningProcessParameterController {
     private static final Logger log = LoggerFactory.getLogger(LearningProcessParameterController.class);
-
-    /**
-     * LearningProcessParameter service for LearningProcessParameter management
-     */
     private final LearningProcessParameterService learningProcessParameterService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -51,19 +39,20 @@ public class LearningProcessParameterController {
 
     /**
      * Read all LearningProcessParameters or filtered by learningProcessId and/or parameterId
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
      * @param parameterId ID of the Parameter (optional)
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with list of LearningProcessParameterDTOs
      */
     @GetMapping()
     public ResponseEntity<List<LearningProcessParameterDTO>> getLearningProcessParameters(
+            @RequestParam Long studyId,
             @RequestParam(required = false) Long learningProcessId,
             @RequestParam(required = false) Long parameterId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -84,30 +73,28 @@ public class LearningProcessParameterController {
         }
 
         List<LearningProcessParameterDTO> dtos = parameters.stream()
-                .map(entity -> new LearningProcessParameterDTO(entity))
+                .map(LearningProcessParameterDTO::new)
                 .collect(Collectors.toList());
 
-        long totalCount = dtos.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(dtos.size()));
 
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
      * Create a new LearningProcessParameter entity.
-     * @param learningProcessParameterDTO the DTO containing data for the new LearningProcessParameter
+     * @param studyId ID of the study for authorization
+     * @param learningProcessParameterDTO DTO containing data for the new LearningProcessParameter
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created LearningProcessParameter
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningProcessParameter(@RequestBody LearningProcessParameterDTO learningProcessParameterDTO,
+    public ResponseEntity<?> createLearningProcessParameter(@RequestParam Long studyId,
+                                                            @RequestBody LearningProcessParameterDTO learningProcessParameterDTO,
                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -122,21 +109,22 @@ public class LearningProcessParameterController {
 
     /**
      * Update LearningProcessParameter using query parameters.
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param parameterId ID of the Parameter
-     * @param updatedLearningProcessParameter LearningProcessParameter model instance with updated details.
+     * @param updatedLearningProcessParameter LearningProcessParameter model instance with updated details
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated LearningProcessParameter
      */
     @PutMapping()
     public ResponseEntity<?> updateLearningProcessParameter(
+            @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
             @RequestParam Long parameterId,
             @RequestBody LearningProcessParameter updatedLearningProcessParameter,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -146,11 +134,7 @@ public class LearningProcessParameterController {
 
         try {
             Optional<LearningProcessParameter> savedLearningProcessParameter = this.learningProcessParameterService.updateLearningProcessParameter(learningProcessParameterId, updatedLearningProcessParameter);
-            if (savedLearningProcessParameter.isPresent()) {
-                return ResponseEntity.ok().body(savedLearningProcessParameter);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return savedLearningProcessParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -159,19 +143,20 @@ public class LearningProcessParameterController {
 
     /**
      * Delete by LearningProcessParameter composite ID using query parameters.
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param parameterId ID of the Parameter
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity
      */
     @DeleteMapping()
     public ResponseEntity<?> deleteLearningProcessParameter(
+            @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
             @RequestParam Long parameterId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -181,15 +166,10 @@ public class LearningProcessParameterController {
 
         try {
             boolean isDeleted = this.learningProcessParameterService.deleteLearningProcessParameter(learningProcessParameterId);
-            if (isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
-

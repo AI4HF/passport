@@ -23,21 +23,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/feature")
 public class FeatureController {
+
     private static final Logger log = LoggerFactory.getLogger(FeatureController.class);
 
-    /**
-     * Feature service for Feature management
-     */
     private final FeatureService featureService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
     @Autowired
@@ -49,78 +39,69 @@ public class FeatureController {
     /**
      * Read all Features or filtered by featuresetId
      * @param featuresetId ID of the FeatureSet (optional)
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
     public ResponseEntity<List<Feature>> getFeatures(
             @RequestParam(required = false) Long featuresetId,
+            @RequestParam Long studyId,
             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Feature> features;
+        List<Feature> features = (featuresetId != null) ?
+                this.featureService.findByFeaturesetId(featuresetId) :
+                this.featureService.getAllFeatures();
 
-        if (featuresetId != null) {
-            features = this.featureService.findByFeaturesetId(featuresetId);
-        } else {
-            features = this.featureService.getAllFeatures();
-        }
-
-        long totalCount = features.size();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(features.size()));
 
         return ResponseEntity.ok().headers(headers).body(features);
     }
 
-
     /**
      * Read a Feature by id
      * @param featureId ID of the Feature
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{featureId}")
     public ResponseEntity<?> getFeature(@PathVariable Long featureId,
+                                        @RequestParam Long studyId,
                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Feature> feature = this.featureService.findFeatureByFeatureId(featureId);
-
-        if(feature.isPresent()) {
-            return ResponseEntity.ok().body(feature.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return feature.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
      * Create Feature.
      * @param feature Feature model instance to be created.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
     public ResponseEntity<?> createFeature(@RequestBody Feature feature,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Feature savedFeature = this.featureService.saveFeature(feature);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedFeature);
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -130,27 +111,23 @@ public class FeatureController {
      * Update Feature.
      * @param featureId ID of the Feature that is to be updated.
      * @param updatedFeature Feature model instance with updated details.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{featureId}")
     public ResponseEntity<?> updateFeature(@PathVariable Long featureId,
                                            @RequestBody Feature updatedFeature,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<Feature> savedFeature = this.featureService.updateFeature(featureId, updatedFeature);
-            if(savedFeature.isPresent()) {
-                return ResponseEntity.ok().body(savedFeature);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return savedFeature.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -159,26 +136,22 @@ public class FeatureController {
     /**
      * Delete by Feature ID.
      * @param featureId ID of the Feature that is to be deleted.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,
+                                           @RequestParam Long studyId,
                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.featureService.deleteFeature(featureId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

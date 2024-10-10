@@ -24,19 +24,9 @@ public class StudyOrganizationController {
 
     private static final Logger log = LoggerFactory.getLogger(StudyOrganizationController.class);
 
-    /**
-     * StudyOrganization service for studyOrganization management
-     */
     private final StudyOrganizationService studyOrganizationService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
 
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
 
     @Autowired
@@ -56,22 +46,21 @@ public class StudyOrganizationController {
     public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam Long studyId,
                                                                        @RequestParam Long organizationId,
                                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
             Optional<StudyOrganization> studyOrganization = this.studyOrganizationService.findStudyOrganizationById(studyOrganizationId);
-            if(studyOrganization.isPresent()) {
+            if (studyOrganization.isPresent()) {
                 StudyOrganizationDTO studyOrganizationDTO = new StudyOrganizationDTO(studyOrganization.get());
                 return ResponseEntity.ok(studyOrganizationDTO);
-            }else{
+            } else {
                 return ResponseEntity.notFound().build();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -86,16 +75,15 @@ public class StudyOrganizationController {
     @GetMapping("/organizations")
     public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam Long studyId,
                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             List<Organization> organizations = this.studyOrganizationService.findOrganizationsByStudyId(studyId);
             return ResponseEntity.ok(organizations);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -104,22 +92,23 @@ public class StudyOrganizationController {
     /**
      * Get all studies related to an organization.
      * @param organizationId ID of the organization.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/studies")
     public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam Long organizationId,
+                                                        @RequestParam Long studyId,
                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             List<Study> studies = this.studyOrganizationService.findStudiesByOrganizationId(organizationId);
             return ResponseEntity.ok(studies);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -134,18 +123,19 @@ public class StudyOrganizationController {
     @PostMapping()
     public ResponseEntity<?> createStudyOrganization(@RequestBody StudyOrganizationDTO studyOrganizationDTO,
                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        Long studyId = studyOrganizationDTO.getStudyId();
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
+        try {
             StudyOrganization studyOrganization = new StudyOrganization(studyOrganizationDTO);
             StudyOrganization savedStudyOrganization = this.studyOrganizationService.createStudyOrganizationEntries(studyOrganization);
             StudyOrganizationDTO responseStudyOrganizationDTO = new StudyOrganizationDTO(savedStudyOrganization);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseStudyOrganizationDTO);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -163,23 +153,22 @@ public class StudyOrganizationController {
                                                      @RequestParam Long organizationId,
                                                      @RequestBody StudyOrganizationDTO updatedStudyOrganizationDTO,
                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             StudyOrganization studyOrganization = new StudyOrganization(updatedStudyOrganizationDTO);
             StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
             Optional<StudyOrganization> savedStudyOrganization = this.studyOrganizationService.updateStudyOrganization(studyOrganizationId, studyOrganization);
             if (savedStudyOrganization.isPresent()) {
                 StudyOrganizationDTO savedStudyOrganizationDTO = new StudyOrganizationDTO(savedStudyOrganization.get());
                 return ResponseEntity.ok().body(savedStudyOrganizationDTO);
-            }else{
+            } else {
                 return ResponseEntity.notFound().build();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -196,23 +185,23 @@ public class StudyOrganizationController {
     public ResponseEntity<?> deleteStudyOrganization(@RequestParam Long studyId,
                                                      @RequestParam Long organizationId,
                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+        // Check authorization using studyId
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
             boolean isDeleted = this.studyOrganizationService.deleteStudyOrganization(studyOrganizationId);
-            if(isDeleted) {
+            if (isDeleted) {
                 return ResponseEntity.noContent().build();
-            }else{
+            } else {
                 return ResponseEntity.notFound().build();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
+

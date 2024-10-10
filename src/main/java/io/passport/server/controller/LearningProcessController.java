@@ -24,19 +24,8 @@ import java.util.Optional;
 @RequestMapping("/learning-process")
 public class LearningProcessController {
     private static final Logger log = LoggerFactory.getLogger(LearningProcessController.class);
-    /**
-     * LearningProcess service for learning process management
-     */
     private final LearningProcessService learningProcessService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -47,72 +36,63 @@ public class LearningProcessController {
 
     /**
      * Read all learning processes by studyId
-     * @param studyId ID of the study
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with list of LearningProcesses
      */
     @GetMapping()
     public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
                                                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<LearningProcess> learningProcesses = this.learningProcessService.getAllLearningProcessByStudyId(studyId);
-
-        long totalCount = learningProcesses.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(learningProcesses.size()));
 
         return ResponseEntity.ok().headers(headers).body(learningProcesses);
     }
 
     /**
      * Read a learning process by id
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the learning process
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with LearningProcess
      */
     @GetMapping("/{learningProcessId}")
-    public ResponseEntity<?> getLearningProcess(@PathVariable Long learningProcessId,
+    public ResponseEntity<?> getLearningProcess(@RequestParam Long studyId,
+                                                @PathVariable Long learningProcessId,
                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<LearningProcess> learningProcess = this.learningProcessService.findLearningProcessById(learningProcessId);
-
-        if(learningProcess.isPresent()) {
-            return ResponseEntity.ok().body(learningProcess.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return learningProcess.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
      * Create LearningProcess.
-     * @param learningProcess LearningProcess model instance to be created.
+     * @param studyId ID of the study for authorization
+     * @param learningProcess LearningProcess model instance to be created
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created LearningProcess
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningProcess(@RequestBody LearningProcess learningProcess,
+    public ResponseEntity<?> createLearningProcess(@RequestParam Long studyId,
+                                                   @RequestBody LearningProcess learningProcess,
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             LearningProcess savedLearningProcess = this.learningProcessService.saveLearningProcess(learningProcess);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningProcess);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -120,29 +100,25 @@ public class LearningProcessController {
 
     /**
      * Update LearningProcess.
-     * @param learningProcessId ID of the learning process that is to be updated.
-     * @param updatedLearningProcess LearningProcess model instance with updated details.
+     * @param studyId ID of the study for authorization
+     * @param learningProcessId ID of the learning process that is to be updated
+     * @param updatedLearningProcess LearningProcess model instance with updated details
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated LearningProcess
      */
     @PutMapping("/{learningProcessId}")
-    public ResponseEntity<?> updateLearningProcess(@PathVariable Long learningProcessId,
+    public ResponseEntity<?> updateLearningProcess(@RequestParam Long studyId,
+                                                   @PathVariable Long learningProcessId,
                                                    @RequestBody LearningProcess updatedLearningProcess,
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<LearningProcess> savedLearningProcess = this.learningProcessService.updateLearningProcess(learningProcessId, updatedLearningProcess);
-            if(savedLearningProcess.isPresent()) {
-                return ResponseEntity.ok().body(savedLearningProcess);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return savedLearningProcess.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -150,27 +126,23 @@ public class LearningProcessController {
 
     /**
      * Delete by LearningProcess ID.
-     * @param learningProcessId ID of the learning process that is to be deleted.
+     * @param studyId ID of the study for authorization
+     * @param learningProcessId ID of the learning process that is to be deleted
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity
      */
     @DeleteMapping("/{learningProcessId}")
-    public ResponseEntity<?> deleteLearningProcess(@PathVariable Long learningProcessId,
+    public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,
+                                                   @PathVariable Long learningProcessId,
                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.learningProcessService.deleteLearningProcess(learningProcessId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
