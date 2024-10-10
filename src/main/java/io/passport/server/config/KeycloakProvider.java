@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Class which allows the Keycloak methods to be called on Spring.
+ * Class which provides Keycloak instance and necessary resources for interacting with Keycloak server.
  */
 @Configuration
 @Getter
@@ -23,15 +23,22 @@ public class KeycloakProvider {
      */
     @Value("${keycloak.auth-server-url}")
     private String serverURL;
+
     @Value("${keycloak.realm}")
     private String realm;
+
     @Value("${keycloak.resource}")
     private String clientID;
+
     @Value("${keycloak.credentials.secret}")
     private String clientSecret;
 
+    /**
+     * Provides a Keycloak instance configured with client credentials.
+     * @return a configured Keycloak instance.
+     */
     @Bean
-    public Keycloak keycloak() {
+    public Keycloak getKeycloak() {
         return KeycloakBuilder.builder()
                 .serverUrl(serverURL)
                 .realm(realm)
@@ -41,30 +48,41 @@ public class KeycloakProvider {
                 .build();
     }
 
+    /**
+     * Provides the RealmResource for the configured realm in Keycloak.
+     * @param keycloak the Keycloak instance.
+     * @return the RealmResource for the realm.
+     */
     @Bean
     public RealmResource realmResource(Keycloak keycloak) {
         return keycloak.realm(realm);
     }
 
+    /**
+     * Provides the UsersResource for managing users in the configured realm.
+     * @param realmResource the RealmResource instance.
+     * @return the UsersResource for user management.
+     */
     @Bean
     public UsersResource usersResource(RealmResource realmResource) {
         return realmResource.users();
     }
 
     /**
-     * Called to create an instance of the Keycloak in Spring
-     * @param username user Keycloak recorded username
-     * @param password user Keycloak recorded password
-     * @return
+     * Provides a Keycloak instance configured with password credentials for user-specific actions.
+     * @param username the username for Keycloak login.
+     * @param password the password for Keycloak login.
+     * @return a configured Keycloak instance with password credentials.
      */
     public Keycloak newKeycloakBuilderWithPasswordCredentials(String username, String password) {
-        return (KeycloakBuilder.builder()
+        return KeycloakBuilder.builder()
                 .realm(realm)
                 .serverUrl(serverURL)
                 .clientId(clientID)
                 .clientSecret(clientSecret)
                 .username(username)
-                .password(password)).build();
+                .password(password)
+                .grantType(OAuth2Constants.PASSWORD)
+                .build();
     }
-
 }

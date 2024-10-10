@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -28,10 +29,16 @@ public class StudyPersonnelService {
      */
     private final PersonnelService personnelService;
 
+    /**
+     * Keycloak service for role assignments on Keycloak
+     */
+    private final KeycloakService keycloakService;
+
     @Autowired
-    public StudyPersonnelService(StudyPersonnelRepository studyPersonnelRepository, PersonnelService personnelService) {
+    public StudyPersonnelService(StudyPersonnelRepository studyPersonnelRepository, PersonnelService personnelService, KeycloakService keycloakService) {
         this.studyPersonnelRepository = studyPersonnelRepository;
         this.personnelService = personnelService;
+        this.keycloakService = keycloakService;
     }
 
     /**
@@ -55,39 +62,72 @@ public class StudyPersonnelService {
 
     /**
      * Delete StudyPersonnel entries by studyId and PersonnelId.
+     * When the roles of the given personnel are deleted,
+     * their role memberships in the study with the given ID must also be deleted from Keycloak.
      * @param studyId ID of the study
      * @param personnelIdList ID list for personnel
-     * @return
      */
     @Transactional
     public void clearStudyPersonnelEntriesByStudyIdAndPersonnelId(Long studyId, List<String> personnelIdList) {
+        String studyName = "study-" + studyId;
+
+        List<StudyPersonnel> studyPersonnelList = studyPersonnelRepository.findByStudyIdAndPersonnelIdList(studyId, personnelIdList);
+
+        studyPersonnelList.forEach(studyPersonnel -> {
+            List<String> roles = studyPersonnel.getRolesAsList();
+            String personnelId = studyPersonnel.getId().getPersonnelId();
+            keycloakService.removePersonnelFromStudyGroups(studyName, personnelId, roles);
+        });
         studyPersonnelRepository.deleteByStudyIdAndPersonnelId(studyId, personnelIdList);
     }
 
+
     /**
-     * Clear StudyPersonnel entries by studyId and PersonnelId then create new ones.
+     * Create StudyPersonnel entries with role assignments and Keycloak memberships.
      * @param studyId ID of the study
      * @param organizationId ID of the organization
-     * @param personnelList list of personnel to be used in StudyPersonnel entries
-     * @return
+     * @param personnelRoleMap Map of Personnel and their corresponding roles
      */
     @Transactional
-    public void createStudyPersonnelEntries(Long studyId, Long organizationId, List<Personnel> personnelList) {
-        // Fetch existing personnel for organization and clear them from StudyPersonnel table
+    public void createStudyPersonnelEntries(Long studyId, Long organizationId, Map<Personnel, List<String>> personnelRoleMap) {
+        // Fetch existing personnel for the organization and clear their StudyPersonnel entries
         List<String> personnelIdList = this.personnelService.findPersonnelByOrganizationId(organizationId).stream()
                 .map(Personnel::getPersonId).collect(Collectors.toList());
+
+        // Clear existing personnel entries and remove their roles from Keycloak
         clearStudyPersonnelEntriesByStudyIdAndPersonnelId(studyId, personnelIdList);
 
-        List<StudyPersonnel> studyPersonnelEntries = personnelList.stream().map((personnel -> {
+        // Process each Personnel and their roles
+        List<StudyPersonnel> studyPersonnelEntries = personnelRoleMap.entrySet().stream().map(entry -> {
+            Personnel personnel = entry.getKey();
+            List<String> roles = entry.getValue();
+
+            // Create a StudyPersonnel entry for this personnel with the assigned roles
             StudyPersonnel studyPersonnel = new StudyPersonnel();
             StudyPersonnelId studyPersonnelId = new StudyPersonnelId();
             studyPersonnelId.setStudyId(studyId);
             studyPersonnelId.setPersonnelId(personnel.getPersonId());
             studyPersonnel.setId(studyPersonnelId);
-            studyPersonnel.setRole(personnel.getRole());
-            return studyPersonnel;
-        })).collect(Collectors.toList());
+            studyPersonnel.setRolesFromList(roles);
 
+            // Assign personnel to the Keycloak groups for each role
+            String studyName = "study-" + studyId;
+            keycloakService.assignPersonnelToStudyGroups(studyName, personnel.getPersonId(), roles);
+
+            return studyPersonnel;
+        }).collect(Collectors.toList());
+
+        // Save all the new StudyPersonnel entries
         studyPersonnelRepository.saveAll(studyPersonnelEntries);
     }
+
+    /**
+     * Find all StudyPersonnel entries related to the given personId.
+     * @param personId ID of the personnel.
+     * @return List of StudyPersonnel entries.
+     */
+    public List<StudyPersonnel> findStudyPersonnelByPersonId(String personId) {
+        return studyPersonnelRepository.findStudyPersonnelById_PersonnelId(personId);
+    }
+
 }

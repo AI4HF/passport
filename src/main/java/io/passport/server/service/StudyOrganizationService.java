@@ -76,7 +76,6 @@ public class StudyOrganizationService {
      */
     @Transactional
     public Optional<StudyOrganization> updateStudyOrganization(StudyOrganizationId studyOrganizationId, StudyOrganization updatedStudyOrganization) {
-        this.clearStudyPersonnelWithForbiddenRoles(studyOrganizationId, updatedStudyOrganization);
         Optional<StudyOrganization> oldStudyOrganization = this.studyOrganizationRepository.findById(studyOrganizationId);
         if (oldStudyOrganization.isPresent()) {
             StudyOrganization studyOrganization = oldStudyOrganization.get();
@@ -102,24 +101,5 @@ public class StudyOrganizationService {
         }else{
             return false;
         }
-    }
-
-    /**
-     * Delete studyPersonnel entries that role of studyPersonnel is not in allowed role list
-     * @param studyOrganizationId ID of study organization that contains studyId
-     * @param updatedStudyOrganization studyOrganization object that contains allowed roles information
-     * @return
-     */
-    @Transactional
-    public void clearStudyPersonnelWithForbiddenRoles(StudyOrganizationId studyOrganizationId, StudyOrganization updatedStudyOrganization){
-        StudyOrganizationDTO studyOrganizationDTO = new StudyOrganizationDTO(updatedStudyOrganization);
-        List<Personnel> oldStudyPersonnelList = this.studyPersonnelService
-                .findPersonnelByStudyIdAndOrganizationId(studyOrganizationId.getStudyId(),
-                        studyOrganizationId.getOrganizationId());
-        List<String> personnelIdWithRemovedRoles = oldStudyPersonnelList.stream()
-                .filter(personnel -> !studyOrganizationDTO.getRoles().contains(personnel.getRole()))
-                .map(Personnel::getPersonId)
-                .collect(Collectors.toList());
-        this.studyPersonnelService.clearStudyPersonnelEntriesByStudyIdAndPersonnelId(studyOrganizationId.getStudyId(), personnelIdWithRemovedRoles);
     }
 }
