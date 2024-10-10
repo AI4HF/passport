@@ -18,18 +18,17 @@ CREATE TABLE personnel
     organization_id INTEGER REFERENCES organization (organization_id) ON DELETE CASCADE,
     first_name      VARCHAR(255),
     last_name       VARCHAR(255),
-    role            VARCHAR(255),
     email           VARCHAR(255)
 );
 
 -- Insert dummy personnel
-INSERT INTO personnel (person_id, organization_id, first_name, last_name, role, email)
-VALUES ('study_owner', 1, 'John', 'Doe', 'STUDY_OWNER', 'study_owner@gmail.com'),
-       ('data_engineer', 1, 'Okan', 'Mercan', 'DATA_ENGINEER', 'data_engineer@gmail.com'),
-       ('data_scientist', 1, 'Kerem', 'Yilmaz', 'DATA_SCIENTIST', 'data_scientist@gmail.com'),
-       ('quality_assurance_specialist', 1, 'Anil', 'Sinaci', 'QUALITY_ASSURANCE_SPECIALIST',
+INSERT INTO personnel (person_id, organization_id, first_name, last_name, email)
+VALUES ('study_owner', 1, 'John', 'Doe', 'study_owner@gmail.com'),
+       ('data_engineer', 1, 'Okan', 'Mercan','data_engineer@gmail.com'),
+       ('data_scientist', 1, 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
+       ('quality_assurance_specialist', 1, 'Anil', 'Sinaci',
         'quality_assurance_specialist@gmail.com'),
-       ('survey_manager', 1, 'Senan', 'Postaci', 'SURVEY_MANAGER', 'survey_manager@gmail.com');
+       ('survey_manager', 1, 'Senan', 'Postaci', 'survey_manager@gmail.com');
 
 -- Create study table
 CREATE TABLE study
@@ -95,17 +94,18 @@ CREATE TABLE study_personnel
 (
     study_id     INTEGER REFERENCES study (study_id) ON DELETE CASCADE,
     personnel_id VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
-    role         VARCHAR(255),
+    role       VARCHAR(255) NOT NULL,
     PRIMARY KEY (study_id, personnel_id)
 );
 
--- Insert dummy study_personnel
+-- Insert dummy study_personnel with list of roles
 INSERT INTO study_personnel (study_id, personnel_id, role)
-VALUES (1, 'study_owner', 'STUDY_OWNER'),
+VALUES (1, 'study_owner','STUDY_OWNER'),
        (1, 'data_scientist', 'DATA_SCIENTIST'),
        (1, 'survey_manager', 'SURVEY_MANAGER'),
        (1, 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
        (1, 'data_engineer', 'DATA_ENGINEER');
+
 
 -- Create study_organization table
 CREATE TABLE study_organization
@@ -242,7 +242,7 @@ CREATE TABLE learning_dataset
 
 -- Insert dummy LearningDataset
 INSERT INTO learning_dataset (dataset_id, study_id, data_transformation_id, description)
-VALUES (1, 1, 1, 'Finalized learning dataset for HF Risk Prediction Model Teaching');
+VALUES (1, 1, 1, 'Finalized learning dataset for HF Risk Prediction Model Training');
 
 -- Create FeatureDatasetCharacteristic table
 CREATE TABLE feature_dataset_characteristic
