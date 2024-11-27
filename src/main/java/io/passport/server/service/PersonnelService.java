@@ -2,6 +2,7 @@ package io.passport.server.service;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.model.PersonnelDTO;
+import io.passport.server.model.Role;
 import io.passport.server.repository.PersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,7 @@ public class PersonnelService {
      */
     public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
         Optional<String> keycloakUserId = this.keycloakService
-                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, null);  // No role assignment
+                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, Role.valueOf(personnelDTO.getPersonnel().getRole()));  // No role assignment
         if(keycloakUserId.isPresent()) {
             Personnel personnel = personnelDTO.getPersonnel();
             personnel.setPersonId(keycloakUserId.get());
@@ -83,6 +84,7 @@ public class PersonnelService {
     public Optional<Personnel> updatePersonnel(String personnelId, Personnel updatedPersonnel) {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(personnelId);
         if (oldPersonnel.isPresent()) {
+            keycloakService.updateRole(personnelId, Role.valueOf(updatedPersonnel.getRole()));
             Personnel personnel = oldPersonnel.get();
             personnel.setFirstName(updatedPersonnel.getFirstName());
             personnel.setLastName(updatedPersonnel.getLastName());
