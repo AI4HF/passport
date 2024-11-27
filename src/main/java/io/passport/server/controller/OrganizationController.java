@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class OrganizationController {
      */
     @GetMapping()
     public ResponseEntity<List<Organization>> getAllOrganizations(@RequestParam(required = false) String organizationAdminId,
-                                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                  @AuthenticationPrincipal Jwt principal) {
 
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
@@ -86,7 +87,7 @@ public class OrganizationController {
      * @return
      */
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId, @AuthenticationPrincipal Jwt principal) {
 
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
@@ -110,7 +111,7 @@ public class OrganizationController {
          * @return
          */
     @PostMapping()
-    public ResponseEntity<?> createOrganization(@RequestBody Organization organization, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createOrganization(@RequestBody Organization organization, @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint
@@ -138,7 +139,7 @@ public class OrganizationController {
     @PutMapping("/{organizationId}")
     public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId,
                                                 @RequestBody Organization updatedOrganization,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint
@@ -168,7 +169,7 @@ public class OrganizationController {
      */
     @DeleteMapping("/{organizationId}")
     public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint

@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class DatasetTransformationController {
 
     @GetMapping()
     public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam Long studyId,
-                                                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                                    @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -52,7 +53,7 @@ public class DatasetTransformationController {
     @GetMapping("/{dataTransformationId}")
     public ResponseEntity<?> getDatasetTransformation(@PathVariable Long dataTransformationId,
                                                       @RequestParam Long studyId,
-                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -66,7 +67,7 @@ public class DatasetTransformationController {
     @PostMapping()
     public ResponseEntity<?> createDatasetTransformation(@RequestBody DatasetTransformation datasetTransformation,
                                                          @RequestParam Long studyId,
-                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                         @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -85,7 +86,7 @@ public class DatasetTransformationController {
     public ResponseEntity<?> updateDatasetTransformation(@PathVariable Long dataTransformationId,
                                                          @RequestBody DatasetTransformation updatedDatasetTransformation,
                                                          @RequestParam Long studyId,
-                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                         @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -103,7 +104,7 @@ public class DatasetTransformationController {
     @DeleteMapping("/{dataTransformationId}")
     public ResponseEntity<?> deleteDatasetTransformation(@PathVariable Long dataTransformationId,
                                                          @RequestParam Long studyId,
-                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                         @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

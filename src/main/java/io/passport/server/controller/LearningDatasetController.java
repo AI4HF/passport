@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class LearningDatasetController {
     @GetMapping("/{learningDatasetId}")
     public ResponseEntity<?> getLearningDataset(@RequestParam Long studyId,
                                                 @PathVariable Long learningDatasetId,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -64,7 +65,7 @@ public class LearningDatasetController {
             @RequestParam Long studyId,
             @RequestParam(required = false) Long dataTransformationId,
             @RequestParam(required = false) Long datasetId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -93,7 +94,7 @@ public class LearningDatasetController {
     @PostMapping()
     public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam Long studyId,
                                                                      @RequestBody LearningDatasetandTransformationDTO request,
-                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                     @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -120,7 +121,7 @@ public class LearningDatasetController {
             @RequestParam Long studyId,
             @PathVariable Long learningDatasetId,
             @RequestBody LearningDatasetandTransformationDTO request,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -153,7 +154,7 @@ public class LearningDatasetController {
     @DeleteMapping("/{learningDatasetId}")
     public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,
                                                    @PathVariable Long learningDatasetId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

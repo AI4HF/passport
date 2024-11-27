@@ -8,7 +8,7 @@ import io.passport.server.repository.StudyPersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -89,30 +89,27 @@ public class StudyPersonnelService {
      * @param personnelRoleMap Map of Personnel and their corresponding roles
      */
     @Transactional
-    public void createStudyPersonnelEntries(Long studyId, Long organizationId, Map<Personnel, List<String>> personnelRoleMap) {
+    public void createStudyPersonnelEntries(Long studyId, Long organizationId, Map<String, List<String>> personnelRoleMap) {
         // Fetch existing personnel for the organization and clear their StudyPersonnel entries
         List<String> personnelIdList = this.personnelService.findPersonnelByOrganizationId(organizationId).stream()
                 .map(Personnel::getPersonId).collect(Collectors.toList());
 
         // Clear existing personnel entries and remove their roles from Keycloak
-        clearStudyPersonnelEntriesByStudyIdAndPersonnelId(studyId, personnelIdList);
 
         // Process each Personnel and their roles
         List<StudyPersonnel> studyPersonnelEntries = personnelRoleMap.entrySet().stream().map(entry -> {
-            Personnel personnel = entry.getKey();
+            String personnel = entry.getKey();
             List<String> roles = entry.getValue();
 
             // Create a StudyPersonnel entry for this personnel with the assigned roles
             StudyPersonnel studyPersonnel = new StudyPersonnel();
             StudyPersonnelId studyPersonnelId = new StudyPersonnelId();
             studyPersonnelId.setStudyId(studyId);
-            studyPersonnelId.setPersonnelId(personnel.getPersonId());
+            studyPersonnelId.setPersonnelId(personnel);
             studyPersonnel.setId(studyPersonnelId);
             studyPersonnel.setRolesFromList(roles);
 
-            // Assign personnel to the Keycloak groups for each role
-            String studyName = "study-" + studyId;
-            keycloakService.assignPersonnelToStudyGroups(studyName, personnel.getPersonId(), roles);
+            keycloakService.assignPersonnelToStudyGroups(studyId, personnel, roles);
 
             return studyPersonnel;
         }).collect(Collectors.toList());

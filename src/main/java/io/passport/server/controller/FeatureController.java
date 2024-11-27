@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class FeatureController {
     public ResponseEntity<List<Feature>> getFeatures(
             @RequestParam(required = false) Long featuresetId,
             @RequestParam Long studyId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -73,7 +74,7 @@ public class FeatureController {
     @GetMapping("/{featureId}")
     public ResponseEntity<?> getFeature(@PathVariable Long featureId,
                                         @RequestParam Long studyId,
-                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                        @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -93,7 +94,7 @@ public class FeatureController {
     @PostMapping()
     public ResponseEntity<?> createFeature(@RequestBody Feature feature,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -119,7 +120,7 @@ public class FeatureController {
     public ResponseEntity<?> updateFeature(@PathVariable Long featureId,
                                            @RequestBody Feature updatedFeature,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -143,7 +144,7 @@ public class FeatureController {
     @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

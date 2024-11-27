@@ -3,7 +3,6 @@ package io.passport.server.controller;
 import io.passport.server.model.Study;
 import io.passport.server.service.KeycloakService;
 import io.passport.server.service.StudyService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +10,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Controller class for managing HTTP requests related to study operations.
@@ -36,7 +38,7 @@ public class StudyController {
 
     @GetMapping()
     public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) Long studyId,
-                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                  @AuthenticationPrincipal Jwt principal) {
 
         List<Study> studies;
         if (studyId != null) {
@@ -54,8 +56,8 @@ public class StudyController {
     }
 
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        String userId = principal.getName();
+    public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -66,15 +68,15 @@ public class StudyController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createStudy(@RequestBody Study study, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createStudy(@RequestBody Study study, @AuthenticationPrincipal Jwt principal) {
         try {
-            String ownerId = principal.getName();
+            String ownerId = principal.getSubject();
             study.setOwner(ownerId);
 
             Study savedStudy = studyService.saveStudy(study);
 
-            keycloakService.createStudyGroups("study-" + savedStudy.getId());
-            keycloakService.assignPersonnelToStudyGroups(savedStudy.getName(), ownerId, List.of("STUDY_OWNER"));
+            keycloakService.createStudyGroups(study.getId(), ownerId);
+            keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
         } catch (Exception e) {
@@ -86,8 +88,8 @@ public class StudyController {
     @PutMapping("/{studyId}")
     public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
                                          @RequestBody Study updatedStudy,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        String userId = principal.getName();
+                                         @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -99,8 +101,8 @@ public class StudyController {
 
     @DeleteMapping("/{studyId}")
     public ResponseEntity<?> deleteStudy(@PathVariable Long studyId,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        String userId = principal.getName();
+                                         @AuthenticationPrincipal Jwt principal) {
+        String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

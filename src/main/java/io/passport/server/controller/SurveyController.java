@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class SurveyController {
     @GetMapping("/{surveyId}")
     public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") Long surveyId,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -56,7 +57,7 @@ public class SurveyController {
 
     @GetMapping()
     public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") Long studyId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -70,7 +71,7 @@ public class SurveyController {
     @PostMapping()
     public ResponseEntity<?> createSurvey(@RequestBody Survey survey,
                                           @RequestParam Long studyId,
-                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                          @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -89,7 +90,7 @@ public class SurveyController {
     public ResponseEntity<?> updateSurvey(@PathVariable Long surveyId,
                                           @RequestParam Long studyId,
                                           @RequestBody Survey updatedSurvey,
-                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                          @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -107,7 +108,7 @@ public class SurveyController {
     @DeleteMapping("/{surveyId}")
     public ResponseEntity<?> deleteSurvey(@PathVariable Long surveyId,
                                           @RequestParam Long studyId,
-                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                          @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

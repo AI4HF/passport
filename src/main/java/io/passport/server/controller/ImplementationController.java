@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class ImplementationController {
      */
     @GetMapping()
     public ResponseEntity<List<Implementation>> getAllImplementations(@RequestParam Long studyId,
-                                                                      @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                      @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -65,7 +66,7 @@ public class ImplementationController {
     @GetMapping("/{implementationId}")
     public ResponseEntity<?> getImplementation(@RequestParam Long studyId,
                                                @PathVariable Long implementationId,
-                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                               @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -85,7 +86,7 @@ public class ImplementationController {
     @PostMapping()
     public ResponseEntity<?> createImplementation(@RequestParam Long studyId,
                                                   @RequestBody Implementation implementation,
-                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                  @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -111,7 +112,7 @@ public class ImplementationController {
     public ResponseEntity<?> updateImplementation(@RequestParam Long studyId,
                                                   @PathVariable Long implementationId,
                                                   @RequestBody Implementation updatedImplementation,
-                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                  @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -135,7 +136,7 @@ public class ImplementationController {
     @DeleteMapping("/{implementationId}")
     public ResponseEntity<?> deleteImplementation(@RequestParam Long studyId,
                                                   @PathVariable Long implementationId,
-                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                  @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

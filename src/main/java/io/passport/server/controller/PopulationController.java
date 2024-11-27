@@ -4,13 +4,13 @@ import io.passport.server.model.Population;
 import io.passport.server.model.Role;
 import io.passport.server.service.PopulationService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class PopulationController {
     @GetMapping("/{populationId}")
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
                                                @RequestParam Long studyId,
-                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                               @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -63,7 +63,7 @@ public class PopulationController {
      */
     @GetMapping()
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam Long studyId,
-                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                    @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -83,7 +83,7 @@ public class PopulationController {
     @PostMapping()
     public ResponseEntity<?> createPopulation(@RequestBody Population population,
                                               @RequestParam Long studyId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                              @AuthenticationPrincipal Jwt principal) {
         // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         // Check user authorization for the given study
@@ -112,7 +112,7 @@ public class PopulationController {
     public ResponseEntity<?> updatePopulation(@PathVariable Long populationId,
                                               @RequestBody Population updatedPopulation,
                                               @RequestParam Long studyId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                              @AuthenticationPrincipal Jwt principal) {
         // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         // Check user authorization for the given study
@@ -139,7 +139,7 @@ public class PopulationController {
     @DeleteMapping("/{populationId}")
     public ResponseEntity<?> deletePopulation(@PathVariable Long populationId,
                                               @RequestParam Long studyId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                              @AuthenticationPrincipal Jwt principal) {
         // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         // Check user authorization for the given study

@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Class which stores the generated HTTP requests related to StudyPersonnel operations.
@@ -47,7 +49,7 @@ public class StudyPersonnelController {
     @GetMapping("/personnel")
     public ResponseEntity<?> getPersonnelByStudyId(@RequestParam Long studyId,
                                                    @RequestParam Long organizationId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -68,14 +70,14 @@ public class StudyPersonnelController {
      * @return ResponseEntity with the studies data.
      */
     @GetMapping("/studies")
-    public ResponseEntity<?> getPersonnelByStudyId(@AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> getPersonnelByStudyId(@AuthenticationPrincipal Jwt principal) {
         // Check user authorization for any role in the allowedRoles list
         if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            String personnelId = principal.getSubject();
             List<Study> studies = this.studyPersonnelService.findStudiesByPersonnelId(personnelId);
             return ResponseEntity.ok(studies);
         } catch (Exception e) {
@@ -84,30 +86,26 @@ public class StudyPersonnelController {
         }
     }
 
-    /**
-     * Clear all old StudyPersonnel entries related to both the study and the organization,
-     * then create new ones. Return updated personnel list.
-     * @param studyId ID of the study.
-     * @param organizationId ID of the organization.
-     * @param personnelRoleMap Map of personnel and their corresponding role lists.
-     * @param principal KeycloakPrincipal object that holds access token.
-     * @return ResponseEntity with updated personnel list.
-     */
     @PostMapping("/personnel")
-    public ResponseEntity<?> createStudyPersonnelEntries(@RequestParam Long studyId,
-                                                         @RequestParam Long organizationId,
-                                                         @RequestBody Map<Personnel, List<String>> personnelRoleMap,
-                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        // Check user authorization for the given study
+    public ResponseEntity<?> createStudyPersonnelEntries(
+            @RequestParam Long studyId,
+            @RequestParam Long organizationId,
+            @RequestBody List<Map<String, Object>> personnelRoleList,
+            @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            // Create StudyPersonnel entries using the personnel-role map
+            // Convert list of maps to personnelRoleMap
+            Map<String, List<String>> personnelRoleMap = personnelRoleList.stream()
+                    .collect(Collectors.toMap(
+                            item -> (String) item.get("personId"),
+                            item -> (List<String>) item.get("roles")
+                    ));
+
             this.studyPersonnelService.createStudyPersonnelEntries(studyId, organizationId, personnelRoleMap);
 
-            // Fetch updated personnel for the study and organization
             List<Personnel> updatedPersonnel = this.studyPersonnelService.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
             return ResponseEntity.ok(updatedPersonnel);
         } catch (Exception e) {
@@ -124,7 +122,7 @@ public class StudyPersonnelController {
      */
     @GetMapping("")
     public ResponseEntity<?> getStudyPersonnelByPersonId(@RequestParam String personId,
-                                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                         @AuthenticationPrincipal Jwt principal) {
 
         try {
             List<StudyPersonnel> studyPersonnelList = this.studyPersonnelService.findStudyPersonnelByPersonId(personId);

@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class ParameterController {
      */
     @GetMapping()
     public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam Long studyId,
-                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                     @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -66,7 +67,7 @@ public class ParameterController {
     @GetMapping("/{parameterId}")
     public ResponseEntity<?> getParameterById(@PathVariable Long parameterId,
                                               @RequestParam Long studyId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                              @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -85,7 +86,7 @@ public class ParameterController {
     @PostMapping()
     public ResponseEntity<?> createParameter(@RequestBody Parameter parameter,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -111,7 +112,7 @@ public class ParameterController {
     public ResponseEntity<?> updateParameter(@PathVariable Long parameterId,
                                              @RequestBody Parameter updatedParameter,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -135,7 +136,7 @@ public class ParameterController {
     @DeleteMapping("/{parameterId}")
     public ResponseEntity<?> deleteParameter(@PathVariable Long parameterId,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

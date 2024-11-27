@@ -1,13 +1,13 @@
 package io.passport.server.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.passport.server.config.KeycloakProvider;
 import io.passport.server.model.Role;
+import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.GroupResource;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -18,10 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import javax.ws.rs.core.Response;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service class for managing Keycloak operations related to user creation, group handling, and role management.
@@ -30,46 +28,40 @@ import java.util.Optional;
 @Getter
 public class KeycloakService {
 
+    private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final Logger log = LoggerFactory.getLogger(KeycloakService.class);
 
-    /**
-     * Provider class for the Keycloak.
-     */
     private final KeycloakProvider keycloakProvider;
-
-    /**
-     * UsersResource class for managing users in Keycloak.
-     */
     private final UsersResource usersResource;
-
-    private final String realm = "your_realm_name"; // Replace with your actual realm
+    private final String realm = "AI4HF-Authorization";
+    private final Keycloak keycloak;
 
     @Autowired
-    public KeycloakService(KeycloakProvider keycloakProvider, UsersResource usersResource) {
+    public KeycloakService(KeycloakProvider keycloakProvider) {
         this.keycloakProvider = keycloakProvider;
-        this.usersResource = usersResource;
+        this.keycloak = keycloakProvider.getKeycloak();
+        this.usersResource = keycloak.realm(realm).users();
     }
 
     /**
      * Login with user credentials and acquire an access token.
      * @param username user Keycloak recorded username
      * @param password user Keycloak recorded password
-     * @return
+     * @return AccessTokenResponse
      */
     public AccessTokenResponse getAccessToken(String username, String password) {
-        Keycloak keycloak = this.keycloakProvider.newKeycloakBuilderWithPasswordCredentials(username, password);
-        AccessTokenResponse tokenResponse = keycloak.tokenManager().grantToken();
-        keycloak.close();
+        Keycloak keycloakWithCredentials = this.keycloakProvider.newKeycloakBuilderWithPasswordCredentials(username, password);
+        AccessTokenResponse tokenResponse = keycloakWithCredentials.tokenManager().grantToken();
+        keycloakWithCredentials.close(); // Close the instance used for token
         return tokenResponse;
     }
 
     /**
      * Creates a Keycloak user with the given username and password, then assigns the specified role.
-     *
      * @param username the username for the new Keycloak user.
      * @param password the password for the new Keycloak user.
      * @param role the role to be assigned to the new user.
-     * @return the Keycloak user ID if creation is successful.
+     * @return Optional<String> Keycloak user ID if creation is successful.
      */
     public Optional<String> createUserAndReturnId(String username, String password, Role role) {
         UserRepresentation user = new UserRepresentation();
@@ -102,7 +94,6 @@ public class KeycloakService {
 
     /**
      * Updates the role of an existing Keycloak user by assigning a new role.
-     *
      * @param userId  the Keycloak user ID.
      * @param newRole the new role to assign to the user.
      * @return true if the role is successfully updated, false otherwise.
@@ -115,8 +106,6 @@ public class KeycloakService {
 
         // Remove current roles
         user.roles().realmLevel().remove(currentRoles);
-
-        // Assign the new role
         Optional<RoleRepresentation> newRoleRepresentation = user.roles().realmLevel().listAvailable().stream()
                 .filter(role -> role.getName().equals(newRole.name()))
                 .findFirst();
@@ -131,7 +120,6 @@ public class KeycloakService {
 
     /**
      * Deletes a Keycloak user with the specified user ID.
-     *
      * @param userId the Keycloak user ID.
      * @return true if the user is successfully deleted, false otherwise.
      */
@@ -150,77 +138,100 @@ public class KeycloakService {
         }
     }
 
-    /**
-     * Creates a group for the specified study and subgroups for each role within the study group.
-     *
-     * @param studyName the name of the study for which the groups are created.
-     */
-    public void createStudyGroups(String studyName) {
-        RealmResource realmResource = keycloakProvider.getKeycloak().realm(realm);
-        GroupRepresentation studyGroup = new GroupRepresentation();
-        studyGroup.setName(studyName);
+    public void createStudyGroups(Long studyId, String ownerId) {
+        // Create the main group
+        String groupName = "study-" + studyId;
+        GroupRepresentation group = new GroupRepresentation();
+        group.setName(groupName);
 
+        Response response = keycloak.realm(realm).groups().add(group);
 
-        realmResource.groups().add(studyGroup);
-        try {
-            GroupResource studyGroupResource = realmResource.groups().group(findGroupIdByName(studyName));
-
-
-            // Create subgroups for each role
-            String[] roles = {"SURVEY_MANAGER", "DATA_ENGINEER", "DATA_SCIENTIST", "QUALITY_ASSURANCE_SPECIALIST", "ML_OPS_ENGINEER", "STUDY_OWNER"};
-            for (String role : roles) {
-                GroupRepresentation roleGroup = new GroupRepresentation();
-                roleGroup.setName(role);
-                studyGroupResource.subGroup(roleGroup);
-            }
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Failed to create group: " + groupName);
         }
-        catch (Exception e)
-        {
-            log.info(e.getMessage());
-        }
+        String groupId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
+        List<String> subgroupNames = Arrays.asList(
+                "STUDY_OWNER",
+                "DATA_ENGINEER",
+                "DATA_SCIENTIST",
+                "SURVEY_MANAGER",
+                "QUALITY_ASSURANCE_SPECIALIST",
+                "ML_OPS_ENGINEER"
+        );
+
+        for (String subgroupName : subgroupNames) {
+            GroupRepresentation subgroup = new GroupRepresentation();
+            subgroup.setName(subgroupName);
+            keycloak.realm(realm).groups().group(groupId).subGroup(subgroup);
+        }
+        assignPersonnelToStudyGroups(studyId, ownerId, List.of("STUDY_OWNER"));
     }
 
     /**
-     * Assigns a Keycloak user to specific role groups within a study.
+     * Assign personnel to subgroups for a specific study.
+     * This method will overwrite the user's existing group memberships.
+     * If the roles list is empty, the user will be removed from all subgroups for that study.
      *
-     * @param studyName   the name of the study.
-     * @param personnelId the Keycloak user ID of the personnel.
-     * @param roles       the roles to assign.
+     * @param studyId the ID of the study
+     * @param personnelId the ID of the personnel (user)
+     * @param roles the list of roles to assign
      */
-    public void assignPersonnelToStudyGroups(String studyName, String personnelId, List<String> roles) {
-        RealmResource realmResource = keycloakProvider.getKeycloak().realm(realm);
+    public void assignPersonnelToStudyGroups(Long studyId, String personnelId, List<String> roles) {
+        // Retrieve all subgroups of the study
+        GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
+        List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);
+        List<GroupRepresentation> subgroups2 = subgroups.stream().filter(subgroup -> !subgroup.getName().equals("STUDY_OWNER")).collect(Collectors.toList());
+        for (GroupRepresentation subgroup : subgroups2) {
+            keycloak.realm(realm).users().get(personnelId).leaveGroup(subgroup.getId());
+        }
+
         for (String role : roles) {
-            GroupRepresentation roleGroup = findSubgroupByName(studyName, role);
-            if (roleGroup != null) {
-                realmResource.users().get(personnelId).joinGroup(roleGroup.getId());
-            }
+            GroupRepresentation subgroup = subgroups.stream()
+                    .filter(g -> g.getName().equals(role))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Subgroup for role " + role + " not found."));
+            keycloak.realm(realm).users().get(personnelId).joinGroup(subgroup.getId());
         }
+    }
+    /**
+     * Get the group by its name.
+     * @param groupName the name of the group
+     * @return the GroupRepresentation of the group
+     */
+    private GroupRepresentation getGroupByName(String groupName) {
+        GroupsResource groups = keycloak.realm(realm).groups();
+
+        return groups.groups().stream()
+                .filter(group -> group.getName().equalsIgnoreCase(groupName))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Group not found: " + groupName));
     }
 
     /**
-     * Helper method to find the group ID by its name.
-     *
-     * @param groupName the name of the group.
-     * @return the group ID.
+     * Get group ID by group name.
+     * @param groupName the name of the group
+     * @return the ID of the group or null if not found
      */
-    private String findGroupIdByName(String groupName) {
-        return keycloakProvider.getKeycloak().realm(realm).groups().groups().stream()
-                .filter(g -> g.getName().equals(groupName))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Group not found"))
-                .getId();
+    public String findGroupIdByName(String groupName) {
+        List<GroupRepresentation> groups = keycloak.realm(realm).groups().groups();
+
+        for (GroupRepresentation group : groups) {
+            if (group.getName().equalsIgnoreCase(groupName)) {
+                return group.getId();
+            }
+        }
+        return null;
     }
 
     /**
      * Finds a subgroup within a parent group (study) by name.
-     *
      * @param studyName the name of the parent study group.
      * @param roleName  the name of the subgroup.
      * @return the group representation of the subgroup.
      */
     private GroupRepresentation findSubgroupByName(String studyName, String roleName) {
-        return keycloakProvider.getKeycloak().realm(realm).groups().group(findGroupIdByName(studyName))
+        return keycloak.realm(realm).groups().group(findGroupIdByName(studyName))
                 .toRepresentation()
                 .getSubGroups().stream()
                 .filter(g -> g.getName().equals(roleName))
@@ -230,13 +241,12 @@ public class KeycloakService {
 
     /**
      * Removes a Keycloak user from specific role groups within a study.
-     *
      * @param studyName   the name of the study.
      * @param personnelId the Keycloak user ID of the personnel.
      * @param roles       the roles to remove.
      */
     public void removePersonnelFromStudyGroups(String studyName, String personnelId, List<String> roles) {
-        RealmResource realmResource = keycloakProvider.getKeycloak().realm(realm);
+        RealmResource realmResource = keycloak.realm(realm);
         for (String role : roles) {
             GroupRepresentation roleGroup = findSubgroupByName(studyName, role);
             if (roleGroup != null) {
@@ -247,48 +257,67 @@ public class KeycloakService {
 
     /**
      * Checks if the user belongs to the 'STUDY_OWNER' group for a given study.
-     *
      * @param studyId  the ID of the study.
      * @param userId   the ID of the user.
      * @return true if the user belongs to the study owner group, false otherwise.
      */
     public boolean isUserInStudyOwnerGroup(Long studyId, String userId) {
-        UsersResource usersResource = keycloakProvider.getKeycloak().realm(realm).users();
-        UserResource user = usersResource.get(userId);
-
-        List<GroupRepresentation> groups = user.groups();
+        List<GroupRepresentation> groups = usersResource.get(userId).groups();
         String expectedGroupName = "study-" + studyId + "-STUDY_OWNER";  // Assuming groups are named with this convention
 
-        return groups.stream()
-                .anyMatch(group -> group.getName().equals(expectedGroupName));
+        return groups.stream().anyMatch(group -> group.getName().equals(expectedGroupName));
     }
 
     /**
-     * Checks if the user is a member of any of the role groups in a specific study.
-     * @param studyId the ID of the study.
-     * @param personnelId the ID of the personnel (Keycloak user).
-     * @param allowedRoles the list of roles to check.
-     * @return true if the user belongs to any of the allowed roles in the study, false otherwise.
+     * Check if a personnel belongs to at least one subgroup for a given study
+     * by searching for their ID in the members of each subgroup.
+     *
+     * @param studyId the ID of the study
+     * @param personnelId the ID of the personnel (user)
+     * @param roles the list of roles to check
+     * @return true if the user is a member of at least one of the subgroups, false otherwise
      */
-    public boolean isUserInStudyGroupWithRoles(Long studyId, String personnelId, List<String> allowedRoles) {
-        RealmResource realmResource = keycloakProvider.getKeycloak().realm(realm);
-        UsersResource usersResource = realmResource.users();
-        UserResource userResource = usersResource.get(personnelId);
+    public boolean isUserInStudyGroupWithRoles(Long studyId, String personnelId, List<String> roles) {
+        // Retrieve the main study group
+        GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
+        List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);
 
-        // Fetch the groups the user belongs to
-        List<GroupRepresentation> userGroups = userResource.groups();
+        // Iterate through the desired roles (subgroups)
+        for (String role : roles) {
+            // Find the subgroup for the role
+            GroupRepresentation subgroup = subgroups.stream()
+                    .filter(g -> g.getName().equals(role))
+                    .findFirst()
+                    .orElse(null);
 
-        // Check for matching groups in the study with the allowed roles
-        String studyGroupPrefix = "study-" + studyId + "-";
-        for (GroupRepresentation group : userGroups) {
-            for (String role : allowedRoles) {
-                String expectedGroupName = studyGroupPrefix + role;
-                if (group.getName().equals(expectedGroupName)) {
-                    return true;
+            if (subgroup != null) {
+                // Retrieve the members of the subgroup
+                List<UserRepresentation> members = keycloak.realm(realm).groups().group(subgroup.getId()).members();
+
+                // Check if the personnelId exists in the list of members
+                boolean isMember = members.stream().anyMatch(member -> member.getId().equals(personnelId));
+
+                if (isMember) {
+                    return true; // Return true if the user is found in at least one subgroup
                 }
             }
         }
 
-        return false;  // Return false if no matching group is found
+        return false; // Return false if the user is not found in any of the desired subgroups
+    }
+
+    /**
+     * Retrieves all realm-level roles assigned to a user.
+     *
+     * @param userId the ID of the user in Keycloak.
+     * @return a set of roles assigned to the user.
+     */
+    public Set<String> getUserRoles(String userId) {
+        UserResource userResource = usersResource.get(userId);
+        List<RoleRepresentation> userRoles = userResource.roles().realmLevel().listEffective();
+
+        return userRoles.stream()
+                .map(RoleRepresentation::getName)
+                .collect(Collectors.toSet());
     }
 }

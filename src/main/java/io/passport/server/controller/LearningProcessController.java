@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class LearningProcessController {
      */
     @GetMapping()
     public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
-                                                                                  @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                                  @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -64,7 +65,7 @@ public class LearningProcessController {
     @GetMapping("/{learningProcessId}")
     public ResponseEntity<?> getLearningProcess(@RequestParam Long studyId,
                                                 @PathVariable Long learningProcessId,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -84,7 +85,7 @@ public class LearningProcessController {
     @PostMapping()
     public ResponseEntity<?> createLearningProcess(@RequestParam Long studyId,
                                                    @RequestBody LearningProcess learningProcess,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -110,7 +111,7 @@ public class LearningProcessController {
     public ResponseEntity<?> updateLearningProcess(@RequestParam Long studyId,
                                                    @PathVariable Long learningProcessId,
                                                    @RequestBody LearningProcess updatedLearningProcess,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -134,7 +135,7 @@ public class LearningProcessController {
     @DeleteMapping("/{learningProcessId}")
     public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,
                                                    @PathVariable Long learningProcessId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

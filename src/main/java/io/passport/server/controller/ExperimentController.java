@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,7 @@ public class ExperimentController {
 
     @GetMapping()
     public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") Long studyId,
-                                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        // Check authorization using studyId
+                                                                    @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -49,7 +49,7 @@ public class ExperimentController {
     @PostMapping()
     public ResponseEntity<?> createExperiments(@RequestParam Long studyId,
                                                @RequestBody List<Experiment> experiments,
-                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                               @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

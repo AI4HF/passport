@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ModelDeploymentController {
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
             @RequestParam(required = false) Long environmentId,
             @RequestParam(required = false) Long studyId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -79,7 +80,7 @@ public class ModelDeploymentController {
     @GetMapping("/{deploymentId}")
     public ResponseEntity<?> getModelDeployment(@RequestParam Long studyId,
                                                 @PathVariable Long deploymentId,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -100,7 +101,7 @@ public class ModelDeploymentController {
     @PostMapping()
     public ResponseEntity<?> createModelDeployment(@RequestParam Long studyId,
                                                    @RequestBody ModelDeployment modelDeployment,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -126,7 +127,7 @@ public class ModelDeploymentController {
     public ResponseEntity<?> updateModelDeployment(@RequestParam Long studyId,
                                                    @PathVariable Long deploymentId,
                                                    @RequestBody ModelDeployment updatedModelDeployment,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -150,7 +151,7 @@ public class ModelDeploymentController {
     @DeleteMapping("/{deploymentId}")
     public ResponseEntity<?> deleteModelDeployment(@RequestParam Long studyId,
                                                    @PathVariable Long deploymentId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

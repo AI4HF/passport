@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class LearningStageController {
     public ResponseEntity<List<LearningStage>> getLearningStages(
             @RequestParam Long studyId,
             @RequestParam(required = false) Long learningProcessId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -68,7 +69,7 @@ public class LearningStageController {
     @GetMapping("/{learningStageId}")
     public ResponseEntity<?> getLearningStage(@RequestParam Long studyId,
                                               @PathVariable Long learningStageId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                              @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -88,7 +89,7 @@ public class LearningStageController {
     @PostMapping()
     public ResponseEntity<?> createLearningStage(@RequestParam Long studyId,
                                                  @RequestBody LearningStage learningStage,
-                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                 @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -114,7 +115,7 @@ public class LearningStageController {
     public ResponseEntity<?> updateLearningStage(@RequestParam Long studyId,
                                                  @PathVariable Long learningStageId,
                                                  @RequestBody LearningStage updatedLearningStage,
-                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                 @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -138,7 +139,7 @@ public class LearningStageController {
     @DeleteMapping("/{learningStageId}")
     public ResponseEntity<?> deleteLearningStage(@RequestParam Long studyId,
                                                  @PathVariable Long learningStageId,
-                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                 @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

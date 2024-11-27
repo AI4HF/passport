@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public class PersonnelController {
      */
     @GetMapping()
     public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<Long> organizationId,
-                                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                        @AuthenticationPrincipal Jwt principal) {
 
         List<Personnel> personnel = organizationId
                 .map(this.personnelService::findPersonnelByOrganizationId)
@@ -81,7 +82,7 @@ public class PersonnelController {
     @GetMapping("/{personId}")
     public ResponseEntity<?> getPersonnelByPersonId(
             @PathVariable("personId") String personId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personId);
 
@@ -101,7 +102,7 @@ public class PersonnelController {
      */
     @PostMapping()
     public ResponseEntity<?> createPersonnel(@RequestBody PersonnelDTO personnelDTO,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint
@@ -133,7 +134,7 @@ public class PersonnelController {
     @PutMapping("/{personId}")
     public ResponseEntity<?> updatePersonnel(@PathVariable String personId,
                                              @RequestBody Personnel updatedPersonnel,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint
@@ -163,7 +164,7 @@ public class PersonnelController {
      */
     @DeleteMapping("/{personId}")
     public ResponseEntity<?> deletePersonnel(@PathVariable String personId ,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try{
 
             // Allowed roles for this endpoint

@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class DatasetController {
 
     @GetMapping()
     public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
-                                                                 @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                 @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -51,7 +52,7 @@ public class DatasetController {
     @GetMapping("/{datasetId}")
     public ResponseEntity<?> getDataset(@PathVariable Long datasetId,
                                         @RequestParam Long studyId,
-                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                        @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -63,13 +64,13 @@ public class DatasetController {
     @PostMapping()
     public ResponseEntity<?> createDataset(@RequestBody Dataset dataset,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            String personnelId = principal.getSubject();
             Optional<Dataset> savedDataset = this.datasetService.saveDataset(dataset, personnelId);
             return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -82,13 +83,13 @@ public class DatasetController {
     public ResponseEntity<?> updateDataset(@PathVariable Long datasetId,
                                            @RequestBody Dataset updatedDataset,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            String personnelId = this.roleCheckerService.getPersonnelId(principal);
+            String personnelId = principal.getSubject();
             Optional<Dataset> savedDataset = this.datasetService.updateDataset(datasetId, updatedDataset, personnelId);
             return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -100,7 +101,7 @@ public class DatasetController {
     @DeleteMapping("/{datasetId}")
     public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,
                                            @RequestParam Long studyId,
-                                           @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                           @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class AlgorithmController {
 
     @GetMapping()
     public ResponseEntity<List<Algorithm>> getAllAlgorithms(@RequestParam Long studyId,
-                                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                            @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -51,7 +52,7 @@ public class AlgorithmController {
     @GetMapping("/{algorithmId}")
     public ResponseEntity<?> getAlgorithm(@PathVariable Long algorithmId,
                                           @RequestParam Long studyId,
-                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                          @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -63,7 +64,7 @@ public class AlgorithmController {
     @PostMapping()
     public ResponseEntity<?> createAlgorithm(@RequestBody Algorithm algorithm,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -81,7 +82,7 @@ public class AlgorithmController {
     public ResponseEntity<?> updateAlgorithm(@PathVariable Long algorithmId,
                                              @RequestBody Algorithm updatedAlgorithm,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -98,7 +99,7 @@ public class AlgorithmController {
     @DeleteMapping("/{algorithmId}")
     public ResponseEntity<?> deleteAlgorithm(@PathVariable Long algorithmId,
                                              @RequestParam Long studyId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

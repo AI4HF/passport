@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class StudyOrganizationController {
     @GetMapping()
     public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam Long studyId,
                                                                        @RequestParam Long organizationId,
-                                                                       @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                       @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -74,7 +75,7 @@ public class StudyOrganizationController {
      */
     @GetMapping("/organizations")
     public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam Long studyId,
-                                                       @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                       @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -99,7 +100,7 @@ public class StudyOrganizationController {
     @GetMapping("/studies")
     public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam Long organizationId,
                                                         @RequestParam Long studyId,
-                                                        @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                        @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -122,7 +123,7 @@ public class StudyOrganizationController {
      */
     @PostMapping()
     public ResponseEntity<?> createStudyOrganization(@RequestBody StudyOrganizationDTO studyOrganizationDTO,
-                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                     @AuthenticationPrincipal Jwt principal) {
         Long studyId = studyOrganizationDTO.getStudyId();
 
         // Check authorization using studyId
@@ -152,7 +153,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> updateStudyOrganization(@RequestParam Long studyId,
                                                      @RequestParam Long organizationId,
                                                      @RequestBody StudyOrganizationDTO updatedStudyOrganizationDTO,
-                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                     @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -184,7 +185,7 @@ public class StudyOrganizationController {
     @DeleteMapping()
     public ResponseEntity<?> deleteStudyOrganization(@RequestParam Long studyId,
                                                      @RequestParam Long organizationId,
-                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                     @AuthenticationPrincipal Jwt principal) {
         // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
