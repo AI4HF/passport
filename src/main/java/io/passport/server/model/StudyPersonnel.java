@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +24,7 @@ public class StudyPersonnel {
 
     @Column(name = "role")
     private String role;
+
     /**
      * Get the roles as a List of Strings.
      * This method parses the comma-separated roles string into a list.

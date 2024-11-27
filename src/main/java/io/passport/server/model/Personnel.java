@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Personnel model for later use, implemented early to implement Study structure properly.
@@ -28,6 +28,8 @@ public class Personnel {
 
     @Column(name = "first_name")
     private String firstName;
+
+    private String role;
 
     @Column(name = "last_name")
     private String lastName;
