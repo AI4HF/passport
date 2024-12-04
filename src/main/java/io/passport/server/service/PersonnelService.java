@@ -63,8 +63,15 @@ public class PersonnelService {
      * @return
      */
     public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
-        Optional<String> keycloakUserId = this.keycloakService
-                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, Role.valueOf(personnelDTO.getPersonnel().getRole()));  // No role assignment
+        Optional<String> keycloakUserId;
+        if(personnelDTO.getRole()){
+            keycloakUserId = this.keycloakService
+                    .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, Role.STUDY_OWNER);
+        }
+        else {
+            keycloakUserId = this.keycloakService
+                    .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, null);
+        }
         if(keycloakUserId.isPresent()) {
             Personnel personnel = personnelDTO.getPersonnel();
             personnel.setPersonId(keycloakUserId.get());
@@ -84,7 +91,6 @@ public class PersonnelService {
     public Optional<Personnel> updatePersonnel(String personnelId, Personnel updatedPersonnel) {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(personnelId);
         if (oldPersonnel.isPresent()) {
-            keycloakService.updateRole(personnelId, Role.valueOf(updatedPersonnel.getRole()));
             Personnel personnel = oldPersonnel.get();
             personnel.setFirstName(updatedPersonnel.getFirstName());
             personnel.setLastName(updatedPersonnel.getLastName());

@@ -29,8 +29,6 @@ public class Personnel {
     @Column(name = "first_name")
     private String firstName;
 
-    private String role;
-
     @Column(name = "last_name")
     private String lastName;
 

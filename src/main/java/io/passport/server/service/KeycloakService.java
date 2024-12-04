@@ -99,6 +99,9 @@ public class KeycloakService {
      * @return true if the role is successfully updated, false otherwise.
      */
     public boolean updateRole(String userId, Role newRole) {
+        if (newRole == null) {
+            return true;
+        }
         UserResource user = usersResource.get(userId);
 
         // Get the user's current roles
@@ -157,7 +160,7 @@ public class KeycloakService {
                 "DATA_SCIENTIST",
                 "SURVEY_MANAGER",
                 "QUALITY_ASSURANCE_SPECIALIST",
-                "ML_OPS_ENGINEER"
+                "ML_ENGINEER"
         );
 
         for (String subgroupName : subgroupNames) {

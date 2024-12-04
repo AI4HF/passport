@@ -1,7 +1,9 @@
 package io.passport.server.controller;
 
+import io.passport.server.model.Role;
 import io.passport.server.model.Study;
 import io.passport.server.service.KeycloakService;
+import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +32,16 @@ public class StudyController {
     private final StudyService studyService;
     private final KeycloakService keycloakService;
 
+    /**
+     * Role checker service for authorization
+     */
+    private final RoleCheckerService roleCheckerService;
+
     @Autowired
-    public StudyController(StudyService studyService, KeycloakService keycloakService) {
+    public StudyController(StudyService studyService, KeycloakService keycloakService, RoleCheckerService roleCheckerService) {
         this.studyService = studyService;
         this.keycloakService = keycloakService;
+        this.roleCheckerService = roleCheckerService;
     }
 
     @GetMapping()
@@ -57,6 +65,10 @@ public class StudyController {
 
     @GetMapping("/{studyId}")
     public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal Jwt principal) {
+
+        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
@@ -69,6 +81,10 @@ public class StudyController {
 
     @PostMapping()
     public ResponseEntity<?> createStudy(@RequestBody Study study, @AuthenticationPrincipal Jwt principal) {
+
+        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             String ownerId = principal.getSubject();
             study.setOwner(ownerId);
@@ -89,6 +105,10 @@ public class StudyController {
     public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
                                          @RequestBody Study updatedStudy,
                                          @AuthenticationPrincipal Jwt principal) {
+
+        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
@@ -102,6 +122,10 @@ public class StudyController {
     @DeleteMapping("/{studyId}")
     public ResponseEntity<?> deleteStudy(@PathVariable Long studyId,
                                          @AuthenticationPrincipal Jwt principal) {
+        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         String userId = principal.getSubject();
 
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
