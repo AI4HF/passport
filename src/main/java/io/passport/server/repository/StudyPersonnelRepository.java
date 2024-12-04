@@ -1,9 +1,6 @@
 package io.passport.server.repository;
 
-import io.passport.server.model.Personnel;
-import io.passport.server.model.Study;
-import io.passport.server.model.StudyPersonnel;
-import io.passport.server.model.StudyPersonnelId;
+import io.passport.server.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +35,12 @@ public interface StudyPersonnelRepository extends JpaRepository<StudyPersonnel, 
     List<StudyPersonnel> findByStudyIdAndPersonnelIdList(@Param("studyId") Long studyId, @Param("personnelIdList") List<String> personnelIdList);
 
     List<StudyPersonnel> findStudyPersonnelById_PersonnelId(String personId);
+
+    @Query("SELECT sp " +
+            "FROM StudyPersonnel sp " +
+            "JOIN Personnel p ON sp.id.personnelId = p.personId " +
+            "WHERE sp.id.studyId = :studyId AND p.organizationId = :organizationId")
+    List<StudyPersonnel> findStudyPersonnelByStudyIdAndOrganizationId(@Param("studyId") Long studyId,
+                                                                      @Param("organizationId") Long organizationId);
+
 }

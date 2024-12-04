@@ -1,9 +1,6 @@
 package io.passport.server.service;
 
-import io.passport.server.model.Personnel;
-import io.passport.server.model.Study;
-import io.passport.server.model.StudyPersonnel;
-import io.passport.server.model.StudyPersonnelId;
+import io.passport.server.model.*;
 import io.passport.server.repository.StudyPersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +36,25 @@ public class StudyPersonnelService {
         this.studyPersonnelRepository = studyPersonnelRepository;
         this.personnelService = personnelService;
         this.keycloakService = keycloakService;
+    }
+
+    /**
+     * Fetch personnel-role mappings for a given study and organization.
+     *
+     * @param studyId        The ID of the study.
+     * @param organizationId The ID of the organization.
+     * @return A Map of personnel IDs to their roles.
+     */
+    public Map<String, List<String>> getPersonnelRolesByStudyAndOrganization(Long studyId, Long organizationId) {
+        List<StudyPersonnel> studyPersonnelList =
+                studyPersonnelRepository.findStudyPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
+
+        // Transform StudyPersonnel entries into a Map of personnelId to roles
+        return studyPersonnelList.stream()
+                .collect(Collectors.toMap(
+                        sp -> sp.getId().getPersonnelId(), // Map key: personnelId
+                        StudyPersonnel::getRolesAsList   // Map value: list of roles
+                ));
     }
 
     /**

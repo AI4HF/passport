@@ -39,6 +39,25 @@ public class StudyPersonnelController {
         this.roleCheckerService = roleCheckerService;
     }
 
+    @GetMapping("/roles")
+    public ResponseEntity<?> getPersonnelRolesByStudyAndOrganization(@RequestParam Long studyId,
+                                                                     @RequestParam Long organizationId,
+                                                                     @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            Map<String, List<String>> personnelRoles =
+                    studyPersonnelService.getPersonnelRolesByStudyAndOrganization(studyId, organizationId);
+            return ResponseEntity.ok(personnelRoles);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
     /**
      * Get all personnel related to a study and an organization.
      * @param studyId ID of the study.
