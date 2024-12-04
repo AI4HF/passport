@@ -28,7 +28,7 @@ public class DeploymentEnvironmentController {
 
     private final DeploymentEnvironmentService deploymentEnvironmentService;
     private final RoleCheckerService roleCheckerService;
-    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+    private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
     @Autowired
     public DeploymentEnvironmentController(DeploymentEnvironmentService deploymentEnvironmentService, RoleCheckerService roleCheckerService) {

@@ -28,7 +28,7 @@ public class ModelDeploymentController {
     private static final Logger log = LoggerFactory.getLogger(ModelDeploymentController.class);
     private final ModelDeploymentService modelDeploymentService;
     private final RoleCheckerService roleCheckerService;
-    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
+    private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
     @Autowired
     public ModelDeploymentController(ModelDeploymentService modelDeploymentService, RoleCheckerService roleCheckerService) {
