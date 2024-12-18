@@ -19,7 +19,7 @@
   "clientOfflineSessionIdleTimeout": 0,
   "clientOfflineSessionMaxLifespan": 0,
   "accessCodeLifespan": 60,
-  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanUserAction": 1800,
   "accessCodeLifespanLogin": 1800,
   "actionTokenGeneratedByAdminLifespan": 43200,
   "actionTokenGeneratedByUserLifespan": 300,
@@ -46,60 +46,6 @@
   "failureFactor": 30,
   "roles": {
     "realm": [
-      {
-        "id": "2d5ab47b-3aa6-4de8-b187-ff135c83717d",
-        "name": "ML_ENGINEER",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
-        "id": "29e5ae2c-0ea8-459e-a8a0-26954cff0a1f",
-        "name": "QUALITY_ASSURANCE_SPECIALIST",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
-        "id": "e67fb1b3-dd12-4a31-aa84-8c1fedf21075",
-        "name": "DATA_SCIENTIST",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
-        "id": "1a0922fe-f596-41de-a1cc-55861ebf4dfd",
-        "name": "STUDY_OWNER",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
-        "id": "5b5f986b-f378-4d1d-bf57-aceb4bd15939",
-        "name": "SURVEY_MANAGER",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
-        "id": "6e3979bc-b461-4574-9926-1546c0341d8f",
-        "name": "ORGANIZATION_ADMIN",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
       {
         "id": "6721c6cc-ac6f-447b-b621-7b688f648a50",
         "name": "DATA_ENGINEER",
@@ -135,6 +81,42 @@
         "attributes": {}
       },
       {
+        "id": "5b5f986b-f378-4d1d-bf57-aceb4bd15939",
+        "name": "SURVEY_MANAGER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "6e3979bc-b461-4574-9926-1546c0341d8f",
+        "name": "ORGANIZATION_ADMIN",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "1a0922fe-f596-41de-a1cc-55861ebf4dfd",
+        "name": "STUDY_OWNER",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "e67fb1b3-dd12-4a31-aa84-8c1fedf21075",
+        "name": "DATA_SCIENTIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "9c9967db-4e01-4fee-8cf5-4b0087fd9228",
         "name": "default-roles-ai4hf-authorization",
         "description": "${role_default-roles}",
@@ -151,6 +133,24 @@
             ]
           }
         },
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "29e5ae2c-0ea8-459e-a8a0-26954cff0a1f",
+        "name": "QUALITY_ASSURANCE_SPECIALIST",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
+        "id": "2d5ab47b-3aa6-4de8-b187-ff135c83717d",
+        "name": "ML_ENGINEER",
+        "description": "",
+        "composite": false,
         "clientRole": false,
         "containerId": "AI4HF-Authorization",
         "attributes": {}
@@ -516,7 +516,79 @@
       ]
     }
   },
-  "groups": [],
+  "groups": [
+    {
+      "id": "dab241d3-fb34-417b-85b5-3dce135739b4",
+      "name": "study-1",
+      "path": "/study-1",
+      "subGroups": [
+        {
+          "id": "7b22fe9f-7c43-407e-a87c-a4b4318c9698",
+          "name": "DATA_ENGINEER",
+          "path": "/study-1/DATA_ENGINEER",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "37b4a0c9-eeea-4209-857c-28869614e2f0",
+          "name": "DATA_SCIENTIST",
+          "path": "/study-1/DATA_SCIENTIST",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+
+        },
+        {
+          "id": "ef1f8e4a-e31f-45c8-9c5f-679d1e8e97f2",
+          "name": "ML_ENGINEER",
+          "path": "/study-1/ML_ENGINEER",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "f45d9074-3c19-4122-a40f-53761fb01980",
+          "name": "QUALITY_ASSURANCE_SPECIALIST",
+          "path": "/study-1/QUALITY_ASSURANCE_SPECIALIST",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "cd3775d6-4b34-494a-9980-2ba9b7f5e669",
+          "name": "STUDY_OWNER",
+          "path": "/study-1/STUDY_OWNER",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "d82f24a0-fb81-45b3-a8c9-98ec1d2557a7",
+          "name": "SURVEY_MANAGER",
+          "path": "/study-1/SURVEY_MANAGER",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    }
+  ],
   "defaultRole": {
     "id": "9c9967db-4e01-4fee-8cf5-4b0087fd9228",
     "name": "default-roles-ai4hf-authorization",
@@ -634,6 +706,9 @@
       ],
       "realmRoles": [
         "STUDY_OWNER"
+      ],
+      "groups": [
+        "/study-1/STUDY_OWNER"
       ]
     },
     {
@@ -649,6 +724,27 @@
       ],
       "realmRoles": [
         "DATA_ENGINEER"
+      ],
+      "groups": [
+        "/study-1/DATA_ENGINEER"
+      ]
+    },
+    {
+      "id": "ml_engineer",
+      "username": "ml_engineer",
+      "enabled": true,
+      "email": "ml_engineer@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ml_engineer"
+        }
+      ],
+      "realmRoles": [
+        "ML_ENGINEER"
+      ],
+      "groups": [
+        "/study-1/ML_ENGINEER"
       ]
     },
     {
@@ -664,6 +760,9 @@
       ],
       "realmRoles": [
         "DATA_SCIENTIST"
+      ],
+      "groups": [
+        "/study-1/DATA_SCIENTIST"
       ]
     },
     {
@@ -679,6 +778,9 @@
       ],
       "realmRoles": [
         "SURVEY_MANAGER"
+      ],
+      "groups": [
+        "/study-1/SURVEY_MANAGER"
       ]
     },
     {
@@ -694,6 +796,9 @@
       ],
       "realmRoles": [
         "QUALITY_ASSURANCE_SPECIALIST"
+      ],
+      "groups": [
+        "/study-1/QUALITY_ASSURANCE_SPECIALIST"
       ]
     }
   ],
@@ -895,7 +1000,7 @@
         "saml.client.signature": "false",
         "id.token.as.detached.signature": "false",
         "saml.assertion.signature": "false",
-        "client.secret.creation.time": "1721976556",
+        "client.secret.creation.time": "1734432214",
         "saml.encrypt": "false",
         "saml.server.signature": "false",
         "exclude.session.state.from.auth.response": "false",
@@ -919,6 +1024,7 @@
           "config": {
             "user.session.note": "clientAddress",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
@@ -934,10 +1040,25 @@
           "config": {
             "user.session.note": "client_id",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "0ddabbe3-ea40-4016-b85c-ee1c55bb28a8",
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "foo",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String",
+            "multivalued": "true"
           }
         },
         {
@@ -958,20 +1079,6 @@
           }
         },
         {
-          "id": "0ddabbe3-ea40-4016-b85c-ee1c55bb28a8",
-          "name": "client roles",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-client-role-mapper",
-          "consentRequired": false,
-          "config": {
-            "user.attribute": "foo",
-            "access.token.claim": "true",
-            "claim.name": "resource_access.${client_id}.roles",
-            "jsonType.label": "String",
-            "multivalued": "true"
-          }
-        },
-        {
           "id": "c6e7d347-38d1-4464-bbd1-7223ac1bec5d",
           "name": "Client Host",
           "protocol": "openid-connect",
@@ -980,6 +1087,7 @@
           "config": {
             "user.session.note": "clientHost",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
@@ -1205,7 +1313,8 @@
           "config": {
             "id.token.claim": "true",
             "access.token.claim": "true",
-            "introspection.token.claim": "true"
+            "introspection.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1711,14 +1820,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-role-list-mapper",
-            "oidc-full-name-mapper",
-            "oidc-address-mapper",
             "saml-user-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-user-property-mapper"
+            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-full-name-mapper",
+            "oidc-sha256-pairwise-sub-mapper"
           ]
         }
       },
@@ -1730,14 +1839,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
+            "saml-role-list-mapper",
             "oidc-address-mapper",
-            "saml-user-property-mapper",
             "oidc-full-name-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-attribute-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-role-list-mapper"
+            "saml-user-attribute-mapper",
+            "saml-user-property-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
