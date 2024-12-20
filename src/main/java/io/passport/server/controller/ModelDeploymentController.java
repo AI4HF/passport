@@ -49,7 +49,7 @@ public class ModelDeploymentController {
             @RequestParam(required = false) Long studyId,
             @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -82,7 +82,7 @@ public class ModelDeploymentController {
                                                 @PathVariable Long deploymentId,
                                                 @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

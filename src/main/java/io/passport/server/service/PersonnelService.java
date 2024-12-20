@@ -64,7 +64,7 @@ public class PersonnelService {
      */
     public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
         Optional<String> keycloakUserId;
-        if(personnelDTO.getRole()){
+        if(personnelDTO.getIsStudyOwner()){
             keycloakUserId = this.keycloakService
                     .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, Role.STUDY_OWNER);
         }

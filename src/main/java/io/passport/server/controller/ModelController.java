@@ -45,7 +45,7 @@ public class ModelController {
     public ResponseEntity<List<Model>> getAllModels(@RequestParam Long studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.DATA_SCIENTIST, Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -65,7 +65,7 @@ public class ModelController {
                                           @PathVariable Long modelId,
                                           @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

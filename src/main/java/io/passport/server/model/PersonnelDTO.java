@@ -18,5 +18,5 @@ public class PersonnelDTO {
 
     private Credentials credentials;
 
-    private Boolean role;
+    private Boolean isStudyOwner;
 }
