@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Personnel;
-import io.passport.server.model.Role;
-import io.passport.server.model.Study;
-import io.passport.server.model.StudyPersonnel;
+import io.passport.server.model.*;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyPersonnelService;
 import org.keycloak.KeycloakPrincipal;
@@ -109,18 +106,17 @@ public class StudyPersonnelController {
     public ResponseEntity<?> createStudyPersonnelEntries(
             @RequestParam Long studyId,
             @RequestParam Long organizationId,
-            @RequestBody List<Map<String, Object>> personnelRoleList,
+            @RequestBody List<PersonnelRoleDTO> personnelRoleList,
             @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            // Convert list of maps to personnelRoleMap
             Map<String, List<String>> personnelRoleMap = personnelRoleList.stream()
                     .collect(Collectors.toMap(
-                            item -> (String) item.get("personId"),
-                            item -> (List<String>) item.get("roles")
+                            PersonnelRoleDTO::getPersonId,
+                            PersonnelRoleDTO::getRoles
                     ));
 
             this.studyPersonnelService.createStudyPersonnelEntries(studyId, organizationId, personnelRoleMap);
@@ -132,6 +128,7 @@ public class StudyPersonnelController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
     /**
      * Fetch all StudyPersonnel entries for a given personnel by their personId.

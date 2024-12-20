@@ -33,13 +33,14 @@ public class KeycloakService {
 
     private final KeycloakProvider keycloakProvider;
     private final UsersResource usersResource;
-    private final String realm = "AI4HF-Authorization";
+    private final String realm;
     private final Keycloak keycloak;
 
     @Autowired
     public KeycloakService(KeycloakProvider keycloakProvider) {
         this.keycloakProvider = keycloakProvider;
         this.keycloak = keycloakProvider.getKeycloak();
+        this.realm = keycloakProvider.getRealm();
         this.usersResource = keycloak.realm(realm).users();
     }
 
@@ -141,6 +142,11 @@ public class KeycloakService {
         }
     }
 
+    /**
+     * Initializes a study group for a newly created study, with the creator as its owner.
+     * @param studyId Id of the study that has been created.
+     * @param ownerId Creator id.
+     */
     public void createStudyGroups(Long studyId, String ownerId) {
         // Create the main group
         String groupName = "study-" + studyId;

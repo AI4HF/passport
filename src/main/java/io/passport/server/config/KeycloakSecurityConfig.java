@@ -1,6 +1,7 @@
 package io.passport.server.config;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -21,6 +22,12 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 public class KeycloakSecurityConfig {
 
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    @Value("${keycloak.auth-server-url}")
+    private String url;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -32,7 +39,7 @@ public class KeycloakSecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri("http://localhost:8081/realms/AI4HF-Authorization/protocol/openid-connect/certs")
+        return NimbusJwtDecoder.withJwkSetUri(url+"realms/"+realm+"/protocol/openid-connect/certs")
                 .jwsAlgorithm(SignatureAlgorithm.RS256)
                 .build();
     }
