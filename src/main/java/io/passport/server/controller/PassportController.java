@@ -4,17 +4,16 @@ import io.passport.server.model.Passport;
 import io.passport.server.model.PassportWithDetailSelection;
 import io.passport.server.model.Role;
 import io.passport.server.service.PassportService;
+import io.passport.server.service.PassportSignatureService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,12 +27,14 @@ public class PassportController {
     private static final Logger log = LoggerFactory.getLogger(PassportController.class);
     private final PassportService passportService;
     private final RoleCheckerService roleCheckerService;
+    private final PassportSignatureService passportSignatureService;
     private final List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
-    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService) {
+    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService, PassportSignatureService passportSignatureService) {
         this.passportService = passportService;
         this.roleCheckerService = roleCheckerService;
+        this.passportSignatureService = passportSignatureService;
     }
 
     /**
@@ -123,5 +124,45 @@ public class PassportController {
 
         Passport passport = passportService.getPassportById(passportId);
         return ResponseEntity.ok(passport);
+    }
+
+    /**
+     * New endpoint to sign a PDF file.
+     *
+     * Receives a PDF as a multipart file, checks authorization,
+     * then signs it using the PassportSignatureService.
+     *
+     * @param file       The incoming PDF file to be signed
+     * @param studyId    Study ID for authorization
+     * @param principal  Keycloak JWT principal
+     * @return           A ResponseEntity containing the signed PDF in bytes
+     */
+    @PostMapping(value = "/sign-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> signPdf(@RequestParam("pdf") MultipartFile file,
+                                     @RequestParam Long studyId,
+                                     @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            byte[] fileBytes = file.getBytes();
+
+            byte[] signedPdf = passportSignatureService.generateSignature(fileBytes);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+
+            headers.setContentDisposition(ContentDisposition.builder("attachment")
+                    .filename("signed_document.pdf")
+                    .build());
+
+            return new ResponseEntity<>(signedPdf, headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            log.error("Error while signing PDF: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Could not sign the PDF: " + e.getMessage());
+        }
     }
 }

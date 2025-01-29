@@ -17,3 +17,8 @@ To start using the REST methods, follow the instructions below:
 # Swagger UI
 - Once the Passport is run, go to http://localhost:8080/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config#/ to access the Swagger documentation.
 - Authorization token provided by the login task should be set as the Authorization header for non-login requests, along with a ```Bearer``` at the start.
+
+# DSS
+- Upon Passport PDF generation on frontend, respective endpoint signs the created PDF file and sends it back via response.
+- Upon server setup, for a properly personalized signature, Java Keytool must be utilized to generate a Keystore file and it must be stored in docs folder under the name keystore.p12. To generate, the following command must be run on a path with relation to the Keytool application:
+  - keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -storetype pkcs12 -keystore keystore.p12 -storepass password -keypass password -validity 365 -dname "CN=YourName, OU=YourOrgUnit, O=YourOrg, L=YourCity, ST=YourState, C=TwoCharacterCountryCode"
