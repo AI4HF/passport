@@ -2,9 +2,9 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Dataset;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.DatasetService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,31 +24,51 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/dataset")
 public class DatasetController {
+
     private static final Logger log = LoggerFactory.getLogger(DatasetController.class);
+
     private final DatasetService datasetService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
+
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
     @Autowired
-    public DatasetController(DatasetService datasetService, RoleCheckerService roleCheckerService) {
+    public DatasetController(DatasetService datasetService,
+                             RoleCheckerService roleCheckerService,
+                             AuditLogBookService auditLogBookService) {
         this.datasetService = datasetService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
-    @GetMapping()
+    /**
+     * Retrieves all datasets by the given study ID.
+     *
+     * @param studyId    ID of the study
+     * @param principal  Jwt principal containing user info
+     * @return           List of datasets, or FORBIDDEN if user not authorized
+     */
+    @GetMapping
     public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
                                                                  @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
         List<Dataset> datasets = this.datasetService.getAllDatasetsByStudyId(studyId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(datasets.size()));
-
         return ResponseEntity.ok().headers(headers).body(datasets);
     }
 
+    /**
+     * Retrieves a Dataset by its datasetId.
+     *
+     * @param datasetId  ID of the Dataset
+     * @param studyId    ID of the study for authorization
+     * @param principal  Jwt principal containing user info
+     * @return           Dataset entity or NOT FOUND
+     */
     @GetMapping("/{datasetId}")
     public ResponseEntity<?> getDataset(@PathVariable Long datasetId,
                                         @RequestParam Long studyId,
@@ -56,12 +76,19 @@ public class DatasetController {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
         Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId);
         return dataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping()
+    /**
+     * Creates a new Dataset entity.
+     *
+     * @param dataset     Dataset object to create
+     * @param studyId     ID of the study for authorization
+     * @param principal   Jwt principal containing user info
+     * @return            Created Dataset or BAD_REQUEST on error
+     */
+    @PostMapping
     public ResponseEntity<?> createDataset(@RequestBody Dataset dataset,
                                            @RequestParam Long studyId,
                                            @AuthenticationPrincipal Jwt principal) {
@@ -71,14 +98,41 @@ public class DatasetController {
             }
 
             String personnelId = principal.getSubject();
-            Optional<Dataset> savedDataset = this.datasetService.saveDataset(dataset, personnelId);
-            return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<Dataset> savedDatasetOpt = this.datasetService.saveDataset(dataset, personnelId);
+
+            if (savedDatasetOpt.isPresent()) {
+                Dataset savedDataset = savedDatasetOpt.get();
+                if (savedDataset.getDatasetId() != null) {
+                    String recordId = savedDataset.getDatasetId().toString();
+                    String description = "Creation of Dataset " + recordId;
+                    auditLogBookService.createAuditLog(
+                            personnelId,
+                            "CREATE",
+                            "Dataset",
+                            recordId,
+                            savedDataset,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(savedDataset);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating Dataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    /**
+     * Updates an existing Dataset entity.
+     *
+     * @param datasetId       ID of the Dataset to update
+     * @param updatedDataset  Updated Dataset object
+     * @param studyId         ID of the study for authorization
+     * @param principal       Jwt principal containing user info
+     * @return                Updated Dataset or NOT FOUND if not present
+     */
     @PutMapping("/{datasetId}")
     public ResponseEntity<?> updateDataset(@PathVariable Long datasetId,
                                            @RequestBody Dataset updatedDataset,
@@ -90,14 +144,40 @@ public class DatasetController {
             }
 
             String personnelId = principal.getSubject();
-            Optional<Dataset> savedDataset = this.datasetService.updateDataset(datasetId, updatedDataset, personnelId);
-            return savedDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<Dataset> savedDatasetOpt = this.datasetService.updateDataset(datasetId, updatedDataset, personnelId);
+
+            if (savedDatasetOpt.isPresent()) {
+                Dataset savedDataset = savedDatasetOpt.get();
+                if (savedDataset.getDatasetId() != null) {
+                    String recordId = savedDataset.getDatasetId().toString();
+                    String description = "Update of Dataset " + recordId;
+                    auditLogBookService.createAuditLog(
+                            personnelId,
+                            "UPDATE",
+                            "Dataset",
+                            recordId,
+                            savedDataset,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(savedDataset);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating Dataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    /**
+     * Deletes an existing Dataset entity by its datasetId.
+     *
+     * @param datasetId   ID of the Dataset to delete
+     * @param studyId     ID of the study for authorization
+     * @param principal   Jwt principal containing user info
+     * @return            NO_CONTENT on success, NOT FOUND otherwise
+     */
     @DeleteMapping("/{datasetId}")
     public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,
                                            @RequestParam Long studyId,
@@ -108,9 +188,22 @@ public class DatasetController {
             }
 
             boolean isDeleted = this.datasetService.deleteDataset(datasetId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            if (isDeleted) {
+                String description = "Deletion of Dataset " + datasetId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "Dataset",
+                        datasetId.toString(),
+                        null,
+                        description
+                );
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting Dataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

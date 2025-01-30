@@ -1,12 +1,12 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcessDatasetDTO;
 import io.passport.server.model.LearningProcessDataset;
+import io.passport.server.model.LearningProcessDatasetDTO;
 import io.passport.server.model.LearningProcessDatasetId;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.LearningProcessDatasetService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,26 +27,33 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/learning-process-dataset")
 public class LearningProcessDatasetController {
+
     private static final Logger log = LoggerFactory.getLogger(LearningProcessDatasetController.class);
+
     private final LearningProcessDatasetService learningProcessDatasetService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
+
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningProcessDatasetController(LearningProcessDatasetService learningProcessDatasetService, RoleCheckerService roleCheckerService) {
+    public LearningProcessDatasetController(LearningProcessDatasetService learningProcessDatasetService,
+                                            RoleCheckerService roleCheckerService,
+                                            AuditLogBookService auditLogBookService) {
         this.learningProcessDatasetService = learningProcessDatasetService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read all LearningProcessDatasets or filtered by learningProcessId and/or learningDatasetId
+     * Read all LearningProcessDatasets or filtered by learningProcessId and/or learningDatasetId.
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
      * @param learningDatasetId ID of the LearningDataset (optional)
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with list of LearningProcessDatasetDTOs
+     * @param principal Jwt principal containing user info
+     * @return List of LearningProcessDatasetDTOs
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LearningProcessDatasetDTO>> getLearningProcessDatasets(
             @RequestParam Long studyId,
             @RequestParam(required = false) Long learningProcessId,
@@ -61,10 +68,10 @@ public class LearningProcessDatasetController {
 
         if (learningProcessId != null && learningDatasetId != null) {
             LearningProcessDatasetId id = new LearningProcessDatasetId();
-            id.setLearningProcessId(learningProcessId);
             id.setLearningDatasetId(learningDatasetId);
-            Optional<LearningProcessDataset> dataset = this.learningProcessDatasetService.findLearningProcessDatasetById(id);
-            datasets = dataset.map(List::of).orElseGet(List::of);
+            id.setLearningProcessId(learningProcessId);
+            Optional<LearningProcessDataset> one = this.learningProcessDatasetService.findLearningProcessDatasetById(id);
+            datasets = one.map(List::of).orElseGet(List::of);
         } else if (learningProcessId != null) {
             datasets = this.learningProcessDatasetService.findByLearningProcessId(learningProcessId);
         } else if (learningDatasetId != null) {
@@ -79,18 +86,17 @@ public class LearningProcessDatasetController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(dtos.size()));
-
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
      * Create a new LearningProcessDataset entity.
      * @param studyId ID of the study for authorization
-     * @param learningProcessDatasetDTO DTO containing data for the new LearningProcessDataset
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with created LearningProcessDataset
+     * @param learningProcessDatasetDTO DTO with the new entity data
+     * @param principal Jwt principal containing user info
+     * @return Created LearningProcessDataset
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningProcessDataset(@RequestParam Long studyId,
                                                           @RequestBody LearningProcessDatasetDTO learningProcessDatasetDTO,
                                                           @AuthenticationPrincipal Jwt principal) {
@@ -99,11 +105,28 @@ public class LearningProcessDatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningProcessDataset learningProcessDataset = new LearningProcessDataset(learningProcessDatasetDTO);
-            LearningProcessDataset savedLearningProcessDataset = this.learningProcessDatasetService.saveLearningProcessDataset(learningProcessDataset);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningProcessDataset);
+            LearningProcessDataset entity = new LearningProcessDataset(learningProcessDatasetDTO);
+            LearningProcessDataset saved = this.learningProcessDatasetService.saveLearningProcessDataset(entity);
+
+            if (saved.getId() != null) {
+                Long lpId = saved.getId().getLearningProcessId();
+                Long ldId = saved.getId().getLearningDatasetId();
+                String compositeId = "(" + lpId + ", " + ldId + ")";
+                String description = "Creation of LearningProcessDataset with learningProcessId="
+                        + lpId + " and learningDatasetId=" + ldId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "CREATE",
+                        "LearningProcessDataset",
+                        compositeId,
+                        saved,
+                        description
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating LearningProcessDataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -113,11 +136,11 @@ public class LearningProcessDatasetController {
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param learningDatasetId ID of the LearningDataset
-     * @param updatedLearningProcessDataset LearningProcessDataset model instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with updated LearningProcessDataset
+     * @param updatedLearningProcessDataset Updated entity data
+     * @param principal Jwt principal containing user info
+     * @return Updated LearningProcessDataset or NOT_FOUND
      */
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<?> updateLearningProcessDataset(
             @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
@@ -129,15 +152,37 @@ public class LearningProcessDatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningProcessDatasetId learningProcessDatasetId = new LearningProcessDatasetId();
-        learningProcessDatasetId.setLearningProcessId(learningProcessId);
-        learningProcessDatasetId.setLearningDatasetId(learningDatasetId);
+        LearningProcessDatasetId id = new LearningProcessDatasetId();
+
+        id.setLearningDatasetId(learningDatasetId);
+        id.setLearningProcessId(learningProcessId);
 
         try {
-            Optional<LearningProcessDataset> savedLearningProcessDataset = this.learningProcessDatasetService.updateLearningProcessDataset(learningProcessDatasetId, updatedLearningProcessDataset);
-            return savedLearningProcessDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<LearningProcessDataset> savedOpt =
+                    this.learningProcessDatasetService.updateLearningProcessDataset(id, updatedLearningProcessDataset);
+
+            if (savedOpt.isPresent()) {
+                LearningProcessDataset saved = savedOpt.get();
+                if (saved.getId() != null) {
+                    String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
+                    String description = "Update of LearningProcessDataset with learningProcessId="
+                            + learningProcessId + " and learningDatasetId=" + learningDatasetId;
+                    auditLogBookService.createAuditLog(
+                            principal.getSubject(),
+                            "UPDATE",
+                            "LearningProcessDataset",
+                            compositeId,
+                            saved,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating LearningProcessDataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -147,10 +192,10 @@ public class LearningProcessDatasetController {
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param learningDatasetId ID of the LearningDataset
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity
+     * @param principal Jwt principal containing user info
+     * @return No content or NOT_FOUND
      */
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteLearningProcessDataset(
             @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
@@ -161,17 +206,31 @@ public class LearningProcessDatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningProcessDatasetId learningProcessDatasetId = new LearningProcessDatasetId();
-        learningProcessDatasetId.setLearningProcessId(learningProcessId);
-        learningProcessDatasetId.setLearningDatasetId(learningDatasetId);
+        LearningProcessDatasetId id = new LearningProcessDatasetId();
+        id.setLearningDatasetId(learningDatasetId);
+        id.setLearningProcessId(learningProcessId);
 
         try {
-            boolean isDeleted = this.learningProcessDatasetService.deleteLearningProcessDataset(learningProcessDatasetId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            boolean isDeleted = this.learningProcessDatasetService.deleteLearningProcessDataset(id);
+            if (isDeleted) {
+                String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
+                String description = "Deletion of LearningProcessDataset with learningProcessId="
+                        + learningProcessId + " and learningDatasetId=" + learningDatasetId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "LearningProcessDataset",
+                        compositeId,
+                        null,
+                        description
+                );
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningProcessDataset: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
-

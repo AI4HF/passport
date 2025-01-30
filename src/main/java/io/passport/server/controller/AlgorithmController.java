@@ -3,8 +3,8 @@ package io.passport.server.controller;
 import io.passport.server.model.Algorithm;
 import io.passport.server.model.Role;
 import io.passport.server.service.AlgorithmService;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,26 +18,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Class which stores the generated HTTP requests related to algorithm operations.
- */
 @RestController
 @RequestMapping("/algorithm")
 public class AlgorithmController {
+
     private static final Logger log = LoggerFactory.getLogger(AlgorithmController.class);
+
     private final AlgorithmService algorithmService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public AlgorithmController(AlgorithmService algorithmService, RoleCheckerService roleCheckerService) {
+    public AlgorithmController(
+            AlgorithmService algorithmService,
+            RoleCheckerService roleCheckerService,
+            AuditLogBookService auditLogBookService
+    ) {
         this.algorithmService = algorithmService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<Algorithm>> getAllAlgorithms(@RequestParam Long studyId,
-                                                            @AuthenticationPrincipal Jwt principal) {
+    @GetMapping
+    public ResponseEntity<List<Algorithm>> getAllAlgorithms(
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal
+    ) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -45,72 +52,130 @@ public class AlgorithmController {
         List<Algorithm> algorithms = this.algorithmService.getAllAlgorithms();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(algorithms.size()));
-
         return ResponseEntity.ok().headers(headers).body(algorithms);
     }
 
     @GetMapping("/{algorithmId}")
-    public ResponseEntity<?> getAlgorithm(@PathVariable Long algorithmId,
-                                          @RequestParam Long studyId,
-                                          @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<?> getAlgorithm(
+            @PathVariable Long algorithmId,
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal
+    ) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Algorithm> algorithm = this.algorithmService.findAlgorithmById(algorithmId);
-        return algorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return algorithm.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping()
-    public ResponseEntity<?> createAlgorithm(@RequestBody Algorithm algorithm,
-                                             @RequestParam Long studyId,
-                                             @AuthenticationPrincipal Jwt principal) {
+    @PostMapping
+    public ResponseEntity<?> createAlgorithm(
+            @RequestBody Algorithm algorithm,
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal
+    ) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Algorithm savedAlgorithm = this.algorithmService.saveAlgorithm(algorithm);
+            if (savedAlgorithm.getAlgorithmId() == null) {
+                // Just a safety check, in case ID is not generated
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            // Log to AuditLog (via AuditLogBookService)
+            String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
+            String description = "Creation of Algorithm " + recordId;
+            auditLogBookService.createAuditLog(
+                    principal.getSubject(),
+                    "CREATE",
+                    "Algorithm",
+                    recordId,
+                    savedAlgorithm,
+                    description
+            );
+
             return ResponseEntity.status(HttpStatus.CREATED).body(savedAlgorithm);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating Algorithm: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping("/{algorithmId}")
-    public ResponseEntity<?> updateAlgorithm(@PathVariable Long algorithmId,
-                                             @RequestBody Algorithm updatedAlgorithm,
-                                             @RequestParam Long studyId,
-                                             @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<?> updateAlgorithm(
+            @PathVariable Long algorithmId,
+            @RequestBody Algorithm updatedAlgorithm,
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal
+    ) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<Algorithm> savedAlgorithm = this.algorithmService.updateAlgorithm(algorithmId, updatedAlgorithm);
-            return savedAlgorithm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<Algorithm> savedAlgorithmOpt = this.algorithmService.updateAlgorithm(algorithmId, updatedAlgorithm);
+            if (savedAlgorithmOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            Algorithm savedAlgorithm = savedAlgorithmOpt.get();
+
+            String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
+            String description = "Update of Algorithm " + recordId;
+            auditLogBookService.createAuditLog(
+                    principal.getSubject(),
+                    "UPDATE",
+                    "Algorithm",
+                    recordId,
+                    savedAlgorithm,
+                    description
+            );
+
+            return ResponseEntity.ok(savedAlgorithm);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating Algorithm: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{algorithmId}")
-    public ResponseEntity<?> deleteAlgorithm(@PathVariable Long algorithmId,
-                                             @RequestParam Long studyId,
-                                             @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<?> deleteAlgorithm(
+            @PathVariable Long algorithmId,
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal
+    ) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.algorithmService.deleteAlgorithm(algorithmId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            if (!isDeleted) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String recordId = String.valueOf(algorithmId);
+            String description = "Deletion of Algorithm " + recordId;
+            auditLogBookService.createAuditLog(
+                    principal.getSubject(),
+                    "DELETE",
+                    "Algorithm",
+                    recordId,
+                    null,
+                    description
+            );
+
+            return ResponseEntity.noContent().build();
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting Algorithm: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
-

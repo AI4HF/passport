@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Population;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.PopulationService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -27,26 +28,30 @@ public class PopulationController {
 
     private final PopulationService populationService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
+
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
 
     @Autowired
-    public PopulationController(PopulationService populationService, RoleCheckerService roleCheckerService) {
+    public PopulationController(PopulationService populationService,
+                                RoleCheckerService roleCheckerService,
+                                AuditLogBookService auditLogBookService) {
         this.populationService = populationService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
      * Read population by populationId.
      * @param populationId ID of the population.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token.
+     * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the population data.
      */
     @GetMapping("/{populationId}")
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
                                                @RequestParam Long studyId,
                                                @AuthenticationPrincipal Jwt principal) {
-        // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -58,13 +63,12 @@ public class PopulationController {
     /**
      * Read population by studyId.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token.
+     * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the list of populations.
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam Long studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
-        // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -75,37 +79,54 @@ public class PopulationController {
 
     /**
      * Create Population.
+     * (Only STUDY_OWNER is allowed to create)
+     *
      * @param population Population model instance to be created.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token.
+     * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the created population data.
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createPopulation(@RequestBody Population population,
                                               @RequestParam Long studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
             Population savedPopulation = this.populationService.savePopulation(population);
+
+            // Audit log
+            if (savedPopulation.getPopulationId() != null) {
+                String recordId = savedPopulation.getPopulationId().toString();
+                String description = "Creation of Population " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "CREATE",
+                        "Population",
+                        recordId,
+                        savedPopulation,
+                        description
+                );
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
      * Update Population.
+     * (Only STUDY_OWNER is allowed to update)
+     *
      * @param populationId ID of the population to be updated.
      * @param updatedPopulation Updated population model.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token.
+     * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the updated population data.
      */
     @PutMapping("/{populationId}")
@@ -113,36 +134,54 @@ public class PopulationController {
                                               @RequestBody Population updatedPopulation,
                                               @RequestParam Long studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            Optional<Population> savedPopulation = this.populationService.updatePopulation(populationId, updatedPopulation);
-            return savedPopulation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<Population> savedPopulationOpt =
+                    this.populationService.updatePopulation(populationId, updatedPopulation);
+
+            if (savedPopulationOpt.isPresent()) {
+                Population savedPopulation = savedPopulationOpt.get();
+                if (savedPopulation.getPopulationId() != null) {
+                    String recordId = savedPopulation.getPopulationId().toString();
+                    String description = "Update of Population " + recordId;
+                    auditLogBookService.createAuditLog(
+                            principal.getSubject(),
+                            "UPDATE",
+                            "Population",
+                            recordId,
+                            savedPopulation,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(savedPopulation);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
      * Delete Population by populationId.
+     * (Only STUDY_OWNER is allowed to delete)
+     *
      * @param populationId ID of the population to be deleted.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token.
+     * @param principal Jwt principal containing user info.
      * @return ResponseEntity with no content if successful.
      */
     @DeleteMapping("/{populationId}")
     public ResponseEntity<?> deletePopulation(@PathVariable Long populationId,
                                               @RequestParam Long studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        // Allowed roles for this endpoint
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -150,12 +189,22 @@ public class PopulationController {
         try {
             boolean isDeleted = this.populationService.deletePopulation(populationId);
             if (isDeleted) {
+                String description = "Deletion of Population " + populationId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "Population",
+                        populationId.toString(),
+                        null,
+                        description
+                );
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

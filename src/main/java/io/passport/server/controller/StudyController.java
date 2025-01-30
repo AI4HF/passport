@@ -2,6 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Role;
 import io.passport.server.model.Study;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.KeycloakService;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyService;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Controller class for managing HTTP requests related to study operations.
  */
@@ -31,20 +30,27 @@ public class StudyController {
 
     private final StudyService studyService;
     private final KeycloakService keycloakService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
 
     @Autowired
-    public StudyController(StudyService studyService, KeycloakService keycloakService, RoleCheckerService roleCheckerService) {
+    public StudyController(StudyService studyService,
+                           KeycloakService keycloakService,
+                           RoleCheckerService roleCheckerService,
+                           AuditLogBookService auditLogBookService) {
         this.studyService = studyService;
         this.keycloakService = keycloakService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
-    @GetMapping()
+    /**
+     * Retrieves all studies or a single study if studyId param is provided.
+     * @param studyId   Optional ID of the study
+     * @param principal Jwt principal containing user info
+     * @return List of studies or single
+     */
+    @GetMapping
     public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) Long studyId,
                                                   @AuthenticationPrincipal Jwt principal) {
 
@@ -63,10 +69,19 @@ public class StudyController {
         return ResponseEntity.ok().headers(headers).body(studies);
     }
 
+    /**
+     * Retrieves a single study by its ID.
+     * Requires STUDY_OWNER role.
+     *
+     * @param studyId   ID of the study
+     * @param principal Jwt principal containing user info
+     * @return Study or 403 if unauthorized
+     */
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudy(@PathVariable Long studyId, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<?> getStudy(@PathVariable Long studyId,
+                                      @AuthenticationPrincipal Jwt principal) {
 
-        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+        if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         String userId = principal.getSubject();
@@ -79,10 +94,18 @@ public class StudyController {
         return study.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping()
-    public ResponseEntity<?> createStudy(@RequestBody Study study, @AuthenticationPrincipal Jwt principal) {
+    /**
+     * Creates a new Study and assigns the creator as STUDY_OWNER.
+     *
+     * @param study     Study object to create
+     * @param principal Jwt principal containing user info
+     * @return Created Study or BAD_REQUEST on error
+     */
+    @PostMapping
+    public ResponseEntity<?> createStudy(@RequestBody Study study,
+                                         @AuthenticationPrincipal Jwt principal) {
 
-        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+        if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
@@ -91,22 +114,44 @@ public class StudyController {
 
             Study savedStudy = studyService.saveStudy(study);
 
-            keycloakService.createStudyGroups(study.getId(), ownerId);
+            keycloakService.createStudyGroups(savedStudy.getId(), ownerId);
             keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
+            // Audit log
+            if (savedStudy.getId() != null) {
+                String recordId = savedStudy.getId().toString();
+                String description = "Creation of Study " + recordId;
+                auditLogBookService.createAuditLog(
+                        ownerId,
+                        "CREATE",
+                        "Study",
+                        recordId,
+                        savedStudy,
+                        description
+                );
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
+    /**
+     * Updates an existing Study if the caller has STUDY_OWNER role.
+     *
+     * @param studyId       ID of the study to update
+     * @param updatedStudy  Updated details
+     * @param principal     Jwt principal containing user info
+     * @return Updated Study or NOT_FOUND
+     */
     @PutMapping("/{studyId}")
     public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
                                          @RequestBody Study updatedStudy,
                                          @AuthenticationPrincipal Jwt principal) {
 
-        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+        if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         String userId = principal.getSubject();
@@ -115,25 +160,60 @@ public class StudyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<Study> savedStudy = studyService.updateStudy(studyId, updatedStudy);
-        return savedStudy.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Study> savedStudyOpt = studyService.updateStudy(studyId, updatedStudy);
+        if (savedStudyOpt.isPresent()) {
+            Study savedStudy = savedStudyOpt.get();
+            if (savedStudy.getId() != null) {
+                String recordId = savedStudy.getId().toString();
+                String description = "Update of Study " + recordId;
+                auditLogBookService.createAuditLog(
+                        userId,
+                        "UPDATE",
+                        "Study",
+                        recordId,
+                        savedStudy,
+                        description
+                );
+            }
+            return ResponseEntity.ok(savedStudy);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    /**
+     * Deletes an existing Study if caller has STUDY_OWNER role.
+     *
+     * @param studyId   ID of the study to delete
+     * @param principal Jwt principal containing user info
+     * @return No content or NOT_FOUND
+     */
     @DeleteMapping("/{studyId}")
     public ResponseEntity<?> deleteStudy(@PathVariable Long studyId,
                                          @AuthenticationPrincipal Jwt principal) {
-        if(!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))){
+        if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         String userId = principal.getSubject();
-
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         boolean isDeleted = studyService.deleteStudy(studyId);
-        return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if (isDeleted) {
+            String description = "Deletion of Study " + studyId;
+            auditLogBookService.createAuditLog(
+                    userId,
+                    "DELETE",
+                    "Study",
+                    studyId.toString(),
+                    null,
+                    description
+            );
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
-

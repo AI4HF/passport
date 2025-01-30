@@ -1,9 +1,9 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyOrganizationService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,42 +27,45 @@ public class StudyOrganizationController {
 
     private final StudyOrganizationService studyOrganizationService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
 
     @Autowired
-    public StudyOrganizationController(StudyOrganizationService studyOrganizationService, RoleCheckerService roleCheckerService) {
+    public StudyOrganizationController(StudyOrganizationService studyOrganizationService,
+                                       RoleCheckerService roleCheckerService,
+                                       AuditLogBookService auditLogBookService) {
         this.studyOrganizationService = studyOrganizationService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Get a studyOrganization by studyOrganizationId.
+     * Get a studyOrganization by (studyId, organizationId).
      * @param studyId ID of the study.
      * @param organizationId ID of the organization.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param principal Jwt principal containing user info
+     * @return StudyOrganizationDTO or NOT_FOUND
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam Long studyId,
                                                                        @RequestParam Long organizationId,
                                                                        @AuthenticationPrincipal Jwt principal) {
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
-            Optional<StudyOrganization> studyOrganization = this.studyOrganizationService.findStudyOrganizationById(studyOrganizationId);
-            if (studyOrganization.isPresent()) {
-                StudyOrganizationDTO studyOrganizationDTO = new StudyOrganizationDTO(studyOrganization.get());
-                return ResponseEntity.ok(studyOrganizationDTO);
+            StudyOrganizationId id = new StudyOrganizationId(organizationId, studyId);
+            Optional<StudyOrganization> soOpt = this.studyOrganizationService.findStudyOrganizationById(id);
+            if (soOpt.isPresent()) {
+                StudyOrganizationDTO dto = new StudyOrganizationDTO(soOpt.get());
+                return ResponseEntity.ok(dto);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error retrieving StudyOrganization: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -70,13 +73,12 @@ public class StudyOrganizationController {
     /**
      * Get all organizations related to a study.
      * @param studyId ID of the study.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param principal Jwt principal containing user info
+     * @return List of Organization or BAD_REQUEST
      */
     @GetMapping("/organizations")
     public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam Long studyId,
                                                        @AuthenticationPrincipal Jwt principal) {
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -85,7 +87,7 @@ public class StudyOrganizationController {
             List<Organization> organizations = this.studyOrganizationService.findOrganizationsByStudyId(studyId);
             return ResponseEntity.ok(organizations);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error retrieving organizations by studyId: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -93,15 +95,14 @@ public class StudyOrganizationController {
     /**
      * Get all studies related to an organization.
      * @param organizationId ID of the organization.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param studyId ID of the study (for authorization)
+     * @param principal Jwt principal containing user info
+     * @return List of Study or BAD_REQUEST
      */
     @GetMapping("/studies")
     public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam Long organizationId,
                                                         @RequestParam Long studyId,
                                                         @AuthenticationPrincipal Jwt principal) {
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -110,97 +111,142 @@ public class StudyOrganizationController {
             List<Study> studies = this.studyOrganizationService.findStudiesByOrganizationId(organizationId);
             return ResponseEntity.ok(studies);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error retrieving studies by organizationId: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
      * Create a study organization.
-     * @param studyOrganizationDTO studyOrganization object to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param studyOrganizationDTO data to create
+     * @param principal Jwt principal containing user info
+     * @return Created StudyOrganizationDTO
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createStudyOrganization(@RequestBody StudyOrganizationDTO studyOrganizationDTO,
                                                      @AuthenticationPrincipal Jwt principal) {
         Long studyId = studyOrganizationDTO.getStudyId();
-
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            StudyOrganization studyOrganization = new StudyOrganization(studyOrganizationDTO);
-            StudyOrganization savedStudyOrganization = this.studyOrganizationService.createStudyOrganizationEntries(studyOrganization);
-            StudyOrganizationDTO responseStudyOrganizationDTO = new StudyOrganizationDTO(savedStudyOrganization);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseStudyOrganizationDTO);
+            StudyOrganization entity = new StudyOrganization(studyOrganizationDTO);
+            StudyOrganization saved = this.studyOrganizationService.createStudyOrganizationEntries(entity);
+
+            StudyOrganizationDTO responseDTO = new StudyOrganizationDTO(saved);
+
+            if (saved.getId() != null) {
+                Long orgId = saved.getId().getOrganizationId();
+                Long stdId = saved.getId().getStudyId();
+                String compositeId = "(" + stdId + ", " + orgId + ")";
+                String description = "Creation of StudyOrganization with studyId="
+                        + stdId + " and organizationId=" + orgId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "CREATE",
+                        "StudyOrganization",
+                        compositeId,
+                        saved,
+                        description
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating StudyOrganization: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update study organization.
+     * Update a study organization.
      * @param studyId ID of the study
      * @param organizationId ID of the organization
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param updatedStudyOrganizationDTO updated data
+     * @param principal Jwt principal containing user info
+     * @return Updated StudyOrganizationDTO or NOT_FOUND
      */
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<?> updateStudyOrganization(@RequestParam Long studyId,
                                                      @RequestParam Long organizationId,
                                                      @RequestBody StudyOrganizationDTO updatedStudyOrganizationDTO,
                                                      @AuthenticationPrincipal Jwt principal) {
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            StudyOrganization studyOrganization = new StudyOrganization(updatedStudyOrganizationDTO);
-            StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
-            Optional<StudyOrganization> savedStudyOrganization = this.studyOrganizationService.updateStudyOrganization(studyOrganizationId, studyOrganization);
-            if (savedStudyOrganization.isPresent()) {
-                StudyOrganizationDTO savedStudyOrganizationDTO = new StudyOrganizationDTO(savedStudyOrganization.get());
-                return ResponseEntity.ok().body(savedStudyOrganizationDTO);
+            StudyOrganization entity = new StudyOrganization(updatedStudyOrganizationDTO);
+            StudyOrganizationId id = new StudyOrganizationId(organizationId, studyId);
+            Optional<StudyOrganization> savedOpt = this.studyOrganizationService.updateStudyOrganization(id, entity);
+
+            if (savedOpt.isPresent()) {
+                StudyOrganization saved = savedOpt.get();
+                StudyOrganizationDTO responseDTO = new StudyOrganizationDTO(saved);
+
+                if (saved.getId() != null) {
+                    Long orgId = saved.getId().getOrganizationId();
+                    Long stdId = saved.getId().getStudyId();
+                    String compositeId = "(" + stdId + ", " + orgId + ")";
+                    String description = "Update of StudyOrganization with studyId="
+                            + stdId + " and organizationId=" + orgId;
+                    auditLogBookService.createAuditLog(
+                            principal.getSubject(),
+                            "UPDATE",
+                            "StudyOrganization",
+                            compositeId,
+                            saved,
+                            description
+                    );
+                }
+                return ResponseEntity.ok().body(responseDTO);
             } else {
                 return ResponseEntity.notFound().build();
             }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating StudyOrganization: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete a study organization by studyOrganizationId.
+     * Delete a study organization by (studyId, organizationId).
      * @param studyId ID of the study.
      * @param organizationId ID of the organization.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param principal Jwt principal containing user info
+     * @return No content or NOT_FOUND
      */
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteStudyOrganization(@RequestParam Long studyId,
                                                      @RequestParam Long organizationId,
                                                      @AuthenticationPrincipal Jwt principal) {
-        // Check authorization using studyId
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         try {
-            StudyOrganizationId studyOrganizationId = new StudyOrganizationId(organizationId, studyId);
-            boolean isDeleted = this.studyOrganizationService.deleteStudyOrganization(studyOrganizationId);
+            StudyOrganizationId id = new StudyOrganizationId(organizationId, studyId);
+            boolean isDeleted = this.studyOrganizationService.deleteStudyOrganization(id);
             if (isDeleted) {
+                String compositeId = "(" + studyId + ", " + organizationId + ")";
+                String description = "Deletion of StudyOrganization with studyId="
+                        + studyId + " and organizationId=" + organizationId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "StudyOrganization",
+                        compositeId,
+                        null,
+                        description
+                );
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting StudyOrganization: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

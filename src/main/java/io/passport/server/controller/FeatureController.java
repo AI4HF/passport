@@ -2,9 +2,9 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Feature;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.FeatureService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +29,28 @@ public class FeatureController {
 
     private final FeatureService featureService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
+
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
     @Autowired
-    public FeatureController(FeatureService featureService, RoleCheckerService roleCheckerService) {
+    public FeatureController(FeatureService featureService,
+                             RoleCheckerService roleCheckerService,
+                             AuditLogBookService auditLogBookService) {
         this.featureService = featureService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read all Features or filtered by featuresetId
-     * @param featuresetId ID of the FeatureSet (optional)
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Read all Features or filtered by featuresetId.
+     *
+     * @param featuresetId Optional ID of the FeatureSet
+     * @param studyId      ID of the study for authorization
+     * @param principal    Jwt principal containing user info
+     * @return             List of Features
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Feature>> getFeatures(
             @RequestParam(required = false) Long featuresetId,
             @RequestParam Long studyId,
@@ -54,22 +60,22 @@ public class FeatureController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Feature> features = (featuresetId != null) ?
-                this.featureService.findByFeaturesetId(featuresetId) :
-                this.featureService.getAllFeatures();
+        List<Feature> features = (featuresetId != null)
+                ? this.featureService.findByFeaturesetId(featuresetId)
+                : this.featureService.getAllFeatures();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(features.size()));
-
         return ResponseEntity.ok().headers(headers).body(features);
     }
 
     /**
-     * Read a Feature by id
+     * Read a Feature by id.
+     *
      * @param featureId ID of the Feature
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return          The requested Feature or NOT FOUND
      */
     @GetMapping("/{featureId}")
     public ResponseEntity<?> getFeature(@PathVariable Long featureId,
@@ -80,18 +86,19 @@ public class FeatureController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<Feature> feature = this.featureService.findFeatureByFeatureId(featureId);
-        return feature.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Feature> featureOpt = this.featureService.findFeatureByFeatureId(featureId);
+        return featureOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create Feature.
-     * @param feature Feature model instance to be created.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Create a new Feature.
+     *
+     * @param feature   Feature model instance to be created
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return          The created Feature or BAD_REQUEST on error
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createFeature(@RequestBody Feature feature,
                                            @RequestParam Long studyId,
                                            @AuthenticationPrincipal Jwt principal) {
@@ -100,21 +107,35 @@ public class FeatureController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Feature savedFeature = this.featureService.saveFeature(feature);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedFeature);
+            Feature saved = this.featureService.saveFeature(feature);
+            if (saved.getFeatureId() != null) {
+                String recordId = saved.getFeatureId().toString();
+                String description = "Creation of Feature " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "CREATE",
+                        "Feature",
+                        recordId,
+                        saved,
+                        description
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating Feature: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update Feature.
-     * @param featureId ID of the Feature that is to be updated.
-     * @param updatedFeature Feature model instance with updated details.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Update an existing Feature by featureId.
+     *
+     * @param featureId       ID of the Feature to update
+     * @param updatedFeature  Updated details
+     * @param studyId         ID of the study for authorization
+     * @param principal       Jwt principal containing user info
+     * @return                Updated Feature or NOT_FOUND
      */
     @PutMapping("/{featureId}")
     public ResponseEntity<?> updateFeature(@PathVariable Long featureId,
@@ -126,20 +147,39 @@ public class FeatureController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<Feature> savedFeature = this.featureService.updateFeature(featureId, updatedFeature);
-            return savedFeature.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<Feature> savedOpt = this.featureService.updateFeature(featureId, updatedFeature);
+            if (savedOpt.isPresent()) {
+                Feature saved = savedOpt.get();
+                if (saved.getFeatureId() != null) {
+                    String recordId = saved.getFeatureId().toString();
+                    String description = "Update of Feature " + recordId;
+                    auditLogBookService.createAuditLog(
+                            principal.getSubject(),
+                            "UPDATE",
+                            "Feature",
+                            recordId,
+                            saved,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating Feature: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete by Feature ID.
-     * @param featureId ID of the Feature that is to be deleted.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Delete a Feature by featureId.
+     *
+     * @param featureId  ID of the Feature to delete
+     * @param studyId    ID of the study for authorization
+     * @param principal  Jwt principal containing user info
+     * @return           NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,
@@ -151,9 +191,23 @@ public class FeatureController {
             }
 
             boolean isDeleted = this.featureService.deleteFeature(featureId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            if (isDeleted) {
+                String description = "Deletion of Feature " + featureId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "Feature",
+                        featureId.toString(),
+                        null,
+                        description
+                );
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting Feature: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

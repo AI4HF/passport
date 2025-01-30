@@ -1,12 +1,12 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcessParameterDTO;
 import io.passport.server.model.LearningProcessParameter;
+import io.passport.server.model.LearningProcessParameterDTO;
 import io.passport.server.model.LearningProcessParameterId;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.LearningProcessParameterService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +27,22 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/learning-process-parameter")
 public class LearningProcessParameterController {
+
     private static final Logger log = LoggerFactory.getLogger(LearningProcessParameterController.class);
+
     private final LearningProcessParameterService learningProcessParameterService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService; // <-- NEW
+
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningProcessParameterController(LearningProcessParameterService learningProcessParameterService, RoleCheckerService roleCheckerService) {
+    public LearningProcessParameterController(LearningProcessParameterService learningProcessParameterService,
+                                              RoleCheckerService roleCheckerService,
+                                              AuditLogBookService auditLogBookService) {
         this.learningProcessParameterService = learningProcessParameterService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
@@ -43,10 +50,10 @@ public class LearningProcessParameterController {
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
      * @param parameterId ID of the Parameter (optional)
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with list of LearningProcessParameterDTOs
+     * @param principal Jwt principal containing user info
+     * @return List of LearningProcessParameterDTO
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LearningProcessParameterDTO>> getLearningProcessParameters(
             @RequestParam Long studyId,
             @RequestParam(required = false) Long learningProcessId,
@@ -58,13 +65,12 @@ public class LearningProcessParameterController {
         }
 
         List<LearningProcessParameter> parameters;
-
         if (learningProcessId != null && parameterId != null) {
             LearningProcessParameterId id = new LearningProcessParameterId();
             id.setLearningProcessId(learningProcessId);
             id.setParameterId(parameterId);
-            Optional<LearningProcessParameter> parameter = this.learningProcessParameterService.findLearningProcessParameterById(id);
-            parameters = parameter.map(List::of).orElseGet(List::of);
+            Optional<LearningProcessParameter> one = this.learningProcessParameterService.findLearningProcessParameterById(id);
+            parameters = one.map(List::of).orElseGet(List::of);
         } else if (learningProcessId != null) {
             parameters = this.learningProcessParameterService.findByLearningProcessId(learningProcessId);
         } else if (parameterId != null) {
@@ -79,18 +85,17 @@ public class LearningProcessParameterController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(dtos.size()));
-
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
      * Create a new LearningProcessParameter entity.
      * @param studyId ID of the study for authorization
-     * @param learningProcessParameterDTO DTO containing data for the new LearningProcessParameter
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with created LearningProcessParameter
+     * @param learningProcessParameterDTO DTO for the new entity
+     * @param principal Jwt principal containing user info
+     * @return Created LearningProcessParameter
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningProcessParameter(@RequestParam Long studyId,
                                                             @RequestBody LearningProcessParameterDTO learningProcessParameterDTO,
                                                             @AuthenticationPrincipal Jwt principal) {
@@ -99,11 +104,28 @@ public class LearningProcessParameterController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningProcessParameter learningProcessParameter = new LearningProcessParameter(learningProcessParameterDTO);
-            LearningProcessParameter savedLearningProcessParameter = this.learningProcessParameterService.saveLearningProcessParameter(learningProcessParameter);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningProcessParameter);
+            LearningProcessParameter entity = new LearningProcessParameter(learningProcessParameterDTO);
+            LearningProcessParameter saved = this.learningProcessParameterService.saveLearningProcessParameter(entity);
+
+            if (saved.getId() != null) {
+                Long lpId = saved.getId().getLearningProcessId();
+                Long pId = saved.getId().getParameterId();
+                String compositeId = "(" + lpId + ", " + pId + ")";
+                String description = "Creation of LearningProcessParameter with learningProcessId="
+                        + lpId + " and parameterId=" + pId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "CREATE",
+                        "LearningProcessParameter",
+                        compositeId,
+                        saved,
+                        description
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating LearningProcessParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -113,11 +135,11 @@ public class LearningProcessParameterController {
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param parameterId ID of the Parameter
-     * @param updatedLearningProcessParameter LearningProcessParameter model instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with updated LearningProcessParameter
+     * @param updatedLearningProcessParameter Updated data
+     * @param principal Jwt principal containing user info
+     * @return Updated LearningProcessParameter or NOT_FOUND
      */
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<?> updateLearningProcessParameter(
             @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
@@ -129,15 +151,36 @@ public class LearningProcessParameterController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningProcessParameterId learningProcessParameterId = new LearningProcessParameterId();
-        learningProcessParameterId.setLearningProcessId(learningProcessId);
-        learningProcessParameterId.setParameterId(parameterId);
+        LearningProcessParameterId id = new LearningProcessParameterId();
+        id.setLearningProcessId(learningProcessId);
+        id.setParameterId(parameterId);
 
         try {
-            Optional<LearningProcessParameter> savedLearningProcessParameter = this.learningProcessParameterService.updateLearningProcessParameter(learningProcessParameterId, updatedLearningProcessParameter);
-            return savedLearningProcessParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<LearningProcessParameter> savedOpt =
+                    this.learningProcessParameterService.updateLearningProcessParameter(id, updatedLearningProcessParameter);
+
+            if (savedOpt.isPresent()) {
+                LearningProcessParameter saved = savedOpt.get();
+                if (saved.getId() != null) {
+                    String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
+                    String description = "Update of LearningProcessParameter with learningProcessId="
+                            + learningProcessId + " and parameterId=" + parameterId;
+                    auditLogBookService.createAuditLog(
+                            principal.getSubject(),
+                            "UPDATE",
+                            "LearningProcessParameter",
+                            compositeId,
+                            saved,
+                            description
+                    );
+                }
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating LearningProcessParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -147,10 +190,10 @@ public class LearningProcessParameterController {
      * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param parameterId ID of the Parameter
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity
+     * @param principal Jwt principal containing user info
+     * @return No content or NOT_FOUND
      */
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteLearningProcessParameter(
             @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
@@ -161,15 +204,31 @@ public class LearningProcessParameterController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        LearningProcessParameterId learningProcessParameterId = new LearningProcessParameterId();
-        learningProcessParameterId.setLearningProcessId(learningProcessId);
-        learningProcessParameterId.setParameterId(parameterId);
+        LearningProcessParameterId id = new LearningProcessParameterId();
+        id.setLearningProcessId(learningProcessId);
+        id.setParameterId(parameterId);
 
         try {
-            boolean isDeleted = this.learningProcessParameterService.deleteLearningProcessParameter(learningProcessParameterId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            boolean isDeleted = this.learningProcessParameterService.deleteLearningProcessParameter(id);
+            if (isDeleted) {
+                String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
+                String description = "Deletion of LearningProcessParameter with learningProcessId="
+                        + learningProcessId + " and parameterId=" + parameterId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        "DELETE",
+                        "LearningProcessParameter",
+                        compositeId,
+                        null,
+                        description
+                );
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningProcessParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
