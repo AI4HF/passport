@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,21 +27,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/feature-dataset-characteristic")
 public class FeatureDatasetCharacteristicController {
+
     private static final Logger log = LoggerFactory.getLogger(FeatureDatasetCharacteristicController.class);
 
-    /**
-     * FeatureDatasetCharacteristic service for FeatureDatasetCharacteristic management
-     */
     private final FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
     @Autowired
@@ -54,6 +45,7 @@ public class FeatureDatasetCharacteristicController {
      * Read all FeatureDatasetCharacteristics or filtered by datasetId and/or featureId
      * @param datasetId ID of the Dataset (optional)
      * @param featureId ID of the Feature (optional)
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
@@ -61,10 +53,10 @@ public class FeatureDatasetCharacteristicController {
     public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristics(
             @RequestParam(required = false) Long datasetId,
             @RequestParam(required = false) Long featureId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -74,8 +66,10 @@ public class FeatureDatasetCharacteristicController {
             FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
             id.setDatasetId(datasetId);
             id.setFeatureId(featureId);
-            Optional<FeatureDatasetCharacteristic> characteristic = this.featureDatasetCharacteristicService.findFeatureDatasetCharacteristicById(id);
-            characteristics = characteristic.map(List::of).orElseGet(List::of);
+            characteristics = this.featureDatasetCharacteristicService
+                    .findFeatureDatasetCharacteristicById(id)
+                    .map(List::of)
+                    .orElseGet(List::of);
         } else if (datasetId != null) {
             characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
         } else if (featureId != null) {
@@ -85,13 +79,11 @@ public class FeatureDatasetCharacteristicController {
         }
 
         List<FeatureDatasetCharacteristicDTO> dtos = characteristics.stream()
-                .map(entity -> new FeatureDatasetCharacteristicDTO(entity))
+                .map(FeatureDatasetCharacteristicDTO::new)
                 .collect(Collectors.toList());
 
-        long totalCount = dtos.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(dtos.size()));
 
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
@@ -99,16 +91,16 @@ public class FeatureDatasetCharacteristicController {
     /**
      * Create a new FeatureDatasetCharacteristic entity.
      * @param featureDatasetCharacteristicDTO the DTO containing data for the new FeatureDatasetCharacteristic with input structure
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
     public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody FeatureDatasetCharacteristicDTO featureDatasetCharacteristicDTO,
-                                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                                @RequestParam Long studyId,
+                                                                @AuthenticationPrincipal Jwt principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -126,6 +118,7 @@ public class FeatureDatasetCharacteristicController {
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
      * @param updatedFeatureDatasetCharacteristic FeatureDatasetCharacteristic model instance with updated details.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
@@ -134,25 +127,20 @@ public class FeatureDatasetCharacteristicController {
             @RequestParam Long datasetId,
             @RequestParam Long featureId,
             @RequestBody FeatureDatasetCharacteristic updatedFeatureDatasetCharacteristic,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
-        featureDatasetCharacteristicId.setDatasetId(datasetId);
         featureDatasetCharacteristicId.setFeatureId(featureId);
+        featureDatasetCharacteristicId.setDatasetId(datasetId);
 
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<FeatureDatasetCharacteristic> savedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.updateFeatureDatasetCharacteristic(featureDatasetCharacteristicId, updatedFeatureDatasetCharacteristic);
-            if (savedFeatureDatasetCharacteristic.isPresent()) {
-                return ResponseEntity.ok().body(savedFeatureDatasetCharacteristic);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return savedFeatureDatasetCharacteristic.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -163,6 +151,7 @@ public class FeatureDatasetCharacteristicController {
      * Delete by FeatureDatasetCharacteristic composite ID using query parameters.
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
@@ -170,29 +159,25 @@ public class FeatureDatasetCharacteristicController {
     public ResponseEntity<?> deleteFeatureDatasetCharacteristic(
             @RequestParam Long datasetId,
             @RequestParam Long featureId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId featureDatasetCharacteristicId = new FeatureDatasetCharacteristicId();
-        featureDatasetCharacteristicId.setDatasetId(datasetId);
         featureDatasetCharacteristicId.setFeatureId(featureId);
+        featureDatasetCharacteristicId.setDatasetId(datasetId);
 
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(featureDatasetCharacteristicId);
-            if (isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
+
 

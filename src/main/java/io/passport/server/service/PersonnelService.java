@@ -2,6 +2,7 @@ package io.passport.server.service;
 
 import io.passport.server.model.Personnel;
 import io.passport.server.model.PersonnelDTO;
+import io.passport.server.model.Role;
 import io.passport.server.repository.PersonnelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,8 +63,15 @@ public class PersonnelService {
      * @return
      */
     public Optional<Personnel> savePersonnel(PersonnelDTO personnelDTO) {
-        Optional<String> keycloakUserId = this.keycloakService
-                .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, personnelDTO.getPersonnel().getRole());
+        Optional<String> keycloakUserId;
+        if(personnelDTO.getIsStudyOwner()){
+            keycloakUserId = this.keycloakService
+                    .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, Role.STUDY_OWNER);
+        }
+        else {
+            keycloakUserId = this.keycloakService
+                    .createUserAndReturnId(personnelDTO.getCredentials().username, personnelDTO.getCredentials().password, null);
+        }
         if(keycloakUserId.isPresent()) {
             Personnel personnel = personnelDTO.getPersonnel();
             personnel.setPersonId(keycloakUserId.get());
@@ -83,19 +91,13 @@ public class PersonnelService {
     public Optional<Personnel> updatePersonnel(String personnelId, Personnel updatedPersonnel) {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(personnelId);
         if (oldPersonnel.isPresent()) {
-            boolean changeKeycloakRole = this.keycloakService.updateRole(personnelId, updatedPersonnel.getRole());
-            if (changeKeycloakRole) {
-                Personnel personnel = oldPersonnel.get();
-                personnel.setFirstName(updatedPersonnel.getFirstName());
-                personnel.setLastName(updatedPersonnel.getLastName());
-                personnel.setEmail(updatedPersonnel.getEmail());
-                personnel.setRole(updatedPersonnel.getRole());
-                personnel.setOrganizationId(updatedPersonnel.getOrganizationId());
-                Personnel savedPersonnel = personnelRepository.save(personnel);
-                return Optional.of(savedPersonnel);
-            }else{
-             return Optional.empty();
-            }
+            Personnel personnel = oldPersonnel.get();
+            personnel.setFirstName(updatedPersonnel.getFirstName());
+            personnel.setLastName(updatedPersonnel.getLastName());
+            personnel.setEmail(updatedPersonnel.getEmail());
+            personnel.setOrganizationId(updatedPersonnel.getOrganizationId());
+            Personnel savedPersonnel = personnelRepository.save(personnel);
+            return Optional.of(savedPersonnel);
         } else {
             return Optional.empty();
         }

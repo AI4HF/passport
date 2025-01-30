@@ -1,17 +1,16 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Experiment;
 import io.passport.server.model.Population;
 import io.passport.server.model.Role;
 import io.passport.server.service.PopulationService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,19 +25,8 @@ public class PopulationController {
 
     private static final Logger log = LoggerFactory.getLogger(PopulationController.class);
 
-    /**
-     * Population service for population management
-     */
     private final PopulationService populationService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
 
     @Autowired
@@ -48,76 +36,65 @@ public class PopulationController {
     }
 
     /**
-     * Read population by populationId
+     * Read population by populationId.
      * @param populationId ID of the population.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param studyId ID of the study.
+     * @param principal KeycloakPrincipal object that holds access token.
+     * @return ResponseEntity with the population data.
      */
     @GetMapping("/{populationId}")
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
-                                               @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                               @RequestParam Long studyId,
+                                               @AuthenticationPrincipal Jwt principal) {
+        // Check user authorization for the given study
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Population> population = this.populationService.findPopulationById(populationId);
-
-        if(population.isPresent()) {
-            return ResponseEntity.ok().body(population);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return population.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Read population by studyId
-     * @param studyId ID of the study related to population.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Read population by studyId.
+     * @param studyId ID of the study.
+     * @param principal KeycloakPrincipal object that holds access token.
+     * @return ResponseEntity with the list of populations.
      */
     @GetMapping()
-    public ResponseEntity<?> getPopulationByStudyId(@RequestParam(value = "studyId", required = false) Long studyId,
-                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<?> getPopulationByStudyId(@RequestParam Long studyId,
+                                                    @AuthenticationPrincipal Jwt principal) {
+        // Check user authorization for the given study
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Population> populations;
-        if(studyId != null)
-        {
-            populations = this.populationService.findPopulationByStudyId(studyId);
-        }
-        else {
-            populations = this.populationService.findAllPopulations();
-        }
+        List<Population> populations = this.populationService.findPopulationByStudyId(studyId);
         return ResponseEntity.ok().body(populations);
     }
 
     /**
      * Create Population.
      * @param population Population model instance to be created.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param studyId ID of the study.
+     * @param principal KeycloakPrincipal object that holds access token.
+     * @return ResponseEntity with the created population data.
      */
     @PostMapping()
     public ResponseEntity<?> createPopulation(@RequestBody Population population,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+                                              @RequestParam Long studyId,
+                                              @AuthenticationPrincipal Jwt principal) {
+        // Allowed roles for this endpoint
+        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
+        // Check user authorization for the given study
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             Population savedPopulation = this.populationService.savePopulation(population);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -125,61 +102,59 @@ public class PopulationController {
 
     /**
      * Update Population.
-     * @param populationId ID of the population that is to be updated.
-     * @param updatedPopulation model instance with updated details.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @param populationId ID of the population to be updated.
+     * @param updatedPopulation Updated population model.
+     * @param studyId ID of the study.
+     * @param principal KeycloakPrincipal object that holds access token.
+     * @return ResponseEntity with the updated population data.
      */
     @PutMapping("/{populationId}")
     public ResponseEntity<?> updatePopulation(@PathVariable Long populationId,
                                               @RequestBody Population updatedPopulation,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-            // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
+                                              @RequestParam Long studyId,
+                                              @AuthenticationPrincipal Jwt principal) {
+        // Allowed roles for this endpoint
+        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
+        // Check user authorization for the given study
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
+        try {
             Optional<Population> savedPopulation = this.populationService.updatePopulation(populationId, updatedPopulation);
-            if(savedPopulation.isPresent()) {
-                return ResponseEntity.ok(savedPopulation.get());
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch(Exception e){
+            return savedPopulation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
     }
 
     /**
-     * Delete by Population ID.
-     * @param populationId ID of the population that is to be deleted.
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Delete Population by populationId.
+     * @param populationId ID of the population to be deleted.
+     * @param studyId ID of the study.
+     * @param principal KeycloakPrincipal object that holds access token.
+     * @return ResponseEntity with no content if successful.
      */
     @DeleteMapping("/{populationId}")
     public ResponseEntity<?> deletePopulation(@PathVariable Long populationId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
+                                              @RequestParam Long studyId,
+                                              @AuthenticationPrincipal Jwt principal) {
+        // Allowed roles for this endpoint
+        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
+        // Check user authorization for the given study
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
-            // Allowed roles for this endpoint
-            List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, lesserAllowedRoles)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
+        try {
             boolean isDeleted = this.populationService.deletePopulation(populationId);
-            if(isDeleted) {
+            if (isDeleted) {
                 return ResponseEntity.noContent().build();
-            }else{
+            } else {
                 return ResponseEntity.notFound().build();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

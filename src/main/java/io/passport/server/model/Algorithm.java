@@ -2,7 +2,7 @@ package io.passport.server.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Algorithm model used for algorithm management tasks.

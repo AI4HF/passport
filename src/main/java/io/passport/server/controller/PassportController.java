@@ -1,7 +1,10 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.*;
-import io.passport.server.service.*;
+import io.passport.server.model.Passport;
+import io.passport.server.model.PassportWithDetailSelection;
+import io.passport.server.model.Role;
+import io.passport.server.service.PassportService;
+import io.passport.server.service.RoleCheckerService;
 import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,19 +26,8 @@ import java.util.List;
 public class PassportController {
 
     private static final Logger log = LoggerFactory.getLogger(PassportController.class);
-    /**
-     * Passport service for passport management
-     */
     private final PassportService passportService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
@@ -44,73 +37,67 @@ public class PassportController {
     }
 
     /**
-     * Read all passports
+     * Read all passports by studyId.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return List of Passports
      */
     @GetMapping()
-    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId,
+                                                                   @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Passport> passports = this.passportService.findPassportsByStudyId(studyId);
 
-        long totalCount = passports.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(passports.size()));
 
         return ResponseEntity.ok().headers(headers).body(passports);
     }
 
     /**
-     * Delete passport by passportID.
-     * @param passportId ID of the passport that is to be deleted.
+     * Delete passport by passportId.
+     * @param passportId ID of the passport that is to be deleted
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return No content or not found status
      */
     @DeleteMapping("/{passportId}")
     public ResponseEntity<?> deletePassport(@PathVariable Long passportId,
-                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                            @RequestParam Long studyId,
+                                            @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.passportService.deletePassport(passportId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Endpoint to create a Passport and populate detailsJson field.
-     *
-     * @param passportWithDetailSelection The passport object with basic info (deploymentId, studyId, etc.) and selected details of the passport.
-     * @return The created Passport.
+     * Create a Passport.
+     * @param passport The passport object with basic info (deploymentId, studyId, etc.)
+     * @param studyId ID of the study for authorization
+     * @param principal KeycloakPrincipal object that holds access token
+     * @return Created Passport
      */
     @PostMapping
-    public ResponseEntity<?> createPassport(@RequestBody PassportWithDetailSelection passportWithDetailSelection,
-                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createPassport(@RequestBody PassportWithDetailSelection passport,
+                                            @RequestParam Long studyId,
+                                            @AuthenticationPrincipal Jwt principal) {
         try {
-
-            // Check role of the user
-            if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Passport savedPassport = passportService.createPassport(passportWithDetailSelection);
+            Passport savedPassport = passportService.createPassport(passport);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
         } catch (RuntimeException e) {
             log.error("Error while creating passport: " + e.getMessage());
@@ -119,24 +106,22 @@ public class PassportController {
         }
     }
 
-
     /**
-     * Endpoint to retrieve Passport by passportId.
-     *
-     * @param passportId The ID of the passport.
-     * @return The Passport object.
+     * Retrieve Passport by passportId.
+     * @param passportId The ID of the passport
+     * @param studyId ID of the study for authorization
+     * @param principal KeycloakPrincipal object that holds access token
+     * @return Passport object
      */
     @GetMapping("/{passportId}")
-    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId, @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId,
+                                                @RequestParam Long studyId,
+                                                @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Passport passport = passportService.getPassportById(passportId);
         return ResponseEntity.ok(passport);
     }
-
-
 }

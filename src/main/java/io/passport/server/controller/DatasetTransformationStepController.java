@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,19 +26,8 @@ import java.util.Optional;
 public class DatasetTransformationStepController {
     private static final Logger log = LoggerFactory.getLogger(DatasetTransformationStepController.class);
 
-    /**
-     * DatasetTransformationStep service for DatasetTransformationStep management
-     */
     private final DatasetTransformationStepService datasetTransformationStepService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
     @Autowired
@@ -49,78 +39,69 @@ public class DatasetTransformationStepController {
     /**
      * Read all DatasetTransformationSteps or filtered by dataTransformationId
      * @param dataTransformationId ID of the DatasetTransformation (optional)
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping()
     public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationSteps(
             @RequestParam(required = false) Long dataTransformationId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @RequestParam Long studyId,
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<DatasetTransformationStep> steps;
+        List<DatasetTransformationStep> steps = (dataTransformationId != null) ?
+                this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId) :
+                this.datasetTransformationStepService.getAllDatasetTransformationSteps();
 
-        if (dataTransformationId != null) {
-            steps = this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId);
-        } else {
-            steps = this.datasetTransformationStepService.getAllDatasetTransformationSteps();
-        }
-
-        long totalCount = steps.size();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(steps.size()));
 
         return ResponseEntity.ok().headers(headers).body(steps);
     }
 
-
     /**
      * Read a DatasetTransformationStep by id
      * @param stepId ID of the DatasetTransformationStep
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @GetMapping("/{stepId}")
     public ResponseEntity<?> getDatasetTransformationStep(@PathVariable Long stepId,
-                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+                                                          @RequestParam Long studyId,
+                                                          @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<DatasetTransformationStep> datasetTransformationStep = this.datasetTransformationStepService.findDatasetTransformationStepByStepId(stepId);
-
-        if(datasetTransformationStep.isPresent()) {
-            return ResponseEntity.ok().body(datasetTransformationStep.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return datasetTransformationStep.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
      * Create DatasetTransformationStep.
      * @param datasetTransformationStep DatasetTransformationStep model instance to be created.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PostMapping()
     public ResponseEntity<?> createDatasetTransformationStep(@RequestBody DatasetTransformationStep datasetTransformationStep,
-                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                                             @RequestParam Long studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             DatasetTransformationStep savedDatasetTransformationStep = this.datasetTransformationStepService.saveDatasetTransformationStep(datasetTransformationStep);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedDatasetTransformationStep);
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -130,27 +111,23 @@ public class DatasetTransformationStepController {
      * Update DatasetTransformationStep.
      * @param stepId ID of the DatasetTransformationStep that is to be updated.
      * @param updatedDatasetTransformationStep DatasetTransformationStep model instance with updated details.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @PutMapping("/{stepId}")
     public ResponseEntity<?> updateDatasetTransformationStep(@PathVariable Long stepId,
                                                              @RequestBody DatasetTransformationStep updatedDatasetTransformationStep,
-                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                                             @RequestParam Long studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<DatasetTransformationStep> savedDatasetTransformationStep = this.datasetTransformationStepService.updateDatasetTransformationStep(stepId, updatedDatasetTransformationStep);
-            if(savedDatasetTransformationStep.isPresent()) {
-                return ResponseEntity.ok().body(savedDatasetTransformationStep);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return savedDatasetTransformationStep.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -159,28 +136,25 @@ public class DatasetTransformationStepController {
     /**
      * Delete by DatasetTransformationStep ID.
      * @param stepId ID of the DatasetTransformationStep that is to be deleted.
+     * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return
      */
     @DeleteMapping("/{stepId}")
     public ResponseEntity<?> deleteDatasetTransformationStep(@PathVariable Long stepId,
-                                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                                             @RequestParam Long studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
+

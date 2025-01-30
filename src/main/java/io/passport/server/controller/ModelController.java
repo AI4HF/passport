@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,21 +25,9 @@ import java.util.Optional;
 public class ModelController {
 
     private static final Logger log = LoggerFactory.getLogger(ModelController.class);
-
-    /**
-     * Model service for model management.
-     */
     private final ModelService modelService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
-    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST);
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
     public ModelController(ModelService modelService, RoleCheckerService roleCheckerService) {
@@ -47,104 +36,88 @@ public class ModelController {
     }
 
     /**
-     * Read models, if studyId is provided, filter by studyId; otherwise, return all models.
-     * @param studyId Optional ID of the study.
+     * Retrieve all models, or filter by studyId if provided.
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return List of models
      */
     @GetMapping()
-    public ResponseEntity<List<Model>> getAllModels(@RequestParam(value = "studyId", required = false) Long studyId,
-                                                    @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<List<Model>> getAllModels(@RequestParam Long studyId,
+                                                    @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.DATA_SCIENTIST, Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<Model> models;
-
-        if (studyId != null) {
-            models = modelService.getAllModelsByStudyId(studyId);
-        } else {
-            models = modelService.getAllModels();
-        }
-
+        List<Model> models = modelService.getAllModelsByStudyId(studyId);
         return ResponseEntity.ok(models);
     }
 
     /**
-     * Read a model by id
+     * Retrieve a model by id
+     * @param studyId ID of the study for authorization
      * @param modelId ID of the model
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return Model or 404 if not found
      */
     @GetMapping("/{modelId}")
-    public ResponseEntity<?> getModelById(@PathVariable Long modelId,
-                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> getModelById(@RequestParam Long studyId,
+                                          @PathVariable Long modelId,
+                                          @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Model> model = this.modelService.findModelById(modelId);
-
-        if (model.isPresent()) {
-            return ResponseEntity.ok().body(model);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create a Model.
-     * @param model model instance to be created.
+     * Create a new Model.
+     * @param studyId ID of the study for authorization
+     * @param model Model to be created
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created Model
      */
     @PostMapping()
-    public ResponseEntity<?> createModel(@RequestBody Model model,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<?> createModel(@RequestParam Long studyId,
+                                         @RequestBody Model model,
+                                         @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Model savedModel = this.modelService.saveModel(model);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedModel);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update Model.
-     * @param modelId ID of the model that is to be updated.
-     * @param updatedModel model instance with updated details.
+     * Update Model by ID.
+     * @param studyId ID of the study for authorization
+     * @param modelId ID of the model to be updated
+     * @param updatedModel Updated Model
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated model or not found status
      */
     @PutMapping("/{modelId}")
-    public ResponseEntity<?> updateModel(@PathVariable Long modelId,
+    public ResponseEntity<?> updateModel(@RequestParam Long studyId,
+                                         @PathVariable Long modelId,
                                          @RequestBody Model updatedModel,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                         @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<Model> savedModel = this.modelService.updateModel(modelId, updatedModel);
-            if (savedModel.isPresent()) {
-                return ResponseEntity.ok().body(savedModel.get());
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch(Exception e){
+            return savedModel.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -152,27 +125,23 @@ public class ModelController {
 
     /**
      * Delete a model by Model ID.
-     * @param modelId ID of the model that is to be deleted.
+     * @param studyId ID of the study for authorization
+     * @param modelId ID of the model to be deleted
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with no content status or not found status
      */
     @DeleteMapping("/{modelId}")
-    public ResponseEntity<?> deleteModel(@PathVariable Long modelId,
-                                         @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<?> deleteModel(@RequestParam Long studyId,
+                                         @PathVariable Long modelId,
+                                         @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.modelService.deleteModel(modelId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

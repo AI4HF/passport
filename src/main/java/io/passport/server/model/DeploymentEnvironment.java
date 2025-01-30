@@ -4,7 +4,7 @@ package io.passport.server.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * DeploymentEnvironment model on which ModelDeployment will be performed.

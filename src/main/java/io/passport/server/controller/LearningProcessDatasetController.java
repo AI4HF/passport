@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,20 +28,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/learning-process-dataset")
 public class LearningProcessDatasetController {
     private static final Logger log = LoggerFactory.getLogger(LearningProcessDatasetController.class);
-
-    /**
-     * LearningProcessDataset service for LearningProcessDataset management
-     */
     private final LearningProcessDatasetService learningProcessDatasetService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -51,19 +40,20 @@ public class LearningProcessDatasetController {
 
     /**
      * Read all LearningProcessDatasets or filtered by learningProcessId and/or learningDatasetId
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
      * @param learningDatasetId ID of the LearningDataset (optional)
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with list of LearningProcessDatasetDTOs
      */
     @GetMapping()
     public ResponseEntity<List<LearningProcessDatasetDTO>> getLearningProcessDatasets(
+            @RequestParam Long studyId,
             @RequestParam(required = false) Long learningProcessId,
             @RequestParam(required = false) Long learningDatasetId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -84,30 +74,28 @@ public class LearningProcessDatasetController {
         }
 
         List<LearningProcessDatasetDTO> dtos = datasets.stream()
-                .map(entity -> new LearningProcessDatasetDTO(entity))
+                .map(LearningProcessDatasetDTO::new)
                 .collect(Collectors.toList());
 
-        long totalCount = dtos.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(dtos.size()));
 
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
      * Create a new LearningProcessDataset entity.
-     * @param learningProcessDatasetDTO the DTO containing data for the new LearningProcessDataset with input structure
+     * @param studyId ID of the study for authorization
+     * @param learningProcessDatasetDTO DTO containing data for the new LearningProcessDataset
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created LearningProcessDataset
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningProcessDataset(@RequestBody LearningProcessDatasetDTO learningProcessDatasetDTO,
-                                                          @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createLearningProcessDataset(@RequestParam Long studyId,
+                                                          @RequestBody LearningProcessDatasetDTO learningProcessDatasetDTO,
+                                                          @AuthenticationPrincipal Jwt principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -122,21 +110,22 @@ public class LearningProcessDatasetController {
 
     /**
      * Update LearningProcessDataset using query parameters.
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param learningDatasetId ID of the LearningDataset
-     * @param updatedLearningProcessDataset LearningProcessDataset model instance with updated details.
+     * @param updatedLearningProcessDataset LearningProcessDataset model instance with updated details
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with updated LearningProcessDataset
      */
     @PutMapping()
     public ResponseEntity<?> updateLearningProcessDataset(
+            @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
             @RequestParam Long learningDatasetId,
             @RequestBody LearningProcessDataset updatedLearningProcessDataset,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -146,11 +135,7 @@ public class LearningProcessDatasetController {
 
         try {
             Optional<LearningProcessDataset> savedLearningProcessDataset = this.learningProcessDatasetService.updateLearningProcessDataset(learningProcessDatasetId, updatedLearningProcessDataset);
-            if (savedLearningProcessDataset.isPresent()) {
-                return ResponseEntity.ok().body(savedLearningProcessDataset);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return savedLearningProcessDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -159,19 +144,20 @@ public class LearningProcessDatasetController {
 
     /**
      * Delete by LearningProcessDataset composite ID using query parameters.
+     * @param studyId ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param learningDatasetId ID of the LearningDataset
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity
      */
     @DeleteMapping()
     public ResponseEntity<?> deleteLearningProcessDataset(
+            @RequestParam Long studyId,
             @RequestParam Long learningProcessId,
             @RequestParam Long learningDatasetId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -181,14 +167,11 @@ public class LearningProcessDatasetController {
 
         try {
             boolean isDeleted = this.learningProcessDatasetService.deleteLearningProcessDataset(learningProcessDatasetId);
-            if (isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
+

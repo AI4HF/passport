@@ -1,110 +1,57 @@
 package io.passport.server.config;
 
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
-/**
- * Keycloak Configuration which allows us to determine security conditions for different types of login attempts
- * Will be further expanded as new REST methods are implemented
- */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+@EnableMethodSecurity(prePostEnabled = true)
+public class KeycloakSecurityConfig {
 
-    /**
-     * Method to configure the access rules for different REST endpoints
-     * Will be expanded as new endpoints for different user roles are generated     *
-     * @param http
-     * @throws Exception
-     */
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-        http.cors().and().csrf().disable()
-                .authorizeRequests()
-                .anyRequest().permitAll();//TODO: this is a bad practice, we should enable csrf in the future.
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    @Value("${keycloak.auth-server-url}")
+    private String url;
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
+        return http.build();
     }
 
-    /**
-     * Keycloak's own Authentication configurations
-     * @param auth
-     * @throws Exception
-     */
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(keycloakGrantedAuthoritiesMapper());
-
-        auth.authenticationProvider(keycloakAuthenticationProvider);
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withJwkSetUri(url+"realms/"+realm+"/protocol/openid-connect/certs")
+                .jwsAlgorithm(SignatureAlgorithm.RS256)
+                .build();
     }
-
-    /**
-     * Cors security configuration method to handle the Cors related errors.
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH",
-                "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type",
-                "x-auth-token"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
         configuration.setExposedHeaders(Arrays.asList("X-Total-Count"));
-        UrlBasedCorsConfigurationSource source = new
-                UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
-    }
-
-    /**
-     * Method which handles the Authenticated Users' Authentication Sessions with Keycloak's built-in method
-     * @return
-     */
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-    }
-
-    /**
-     * Method which is used to provide role based authentication to users.
-     * Currently only works for realm roles. Will change later based on decided design choice.
-     * @return
-     */
-    private GrantedAuthoritiesMapper keycloakGrantedAuthoritiesMapper() {
-        return (authorities) -> {
-            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-            for (GrantedAuthority authority : authorities) {
-                if (authority instanceof SimpleGrantedAuthority) {
-                    SimpleGrantedAuthority simpleGrantedAuthority = (SimpleGrantedAuthority) authority;
-                    mappedAuthorities.add(new SimpleGrantedAuthority(simpleGrantedAuthority.getAuthority()));
-                }
-            }
-
-            return mappedAuthorities;
-        };
     }
 }

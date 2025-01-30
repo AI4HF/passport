@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,20 +23,8 @@ import java.util.Optional;
 @RequestMapping("/learning-dataset")
 public class LearningDatasetController {
     private static final Logger log = LoggerFactory.getLogger(LearningDatasetController.class);
-
-    /**
-     * LearningDataset service for LearningDataset management
-     */
     private final LearningDatasetService learningDatasetService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
     @Autowired
@@ -46,77 +35,68 @@ public class LearningDatasetController {
 
     /**
      * Read a LearningDataset by id
+     * @param studyId ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with LearningDataset
      */
     @GetMapping("/{learningDatasetId}")
-    public ResponseEntity<?> getLearningDataset(@PathVariable Long learningDatasetId,
-                                                @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<?> getLearningDataset(@RequestParam Long studyId,
+                                                @PathVariable Long learningDatasetId,
+                                                @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<LearningDataset> learningDataset = this.learningDatasetService.findLearningDatasetByLearningDatasetId(learningDatasetId);
-
-        if(learningDataset.isPresent()) {
-            return ResponseEntity.ok().body(learningDataset.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return learningDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
      * Read all LearningDatasets or filtered by dataTransformationId and/or datasetId
+     * @param studyId ID of the study for authorization
      * @param dataTransformationId ID of the DataTransformation (optional)
      * @param datasetId ID of the Dataset (optional)
-     * @param studyId ID of the study                 
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with list of LearningDatasets
      */
     @GetMapping()
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
+            @RequestParam Long studyId,
             @RequestParam(required = false) Long dataTransformationId,
             @RequestParam(required = false) Long datasetId,
-            @RequestParam(required = false) Long studyId,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+            @AuthenticationPrincipal Jwt principal) {
 
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<LearningDataset> datasets = List.of();
+        List<LearningDataset> datasets;
 
-        if (dataTransformationId != null && datasetId != null) {
-            return ResponseEntity.badRequest().build();
-        } else if (dataTransformationId != null) {
+        if (dataTransformationId != null) {
             datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
         } else if (datasetId != null) {
             datasets = this.learningDatasetService.findByDatasetId(datasetId);
-        } else if (studyId != null) {
+        } else {
             datasets = this.learningDatasetService.getAllLearningDatasetsByStudyId(studyId);
         }
 
         return ResponseEntity.ok().body(datasets);
     }
 
-
     /**
      * Create LearningDataset with corresponding Dataset Transformation.
-     * @param request LearningDataset and Transformation model instance to be created.
+     * @param studyId ID of the study for authorization
+     * @param request LearningDataset and Transformation model instance to be created
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity with created LearningDatasetAndTransformationDTO
      */
     @PostMapping()
-    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestBody LearningDatasetandTransformationDTO request,
-                                                                     @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
+    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam Long studyId,
+                                                                     @RequestBody LearningDatasetandTransformationDTO request,
+                                                                     @AuthenticationPrincipal Jwt principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -130,21 +110,20 @@ public class LearningDatasetController {
 
     /**
      * Update both DatasetTransformation and LearningDataset in a single transaction.
-     * @param learningDatasetId ID of the LearningDataset to be updated.
-     * @param request LearningDatasetAndTransformationRequest containing updated DatasetTransformation and LearningDataset.
+     * @param studyId ID of the study for authorization
+     * @param learningDatasetId ID of the LearningDataset to be updated
+     * @param request LearningDatasetAndTransformationRequest containing updated DatasetTransformation and LearningDataset
      * @param principal KeycloakPrincipal object that holds access token
      * @return ResponseEntity with updated LearningDataset and DatasetTransformation
      */
     @PutMapping("/{learningDatasetId}")
     public ResponseEntity<?> updateLearningDatasetWithTransformation(
+            @RequestParam Long studyId,
             @PathVariable Long learningDatasetId,
             @RequestBody LearningDatasetandTransformationDTO request,
-            @AuthenticationPrincipal KeycloakPrincipal<?> principal
-    ) {
+            @AuthenticationPrincipal Jwt principal) {
         try {
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -167,27 +146,23 @@ public class LearningDatasetController {
 
     /**
      * Delete by LearningDataset ID.
-     * @param learningDatasetId ID of the LearningDataset that is to be deleted.
+     * @param studyId ID of the study for authorization
+     * @param learningDatasetId ID of the LearningDataset that is to be deleted
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return ResponseEntity
      */
     @DeleteMapping("/{learningDatasetId}")
-    public ResponseEntity<?> deleteLearningDataset(@PathVariable Long learningDatasetId,
-                                                   @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+    public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,
+                                                   @PathVariable Long learningDatasetId,
+                                                   @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

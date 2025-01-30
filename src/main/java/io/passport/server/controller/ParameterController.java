@@ -12,33 +12,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Class which stores the generated HTTP requests related to parameter. operations.
+ * Class which stores the generated HTTP requests related to parameter operations.
  */
 @RestController
 @RequestMapping("/parameter")
 public class ParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(ParameterController.class);
-
-    /**
-     * Parameter service for parameter management.
-     */
     private final ParameterService parameterService;
-
-    /**
-     * Role checker service for authorization
-     */
     private final RoleCheckerService roleCheckerService;
-
-    /**
-     * List of authorized roles for this endpoint
-     */
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
@@ -48,132 +37,114 @@ public class ParameterController {
     }
 
     /**
-     * Read all parameters by StudyId
+     * Read all parameters by StudyId.
      * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return List of Parameters
      */
     @GetMapping()
     public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam Long studyId,
-                                                            @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                                                     @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<Parameter> parameters = this.parameterService.findParametersByStudyId(studyId);
 
-        long totalCount = parameters.size();
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", String.valueOf(totalCount));
+        headers.add("X-Total-Count", String.valueOf(parameters.size()));
 
         return ResponseEntity.ok().headers(headers).body(parameters);
     }
 
     /**
-     * Read a parameter by id
+     * Read a parameter by id.
      * @param parameterId ID of the parameter
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return Parameter entity or not found
      */
     @GetMapping("/{parameterId}")
     public ResponseEntity<?> getParameterById(@PathVariable Long parameterId,
-                                              @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-
-        // Check role of the user
-        if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                              @RequestParam Long studyId,
+                                              @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Optional<Parameter> parameter = this.parameterService.findParameterById(parameterId);
-
-        if (parameter.isPresent()) {
-            return ResponseEntity.ok().body(parameter);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return parameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
     /**
      * Create a Parameter.
-     * @param parameter parameter model instance to be created.
+     * @param parameter parameter model instance to be created
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return Created parameter
      */
     @PostMapping()
     public ResponseEntity<?> createParameter(@RequestBody Parameter parameter,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                             @RequestParam Long studyId,
+                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Parameter savedParameter = this.parameterService.saveParameter(parameter);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedParameter);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update Parameter.
-     * @param parameterId ID of the parameter that is to be updated.
-     * @param updatedParameter model instance with updated details.
+     * Update a parameter.
+     * @param parameterId ID of the parameter that is to be updated
+     * @param updatedParameter model instance with updated details
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return Updated parameter
      */
     @PutMapping("/{parameterId}")
     public ResponseEntity<?> updateParameter(@PathVariable Long parameterId,
                                              @RequestBody Parameter updatedParameter,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                             @RequestParam Long studyId,
+                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             Optional<Parameter> savedParameter = this.parameterService.updateParameter(parameterId, updatedParameter);
-            if (savedParameter.isPresent()) {
-                return ResponseEntity.ok().body(savedParameter.get());
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch(Exception e){
+            return savedParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete a parameter by Parameter ID.
-     * @param parameterId ID of the parameter that is to be deleted.
+     * Delete a parameter by ID.
+     * @param parameterId ID of the parameter that is to be deleted
+     * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * @return No content or not found status
      */
     @DeleteMapping("/{parameterId}")
     public ResponseEntity<?> deleteParameter(@PathVariable Long parameterId,
-                                             @AuthenticationPrincipal KeycloakPrincipal<?> principal) {
-        try{
-
-            // Check role of the user
-            if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
+                                             @RequestParam Long studyId,
+                                             @AuthenticationPrincipal Jwt principal) {
+        try {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             boolean isDeleted = this.parameterService.deleteParameter(parameterId);
-            if(isDeleted) {
-                return ResponseEntity.noContent().build();
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
+            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

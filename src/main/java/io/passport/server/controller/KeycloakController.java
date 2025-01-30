@@ -2,13 +2,14 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Credentials;
 import io.passport.server.service.KeycloakService;
+import jakarta.ws.rs.NotAuthorizedException;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.NotAuthorizedException;
+
 
 /**
  * Keycloak authorization tools and request.
