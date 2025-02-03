@@ -124,6 +124,7 @@ public class ModelDeploymentController {
                 String description = "Creation of ModelDeployment " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "ModelDeployment",
                         recordId,
@@ -168,6 +169,7 @@ public class ModelDeploymentController {
                     String description = "Update of ModelDeployment " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "ModelDeployment",
                             recordId,
@@ -208,6 +210,7 @@ public class ModelDeploymentController {
                 String description = "Deletion of ModelDeployment " + deploymentId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "ModelDeployment",
                         deploymentId.toString(),

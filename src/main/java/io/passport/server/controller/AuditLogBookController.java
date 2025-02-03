@@ -4,6 +4,8 @@ import io.passport.server.model.AuditLogBook;
 import io.passport.server.model.AuditLog;
 import io.passport.server.service.AuditLogBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +22,8 @@ public class AuditLogBookController {
     }
 
     @GetMapping("/{passportId}")
-    public List<AuditLogBook> getAuditLogsByPassportId(@PathVariable String passportId) {
+    public List<AuditLogBook> getAuditLogsByPassportId(@PathVariable String passportId,
+                                                       @AuthenticationPrincipal Jwt principal) {
         return auditLogBookService.getAuditLogBooksByPassportId(passportId);
     }
 
@@ -28,13 +31,15 @@ public class AuditLogBookController {
     public void createAuditLogBookEntries(
             @RequestParam String passportId,
             @RequestParam Long studyId,
-            @RequestParam Long deploymentId
+            @RequestParam Long deploymentId,
+            @AuthenticationPrincipal Jwt principal
     ) {
         auditLogBookService.createAuditLogBookEntries(passportId, studyId, deploymentId);
     }
 
     @PostMapping("/audit-logs")
-    public List<AuditLog> getAuditLogsByIds(@RequestBody List<String> auditLogIds) {
+    public List<AuditLog> getAuditLogsByIds(@RequestBody List<String> auditLogIds,
+                                            @AuthenticationPrincipal Jwt principal) {
         return auditLogBookService.getAuditLogsByIds(auditLogIds);
     }
 }

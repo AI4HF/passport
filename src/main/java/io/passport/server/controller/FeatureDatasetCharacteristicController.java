@@ -119,6 +119,7 @@ public class FeatureDatasetCharacteristicController {
                         + " and featureId=" + ftId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "FeatureDatasetCharacteristic",
                         compositeId,
@@ -171,6 +172,7 @@ public class FeatureDatasetCharacteristicController {
                             + id.getDatasetId() + " and featureId=" + id.getFeatureId();
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "FeatureDatasetCharacteristic",
                             compositeId,
@@ -220,6 +222,7 @@ public class FeatureDatasetCharacteristicController {
                         + datasetId + " and featureId=" + featureId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "FeatureDatasetCharacteristic",
                         compositeId,

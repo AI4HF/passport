@@ -105,6 +105,7 @@ public class LearningProcessController {
                 String description = "Creation of LearningProcess " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningProcess",
                         recordId,
@@ -149,6 +150,7 @@ public class LearningProcessController {
                     String description = "Update of LearningProcess " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningProcess",
                             recordId,
@@ -188,6 +190,7 @@ public class LearningProcessController {
                 String description = "Deletion of LearningProcess " + learningProcessId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningProcess",
                         learningProcessId.toString(),

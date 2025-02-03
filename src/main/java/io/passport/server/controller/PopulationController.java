@@ -104,6 +104,7 @@ public class PopulationController {
                 String description = "Creation of Population " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "Population",
                         recordId,
@@ -150,6 +151,7 @@ public class PopulationController {
                     String description = "Update of Population " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "Population",
                             recordId,
@@ -192,6 +194,7 @@ public class PopulationController {
                 String description = "Deletion of Population " + populationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "Population",
                         populationId.toString(),

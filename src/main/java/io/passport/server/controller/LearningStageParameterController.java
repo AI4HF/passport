@@ -115,6 +115,7 @@ public class LearningStageParameterController {
                         + lsId + " and parameterId=" + pId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningStageParameter",
                         compositeId,
@@ -167,6 +168,7 @@ public class LearningStageParameterController {
                             + learningStageId + " and parameterId=" + parameterId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningStageParameter",
                             compositeId,
@@ -215,6 +217,7 @@ public class LearningStageParameterController {
                         + learningStageId + " and parameterId=" + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningStageParameter",
                         compositeId,

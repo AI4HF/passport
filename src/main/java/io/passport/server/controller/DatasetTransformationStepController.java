@@ -114,6 +114,7 @@ public class DatasetTransformationStepController {
                 String description = "Creation of DatasetTransformationStep " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "DatasetTransformationStep",
                         recordId,
@@ -158,6 +159,7 @@ public class DatasetTransformationStepController {
                     String description = "Update of DatasetTransformationStep " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "DatasetTransformationStep",
                             recordId,
@@ -197,6 +199,7 @@ public class DatasetTransformationStepController {
                 String description = "Deletion of DatasetTransformationStep " + stepId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "DatasetTransformationStep",
                         stepId.toString(),

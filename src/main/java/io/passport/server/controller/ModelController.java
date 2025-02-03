@@ -108,6 +108,7 @@ public class ModelController {
                 String description = "Creation of Model " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "Model",
                         recordId,
@@ -150,6 +151,7 @@ public class ModelController {
                     String description = "Update of Model " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "Model",
                             recordId,
@@ -189,6 +191,7 @@ public class ModelController {
                 String description = "Deletion of Model " + modelId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "Model",
                         modelId.toString(),

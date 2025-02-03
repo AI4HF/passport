@@ -38,7 +38,6 @@ public class AuditLogBookService {
                 .filter(log -> isRelatedToPassport(log, studyId, deploymentId))
                 .toList();
 
-        // Create AuditLogBook entries for each related AuditLog
         for (AuditLog auditLog : relatedAuditLogs) {
             AuditLogBook auditLogBook = new AuditLogBook(new AuditLogBookId(passportId, auditLog.getAuditLogId()));
             auditLogBookRepository.save(auditLogBook);
@@ -46,8 +45,7 @@ public class AuditLogBookService {
     }
 
     private boolean isRelatedToPassport(AuditLog auditLog, Long studyId, Long deploymentId) {
-        // Logic to determine if the audit log is related to the given passport's study and deployment
-        return auditLog.getAffectedRecordId().equals(String.valueOf(studyId)) ||
+        return auditLog.getStudyId().equals(studyId) ||
                 auditLog.getAffectedRecordId().equals(String.valueOf(deploymentId));
     }
 
@@ -70,6 +68,7 @@ public class AuditLogBookService {
      */
     public AuditLog createAuditLog(
             String userId,
+            Long studyId,
             String actionType,
             String affectedRelation,
             String recordId,
@@ -85,6 +84,7 @@ public class AuditLogBookService {
         AuditLog auditLog = new AuditLog(
                 auditLogId,
                 userId,
+                studyId,
                 Instant.now(),
                 actionType,
                 affectedRelation,

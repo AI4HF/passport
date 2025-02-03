@@ -144,6 +144,7 @@ public class StudyOrganizationController {
                         + stdId + " and organizationId=" + orgId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "StudyOrganization",
                         compositeId,
@@ -193,6 +194,7 @@ public class StudyOrganizationController {
                             + stdId + " and organizationId=" + orgId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "StudyOrganization",
                             compositeId,
@@ -235,6 +237,7 @@ public class StudyOrganizationController {
                         + studyId + " and organizationId=" + organizationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "StudyOrganization",
                         compositeId,

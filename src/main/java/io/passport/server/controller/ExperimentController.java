@@ -83,6 +83,7 @@ public class ExperimentController {
                     String description = "Creation of Experiment " + recordId;
                     auditLogBookService.createAuditLog(
                             userId,
+                            studyId,
                             "CREATE",
                             "Experiment",
                             recordId,

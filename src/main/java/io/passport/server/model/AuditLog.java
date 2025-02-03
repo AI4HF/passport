@@ -22,11 +22,15 @@ import java.time.Instant;
 public class AuditLog {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "audit_log_id")
     private String auditLogId;
 
     @Column(name = "person_id")
     private String personId;
+
+    @Column(name = "study_id")
+    private Long studyId;
 
     @Column(name = "occurred_at")
     private Instant occurredAt;
@@ -40,11 +44,9 @@ public class AuditLog {
     @Column(name = "affected_record_id")
     private String affectedRecordId;
 
-    @Lob
     @Column(name = "affected_record")
     private String affectedRecord;
 
-    @Lob
     @Column(name = "description")
     private String description;
 }

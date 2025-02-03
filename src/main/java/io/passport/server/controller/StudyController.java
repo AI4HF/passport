@@ -123,6 +123,7 @@ public class StudyController {
                 String description = "Creation of Study " + recordId;
                 auditLogBookService.createAuditLog(
                         ownerId,
+                        savedStudy.getId(),
                         "CREATE",
                         "Study",
                         recordId,
@@ -168,6 +169,7 @@ public class StudyController {
                 String description = "Update of Study " + recordId;
                 auditLogBookService.createAuditLog(
                         userId,
+                        studyId,
                         "UPDATE",
                         "Study",
                         recordId,
@@ -205,6 +207,7 @@ public class StudyController {
             String description = "Deletion of Study " + studyId;
             auditLogBookService.createAuditLog(
                     userId,
+                    studyId,
                     "DELETE",
                     "Study",
                     studyId.toString(),

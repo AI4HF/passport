@@ -88,6 +88,7 @@ public class DeploymentEnvironmentController {
                 String description = "Creation of DeploymentEnvironment " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "DeploymentEnvironment",
                         recordId,
@@ -132,6 +133,7 @@ public class DeploymentEnvironmentController {
                     String description = "Update of DeploymentEnvironment " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "DeploymentEnvironment",
                             recordId,
@@ -172,6 +174,7 @@ public class DeploymentEnvironmentController {
                 String description = "Deletion of DeploymentEnvironment " + deploymentEnvironmentId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "DeploymentEnvironment",
                         deploymentEnvironmentId.toString(),

@@ -107,6 +107,7 @@ public class DatasetTransformationController {
                 String description = "Creation of DatasetTransformation " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "DatasetTransformation",
                         recordId,
@@ -151,6 +152,7 @@ public class DatasetTransformationController {
                     String description = "Update of DatasetTransformation " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "DatasetTransformation",
                             recordId,
@@ -190,6 +192,7 @@ public class DatasetTransformationController {
                 String description = "Deletion of DatasetTransformation " + dataTransformationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "DatasetTransformation",
                         dataTransformationId.toString(),

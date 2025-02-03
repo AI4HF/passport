@@ -115,6 +115,7 @@ public class LearningProcessParameterController {
                         + lpId + " and parameterId=" + pId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningProcessParameter",
                         compositeId,
@@ -167,6 +168,7 @@ public class LearningProcessParameterController {
                             + learningProcessId + " and parameterId=" + parameterId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningProcessParameter",
                             compositeId,
@@ -216,6 +218,7 @@ public class LearningProcessParameterController {
                         + learningProcessId + " and parameterId=" + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningProcessParameter",
                         compositeId,

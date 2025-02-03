@@ -105,6 +105,7 @@ public class FeatureSetController {
                 String description = "Creation of FeatureSet " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "FeatureSet",
                         recordId,
@@ -147,6 +148,7 @@ public class FeatureSetController {
                     String description = "Update of FeatureSet " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "FeatureSet",
                             recordId,
@@ -187,6 +189,7 @@ public class FeatureSetController {
                 String description = "Deletion of FeatureSet " + featureSetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "FeatureSet",
                         featureSetId.toString(),

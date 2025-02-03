@@ -118,6 +118,7 @@ public class LearningDatasetController {
                 String description = "Creation of LearningDataset " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningDataset",
                         recordId,
@@ -169,6 +170,7 @@ public class LearningDatasetController {
                     String description = "Update of LearningDataset " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningDataset",
                             recordId,
@@ -209,6 +211,7 @@ public class LearningDatasetController {
                 String description = "Deletion of LearningDataset " + learningDatasetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningDataset",
                         learningDatasetId.toString(),

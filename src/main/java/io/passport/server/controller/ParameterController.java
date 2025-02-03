@@ -104,6 +104,7 @@ public class ParameterController {
                 String description = "Creation of Parameter " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "Parameter",
                         recordId,
@@ -145,6 +146,7 @@ public class ParameterController {
                     String description = "Update of Parameter " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "Parameter",
                             recordId,
@@ -183,6 +185,7 @@ public class ParameterController {
                 String description = "Deletion of Parameter " + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "Parameter",
                         parameterId.toString(),

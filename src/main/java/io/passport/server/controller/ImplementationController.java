@@ -105,6 +105,7 @@ public class ImplementationController {
                 String description = "Creation of Implementation " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "Implementation",
                         recordId,
@@ -147,6 +148,7 @@ public class ImplementationController {
                     String description = "Update of Implementation " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "Implementation",
                             recordId,
@@ -187,6 +189,7 @@ public class ImplementationController {
                 String description = "Deletion of Implementation " + implementationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "Implementation",
                         implementationId.toString(),

@@ -116,6 +116,7 @@ public class LearningProcessDatasetController {
                         + lpId + " and learningDatasetId=" + ldId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningProcessDataset",
                         compositeId,
@@ -169,6 +170,7 @@ public class LearningProcessDatasetController {
                             + learningProcessId + " and learningDatasetId=" + learningDatasetId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningProcessDataset",
                             compositeId,
@@ -218,6 +220,7 @@ public class LearningProcessDatasetController {
                         + learningProcessId + " and learningDatasetId=" + learningDatasetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningProcessDataset",
                         compositeId,

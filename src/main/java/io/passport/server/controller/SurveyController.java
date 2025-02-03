@@ -109,6 +109,7 @@ public class SurveyController {
                 String description = "Creation of Survey " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "Survey",
                         recordId,
@@ -151,6 +152,7 @@ public class SurveyController {
                     String description = "Update of Survey " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "Survey",
                             recordId,
@@ -190,6 +192,7 @@ public class SurveyController {
                 String description = "Deletion of Survey " + surveyId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "Survey",
                         surveyId.toString(),

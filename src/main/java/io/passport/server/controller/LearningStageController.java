@@ -109,6 +109,7 @@ public class LearningStageController {
                 String description = "Creation of LearningStage " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "CREATE",
                         "LearningStage",
                         recordId,
@@ -151,6 +152,7 @@ public class LearningStageController {
                     String description = "Update of LearningStage " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            studyId,
                             "UPDATE",
                             "LearningStage",
                             recordId,
@@ -191,6 +193,7 @@ public class LearningStageController {
                 String description = "Deletion of LearningStage " + learningStageId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        studyId,
                         "DELETE",
                         "LearningStage",
                         learningStageId.toString(),
