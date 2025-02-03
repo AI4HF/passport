@@ -45,7 +45,4 @@ public class Passport {
     @Convert(converter = JsonConverter.class)
     @ColumnTransformer(write = "?::jsonb")
     private Map<String, Object> detailsJson;
-
-    @Column(name = "signature", columnDefinition = "bytea")
-    private byte[] signature;
 }
