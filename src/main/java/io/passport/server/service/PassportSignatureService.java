@@ -23,12 +23,21 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.List;
 
+/**
+ * Service class for digital signature generation.
+ */
 @Service
 public class PassportSignatureService {
 
     private static final String KEYSTORE_PATH = "docs/keystore.p12";
     private static final String KEYSTORE_PASSWORD = "password";
 
+    /**
+     * Digital signature generation and signing logic with europa esig package.
+     *
+     * @param documentContent Unsigned PDF file in Byte Array form.
+     * @return Signed PDF file in Byte Array form.
+     */
     public byte[] generateSignature(byte[] documentContent) {
         try (SignatureTokenConnection signingToken = new Pkcs12SignatureToken(
                 new FileInputStream(KEYSTORE_PATH), new KeyStore.PasswordProtection(KEYSTORE_PASSWORD.toCharArray()))) {
@@ -61,7 +70,7 @@ public class PassportSignatureService {
             return outputStream.toByteArray();
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("PDF could not be signed: " + e.getMessage());
         }
     }
 }
