@@ -16,6 +16,7 @@ import eu.europa.esig.dss.token.Pkcs12SignatureToken;
 import eu.europa.esig.dss.token.SignatureTokenConnection;
 import eu.europa.esig.dss.signature.DocumentSignatureService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -29,8 +30,11 @@ import java.util.List;
 @Service
 public class PassportSignatureService {
 
-    private static final String KEYSTORE_PATH = "docs/keystore.p12";
-    private static final String KEYSTORE_PASSWORD = "password";
+    @Value("${dss.keystore.path}")
+    private String KEYSTORE_PATH;
+
+    @Value("${dss.keystore.password}")
+    private String KEYSTORE_PASSWORD;
 
     /**
      * Digital signature generation and signing logic with europa esig package.
