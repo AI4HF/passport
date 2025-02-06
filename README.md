@@ -21,4 +21,4 @@ To start using the REST methods, follow the instructions below:
 # DSS
 - Upon Passport PDF generation on frontend, respective endpoint signs the created PDF file and sends it back via response.
 - Upon server setup, for a properly personalized signature, Java Keytool must be utilized to generate a Keystore file and it must be stored in docs folder under the name keystore.p12. To generate, the following command must be run on a path with relation to the Keytool application:
-  - keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -storetype pkcs12 -keystore keystore.p12 -storepass password -keypass password -validity 365 -dname "CN=YourName, OU=YourOrgUnit, O=YourOrg, L=YourCity, ST=YourState, C=TwoCharacterCountryCode"
+  - ```keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -storetype pkcs12 -keystore keystore.p12 -storepass password -keypass password -validity 365 -dname "CN=YourName, OU=YourOrgUnit, O=YourOrg, L=YourCity, ST=YourState, C=TwoCharacterCountryCode"```
