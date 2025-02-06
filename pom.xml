@@ -131,6 +131,12 @@
             <artifactId>dss-pades-pdfbox</artifactId>
             <version>${dss.version}</version>
         </dependency>
+        <!--Additional dependency requirement for DSS initialization-->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-utils-apache-commons</artifactId>
+            <version>${dss.version}</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
