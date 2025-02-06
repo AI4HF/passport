@@ -17,6 +17,7 @@
     <properties>
         <java.version>21</java.version>
         <keycloak.version>24.0.4</keycloak.version>
+        <dss.version>6.2.RC1</dss.version>
     </properties>
 
     <dependencies>
@@ -112,8 +113,30 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.12.5</version>
         </dependency>
-
-
+        <!-- Token Management (e.g., PKCS12, hardware tokens) -->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-token</artifactId>
+            <version>${dss.version}</version>
+        </dependency>
+        <!-- Document Management -->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-document</artifactId>
+            <version>${dss.version}</version>
+        </dependency>
+        <!--Pades signature service with PDF support-->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-pades-pdfbox</artifactId>
+            <version>${dss.version}</version>
+        </dependency>
+        <!--Additional dependency requirement for DSS initialization-->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-utils-apache-commons</artifactId>
+            <version>${dss.version}</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -123,6 +146,13 @@
                 <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
                 <version>${keycloak.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-bom</artifactId>
+                <version>${dss.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

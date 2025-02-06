@@ -518,6 +518,7 @@ VALUES
          "productIdentifier": "test_product_identifier"
        },
        "studyDetails": {
+         "id": 1,
          "name": "Risk score for acute HF in the emergency department",
          "description": "Predicting risk factors for acute HF…",
          "objectives": "Evaluating the risk prediction for acute HF",
