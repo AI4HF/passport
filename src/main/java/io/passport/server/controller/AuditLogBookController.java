@@ -22,14 +22,14 @@ public class AuditLogBookController {
     }
 
     @GetMapping("/{passportId}")
-    public List<AuditLogBook> getAuditLogsByPassportId(@PathVariable String passportId,
+    public List<AuditLogBook> getAuditLogsByPassportId(@PathVariable Long passportId,
                                                        @AuthenticationPrincipal Jwt principal) {
         return auditLogBookService.getAuditLogBooksByPassportId(passportId);
     }
 
     @PostMapping("")
     public void createAuditLogBookEntries(
-            @RequestParam String passportId,
+            @RequestParam Long passportId,
             @RequestParam Long studyId,
             @RequestParam Long deploymentId,
             @AuthenticationPrincipal Jwt principal

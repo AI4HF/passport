@@ -18,7 +18,7 @@ public interface AuditLogBookRepository extends JpaRepository<AuditLogBook, Audi
      * @param passportId The ID of the passport.
      * @return List of AuditLogBook entries.
      */
-    List<AuditLogBook> findByIdPassportId(String passportId);
+    List<AuditLogBook> findByIdPassportId(Long passportId);
 
     /**
      * Find all AuditLogBook entries by Audit Log ID.

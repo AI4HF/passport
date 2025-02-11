@@ -27,11 +27,11 @@ public class AuditLogBookService {
         this.auditLogRepository = auditLogRepository;
     }
 
-    public List<AuditLogBook> getAuditLogBooksByPassportId(String passportId) {
+    public List<AuditLogBook> getAuditLogBooksByPassportId(Long passportId) {
         return auditLogBookRepository.findByIdPassportId(passportId);
     }
 
-    public void createAuditLogBookEntries(String passportId, Long studyId, Long deploymentId) {
+    public void createAuditLogBookEntries(Long passportId, Long studyId, Long deploymentId) {
         // Query all audit logs related to studyId and deploymentId
         List<AuditLog> relatedAuditLogs = auditLogRepository.findAll()
                 .stream()
@@ -75,25 +75,20 @@ public class AuditLogBookService {
             Object entity,
             String description
     ) {
-        String auditLogId = UUID.randomUUID().toString();
 
         String recordData = (entity != null)
                 ? objectToJsonSafely(entity)
                 : "None";
 
-        AuditLog auditLog = new AuditLog(
-                auditLogId,
-                userId,
-                studyId,
-                Instant.now(),
-                actionType,
-                affectedRelation,
-                recordId,
-                recordData,
-                description
-        );
+        AuditLog auditLog = new AuditLog();
+        auditLog.setPersonId(userId);
+        auditLog.setStudyId(studyId);
+        auditLog.setActionType(actionType);
+        auditLog.setAffectedRelation(affectedRelation);
+        auditLog.setAffectedRecordId(recordId);
+        auditLog.setAffectedRecord(recordData);
+        auditLog.setDescription(description);
 
-        // Save the AuditLog to the DB
         return auditLogRepository.save(auditLog);
     }
 
