@@ -27,11 +27,6 @@
             <version>0.46</version>  <!-- Downgrade to a compatible version -->
         </dependency>
         <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-            <version>4.8.112</version>  <!-- This version is already on your classpath -->
-        </dependency>
-        <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-core</artifactId>
             <version>6.2.7.Final</version>

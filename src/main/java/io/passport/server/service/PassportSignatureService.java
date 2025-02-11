@@ -1,6 +1,5 @@
 package io.passport.server.service;
 
-
 import eu.europa.esig.dss.enumerations.SignatureLevel;
 import eu.europa.esig.dss.model.SignatureValue;
 import eu.europa.esig.dss.pades.PAdESSignatureParameters;
@@ -20,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.List;
 
@@ -43,8 +42,16 @@ public class PassportSignatureService {
      * @return Signed PDF file in Byte Array form.
      */
     public byte[] generateSignature(byte[] documentContent) {
-        try (SignatureTokenConnection signingToken = new Pkcs12SignatureToken(
-                new FileInputStream(KEYSTORE_PATH), new KeyStore.PasswordProtection(KEYSTORE_PASSWORD.toCharArray()))) {
+        try (
+                InputStream keystoreStream = getClass().getClassLoader().getResourceAsStream(KEYSTORE_PATH);
+                SignatureTokenConnection signingToken = new Pkcs12SignatureToken(
+                        keystoreStream,
+                        new KeyStore.PasswordProtection(KEYSTORE_PASSWORD.toCharArray())
+                )
+        ) {
+            if (keystoreStream == null) {
+                throw new IllegalArgumentException("Keystore file not found in the classpath at path: " + KEYSTORE_PATH);
+            }
 
             List<DSSPrivateKeyEntry> keys = signingToken.getKeys();
             if (keys.isEmpty()) {
@@ -62,7 +69,8 @@ public class PassportSignatureService {
 
             signatureParameters.setSignatureLevel(SignatureLevel.PAdES_BASELINE_B);
 
-            DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService = new PAdESService(new CommonCertificateVerifier());
+            DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService =
+                    new PAdESService(new CommonCertificateVerifier());
             ToBeSigned dataToSign = signatureService.getDataToSign(document, signatureParameters);
 
             SignatureValue signatureValue = signingToken.sign(dataToSign, signatureParameters.getDigestAlgorithm(), privateKey);
@@ -74,7 +82,7 @@ public class PassportSignatureService {
             return outputStream.toByteArray();
 
         } catch (Exception e) {
-            throw new RuntimeException("PDF could not be signed: " + e.getMessage());
+            throw new RuntimeException("PDF could not be signed: " + e.getMessage(), e);
         }
     }
 }
