@@ -1,0 +1,1 @@
+docker compose -f passport/docker/proxy/docker-compose.yml --project-directory ./ -p passport-proxy up -d

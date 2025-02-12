@@ -1,0 +1,89 @@
+services:
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.4
+    environment:
+      KC_PROXY_ADDRESS_FORWARDING: "true"
+      KC_PROXY: 'edge'
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak_postgres:5432/keycloak?characterEncoding=UTF-8
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/health/ready" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+    depends_on:
+      - keycloak_postgres
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./passport/docker/deployment/realm-import.json:/opt/keycloak/data/import/realm-import.json
+    ports:
+      - 8081:8080
+    networks:
+      - passport-network
+
+  backend_postgres:
+    container_name: backend_postgres
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: ai4hf
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./passport/docker/deployment/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "15432:5432"
+    networks:
+      - passport-network
+
+  keycloak_postgres:
+    container_name: keycloak_postgres
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    networks:
+      - passport-network
+
+  passport:
+    container_name: passport
+    image: srdc/passport:latest
+    environment:
+      KEYCLOAK_CLIENT_SECRET: Ph9LH7YBWQSBhCygxwszh2Nq2TaMVumR
+      DB_URL: jdbc:postgresql://backend_postgres:5432/ai4hf
+      KEYCLOAK_URL: http://keycloak:8080/
+      KEYSTORE_PATH: /usr/local/passport/keystore/keystore-test.p12
+      KEYSTORE_PASSWORD: password
+    volumes:
+      - ./passport/docker/deployment/keystore/keystore-test.p12:/usr/local/passport/keystore/keystore-test.p12
+    depends_on:
+      - keycloak
+      - backend_postgres
+    ports:
+      - "8082:8080"
+    networks:
+      - passport-network
+
+  passport-web:
+    image: srdc/passport-web:latest
+    container_name: passport-web
+    ports:
+      - "6082:80"
+    depends_on:
+      - passport
+    networks:
+      - passport-network
+
+networks:
+  passport-network:
+    name: passport-network
+    external: true

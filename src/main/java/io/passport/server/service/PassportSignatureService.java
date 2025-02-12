@@ -19,7 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.List;
 
@@ -42,14 +43,15 @@ public class PassportSignatureService {
      * @return Signed PDF file in Byte Array form.
      */
     public byte[] generateSignature(byte[] documentContent) {
+        File keystoreFile = new File(KEYSTORE_PATH);
         try (
-                InputStream keystoreStream = getClass().getClassLoader().getResourceAsStream(KEYSTORE_PATH);
+                FileInputStream keystoreStream = new FileInputStream(keystoreFile);
                 SignatureTokenConnection signingToken = new Pkcs12SignatureToken(
                         keystoreStream,
                         new KeyStore.PasswordProtection(KEYSTORE_PASSWORD.toCharArray())
                 )
         ) {
-            if (keystoreStream == null) {
+            if (!keystoreFile.exists()) {
                 throw new IllegalArgumentException("Keystore file not found in the classpath at path: " + KEYSTORE_PATH);
             }
 
