@@ -72,12 +72,11 @@ public class DatasetService {
      * @return
      */
     public Optional<Dataset> saveDataset(Dataset dataset, String personnelId) {
-        Optional<Population> population = this.populationService.getPopulationByFeatureSetId(dataset.getFeaturesetId());
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if(population.isPresent() && personnel.isPresent()) {
+        if(personnel.isPresent()) {
             dataset.setCreatedAt(Instant.now());
             dataset.setLastUpdatedAt(Instant.now());
-            dataset.setPopulationId(population.get().getPopulationId());
+            dataset.setPopulationId(dataset.getPopulationId());
             dataset.setOrganizationId(personnel.get().getOrganizationId());
             return Optional.of(datasetRepository.save(dataset));
         }else{
@@ -94,12 +93,11 @@ public class DatasetService {
      */
     public Optional<Dataset> updateDataset(Long datasetId, Dataset updatedDataset, String personnelId) {
         Optional<Dataset> oldDataset = datasetRepository.findById(datasetId);
-        Optional<Population> population = this.populationService.getPopulationByFeatureSetId(updatedDataset.getFeaturesetId());
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if (oldDataset.isPresent() && personnel.isPresent() && population.isPresent()) {
+        if (oldDataset.isPresent() && personnel.isPresent()) {
             Dataset dataset = oldDataset.get();
             dataset.setFeaturesetId(updatedDataset.getFeaturesetId());
-            dataset.setPopulationId(population.get().getPopulationId());
+            dataset.setPopulationId(updatedDataset.getPopulationId());
             dataset.setOrganizationId(personnel.get().getOrganizationId());
             dataset.setTitle(updatedDataset.getTitle());
             dataset.setDescription(updatedDataset.getDescription());

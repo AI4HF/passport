@@ -19,5 +19,5 @@ public interface PopulationRepository extends JpaRepository<Population, Long> {
     // Join with Experiment table and get related population
     @Query("SELECT new Population(p.populationId, p.studyId, p.populationUrl, p.description, p.characteristics)  " +
             "FROM FeatureSet fs, Population p, Experiment e WHERE fs.experimentId = e.experimentId AND p.studyId = e.studyId AND fs.featuresetId = :featuresetId")
-    Optional<Population> findByFeatureSetId(@Param("featuresetId") Long featuresetId);
+    List<Population> findByFeatureSetId(@Param("featuresetId") Long featuresetId);
 }
