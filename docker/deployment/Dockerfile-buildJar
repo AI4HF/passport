@@ -1,0 +1,26 @@
+# Stage 0
+FROM maven:3.9.5-eclipse-temurin-21-alpine AS builder
+
+ENV PASSPORT_HOME /usr/local/passport
+RUN mkdir -p "$PASSPORT_HOME"
+WORKDIR $PASSPORT_HOME
+
+COPY . ./
+
+# Build without running the unit and integration tests
+RUN mvn package -Pxtest
+
+# Stage 1
+FROM eclipse-temurin:21-jre
+
+ENV PASSPORT_HOME /usr/local/passport
+RUN mkdir -p "$PASSPORT_HOME"
+WORKDIR $PASSPORT_HOME
+
+COPY --from=builder $PASSPORT_HOME/target/passport-0.0.1-SNAPSHOT.jar .
+
+COPY docker/deployment/docker-entrypoint.sh .
+
+RUN chmod +x docker-entrypoint.sh
+
+ENTRYPOINT ["./docker-entrypoint.sh"]

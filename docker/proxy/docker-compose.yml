@@ -1,0 +1,17 @@
+services:
+  nginx:
+    image: nginx:1.25.4
+    container_name: passport-nginx
+    volumes:
+      - type: bind
+        source: ./passport/docker/proxy/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    ports:
+      - "80:80"
+    networks:
+      - passport-network
+networks:
+  passport-network:
+    name: passport-network
+    external: true

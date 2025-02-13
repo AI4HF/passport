@@ -1,0 +1,1 @@
+docker compose -f passport/docker/proxy/docker-compose.yml -p passport-proxy down

@@ -970,7 +970,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "Ph9LH7YBWQSBhCygxwszh2Nq2TaMVumR",
       "redirectUris": [
         "http://localhost:18080/callback"
       ],
