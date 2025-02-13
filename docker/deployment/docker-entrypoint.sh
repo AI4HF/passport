@@ -27,7 +27,7 @@ if [ ! -z "$KEYSTORE_PATH" ]; then
   JAVA_CMD+="-Ddss.keystore.path=$KEYSTORE_PATH "
 fi
 
-# Configure keystore path
+# Configure keystore password
 if [ ! -z "$KEYSTORE_PASSWORD" ]; then
   JAVA_CMD+="-Ddss.keystore.password=$KEYSTORE_PASSWORD "
 fi

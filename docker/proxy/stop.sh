@@ -1,1 +1,1 @@
-docker compose -f data-ingestion-suite/docker/proxy/docker-compose.yml -p dt4h-proxy down
+docker compose -f passport/docker/proxy/docker-compose.yml -p passport-proxy down
