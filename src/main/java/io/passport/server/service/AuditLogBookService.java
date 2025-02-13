@@ -32,7 +32,6 @@ public class AuditLogBookService {
     }
 
     public void createAuditLogBookEntries(Long passportId, Long studyId, Long deploymentId) {
-        // Query all audit logs related to studyId and deploymentId
         List<AuditLog> relatedAuditLogs = auditLogRepository.findAll()
                 .stream()
                 .filter(log -> isRelatedToPassport(log, studyId, deploymentId))
@@ -88,6 +87,7 @@ public class AuditLogBookService {
         auditLog.setAffectedRecordId(recordId);
         auditLog.setAffectedRecord(recordData);
         auditLog.setDescription(description);
+        auditLog.setOccurredAt(Instant.now());
 
         return auditLogRepository.save(auditLog);
     }
