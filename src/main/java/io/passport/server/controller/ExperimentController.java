@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Experiment;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ExperimentService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -83,6 +83,7 @@ public class ExperimentController {
                     String description = "Creation of Experiment " + recordId;
                     auditLogBookService.createAuditLog(
                             userId,
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "CREATE",
                             "Experiment",

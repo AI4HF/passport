@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.DatasetTransformationStep;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DatasetTransformationStepService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -114,6 +114,7 @@ public class DatasetTransformationStepController {
                 String description = "Creation of DatasetTransformationStep " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "DatasetTransformationStep",
@@ -159,6 +160,7 @@ public class DatasetTransformationStepController {
                     String description = "Update of DatasetTransformationStep " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "DatasetTransformationStep",
@@ -197,8 +199,10 @@ public class DatasetTransformationStepController {
             boolean isDeleted = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
             if (isDeleted) {
                 String description = "Deletion of DatasetTransformationStep " + stepId;
+                System.out.println(Optional.ofNullable(principal.getClaim("preferred_username")));
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "DatasetTransformationStep",

@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.LearningProcess;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -105,6 +105,7 @@ public class LearningProcessController {
                 String description = "Creation of LearningProcess " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "LearningProcess",
@@ -150,6 +151,7 @@ public class LearningProcessController {
                     String description = "Update of LearningProcess " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "LearningProcess",
@@ -190,6 +192,7 @@ public class LearningProcessController {
                 String description = "Deletion of LearningProcess " + learningProcessId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "LearningProcess",

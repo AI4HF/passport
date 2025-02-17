@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Implementation;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ImplementationService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -105,6 +105,7 @@ public class ImplementationController {
                 String description = "Creation of Implementation " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "Implementation",
@@ -148,6 +149,7 @@ public class ImplementationController {
                     String description = "Update of Implementation " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "Implementation",
@@ -189,6 +191,7 @@ public class ImplementationController {
                 String description = "Deletion of Implementation " + implementationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "Implementation",

@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Feature;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.FeatureService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -113,6 +113,7 @@ public class FeatureController {
                 String description = "Creation of Feature " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "Feature",
@@ -156,6 +157,7 @@ public class FeatureController {
                     String description = "Update of Feature " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "Feature",
@@ -197,6 +199,7 @@ public class FeatureController {
                 String description = "Deletion of Feature " + featureId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "Feature",

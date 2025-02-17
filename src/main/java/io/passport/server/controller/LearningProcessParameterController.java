@@ -4,7 +4,7 @@ import io.passport.server.model.LearningProcessParameter;
 import io.passport.server.model.LearningProcessParameterDTO;
 import io.passport.server.model.LearningProcessParameterId;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessParameterService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -115,6 +115,7 @@ public class LearningProcessParameterController {
                         + lpId + " and parameterId=" + pId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "LearningProcessParameter",
@@ -168,6 +169,7 @@ public class LearningProcessParameterController {
                             + learningProcessId + " and parameterId=" + parameterId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "LearningProcessParameter",
@@ -218,6 +220,7 @@ public class LearningProcessParameterController {
                         + learningProcessId + " and parameterId=" + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "LearningProcessParameter",

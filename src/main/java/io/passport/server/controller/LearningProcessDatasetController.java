@@ -4,7 +4,7 @@ import io.passport.server.model.LearningProcessDataset;
 import io.passport.server.model.LearningProcessDatasetDTO;
 import io.passport.server.model.LearningProcessDatasetId;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessDatasetService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class LearningProcessDatasetController {
 
     private final LearningProcessDatasetService learningProcessDatasetService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -116,6 +116,7 @@ public class LearningProcessDatasetController {
                         + lpId + " and learningDatasetId=" + ldId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "LearningProcessDataset",
@@ -170,6 +171,7 @@ public class LearningProcessDatasetController {
                             + learningProcessId + " and learningDatasetId=" + learningDatasetId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "LearningProcessDataset",
@@ -220,6 +222,7 @@ public class LearningProcessDatasetController {
                         + learningProcessId + " and learningDatasetId=" + learningDatasetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "LearningProcessDataset",

@@ -67,6 +67,7 @@ public class AuditLogBookService {
      */
     public AuditLog createAuditLog(
             String userId,
+            String username,
             Long studyId,
             String actionType,
             String affectedRelation,
@@ -81,6 +82,7 @@ public class AuditLogBookService {
 
         AuditLog auditLog = new AuditLog();
         auditLog.setPersonId(userId);
+        auditLog.setPersonName(username);
         auditLog.setStudyId(studyId);
         auditLog.setActionType(actionType);
         auditLog.setAffectedRelation(affectedRelation);

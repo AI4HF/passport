@@ -4,7 +4,7 @@ import io.passport.server.model.FeatureDatasetCharacteristic;
 import io.passport.server.model.FeatureDatasetCharacteristicDTO;
 import io.passport.server.model.FeatureDatasetCharacteristicId;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.FeatureDatasetCharacteristicService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -119,6 +119,7 @@ public class FeatureDatasetCharacteristicController {
                         + " and featureId=" + ftId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "FeatureDatasetCharacteristic",
@@ -172,6 +173,7 @@ public class FeatureDatasetCharacteristicController {
                             + id.getDatasetId() + " and featureId=" + id.getFeatureId();
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "FeatureDatasetCharacteristic",
@@ -222,6 +224,7 @@ public class FeatureDatasetCharacteristicController {
                         + datasetId + " and featureId=" + featureId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "FeatureDatasetCharacteristic",

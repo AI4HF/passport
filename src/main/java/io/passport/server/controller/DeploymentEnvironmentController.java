@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.DeploymentEnvironment;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DeploymentEnvironmentService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -88,6 +88,7 @@ public class DeploymentEnvironmentController {
                 String description = "Creation of DeploymentEnvironment " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "DeploymentEnvironment",
@@ -133,6 +134,7 @@ public class DeploymentEnvironmentController {
                     String description = "Update of DeploymentEnvironment " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "DeploymentEnvironment",
@@ -174,6 +176,7 @@ public class DeploymentEnvironmentController {
                 String description = "Deletion of DeploymentEnvironment " + deploymentEnvironmentId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "DeploymentEnvironment",

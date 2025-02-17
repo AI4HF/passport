@@ -28,6 +28,9 @@ public class AuditLog {
     @Column(name = "person_id")
     private String personId;
 
+    @Column(name = "person_name")
+    private String personName;
+
     @Column(name = "study_id")
     private Long studyId;
 

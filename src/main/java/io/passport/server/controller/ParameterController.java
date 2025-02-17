@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Parameter;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ParameterService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -104,6 +104,7 @@ public class ParameterController {
                 String description = "Creation of Parameter " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "Parameter",
@@ -146,6 +147,7 @@ public class ParameterController {
                     String description = "Update of Parameter " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "Parameter",
@@ -185,6 +187,7 @@ public class ParameterController {
                 String description = "Deletion of Parameter " + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "Parameter",

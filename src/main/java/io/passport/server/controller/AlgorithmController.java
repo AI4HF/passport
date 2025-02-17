@@ -92,6 +92,7 @@ public class AlgorithmController {
             String description = "Creation of Algorithm " + recordId;
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
+                    principal.getClaim("preferred_username"),
                     studyId,
                     "CREATE",
                     "Algorithm",
@@ -130,6 +131,7 @@ public class AlgorithmController {
             String description = "Update of Algorithm " + recordId;
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
+                    principal.getClaim("preferred_username"),
                     studyId,
                     "UPDATE",
                     "Algorithm",
@@ -166,6 +168,7 @@ public class AlgorithmController {
             String description = "Deletion of Algorithm " + recordId;
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
+                    principal.getClaim("preferred_username"),
                     studyId,
                     "DELETE",
                     "Algorithm",

@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Role;
 import io.passport.server.model.Study;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.KeycloakService;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyService;
@@ -123,6 +123,7 @@ public class StudyController {
                 String description = "Creation of Study " + recordId;
                 auditLogBookService.createAuditLog(
                         ownerId,
+                        principal.getClaim("preferred_username"),
                         savedStudy.getId(),
                         "CREATE",
                         "Study",
@@ -169,6 +170,7 @@ public class StudyController {
                 String description = "Update of Study " + recordId;
                 auditLogBookService.createAuditLog(
                         userId,
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "UPDATE",
                         "Study",
@@ -198,6 +200,7 @@ public class StudyController {
         }
 
         String userId = principal.getSubject();
+        String username = principal.getClaim("preferred_username");
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -207,6 +210,7 @@ public class StudyController {
             String description = "Deletion of Study " + studyId;
             auditLogBookService.createAuditLog(
                     userId,
+                    username,
                     studyId,
                     "DELETE",
                     "Study",

@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Model;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ModelService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -108,6 +108,7 @@ public class ModelController {
                 String description = "Creation of Model " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "Model",
@@ -151,6 +152,7 @@ public class ModelController {
                     String description = "Update of Model " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "Model",
@@ -191,6 +193,7 @@ public class ModelController {
                 String description = "Deletion of Model " + modelId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "Model",

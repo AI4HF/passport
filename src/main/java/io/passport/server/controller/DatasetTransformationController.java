@@ -2,7 +2,7 @@ package io.passport.server.controller;
 
 import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.Role;
-import io.passport.server.service.AuditLogBookService; // <-- NEW
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DatasetTransformationService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -107,6 +107,7 @@ public class DatasetTransformationController {
                 String description = "Creation of DatasetTransformation " + recordId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "CREATE",
                         "DatasetTransformation",
@@ -152,6 +153,7 @@ public class DatasetTransformationController {
                     String description = "Update of DatasetTransformation " + recordId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
                             studyId,
                             "UPDATE",
                             "DatasetTransformation",
@@ -192,6 +194,7 @@ public class DatasetTransformationController {
                 String description = "Deletion of DatasetTransformation " + dataTransformationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
                         studyId,
                         "DELETE",
                         "DatasetTransformation",

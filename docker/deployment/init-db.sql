@@ -607,6 +607,7 @@ CREATE TABLE audit_log
 (
     audit_log_id  VARCHAR(255) PRIMARY KEY,
     person_id     VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    person_name     VARCHAR(255),
     study_id      INTEGER REFERENCES study (study_id) ON DELETE CASCADE,
     occurred_at    TIMESTAMP,
     action_type    VARCHAR(255),
