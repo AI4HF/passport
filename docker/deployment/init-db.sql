@@ -602,3 +602,18 @@ VALUES
          }
        ]
      }');
+
+-- Create evaluation measure table
+CREATE TABLE evaluation_measure
+(
+    measure_id SERIAL PRIMARY KEY,
+    model_id          INTEGER REFERENCES model (model_id) ON DELETE CASCADE,
+    name              VARCHAR(255),
+    value             VARCHAR(255),
+    data_type         VARCHAR(255),
+    description       TEXT
+);
+
+-- Insert dummy evaluation measure
+INSERT INTO evaluation_measure (model_id, name, value, data_type, description)
+VALUES (1, 'test_name', 'test_value', 'test_data_type', 'test_description');
