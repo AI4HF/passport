@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Audit Log Book model used to classify logs under different passports.
+ */
 @Entity
 @Table(name = "audit_log_book")
 @Getter

@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+/**
+ * Composite ID for Audit Log Book entries.
+ */
 @Embeddable
 @Getter
 @Setter

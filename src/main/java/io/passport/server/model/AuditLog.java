@@ -11,6 +11,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.time.Instant;
 
+/**
+ * Audit Log model used for Audit Logging.
+ */
 @Entity
 @Table(name = "audit_log")
 @Getter

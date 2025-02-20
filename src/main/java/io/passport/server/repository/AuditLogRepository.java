@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * AuditLog repository for database management.
+ */
 @Repository
 public interface AuditLogRepository extends JpaRepository<AuditLog, String> {
     /**

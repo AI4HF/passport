@@ -1,27 +1,31 @@
 package io.passport.server.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.passport.server.model.AuditLog;
 import io.passport.server.model.AuditLogBook;
 import io.passport.server.model.AuditLogBookId;
 import io.passport.server.repository.AuditLogBookRepository;
 import io.passport.server.repository.AuditLogRepository;
+import io.passport.server.util.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
+/**
+ * Service class for Audit Log Book management.
+ */
 @Service
 public class AuditLogBookService {
 
+    /**
+     * AuditLogBook repo access for database management.
+     */
     private final AuditLogBookRepository auditLogBookRepository;
+    /**
+     * AuditLog repo access for database management.
+     */
     private final AuditLogRepository auditLogRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);;
 
     @Autowired
     public AuditLogBookService(AuditLogBookRepository auditLogBookRepository, AuditLogRepository auditLogRepository) {
@@ -29,14 +33,24 @@ public class AuditLogBookService {
         this.auditLogRepository = auditLogRepository;
     }
 
+    /**
+     * Return all AuditLogBooks based on passport id.
+     * @param passportId Connected passport id.
+     * @return
+     */
     public List<AuditLogBook> getAuditLogBooksByPassportId(Long passportId) {
         return auditLogBookRepository.findByIdPassportId(passportId);
     }
 
-    public void createAuditLogBookEntries(Long passportId, Long studyId, Long deploymentId) {
+    /**
+     * Create AuditLogBook entries.
+     * @param passportId Connected passport id.
+     * @param studyId Connected study id.
+     */
+    public void createAuditLogBookEntries(Long passportId, Long studyId) {
         List<AuditLog> relatedAuditLogs = auditLogRepository.findAll()
                 .stream()
-                .filter(log -> isRelatedToPassport(log, studyId, deploymentId))
+                .filter(log -> isRelatedToPassport(log, studyId))
                 .toList();
 
         for (AuditLog auditLog : relatedAuditLogs) {
@@ -45,11 +59,21 @@ public class AuditLogBookService {
         }
     }
 
-    private boolean isRelatedToPassport(AuditLog auditLog, Long studyId, Long deploymentId) {
-        return auditLog.getStudyId().equals(studyId) ||
-                auditLog.getAffectedRecordId().equals(String.valueOf(deploymentId));
+    /**
+     * Check if an Audit Log belongs to a certain study.
+     * @param auditLog Subject of comparison.
+     * @param studyId Compared study id.
+     * @return
+     */
+    private boolean isRelatedToPassport(AuditLog auditLog, Long studyId) {
+        return auditLog.getStudyId().equals(studyId);
     }
 
+    /**
+     * Get all Audit Logs with given ids.
+     * @param auditLogIds List of ids to be retrieved.
+     * @return
+     */
     public List<AuditLog> getAuditLogsByIds(List<String> auditLogIds) {
         return auditLogRepository.findByAuditLogIdIn(auditLogIds);
     }
@@ -79,7 +103,7 @@ public class AuditLogBookService {
     ) {
 
         String recordData = (entity != null)
-                ? objectToJsonSafely(entity)
+                ? JSONUtil.objectToJsonSafely(entity)
                 : "None";
 
         AuditLog auditLog = new AuditLog();
@@ -95,16 +119,4 @@ public class AuditLogBookService {
 
         return auditLogRepository.save(auditLog);
     }
-
-    /**
-     * Converts any object to JSON string safely.
-     */
-    private String objectToJsonSafely(Object obj) {
-        try {
-            return objectMapper.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            return "Unable to serialize object: " + e.getMessage();
-        }
-    }
 }
-
