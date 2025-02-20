@@ -47,7 +47,7 @@ public class ImplementationController {
      *
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return          List of Implementation objects
+     * @return List of Implementation objects
      */
     @GetMapping
     public ResponseEntity<List<Implementation>> getAllImplementations(@RequestParam Long studyId,
@@ -65,10 +65,10 @@ public class ImplementationController {
     /**
      * Read an Implementation by its ID.
      *
-     * @param studyId         ID of the study for authorization
+     * @param studyId          ID of the study for authorization
      * @param implementationId ID of the Implementation
-     * @param principal       Jwt principal containing user info
-     * @return                Implementation or NOT_FOUND
+     * @param principal        Jwt principal containing user info
+     * @return Implementation or NOT_FOUND
      */
     @GetMapping("/{implementationId}")
     public ResponseEntity<?> getImplementation(@RequestParam Long studyId,
@@ -88,7 +88,7 @@ public class ImplementationController {
      * @param studyId        ID of the study for authorization
      * @param implementation Implementation model instance to create
      * @param principal      Jwt principal containing user info
-     * @return               Created Implementation or BAD_REQUEST on error
+     * @return Created Implementation or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createImplementation(@RequestParam Long studyId,
@@ -125,11 +125,11 @@ public class ImplementationController {
     /**
      * Updates an existing Implementation by implementationId.
      *
-     * @param studyId              ID of the study for authorization
-     * @param implementationId     ID of the Implementation to update
+     * @param studyId               ID of the study for authorization
+     * @param implementationId      ID of the Implementation to update
      * @param updatedImplementation Updated Implementation model
-     * @param principal            Jwt principal containing user info
-     * @return                     Updated Implementation or NOT_FOUND
+     * @param principal             Jwt principal containing user info
+     * @return Updated Implementation or NOT_FOUND
      */
     @PutMapping("/{implementationId}")
     public ResponseEntity<?> updateImplementation(@RequestParam Long studyId,
@@ -144,20 +144,18 @@ public class ImplementationController {
             Optional<Implementation> savedOpt = this.implementationService.updateImplementation(implementationId, updatedImplementation);
             if (savedOpt.isPresent()) {
                 Implementation saved = savedOpt.get();
-                if (saved.getImplementationId() != null) {
-                    String recordId = saved.getImplementationId().toString();
-                    String description = "Update of Implementation " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Implementation",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getImplementationId().toString();
+                String description = "Update of Implementation " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Implementation",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -175,7 +173,7 @@ public class ImplementationController {
      * @param studyId          ID of the study for authorization
      * @param implementationId ID of the Implementation to delete
      * @param principal        Jwt principal containing user info
-     * @return                 NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{implementationId}")
     public ResponseEntity<?> deleteImplementation(@RequestParam Long studyId,

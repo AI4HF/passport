@@ -29,7 +29,7 @@ public class DatasetTransformationController {
 
     private final DatasetTransformationService datasetTransformationService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
@@ -45,9 +45,9 @@ public class DatasetTransformationController {
     /**
      * Retrieves all DatasetTransformations (for authorized DATA_ENGINEER).
      *
-     * @param studyId    ID of the study for authorization
-     * @param principal  Jwt principal containing user info
-     * @return           List of all DatasetTransformations
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return List of all DatasetTransformations
      */
     @GetMapping
     public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam Long studyId,
@@ -65,10 +65,10 @@ public class DatasetTransformationController {
     /**
      * Retrieves a single DatasetTransformation by its ID.
      *
-     * @param dataTransformationId  ID of the DatasetTransformation
-     * @param studyId               ID of the study for authorization
-     * @param principal             Jwt principal containing user info
-     * @return                      DatasetTransformation or NOT FOUND
+     * @param dataTransformationId ID of the DatasetTransformation
+     * @param studyId              ID of the study for authorization
+     * @param principal            Jwt principal containing user info
+     * @return DatasetTransformation or NOT FOUND
      */
     @GetMapping("/{dataTransformationId}")
     public ResponseEntity<?> getDatasetTransformation(@PathVariable Long dataTransformationId,
@@ -86,10 +86,10 @@ public class DatasetTransformationController {
     /**
      * Creates a new DatasetTransformation.
      *
-     * @param datasetTransformation  The DatasetTransformation to be created
-     * @param studyId                ID of the study for authorization
-     * @param principal              Jwt principal containing user info
-     * @return                       The created DatasetTransformation
+     * @param datasetTransformation The DatasetTransformation to be created
+     * @param studyId               ID of the study for authorization
+     * @param principal             Jwt principal containing user info
+     * @return The created DatasetTransformation
      */
     @PostMapping
     public ResponseEntity<?> createDatasetTransformation(@RequestBody DatasetTransformation datasetTransformation,
@@ -127,11 +127,11 @@ public class DatasetTransformationController {
     /**
      * Updates an existing DatasetTransformation by its ID.
      *
-     * @param dataTransformationId  ID of the DatasetTransformation to update
+     * @param dataTransformationId         ID of the DatasetTransformation to update
      * @param updatedDatasetTransformation Updated details
-     * @param studyId               ID of the study for authorization
-     * @param principal             Jwt principal containing user info
-     * @return                      The updated DatasetTransformation or NOT FOUND
+     * @param studyId                      ID of the study for authorization
+     * @param principal                    Jwt principal containing user info
+     * @return The updated DatasetTransformation or NOT FOUND
      */
     @PutMapping("/{dataTransformationId}")
     public ResponseEntity<?> updateDatasetTransformation(@PathVariable Long dataTransformationId,
@@ -148,20 +148,18 @@ public class DatasetTransformationController {
 
             if (savedOpt.isPresent()) {
                 DatasetTransformation saved = savedOpt.get();
-                if (saved.getDataTransformationId() != null) {
-                    String recordId = saved.getDataTransformationId().toString();
-                    String description = "Update of DatasetTransformation " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "DatasetTransformation",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getDataTransformationId().toString();
+                String description = "Update of DatasetTransformation " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "DatasetTransformation",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -175,10 +173,10 @@ public class DatasetTransformationController {
     /**
      * Deletes a DatasetTransformation by its ID.
      *
-     * @param dataTransformationId  ID of the DatasetTransformation to delete
-     * @param studyId               ID of the study for authorization
-     * @param principal             Jwt principal containing user info
-     * @return                      NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @param dataTransformationId ID of the DatasetTransformation to delete
+     * @param studyId              ID of the study for authorization
+     * @param principal            Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{dataTransformationId}")
     public ResponseEntity<?> deleteDatasetTransformation(@PathVariable Long dataTransformationId,

@@ -42,9 +42,10 @@ public class StudyOrganizationController {
 
     /**
      * Get a studyOrganization by (studyId, organizationId).
-     * @param studyId ID of the study.
+     *
+     * @param studyId        ID of the study.
      * @param organizationId ID of the organization.
-     * @param principal Jwt principal containing user info
+     * @param principal      Jwt principal containing user info
      * @return StudyOrganizationDTO or NOT_FOUND
      */
     @GetMapping
@@ -72,7 +73,8 @@ public class StudyOrganizationController {
 
     /**
      * Get all organizations related to a study.
-     * @param studyId ID of the study.
+     *
+     * @param studyId   ID of the study.
      * @param principal Jwt principal containing user info
      * @return List of Organization or BAD_REQUEST
      */
@@ -94,9 +96,10 @@ public class StudyOrganizationController {
 
     /**
      * Get all studies related to an organization.
+     *
      * @param organizationId ID of the organization.
-     * @param studyId ID of the study (for authorization)
-     * @param principal Jwt principal containing user info
+     * @param studyId        ID of the study (for authorization)
+     * @param principal      Jwt principal containing user info
      * @return List of Study or BAD_REQUEST
      */
     @GetMapping("/studies")
@@ -118,8 +121,9 @@ public class StudyOrganizationController {
 
     /**
      * Create a study organization.
+     *
      * @param studyOrganizationDTO data to create
-     * @param principal Jwt principal containing user info
+     * @param principal            Jwt principal containing user info
      * @return Created StudyOrganizationDTO
      */
     @PostMapping
@@ -163,10 +167,11 @@ public class StudyOrganizationController {
 
     /**
      * Update a study organization.
-     * @param studyId ID of the study
-     * @param organizationId ID of the organization
+     *
+     * @param studyId                     ID of the study
+     * @param organizationId              ID of the organization
      * @param updatedStudyOrganizationDTO updated data
-     * @param principal Jwt principal containing user info
+     * @param principal                   Jwt principal containing user info
      * @return Updated StudyOrganizationDTO or NOT_FOUND
      */
     @PutMapping
@@ -186,24 +191,21 @@ public class StudyOrganizationController {
             if (savedOpt.isPresent()) {
                 StudyOrganization saved = savedOpt.get();
                 StudyOrganizationDTO responseDTO = new StudyOrganizationDTO(saved);
-
-                if (saved.getId() != null) {
-                    Long orgId = saved.getId().getOrganizationId();
-                    Long stdId = saved.getId().getStudyId();
-                    String compositeId = "(" + stdId + ", " + orgId + ")";
-                    String description = "Update of StudyOrganization with studyId="
-                            + stdId + " and organizationId=" + orgId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "StudyOrganization",
-                            compositeId,
-                            saved,
-                            description
-                    );
-                }
+                Long orgId = saved.getId().getOrganizationId();
+                Long stdId = saved.getId().getStudyId();
+                String compositeId = "(" + stdId + ", " + orgId + ")";
+                String description = "Update of StudyOrganization with studyId="
+                        + stdId + " and organizationId=" + orgId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "StudyOrganization",
+                        compositeId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok().body(responseDTO);
             } else {
                 return ResponseEntity.notFound().build();
@@ -217,9 +219,10 @@ public class StudyOrganizationController {
 
     /**
      * Delete a study organization by (studyId, organizationId).
-     * @param studyId ID of the study.
+     *
+     * @param studyId        ID of the study.
      * @param organizationId ID of the organization.
-     * @param principal Jwt principal containing user info
+     * @param principal      Jwt principal containing user info
      * @return No content or NOT_FOUND
      */
     @DeleteMapping

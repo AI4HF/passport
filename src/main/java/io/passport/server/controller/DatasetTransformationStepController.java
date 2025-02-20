@@ -45,10 +45,10 @@ public class DatasetTransformationStepController {
     /**
      * Retrieves all DatasetTransformationSteps or filters by dataTransformationId if provided.
      *
-     * @param dataTransformationId  Optional ID to filter steps
-     * @param studyId               ID of the study for authorization
-     * @param principal             Jwt principal containing user info
-     * @return                      List of DatasetTransformationSteps
+     * @param dataTransformationId Optional ID to filter steps
+     * @param studyId              ID of the study for authorization
+     * @param principal            Jwt principal containing user info
+     * @return List of DatasetTransformationSteps
      */
     @GetMapping
     public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationSteps(
@@ -72,10 +72,10 @@ public class DatasetTransformationStepController {
     /**
      * Retrieves a single DatasetTransformationStep by stepId.
      *
-     * @param stepId     ID of the step to retrieve
-     * @param studyId    ID of the study for authorization
-     * @param principal  Jwt principal containing user info
-     * @return           The requested step or NOT_FOUND
+     * @param stepId    ID of the step to retrieve
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return The requested step or NOT_FOUND
      */
     @GetMapping("/{stepId}")
     public ResponseEntity<?> getDatasetTransformationStep(@PathVariable Long stepId,
@@ -92,10 +92,10 @@ public class DatasetTransformationStepController {
     /**
      * Creates a new DatasetTransformationStep.
      *
-     * @param datasetTransformationStep  The step data to create
-     * @param studyId                    ID of the study for authorization
-     * @param principal                  Jwt principal containing user info
-     * @return                           Created step or BAD_REQUEST on error
+     * @param datasetTransformationStep The step data to create
+     * @param studyId                   ID of the study for authorization
+     * @param principal                 Jwt principal containing user info
+     * @return Created step or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createDatasetTransformationStep(@RequestBody DatasetTransformationStep datasetTransformationStep,
@@ -134,11 +134,11 @@ public class DatasetTransformationStepController {
     /**
      * Updates an existing DatasetTransformationStep by stepId.
      *
-     * @param stepId                     ID of the step to update
-     * @param updatedDatasetTransformationStep  Updated details
-     * @param studyId                    ID of the study for authorization
-     * @param principal                  Jwt principal containing user info
-     * @return                           Updated step or NOT_FOUND
+     * @param stepId                           ID of the step to update
+     * @param updatedDatasetTransformationStep Updated details
+     * @param studyId                          ID of the study for authorization
+     * @param principal                        Jwt principal containing user info
+     * @return Updated step or NOT_FOUND
      */
     @PutMapping("/{stepId}")
     public ResponseEntity<?> updateDatasetTransformationStep(@PathVariable Long stepId,
@@ -155,20 +155,18 @@ public class DatasetTransformationStepController {
 
             if (savedOpt.isPresent()) {
                 DatasetTransformationStep saved = savedOpt.get();
-                if (saved.getStepId() != null) {
-                    String recordId = saved.getStepId().toString();
-                    String description = "Update of DatasetTransformationStep " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "DatasetTransformationStep",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getStepId().toString();
+                String description = "Update of DatasetTransformationStep " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "DatasetTransformationStep",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -185,7 +183,7 @@ public class DatasetTransformationStepController {
      * @param stepId    ID of the step to delete
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return          NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{stepId}")
     public ResponseEntity<?> deleteDatasetTransformationStep(@PathVariable Long stepId,
@@ -199,7 +197,6 @@ public class DatasetTransformationStepController {
             boolean isDeleted = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
             if (isDeleted) {
                 String description = "Deletion of DatasetTransformationStep " + stepId;
-                System.out.println(Optional.ofNullable(principal.getClaim("preferred_username")));
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim("preferred_username"),

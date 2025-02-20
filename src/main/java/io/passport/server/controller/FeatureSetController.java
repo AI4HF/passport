@@ -47,7 +47,7 @@ public class FeatureSetController {
      *
      * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
-     * @return          List of FeatureSets or FORBIDDEN if not authorized
+     * @return List of FeatureSets or FORBIDDEN if not authorized
      */
     @GetMapping
     public ResponseEntity<List<FeatureSet>> getAllFeatureSetsByStudyId(@RequestParam Long studyId,
@@ -68,7 +68,7 @@ public class FeatureSetController {
      * @param featureSetId ID of the FeatureSet
      * @param studyId      ID of the study for authorization
      * @param principal    Jwt principal containing user info
-     * @return             FeatureSet or NOT_FOUND
+     * @return FeatureSet or NOT_FOUND
      */
     @GetMapping("/{featureSetId}")
     public ResponseEntity<?> getFeatureSet(@PathVariable Long featureSetId,
@@ -88,7 +88,7 @@ public class FeatureSetController {
      * @param featureSet The FeatureSet model to create
      * @param studyId    ID of the study for authorization
      * @param principal  Jwt principal containing user info
-     * @return           Created FeatureSet or BAD_REQUEST on error
+     * @return Created FeatureSet or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createFeatureSet(@RequestBody FeatureSet featureSet,
@@ -125,11 +125,11 @@ public class FeatureSetController {
     /**
      * Updates an existing FeatureSet by featureSetId.
      *
-     * @param featureSetId         ID of the FeatureSet to update
-     * @param updatedFeatureSet    Updated FeatureSet data
-     * @param studyId              ID of the study for authorization
-     * @param principal            Jwt principal containing user info
-     * @return                     Updated FeatureSet or NOT_FOUND
+     * @param featureSetId      ID of the FeatureSet to update
+     * @param updatedFeatureSet Updated FeatureSet data
+     * @param studyId           ID of the study for authorization
+     * @param principal         Jwt principal containing user info
+     * @return Updated FeatureSet or NOT_FOUND
      */
     @PutMapping("/{featureSetId}")
     public ResponseEntity<?> updateFeatureSet(@PathVariable Long featureSetId,
@@ -144,20 +144,18 @@ public class FeatureSetController {
             Optional<FeatureSet> savedOpt = this.featureSetService.updateFeatureSet(featureSetId, updatedFeatureSet);
             if (savedOpt.isPresent()) {
                 FeatureSet saved = savedOpt.get();
-                if (saved.getFeaturesetId() != null) {
-                    String recordId = saved.getFeaturesetId().toString();
-                    String description = "Update of FeatureSet " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "FeatureSet",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getFeaturesetId().toString();
+                String description = "Update of FeatureSet " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "FeatureSet",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -175,7 +173,7 @@ public class FeatureSetController {
      * @param featureSetId ID of the FeatureSet to delete
      * @param studyId      ID of the study for authorization
      * @param principal    Jwt principal containing user info
-     * @return             NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureSetId}")
     public ResponseEntity<?> deleteFeatureSet(@PathVariable Long featureSetId,

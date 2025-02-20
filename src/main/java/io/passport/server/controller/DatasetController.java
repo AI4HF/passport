@@ -29,7 +29,7 @@ public class DatasetController {
 
     private final DatasetService datasetService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
@@ -45,9 +45,9 @@ public class DatasetController {
     /**
      * Retrieves all datasets by the given study ID.
      *
-     * @param studyId    ID of the study
-     * @param principal  Jwt principal containing user info
-     * @return           List of datasets, or FORBIDDEN if user not authorized
+     * @param studyId   ID of the study
+     * @param principal Jwt principal containing user info
+     * @return List of datasets, or FORBIDDEN if user not authorized
      */
     @GetMapping
     public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
@@ -64,10 +64,10 @@ public class DatasetController {
     /**
      * Retrieves a Dataset by its datasetId.
      *
-     * @param datasetId  ID of the Dataset
-     * @param studyId    ID of the study for authorization
-     * @param principal  Jwt principal containing user info
-     * @return           Dataset entity or NOT FOUND
+     * @param datasetId ID of the Dataset
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return Dataset entity or NOT FOUND
      */
     @GetMapping("/{datasetId}")
     public ResponseEntity<?> getDataset(@PathVariable Long datasetId,
@@ -83,10 +83,10 @@ public class DatasetController {
     /**
      * Creates a new Dataset entity.
      *
-     * @param dataset     Dataset object to create
-     * @param studyId     ID of the study for authorization
-     * @param principal   Jwt principal containing user info
-     * @return            Created Dataset or BAD_REQUEST on error
+     * @param dataset   Dataset object to create
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return Created Dataset or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createDataset(@RequestBody Dataset dataset,
@@ -102,20 +102,18 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                if (savedDataset.getDatasetId() != null) {
-                    String recordId = savedDataset.getDatasetId().toString();
-                    String description = "Creation of Dataset " + recordId;
-                    auditLogBookService.createAuditLog(
-                            personnelId,
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "CREATE",
-                            "Dataset",
-                            recordId,
-                            savedDataset,
-                            description
-                    );
-                }
+                String recordId = savedDataset.getDatasetId().toString();
+                String description = "Creation of Dataset " + recordId;
+                auditLogBookService.createAuditLog(
+                        personnelId,
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "CREATE",
+                        "Dataset",
+                        recordId,
+                        savedDataset,
+                        description
+                );
                 return ResponseEntity.ok(savedDataset);
             } else {
                 return ResponseEntity.notFound().build();
@@ -129,11 +127,11 @@ public class DatasetController {
     /**
      * Updates an existing Dataset entity.
      *
-     * @param datasetId       ID of the Dataset to update
-     * @param updatedDataset  Updated Dataset object
-     * @param studyId         ID of the study for authorization
-     * @param principal       Jwt principal containing user info
-     * @return                Updated Dataset or NOT FOUND if not present
+     * @param datasetId      ID of the Dataset to update
+     * @param updatedDataset Updated Dataset object
+     * @param studyId        ID of the study for authorization
+     * @param principal      Jwt principal containing user info
+     * @return Updated Dataset or NOT FOUND if not present
      */
     @PutMapping("/{datasetId}")
     public ResponseEntity<?> updateDataset(@PathVariable Long datasetId,
@@ -150,20 +148,18 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                if (savedDataset.getDatasetId() != null) {
-                    String recordId = savedDataset.getDatasetId().toString();
-                    String description = "Update of Dataset " + recordId;
-                    auditLogBookService.createAuditLog(
-                            personnelId,
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Dataset",
-                            recordId,
-                            savedDataset,
-                            description
-                    );
-                }
+                String recordId = savedDataset.getDatasetId().toString();
+                String description = "Update of Dataset " + recordId;
+                auditLogBookService.createAuditLog(
+                        personnelId,
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Dataset",
+                        recordId,
+                        savedDataset,
+                        description
+                );
                 return ResponseEntity.ok(savedDataset);
             } else {
                 return ResponseEntity.notFound().build();
@@ -177,10 +173,10 @@ public class DatasetController {
     /**
      * Deletes an existing Dataset entity by its datasetId.
      *
-     * @param datasetId   ID of the Dataset to delete
-     * @param studyId     ID of the study for authorization
-     * @param principal   Jwt principal containing user info
-     * @return            NO_CONTENT on success, NOT FOUND otherwise
+     * @param datasetId ID of the Dataset to delete
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return NO_CONTENT on success, NOT FOUND otherwise
      */
     @DeleteMapping("/{datasetId}")
     public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,

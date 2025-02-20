@@ -43,9 +43,10 @@ public class PopulationController {
 
     /**
      * Read population by populationId.
+     *
      * @param populationId ID of the population.
-     * @param studyId ID of the study.
-     * @param principal Jwt principal containing user info.
+     * @param studyId      ID of the study.
+     * @param principal    Jwt principal containing user info.
      * @return ResponseEntity with the population data.
      */
     @GetMapping("/{populationId}")
@@ -62,7 +63,8 @@ public class PopulationController {
 
     /**
      * Read population by studyId.
-     * @param studyId ID of the study.
+     *
+     * @param studyId   ID of the study.
      * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the list of populations.
      */
@@ -82,8 +84,8 @@ public class PopulationController {
      * (Only STUDY_OWNER is allowed to create)
      *
      * @param population Population model instance to be created.
-     * @param studyId ID of the study.
-     * @param principal Jwt principal containing user info.
+     * @param studyId    ID of the study.
+     * @param principal  Jwt principal containing user info.
      * @return ResponseEntity with the created population data.
      */
     @PostMapping
@@ -125,10 +127,10 @@ public class PopulationController {
      * Update Population.
      * (Only STUDY_OWNER is allowed to update)
      *
-     * @param populationId ID of the population to be updated.
+     * @param populationId      ID of the population to be updated.
      * @param updatedPopulation Updated population model.
-     * @param studyId ID of the study.
-     * @param principal Jwt principal containing user info.
+     * @param studyId           ID of the study.
+     * @param principal         Jwt principal containing user info.
      * @return ResponseEntity with the updated population data.
      */
     @PutMapping("/{populationId}")
@@ -147,20 +149,18 @@ public class PopulationController {
 
             if (savedPopulationOpt.isPresent()) {
                 Population savedPopulation = savedPopulationOpt.get();
-                if (savedPopulation.getPopulationId() != null) {
-                    String recordId = savedPopulation.getPopulationId().toString();
-                    String description = "Update of Population " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Population",
-                            recordId,
-                            savedPopulation,
-                            description
-                    );
-                }
+                String recordId = savedPopulation.getPopulationId().toString();
+                String description = "Update of Population " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Population",
+                        recordId,
+                        savedPopulation,
+                        description
+                );
                 return ResponseEntity.ok(savedPopulation);
             } else {
                 return ResponseEntity.notFound().build();
@@ -177,8 +177,8 @@ public class PopulationController {
      * (Only STUDY_OWNER is allowed to delete)
      *
      * @param populationId ID of the population to be deleted.
-     * @param studyId ID of the study.
-     * @param principal Jwt principal containing user info.
+     * @param studyId      ID of the study.
+     * @param principal    Jwt principal containing user info.
      * @return ResponseEntity with no content if successful.
      */
     @DeleteMapping("/{populationId}")

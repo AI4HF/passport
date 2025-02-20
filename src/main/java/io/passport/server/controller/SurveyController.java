@@ -69,7 +69,7 @@ public class SurveyController {
     /**
      * Retrieves surveys by studyId.
      *
-     * @param studyId  ID of the study
+     * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
      * @return List of surveys
      */
@@ -87,8 +87,8 @@ public class SurveyController {
     /**
      * Creates a new Survey.
      *
-     * @param survey   Survey object to create
-     * @param studyId  ID of the study for authorization
+     * @param survey    Survey object to create
+     * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
      * @return Created Survey or BAD_REQUEST
      */
@@ -129,10 +129,10 @@ public class SurveyController {
     /**
      * Updates an existing Survey.
      *
-     * @param surveyId        ID of the survey to update
-     * @param studyId         ID of the study for authorization
-     * @param updatedSurvey   Updated survey details
-     * @param principal       Jwt principal containing user info
+     * @param surveyId      ID of the survey to update
+     * @param studyId       ID of the study for authorization
+     * @param updatedSurvey Updated survey details
+     * @param principal     Jwt principal containing user info
      * @return Updated Survey or NOT_FOUND
      */
     @PutMapping("/{surveyId}")
@@ -148,20 +148,18 @@ public class SurveyController {
             Optional<Survey> savedSurveyOpt = this.surveyService.updateSurvey(surveyId, updatedSurvey);
             if (savedSurveyOpt.isPresent()) {
                 Survey savedSurvey = savedSurveyOpt.get();
-                if (savedSurvey.getSurveyId() != null) {
-                    String recordId = savedSurvey.getSurveyId().toString();
-                    String description = "Update of Survey " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Survey",
-                            recordId,
-                            savedSurvey,
-                            description
-                    );
-                }
+                String recordId = savedSurvey.getSurveyId().toString();
+                String description = "Update of Survey " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Survey",
+                        recordId,
+                        savedSurvey,
+                        description
+                );
                 return ResponseEntity.ok(savedSurvey);
             } else {
                 return ResponseEntity.notFound().build();
@@ -175,8 +173,8 @@ public class SurveyController {
     /**
      * Deletes a Survey by surveyId.
      *
-     * @param surveyId ID of the Survey to delete
-     * @param studyId  ID of the study for authorization
+     * @param surveyId  ID of the Survey to delete
+     * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
      * @return No content if deleted, NOT_FOUND otherwise
      */

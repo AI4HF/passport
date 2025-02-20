@@ -47,10 +47,11 @@ public class LearningProcessDatasetController {
 
     /**
      * Read all LearningProcessDatasets or filtered by learningProcessId and/or learningDatasetId.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
      * @param learningDatasetId ID of the LearningDataset (optional)
-     * @param principal Jwt principal containing user info
+     * @param principal         Jwt principal containing user info
      * @return List of LearningProcessDatasetDTOs
      */
     @GetMapping
@@ -91,9 +92,10 @@ public class LearningProcessDatasetController {
 
     /**
      * Create a new LearningProcessDataset entity.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId                   ID of the study for authorization
      * @param learningProcessDatasetDTO DTO with the new entity data
-     * @param principal Jwt principal containing user info
+     * @param principal                 Jwt principal containing user info
      * @return Created LearningProcessDataset
      */
     @PostMapping
@@ -135,11 +137,12 @@ public class LearningProcessDatasetController {
 
     /**
      * Update LearningProcessDataset using query parameters.
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId ID of the LearningProcess
-     * @param learningDatasetId ID of the LearningDataset
+     *
+     * @param studyId                       ID of the study for authorization
+     * @param learningProcessId             ID of the LearningProcess
+     * @param learningDatasetId             ID of the LearningDataset
      * @param updatedLearningProcessDataset Updated entity data
-     * @param principal Jwt principal containing user info
+     * @param principal                     Jwt principal containing user info
      * @return Updated LearningProcessDataset or NOT_FOUND
      */
     @PutMapping
@@ -165,21 +168,19 @@ public class LearningProcessDatasetController {
 
             if (savedOpt.isPresent()) {
                 LearningProcessDataset saved = savedOpt.get();
-                if (saved.getId() != null) {
-                    String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
-                    String description = "Update of LearningProcessDataset with learningProcessId="
-                            + learningProcessId + " and learningDatasetId=" + learningDatasetId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningProcessDataset",
-                            compositeId,
-                            saved,
-                            description
-                    );
-                }
+                String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
+                String description = "Update of LearningProcessDataset with learningProcessId="
+                        + learningProcessId + " and learningDatasetId=" + learningDatasetId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningProcessDataset",
+                        compositeId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -193,10 +194,11 @@ public class LearningProcessDatasetController {
 
     /**
      * Delete by LearningProcessDataset composite ID using query parameters.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
      * @param learningDatasetId ID of the LearningDataset
-     * @param principal Jwt principal containing user info
+     * @param principal         Jwt principal containing user info
      * @return No content or NOT_FOUND
      */
     @DeleteMapping

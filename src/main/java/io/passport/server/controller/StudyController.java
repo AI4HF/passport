@@ -46,6 +46,7 @@ public class StudyController {
 
     /**
      * Retrieves all studies or a single study if studyId param is provided.
+     *
      * @param studyId   Optional ID of the study
      * @param principal Jwt principal containing user info
      * @return List of studies or single
@@ -143,9 +144,9 @@ public class StudyController {
     /**
      * Updates an existing Study if the caller has STUDY_OWNER role.
      *
-     * @param studyId       ID of the study to update
-     * @param updatedStudy  Updated details
-     * @param principal     Jwt principal containing user info
+     * @param studyId      ID of the study to update
+     * @param updatedStudy Updated details
+     * @param principal    Jwt principal containing user info
      * @return Updated Study or NOT_FOUND
      */
     @PutMapping("/{studyId}")
@@ -165,20 +166,18 @@ public class StudyController {
         Optional<Study> savedStudyOpt = studyService.updateStudy(studyId, updatedStudy);
         if (savedStudyOpt.isPresent()) {
             Study savedStudy = savedStudyOpt.get();
-            if (savedStudy.getId() != null) {
-                String recordId = savedStudy.getId().toString();
-                String description = "Update of Study " + recordId;
-                auditLogBookService.createAuditLog(
-                        userId,
-                        principal.getClaim("preferred_username"),
-                        studyId,
-                        "UPDATE",
-                        "Study",
-                        recordId,
-                        savedStudy,
-                        description
-                );
-            }
+            String recordId = savedStudy.getId().toString();
+            String description = "Update of Study " + recordId;
+            auditLogBookService.createAuditLog(
+                    userId,
+                    principal.getClaim("preferred_username"),
+                    studyId,
+                    "UPDATE",
+                    "Study",
+                    recordId,
+                    savedStudy,
+                    description
+            );
             return ResponseEntity.ok(savedStudy);
         } else {
             return ResponseEntity.notFound().build();

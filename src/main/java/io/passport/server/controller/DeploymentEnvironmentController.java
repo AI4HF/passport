@@ -44,10 +44,10 @@ public class DeploymentEnvironmentController {
     /**
      * Retrieves a DeploymentEnvironment by its environmentId.
      *
-     * @param environmentId  ID of the deployment environment
-     * @param studyId        ID of the study for authorization
-     * @param principal      Jwt principal containing user info
-     * @return               The requested DeploymentEnvironment or NOT_FOUND
+     * @param environmentId ID of the deployment environment
+     * @param studyId       ID of the study for authorization
+     * @param principal     Jwt principal containing user info
+     * @return The requested DeploymentEnvironment or NOT_FOUND
      */
     @GetMapping("/{environmentId}")
     public ResponseEntity<?> getDeploymentEnvironmentByEnvironmentId(
@@ -66,10 +66,10 @@ public class DeploymentEnvironmentController {
     /**
      * Creates a new DeploymentEnvironment.
      *
-     * @param deploymentEnvironment  The environment to create
+     * @param deploymentEnvironment The environment to create
      * @param studyId               ID of the study for authorization
      * @param principal             Jwt principal containing user info
-     * @return                      Created environment or BAD_REQUEST
+     * @return Created environment or BAD_REQUEST
      */
     @PostMapping
     public ResponseEntity<?> createDeploymentEnvironment(@RequestBody DeploymentEnvironment deploymentEnvironment,
@@ -108,11 +108,11 @@ public class DeploymentEnvironmentController {
     /**
      * Updates an existing DeploymentEnvironment by ID.
      *
-     * @param deploymentEnvironmentId  ID of the environment to update
+     * @param deploymentEnvironmentId      ID of the environment to update
      * @param updatedDeploymentEnvironment Updated environment data
-     * @param studyId                  ID of the study for authorization
-     * @param principal                Jwt principal containing user info
-     * @return                         Updated environment or NOT_FOUND
+     * @param studyId                      ID of the study for authorization
+     * @param principal                    Jwt principal containing user info
+     * @return Updated environment or NOT_FOUND
      */
     @PutMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> updateDeploymentEnvironment(@PathVariable Long deploymentEnvironmentId,
@@ -129,20 +129,18 @@ public class DeploymentEnvironmentController {
 
             if (savedOpt.isPresent()) {
                 DeploymentEnvironment saved = savedOpt.get();
-                if (saved.getEnvironmentId() != null) {
-                    String recordId = saved.getEnvironmentId().toString();
-                    String description = "Update of DeploymentEnvironment " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "DeploymentEnvironment",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getEnvironmentId().toString();
+                String description = "Update of DeploymentEnvironment " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "DeploymentEnvironment",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -157,10 +155,10 @@ public class DeploymentEnvironmentController {
     /**
      * Deletes a DeploymentEnvironment by its ID.
      *
-     * @param deploymentEnvironmentId  ID of the environment to delete
-     * @param studyId                  ID of the study for authorization
-     * @param principal                Jwt principal containing user info
-     * @return                         NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @param deploymentEnvironmentId ID of the environment to delete
+     * @param studyId                 ID of the study for authorization
+     * @param principal               Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId,

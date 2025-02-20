@@ -48,7 +48,7 @@ public class ModelDeploymentController {
      * @param environmentId Optional environment ID to filter by
      * @param studyId       Optional study ID for authorization / filter
      * @param principal     Jwt principal containing user info
-     * @return              List of ModelDeployment objects
+     * @return List of ModelDeployment objects
      */
     @GetMapping
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
@@ -84,7 +84,7 @@ public class ModelDeploymentController {
      * @param studyId      ID of the study for authorization
      * @param deploymentId ID of the ModelDeployment
      * @param principal    Jwt principal containing user info
-     * @return             ModelDeployment or NOT_FOUND
+     * @return ModelDeployment or NOT_FOUND
      */
     @GetMapping("/{deploymentId}")
     public ResponseEntity<?> getModelDeployment(@RequestParam Long studyId,
@@ -104,10 +104,10 @@ public class ModelDeploymentController {
     /**
      * Creates a new ModelDeployment.
      *
-     * @param studyId        ID of the study for authorization
+     * @param studyId         ID of the study for authorization
      * @param modelDeployment ModelDeployment instance to create
-     * @param principal      Jwt principal containing user info
-     * @return               Created ModelDeployment or BAD_REQUEST on error
+     * @param principal       Jwt principal containing user info
+     * @return Created ModelDeployment or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createModelDeployment(@RequestParam Long studyId,
@@ -144,11 +144,11 @@ public class ModelDeploymentController {
     /**
      * Updates an existing ModelDeployment by deploymentId.
      *
-     * @param studyId             ID of the study for authorization
-     * @param deploymentId        ID of the ModelDeployment to update
+     * @param studyId                ID of the study for authorization
+     * @param deploymentId           ID of the ModelDeployment to update
      * @param updatedModelDeployment Updated details
-     * @param principal           Jwt principal containing user info
-     * @return                    Updated ModelDeployment or NOT_FOUND
+     * @param principal              Jwt principal containing user info
+     * @return Updated ModelDeployment or NOT_FOUND
      */
     @PutMapping("/{deploymentId}")
     public ResponseEntity<?> updateModelDeployment(@RequestParam Long studyId,
@@ -165,20 +165,18 @@ public class ModelDeploymentController {
 
             if (savedOpt.isPresent()) {
                 ModelDeployment saved = savedOpt.get();
-                if (saved.getDeploymentId() != null) {
-                    String recordId = saved.getDeploymentId().toString();
-                    String description = "Update of ModelDeployment " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "ModelDeployment",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getDeploymentId().toString();
+                String description = "Update of ModelDeployment " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "ModelDeployment",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -196,7 +194,7 @@ public class ModelDeploymentController {
      * @param studyId      ID of the study for authorization
      * @param deploymentId ID of the ModelDeployment to delete
      * @param principal    Jwt principal containing user info
-     * @return             NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentId}")
     public ResponseEntity<?> deleteModelDeployment(@RequestParam Long studyId,

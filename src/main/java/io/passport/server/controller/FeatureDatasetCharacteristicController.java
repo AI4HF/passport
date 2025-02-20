@@ -47,9 +47,10 @@ public class FeatureDatasetCharacteristicController {
 
     /**
      * Read all FeatureDatasetCharacteristics or filtered by datasetId and/or featureId
+     *
      * @param datasetId ID of the Dataset (optional)
      * @param featureId ID of the Feature (optional)
-     * @param studyId ID of the study
+     * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
      * @return List of FeatureDatasetCharacteristicDTO
      */
@@ -93,9 +94,10 @@ public class FeatureDatasetCharacteristicController {
 
     /**
      * Create a new FeatureDatasetCharacteristic entity.
+     *
      * @param featureDatasetCharacteristicDTO DTO for the new FeatureDatasetCharacteristic
-     * @param studyId ID of the study
-     * @param principal Jwt principal containing user info
+     * @param studyId                         ID of the study
+     * @param principal                       Jwt principal containing user info
      * @return Created FeatureDatasetCharacteristic
      */
     @PostMapping
@@ -138,11 +140,12 @@ public class FeatureDatasetCharacteristicController {
 
     /**
      * Update FeatureDatasetCharacteristic using query parameters.
-     * @param datasetId ID of the Dataset
-     * @param featureId ID of the Feature
+     *
+     * @param datasetId                           ID of the Dataset
+     * @param featureId                           ID of the Feature
      * @param updatedFeatureDatasetCharacteristic Updated details
-     * @param studyId ID of the study
-     * @param principal Jwt principal containing user info
+     * @param studyId                             ID of the study
+     * @param principal                           Jwt principal containing user info
      * @return Updated FeatureDatasetCharacteristic or NOT_FOUND
      */
     @PutMapping
@@ -167,21 +170,19 @@ public class FeatureDatasetCharacteristicController {
 
             if (savedOpt.isPresent()) {
                 FeatureDatasetCharacteristic saved = savedOpt.get();
-                if (saved.getId() != null) {
-                    String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ")";
-                    String description = "Update of FeatureDatasetCharacteristic with datasetId="
-                            + id.getDatasetId() + " and featureId=" + id.getFeatureId();
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "FeatureDatasetCharacteristic",
-                            compositeId,
-                            saved,
-                            description
-                    );
-                }
+                String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ")";
+                String description = "Update of FeatureDatasetCharacteristic with datasetId="
+                        + id.getDatasetId() + " and featureId=" + id.getFeatureId();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "FeatureDatasetCharacteristic",
+                        compositeId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -195,9 +196,10 @@ public class FeatureDatasetCharacteristicController {
 
     /**
      * Delete by FeatureDatasetCharacteristic composite ID using query parameters.
+     *
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
-     * @param studyId ID of the study
+     * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
      * @return No content or NOT_FOUND
      */

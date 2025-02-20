@@ -45,7 +45,7 @@ public class ExperimentController {
      *
      * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
-     * @return          List of experiments or FORBIDDEN if not authorized
+     * @return List of experiments or FORBIDDEN if not authorized
      */
     @GetMapping
     public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") Long studyId,
@@ -60,10 +60,10 @@ public class ExperimentController {
     /**
      * Creates multiple Experiment entries for a given study.
      *
-     * @param studyId    ID of the study for authorization
+     * @param studyId     ID of the study for authorization
      * @param experiments List of Experiment objects to create
-     * @param principal  Jwt principal containing user info
-     * @return           List of newly created experiments
+     * @param principal   Jwt principal containing user info
+     * @return List of newly created experiments
      */
     @PostMapping
     public ResponseEntity<?> createExperiments(@RequestParam Long studyId,
@@ -75,23 +75,20 @@ public class ExperimentController {
         try {
             List<Experiment> newExperiments = this.experimentService.createExperimentEntries(studyId, experiments);
 
-            // Log each created experiment
             String userId = principal.getSubject();
             for (Experiment exp : newExperiments) {
-                if (exp.getExperimentId() != null) {
-                    String recordId = exp.getExperimentId().toString();
-                    String description = "Creation of Experiment " + recordId;
-                    auditLogBookService.createAuditLog(
-                            userId,
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "CREATE",
-                            "Experiment",
-                            recordId,
-                            exp,
-                            description
-                    );
-                }
+                String recordId = exp.getExperimentId().toString();
+                String description = "Creation of Experiment " + recordId;
+                auditLogBookService.createAuditLog(
+                        userId,
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "CREATE",
+                        "Experiment",
+                        recordId,
+                        exp,
+                        description
+                );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiments);
         } catch (Exception e) {

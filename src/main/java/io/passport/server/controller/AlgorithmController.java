@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class which stores the generated HTTP requests related to Algorithm operations.
+ */
 @RestController
 @RequestMapping("/algorithm")
 public class AlgorithmController {
@@ -83,11 +86,10 @@ public class AlgorithmController {
 
             Algorithm savedAlgorithm = this.algorithmService.saveAlgorithm(algorithm);
             if (savedAlgorithm.getAlgorithmId() == null) {
-                // Just a safety check, in case ID is not generated
+                log.error("Error creating the algorithm: {}", algorithm);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-            // Log to AuditLog (via AuditLogBookService)
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
             String description = "Creation of Algorithm " + recordId;
             auditLogBookService.createAuditLog(

@@ -47,7 +47,7 @@ public class LearningProcessController {
      *
      * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
-     * @return          List of LearningProcess objects
+     * @return List of LearningProcess objects
      */
     @GetMapping
     public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
@@ -65,10 +65,10 @@ public class LearningProcessController {
     /**
      * Reads a single LearningProcess by its ID.
      *
-     * @param studyId          ID of the study for authorization
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
-     * @param principal        Jwt principal containing user info
-     * @return                 The LearningProcess or NOT_FOUND
+     * @param principal         Jwt principal containing user info
+     * @return The LearningProcess or NOT_FOUND
      */
     @GetMapping("/{learningProcessId}")
     public ResponseEntity<?> getLearningProcess(@RequestParam Long studyId,
@@ -88,7 +88,7 @@ public class LearningProcessController {
      * @param studyId         ID of the study for authorization
      * @param learningProcess LearningProcess model to create
      * @param principal       Jwt principal containing user info
-     * @return                Created LearningProcess or BAD_REQUEST on error
+     * @return Created LearningProcess or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createLearningProcess(@RequestParam Long studyId,
@@ -125,11 +125,11 @@ public class LearningProcessController {
     /**
      * Updates an existing LearningProcess by learningProcessId.
      *
-     * @param studyId           ID of the study for authorization
-     * @param learningProcessId ID of the LearningProcess to update
+     * @param studyId                ID of the study for authorization
+     * @param learningProcessId      ID of the LearningProcess to update
      * @param updatedLearningProcess Updated details
-     * @param principal         Jwt principal containing user info
-     * @return                  Updated LearningProcess or NOT_FOUND
+     * @param principal              Jwt principal containing user info
+     * @return Updated LearningProcess or NOT_FOUND
      */
     @PutMapping("/{learningProcessId}")
     public ResponseEntity<?> updateLearningProcess(@RequestParam Long studyId,
@@ -146,20 +146,18 @@ public class LearningProcessController {
 
             if (savedOpt.isPresent()) {
                 LearningProcess saved = savedOpt.get();
-                if (saved.getLearningProcessId() != null) {
-                    String recordId = saved.getLearningProcessId().toString();
-                    String description = "Update of LearningProcess " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningProcess",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getLearningProcessId().toString();
+                String description = "Update of LearningProcess " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningProcess",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -173,10 +171,10 @@ public class LearningProcessController {
     /**
      * Deletes a LearningProcess by its ID.
      *
-     * @param studyId          ID of the study for authorization
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess to delete
-     * @param principal        Jwt principal containing user info
-     * @return                 NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @param principal         Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningProcessId}")
     public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,

@@ -44,7 +44,8 @@ public class ParameterController {
 
     /**
      * Read all parameters by StudyId.
-     * @param studyId ID of the study
+     *
+     * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
      * @return List of Parameters
      */
@@ -63,9 +64,10 @@ public class ParameterController {
 
     /**
      * Read a parameter by id.
+     *
      * @param parameterId ID of the parameter
-     * @param studyId ID of the study for authorization
-     * @param principal Jwt principal containing user info
+     * @param studyId     ID of the study for authorization
+     * @param principal   Jwt principal containing user info
      * @return Parameter entity or not found
      */
     @GetMapping("/{parameterId}")
@@ -82,8 +84,9 @@ public class ParameterController {
 
     /**
      * Create a Parameter.
+     *
      * @param parameter parameter model instance to be created
-     * @param studyId ID of the study for authorization
+     * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
      * @return Created parameter
      */
@@ -123,10 +126,11 @@ public class ParameterController {
 
     /**
      * Update a parameter.
-     * @param parameterId ID of the parameter that is to be updated
+     *
+     * @param parameterId      ID of the parameter that is to be updated
      * @param updatedParameter model instance with updated details
-     * @param studyId ID of the study for authorization
-     * @param principal Jwt principal containing user info
+     * @param studyId          ID of the study for authorization
+     * @param principal        Jwt principal containing user info
      * @return Updated parameter
      */
     @PutMapping("/{parameterId}")
@@ -142,20 +146,18 @@ public class ParameterController {
             Optional<Parameter> savedParameterOpt = this.parameterService.updateParameter(parameterId, updatedParameter);
             if (savedParameterOpt.isPresent()) {
                 Parameter savedParameter = savedParameterOpt.get();
-                if (savedParameter.getParameterId() != null) {
-                    String recordId = savedParameter.getParameterId().toString();
-                    String description = "Update of Parameter " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Parameter",
-                            recordId,
-                            savedParameter,
-                            description
-                    );
-                }
+                String recordId = savedParameter.getParameterId().toString();
+                String description = "Update of Parameter " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Parameter",
+                        recordId,
+                        savedParameter,
+                        description
+                );
                 return ResponseEntity.ok(savedParameter);
             } else {
                 return ResponseEntity.notFound().build();
@@ -168,9 +170,10 @@ public class ParameterController {
 
     /**
      * Delete a parameter by ID.
+     *
      * @param parameterId ID of the parameter that is to be deleted
-     * @param studyId ID of the study for authorization
-     * @param principal Jwt principal containing user info
+     * @param studyId     ID of the study for authorization
+     * @param principal   Jwt principal containing user info
      * @return No content or not found status
      */
     @DeleteMapping("/{parameterId}")

@@ -48,7 +48,7 @@ public class FeatureController {
      * @param featuresetId Optional ID of the FeatureSet
      * @param studyId      ID of the study for authorization
      * @param principal    Jwt principal containing user info
-     * @return             List of Features
+     * @return List of Features
      */
     @GetMapping
     public ResponseEntity<List<Feature>> getFeatures(
@@ -75,7 +75,7 @@ public class FeatureController {
      * @param featureId ID of the Feature
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return          The requested Feature or NOT FOUND
+     * @return The requested Feature or NOT FOUND
      */
     @GetMapping("/{featureId}")
     public ResponseEntity<?> getFeature(@PathVariable Long featureId,
@@ -96,7 +96,7 @@ public class FeatureController {
      * @param feature   Feature model instance to be created
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return          The created Feature or BAD_REQUEST on error
+     * @return The created Feature or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createFeature(@RequestBody Feature feature,
@@ -133,11 +133,11 @@ public class FeatureController {
     /**
      * Update an existing Feature by featureId.
      *
-     * @param featureId       ID of the Feature to update
-     * @param updatedFeature  Updated details
-     * @param studyId         ID of the study for authorization
-     * @param principal       Jwt principal containing user info
-     * @return                Updated Feature or NOT_FOUND
+     * @param featureId      ID of the Feature to update
+     * @param updatedFeature Updated details
+     * @param studyId        ID of the study for authorization
+     * @param principal      Jwt principal containing user info
+     * @return Updated Feature or NOT_FOUND
      */
     @PutMapping("/{featureId}")
     public ResponseEntity<?> updateFeature(@PathVariable Long featureId,
@@ -152,20 +152,18 @@ public class FeatureController {
             Optional<Feature> savedOpt = this.featureService.updateFeature(featureId, updatedFeature);
             if (savedOpt.isPresent()) {
                 Feature saved = savedOpt.get();
-                if (saved.getFeatureId() != null) {
-                    String recordId = saved.getFeatureId().toString();
-                    String description = "Update of Feature " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Feature",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getFeatureId().toString();
+                String description = "Update of Feature " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Feature",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -180,10 +178,10 @@ public class FeatureController {
     /**
      * Delete a Feature by featureId.
      *
-     * @param featureId  ID of the Feature to delete
-     * @param studyId    ID of the study for authorization
-     * @param principal  Jwt principal containing user info
-     * @return           NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @param featureId ID of the Feature to delete
+     * @param studyId   ID of the study for authorization
+     * @param principal Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,

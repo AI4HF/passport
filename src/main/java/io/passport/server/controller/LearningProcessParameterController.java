@@ -47,10 +47,11 @@ public class LearningProcessParameterController {
 
     /**
      * Read all LearningProcessParameters or filtered by learningProcessId and/or parameterId
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess (optional)
-     * @param parameterId ID of the Parameter (optional)
-     * @param principal Jwt principal containing user info
+     * @param parameterId       ID of the Parameter (optional)
+     * @param principal         Jwt principal containing user info
      * @return List of LearningProcessParameterDTO
      */
     @GetMapping
@@ -90,9 +91,10 @@ public class LearningProcessParameterController {
 
     /**
      * Create a new LearningProcessParameter entity.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId                     ID of the study for authorization
      * @param learningProcessParameterDTO DTO for the new entity
-     * @param principal Jwt principal containing user info
+     * @param principal                   Jwt principal containing user info
      * @return Created LearningProcessParameter
      */
     @PostMapping
@@ -134,11 +136,12 @@ public class LearningProcessParameterController {
 
     /**
      * Update LearningProcessParameter using query parameters.
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId ID of the LearningProcess
-     * @param parameterId ID of the Parameter
+     *
+     * @param studyId                         ID of the study for authorization
+     * @param learningProcessId               ID of the LearningProcess
+     * @param parameterId                     ID of the Parameter
      * @param updatedLearningProcessParameter Updated data
-     * @param principal Jwt principal containing user info
+     * @param principal                       Jwt principal containing user info
      * @return Updated LearningProcessParameter or NOT_FOUND
      */
     @PutMapping
@@ -163,21 +166,19 @@ public class LearningProcessParameterController {
 
             if (savedOpt.isPresent()) {
                 LearningProcessParameter saved = savedOpt.get();
-                if (saved.getId() != null) {
-                    String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
-                    String description = "Update of LearningProcessParameter with learningProcessId="
-                            + learningProcessId + " and parameterId=" + parameterId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningProcessParameter",
-                            compositeId,
-                            saved,
-                            description
-                    );
-                }
+                String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
+                String description = "Update of LearningProcessParameter with learningProcessId="
+                        + learningProcessId + " and parameterId=" + parameterId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningProcessParameter",
+                        compositeId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -191,10 +192,11 @@ public class LearningProcessParameterController {
 
     /**
      * Delete by LearningProcessParameter composite ID using query parameters.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess
-     * @param parameterId ID of the Parameter
-     * @param principal Jwt principal containing user info
+     * @param parameterId       ID of the Parameter
+     * @param principal         Jwt principal containing user info
      * @return No content or NOT_FOUND
      */
     @DeleteMapping

@@ -47,10 +47,11 @@ public class LearningStageParameterController {
 
     /**
      * Retrieve LearningStageParameters filtered by learningStageId and/or parameterId.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage (optional)
-     * @param parameterId ID of the Parameter (optional)
-     * @param principal Jwt principal containing user info
+     * @param parameterId     ID of the Parameter (optional)
+     * @param principal       Jwt principal containing user info
      * @return List of LearningStageParameterDTO
      */
     @GetMapping
@@ -90,9 +91,10 @@ public class LearningStageParameterController {
 
     /**
      * Create a new LearningStageParameter.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId                   ID of the study for authorization
      * @param learningStageParameterDTO DTO containing data
-     * @param principal Jwt principal containing user info
+     * @param principal                 Jwt principal containing user info
      * @return Created LearningStageParameter
      */
     @PostMapping
@@ -134,11 +136,12 @@ public class LearningStageParameterController {
 
     /**
      * Update LearningStageParameter using composite ID.
-     * @param studyId ID of the study for authorization
-     * @param learningStageId ID of the LearningStage
-     * @param parameterId ID of the Parameter
+     *
+     * @param studyId                       ID of the study for authorization
+     * @param learningStageId               ID of the LearningStage
+     * @param parameterId                   ID of the Parameter
      * @param updatedLearningStageParameter Updated data
-     * @param principal Jwt principal containing user info
+     * @param principal                     Jwt principal containing user info
      * @return Updated LearningStageParameter or NOT_FOUND
      */
     @PutMapping
@@ -163,21 +166,19 @@ public class LearningStageParameterController {
 
             if (savedOpt.isPresent()) {
                 LearningStageParameter saved = savedOpt.get();
-                if (saved.getId() != null) {
-                    String compositeId = "(" + learningStageId + ", " + parameterId + ")";
-                    String description = "Update of LearningStageParameter with learningStageId="
-                            + learningStageId + " and parameterId=" + parameterId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningStageParameter",
-                            compositeId,
-                            saved,
-                            description
-                    );
-                }
+                String compositeId = "(" + learningStageId + ", " + parameterId + ")";
+                String description = "Update of LearningStageParameter with learningStageId="
+                        + learningStageId + " and parameterId=" + parameterId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningStageParameter",
+                        compositeId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -191,10 +192,11 @@ public class LearningStageParameterController {
 
     /**
      * Delete LearningStageParameter by composite ID.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage
-     * @param parameterId ID of the Parameter
-     * @param principal Jwt principal containing user info
+     * @param parameterId     ID of the Parameter
+     * @param principal       Jwt principal containing user info
      * @return No content or NOT_FOUND
      */
     @DeleteMapping

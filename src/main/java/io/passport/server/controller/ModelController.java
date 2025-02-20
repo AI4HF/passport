@@ -46,7 +46,7 @@ public class ModelController {
      *
      * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
-     * @return          List of Model objects
+     * @return List of Model objects
      */
     @GetMapping
     public ResponseEntity<List<Model>> getAllModels(@RequestParam Long studyId,
@@ -68,7 +68,7 @@ public class ModelController {
      * @param studyId   ID of the study for authorization
      * @param modelId   ID of the Model
      * @param principal Jwt principal containing user info
-     * @return          The requested Model or NOT_FOUND
+     * @return The requested Model or NOT_FOUND
      */
     @GetMapping("/{modelId}")
     public ResponseEntity<?> getModelById(@RequestParam Long studyId,
@@ -88,10 +88,10 @@ public class ModelController {
     /**
      * Creates a new Model.
      *
-     * @param studyId  ID of the study for authorization
-     * @param model    Model to be created
+     * @param studyId   ID of the study for authorization
+     * @param model     Model to be created
      * @param principal Jwt principal containing user info
-     * @return         Created Model or BAD_REQUEST on error
+     * @return Created Model or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createModel(@RequestParam Long studyId,
@@ -128,11 +128,11 @@ public class ModelController {
     /**
      * Updates an existing Model by modelId.
      *
-     * @param studyId       ID of the study for authorization
-     * @param modelId       ID of the Model to update
-     * @param updatedModel  Updated details
-     * @param principal     Jwt principal containing user info
-     * @return              Updated Model or NOT_FOUND
+     * @param studyId      ID of the study for authorization
+     * @param modelId      ID of the Model to update
+     * @param updatedModel Updated details
+     * @param principal    Jwt principal containing user info
+     * @return Updated Model or NOT_FOUND
      */
     @PutMapping("/{modelId}")
     public ResponseEntity<?> updateModel(@RequestParam Long studyId,
@@ -147,20 +147,18 @@ public class ModelController {
             Optional<Model> savedOpt = this.modelService.updateModel(modelId, updatedModel);
             if (savedOpt.isPresent()) {
                 Model saved = savedOpt.get();
-                if (saved.getModelId() != null) {
-                    String recordId = saved.getModelId().toString();
-                    String description = "Update of Model " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "Model",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getModelId().toString();
+                String description = "Update of Model " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "Model",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -174,10 +172,10 @@ public class ModelController {
     /**
      * Deletes a Model by modelId.
      *
-     * @param studyId  ID of the study for authorization
-     * @param modelId  ID of the Model to delete
+     * @param studyId   ID of the study for authorization
+     * @param modelId   ID of the Model to delete
      * @param principal Jwt principal containing user info
-     * @return         NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{modelId}")
     public ResponseEntity<?> deleteModel(@RequestParam Long studyId,

@@ -43,10 +43,10 @@ public class LearningDatasetController {
     /**
      * Reads a LearningDataset by its ID.
      *
-     * @param studyId          ID of the study for authorization
+     * @param studyId           ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset
-     * @param principal        Jwt principal containing user info
-     * @return                 The requested LearningDataset or NOT_FOUND
+     * @param principal         Jwt principal containing user info
+     * @return The requested LearningDataset or NOT_FOUND
      */
     @GetMapping("/{learningDatasetId}")
     public ResponseEntity<?> getLearningDataset(@RequestParam Long studyId,
@@ -63,11 +63,11 @@ public class LearningDatasetController {
     /**
      * Reads all LearningDatasets, or filters by dataTransformationId and/or datasetId if provided.
      *
-     * @param studyId             ID of the study for authorization
+     * @param studyId              ID of the study for authorization
      * @param dataTransformationId Optional DataTransformation ID
-     * @param datasetId           Optional Dataset ID
-     * @param principal           Jwt principal containing user info
-     * @return                    List of LearningDatasets
+     * @param datasetId            Optional Dataset ID
+     * @param principal            Jwt principal containing user info
+     * @return List of LearningDatasets
      */
     @GetMapping
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
@@ -94,10 +94,10 @@ public class LearningDatasetController {
     /**
      * Creates a new LearningDataset along with a DatasetTransformation.
      *
-     * @param studyId ID of the study for authorization
-     * @param request DTO containing both LearningDataset and Transformation info
+     * @param studyId   ID of the study for authorization
+     * @param request   DTO containing both LearningDataset and Transformation info
      * @param principal Jwt principal containing user info
-     * @return         Created LearningDatasetandTransformationDTO
+     * @return Created LearningDatasetandTransformationDTO
      */
     @PostMapping
     public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam Long studyId,
@@ -111,7 +111,6 @@ public class LearningDatasetController {
             LearningDatasetandTransformationDTO createdDTO =
                     learningDatasetService.createLearningDatasetAndTransformation(request);
 
-            // Log the newly created LearningDataset
             LearningDataset newLd = createdDTO.getLearningDataset();
             if (newLd != null && newLd.getLearningDatasetId() != null) {
                 String recordId = newLd.getLearningDatasetId().toString();
@@ -139,11 +138,11 @@ public class LearningDatasetController {
     /**
      * Updates a LearningDataset and its DatasetTransformation in a single transaction.
      *
-     * @param studyId          ID of the study for authorization
+     * @param studyId           ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset to update
-     * @param request          DTO containing updated LearningDataset and Transformation
-     * @param principal        Jwt principal containing user info
-     * @return                 Updated LearningDatasetandTransformationDTO or NOT_FOUND
+     * @param request           DTO containing updated LearningDataset and Transformation
+     * @param principal         Jwt principal containing user info
+     * @return Updated LearningDatasetandTransformationDTO or NOT_FOUND
      */
     @PutMapping("/{learningDatasetId}")
     public ResponseEntity<?> updateLearningDatasetWithTransformation(
@@ -166,20 +165,18 @@ public class LearningDatasetController {
             if (updatedOpt.isPresent()) {
                 LearningDatasetandTransformationDTO updatedDTO = updatedOpt.get();
                 LearningDataset updatedLd = updatedDTO.getLearningDataset();
-                if (updatedLd != null && updatedLd.getLearningDatasetId() != null) {
-                    String recordId = updatedLd.getLearningDatasetId().toString();
-                    String description = "Update of LearningDataset " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningDataset",
-                            recordId,
-                            updatedLd,
-                            description
-                    );
-                }
+                String recordId = updatedLd.getLearningDatasetId().toString();
+                String description = "Update of LearningDataset " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningDataset",
+                        recordId,
+                        updatedLd,
+                        description
+                );
                 return ResponseEntity.ok(updatedDTO);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -194,10 +191,10 @@ public class LearningDatasetController {
     /**
      * Deletes a LearningDataset by its ID.
      *
-     * @param studyId          ID of the study for authorization
+     * @param studyId           ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset to delete
-     * @param principal        Jwt principal containing user info
-     * @return                 NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @param principal         Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningDatasetId}")
     public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,

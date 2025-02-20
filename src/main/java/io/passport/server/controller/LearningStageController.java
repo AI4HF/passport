@@ -47,7 +47,7 @@ public class LearningStageController {
      * @param studyId           ID of the study for authorization
      * @param learningProcessId Optional ID of the learning process to filter
      * @param principal         Jwt principal containing user info
-     * @return                  List of LearningStages
+     * @return List of LearningStages
      */
     @GetMapping
     public ResponseEntity<List<LearningStage>> getLearningStages(
@@ -72,7 +72,7 @@ public class LearningStageController {
      * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage
      * @param principal       Jwt principal containing user info
-     * @return                The LearningStage or NOT_FOUND
+     * @return The LearningStage or NOT_FOUND
      */
     @GetMapping("/{learningStageId}")
     public ResponseEntity<?> getLearningStage(@RequestParam Long studyId,
@@ -92,7 +92,7 @@ public class LearningStageController {
      * @param studyId       ID of the study for authorization
      * @param learningStage LearningStage model to create
      * @param principal     Jwt principal containing user info
-     * @return              Created LearningStage or BAD_REQUEST on error
+     * @return Created LearningStage or BAD_REQUEST on error
      */
     @PostMapping
     public ResponseEntity<?> createLearningStage(@RequestParam Long studyId,
@@ -129,11 +129,11 @@ public class LearningStageController {
     /**
      * Updates an existing LearningStage by learningStageId.
      *
-     * @param studyId            ID of the study for authorization
-     * @param learningStageId    ID of the LearningStage to update
+     * @param studyId              ID of the study for authorization
+     * @param learningStageId      ID of the LearningStage to update
      * @param updatedLearningStage Updated details
-     * @param principal          Jwt principal containing user info
-     * @return                   Updated LearningStage or NOT_FOUND
+     * @param principal            Jwt principal containing user info
+     * @return Updated LearningStage or NOT_FOUND
      */
     @PutMapping("/{learningStageId}")
     public ResponseEntity<?> updateLearningStage(@RequestParam Long studyId,
@@ -148,20 +148,18 @@ public class LearningStageController {
             Optional<LearningStage> savedOpt = this.learningStageService.updateLearningStage(learningStageId, updatedLearningStage);
             if (savedOpt.isPresent()) {
                 LearningStage saved = savedOpt.get();
-                if (saved.getLearningStageId() != null) {
-                    String recordId = saved.getLearningStageId().toString();
-                    String description = "Update of LearningStage " + recordId;
-                    auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim("preferred_username"),
-                            studyId,
-                            "UPDATE",
-                            "LearningStage",
-                            recordId,
-                            saved,
-                            description
-                    );
-                }
+                String recordId = saved.getLearningStageId().toString();
+                String description = "Update of LearningStage " + recordId;
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
+                        "UPDATE",
+                        "LearningStage",
+                        recordId,
+                        saved,
+                        description
+                );
                 return ResponseEntity.ok(saved);
             } else {
                 return ResponseEntity.notFound().build();
@@ -179,7 +177,7 @@ public class LearningStageController {
      * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage to delete
      * @param principal       Jwt principal containing user info
-     * @return                NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningStageId}")
     public ResponseEntity<?> deleteLearningStage(@RequestParam Long studyId,
