@@ -96,7 +96,7 @@ public class PopulationService {
      * @param featureSetId ID of the featureSet
      * @return
      */
-    public Optional<Population> getPopulationByFeatureSetId(Long featureSetId) {
+    public List<Population> getPopulationByFeatureSetId(Long featureSetId) {
         return this.populationRepository.findByFeatureSetId(featureSetId);
     }
 

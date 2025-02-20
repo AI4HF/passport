@@ -602,6 +602,27 @@ VALUES
          }
        ]
      }');
+-- Create audit_log table
+CREATE TABLE audit_log
+(
+    audit_log_id  VARCHAR(255) PRIMARY KEY,
+    person_id     VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    person_name     VARCHAR(255),
+    study_id      INTEGER REFERENCES study (study_id) ON DELETE CASCADE,
+    occurred_at    TIMESTAMP,
+    action_type    VARCHAR(255),
+    affected_relation    VARCHAR(255),
+    affected_record_id   VARCHAR(255),
+    affected_record      TEXT,
+    description          TEXT
+);
+
+CREATE TABLE audit_log_book
+(
+    audit_log_id VARCHAR(255) REFERENCES audit_log (audit_log_id) ON DELETE CASCADE,
+    passport_id INTEGER REFERENCES passport (passport_id) ON DELETE CASCADE,
+    PRIMARY KEY (audit_log_id, passport_id)
+)
 
 -- Create evaluation measure table
 CREATE TABLE evaluation_measure
