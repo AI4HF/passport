@@ -119,12 +119,13 @@ public class DatasetService {
      * @param datasetId ID of Dataset to be deleted
      * @return
      */
-    public boolean deleteDataset(Long datasetId) {
-        if(datasetRepository.existsById(datasetId)) {
-            datasetRepository.deleteById(datasetId);
-            return true;
+    public Optional<Dataset> deleteDataset(Long datasetId) {
+        Optional<Dataset> existingDataset = datasetRepository.findById(datasetId);
+        if (existingDataset.isPresent()) {
+            datasetRepository.delete(existingDataset.get());
+            return existingDataset;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
 }

@@ -109,15 +109,16 @@ public class ModelDeploymentService {
      * @param deploymentId ID of model deployment to be deleted
      * @return
      */
-    public boolean deleteModelDeployment(Long deploymentId) {
-        Optional<ModelDeployment> modelDeployment = modelDeploymentRepository.findById(deploymentId);
-        if(modelDeployment.isPresent()) {
-            modelDeploymentRepository.deleteById(deploymentId);
-            deploymentEnvironmentService.deleteDeploymentEnvironment(modelDeployment.get().getEnvironmentId());
-            return true;
-        }else{
-            return false;
+    public Optional<ModelDeployment> deleteModelDeployment(Long deploymentId) {
+        Optional<ModelDeployment> existingDeployment = modelDeploymentRepository.findById(deploymentId);
+        if (existingDeployment.isPresent()) {
+            modelDeploymentRepository.delete(existingDeployment.get());
+            deploymentEnvironmentService.deleteDeploymentEnvironment(existingDeployment.get().getEnvironmentId());
+            return existingDeployment;
+        } else {
+            return Optional.empty();
         }
     }
+
 
 }

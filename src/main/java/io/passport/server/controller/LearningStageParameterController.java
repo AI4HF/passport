@@ -214,8 +214,8 @@ public class LearningStageParameterController {
         id.setLearningStageId(learningStageId);
 
         try {
-            boolean isDeleted = this.learningStageParameterService.deleteLearningStageParameter(id);
-            if (isDeleted) {
+            Optional<LearningStageParameter> deletedLearningStageParameter = this.learningStageParameterService.deleteLearningStageParameter(id);
+            if (deletedLearningStageParameter.isPresent()) {
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
                 String description = "Deletion of LearningStageParameter with learningStageId="
                         + learningStageId + " and parameterId=" + parameterId;
@@ -226,10 +226,10 @@ public class LearningStageParameterController {
                         "DELETE",
                         "LearningStageParameter",
                         compositeId,
-                        null,
+                        deletedLearningStageParameter.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStageParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

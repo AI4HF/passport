@@ -185,8 +185,8 @@ public class LearningProcessController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningProcessService.deleteLearningProcess(learningProcessId);
-            if (isDeleted) {
+            Optional<LearningProcess> deletedLearningProcess = this.learningProcessService.deleteLearningProcess(learningProcessId);
+            if (deletedLearningProcess.isPresent()) {
                 String description = "Deletion of LearningProcess " + learningProcessId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -195,10 +195,10 @@ public class LearningProcessController {
                         "DELETE",
                         "LearningProcess",
                         learningProcessId.toString(),
-                        null,
+                        deletedLearningProcess.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcess.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

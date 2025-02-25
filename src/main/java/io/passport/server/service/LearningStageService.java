@@ -85,12 +85,14 @@ public class LearningStageService {
      * @param learningStageId ID of learning stage to be deleted
      * @return
      */
-    public boolean deleteLearningStage(Long learningStageId) {
-        if(learningStageRepository.existsById(learningStageId)) {
-            learningStageRepository.deleteById(learningStageId);
-            return true;
-        }else{
-            return false;
+    public Optional<LearningStage> deleteLearningStage(Long learningStageId) {
+        Optional<LearningStage> existingStage = learningStageRepository.findById(learningStageId);
+        if (existingStage.isPresent()) {
+            learningStageRepository.delete(existingStage.get());
+            return existingStage;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

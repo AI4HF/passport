@@ -28,7 +28,7 @@ public class PopulationController {
 
     private final PopulationService populationService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
 
@@ -191,8 +191,8 @@ public class PopulationController {
         }
 
         try {
-            boolean isDeleted = this.populationService.deletePopulation(populationId);
-            if (isDeleted) {
+            Optional<Population> deletedPopulation = this.populationService.deletePopulation(populationId);
+            if (deletedPopulation.isPresent()) {
                 String description = "Deletion of Population " + populationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -201,10 +201,10 @@ public class PopulationController {
                         "DELETE",
                         "Population",
                         populationId.toString(),
-                        null,
+                        deletedPopulation.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedPopulation.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

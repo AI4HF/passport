@@ -74,14 +74,16 @@ public class LearningDatasetService {
      * @param learningDatasetId ID of LearningDataset to be deleted
      * @return
      */
-    public boolean deleteLearningDataset(Long learningDatasetId) {
-        if(learningDatasetRepository.existsById(learningDatasetId)) {
-            learningDatasetRepository.deleteById(learningDatasetId);
-            return true;
+    public Optional<LearningDataset> deleteLearningDataset(Long learningDatasetId) {
+        Optional<LearningDataset> existingLearningDataset = learningDatasetRepository.findById(learningDatasetId);
+        if (existingLearningDataset.isPresent()) {
+            learningDatasetRepository.delete(existingLearningDataset.get());
+            return existingLearningDataset;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 
     /**
      * Transactional Service method used to create both Transformations and Learning Datasets at the same time to avoid duplicating instances.

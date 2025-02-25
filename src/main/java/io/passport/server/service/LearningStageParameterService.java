@@ -93,12 +93,14 @@ public class LearningStageParameterService {
      * @param learningStageParameterId composite ID of LearningStageParameter to be deleted
      * @return
      */
-    public boolean deleteLearningStageParameter(LearningStageParameterId learningStageParameterId) {
-        if(learningStageParameterRepository.existsById(learningStageParameterId)) {
-            learningStageParameterRepository.deleteById(learningStageParameterId);
-            return true;
+    public Optional<LearningStageParameter> deleteLearningStageParameter(LearningStageParameterId learningStageParameterId) {
+        Optional<LearningStageParameter> existingParameter = learningStageParameterRepository.findById(learningStageParameterId);
+        if (existingParameter.isPresent()) {
+            learningStageParameterRepository.delete(existingParameter.get());
+            return existingParameter;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }

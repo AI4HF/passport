@@ -28,7 +28,7 @@ public class ModelController {
 
     private final ModelService modelService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -186,8 +186,8 @@ public class ModelController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.modelService.deleteModel(modelId);
-            if (isDeleted) {
+            Optional<Model> deletedModel = this.modelService.deleteModel(modelId);
+            if (deletedModel.isPresent()) {
                 String description = "Deletion of Model " + modelId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -196,10 +196,10 @@ public class ModelController {
                         "DELETE",
                         "Model",
                         modelId.toString(),
-                        null,
+                        deletedModel.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModel.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

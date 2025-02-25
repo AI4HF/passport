@@ -29,7 +29,7 @@ public class ParameterController {
 
     private final ParameterService parameterService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -185,8 +185,8 @@ public class ParameterController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.parameterService.deleteParameter(parameterId);
-            if (isDeleted) {
+            Optional<Parameter> deletedParameter = this.parameterService.deleteParameter(parameterId);
+            if (deletedParameter.isPresent()) {
                 String description = "Deletion of Parameter " + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -195,10 +195,10 @@ public class ParameterController {
                         "DELETE",
                         "Parameter",
                         parameterId.toString(),
-                        null,
+                        deletedParameter.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

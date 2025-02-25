@@ -192,8 +192,8 @@ public class FeatureController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.featureService.deleteFeature(featureId);
-            if (isDeleted) {
+            Optional<Feature> deletedFeature = this.featureService.deleteFeature(featureId);
+            if (deletedFeature.isPresent()) {
                 String description = "Deletion of Feature " + featureId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -202,10 +202,10 @@ public class FeatureController {
                         "DELETE",
                         "Feature",
                         featureId.toString(),
-                        null,
+                        deletedFeature.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeature.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

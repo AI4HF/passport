@@ -187,8 +187,8 @@ public class DatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.datasetService.deleteDataset(datasetId);
-            if (isDeleted) {
+            Optional<Dataset> deletedDataset = this.datasetService.deleteDataset(datasetId);
+            if (deletedDataset.isPresent()) {
                 String description = "Deletion of Dataset " + datasetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -197,10 +197,10 @@ public class DatasetController {
                         "DELETE",
                         "Dataset",
                         datasetId.toString(),
-                        null,
+                        deletedDataset.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

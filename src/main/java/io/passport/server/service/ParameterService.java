@@ -83,12 +83,14 @@ public class ParameterService {
      * @param parameterId ID of parameter to be deleted
      * @return
      */
-    public boolean deleteParameter(Long parameterId) {
-        if(parameterRepository.existsById(parameterId)) {
-            parameterRepository.deleteById(parameterId);
-            return true;
-        }else{
-            return false;
+    public Optional<Parameter> deleteParameter(Long parameterId) {
+        Optional<Parameter> existingParameter = parameterRepository.findById(parameterId);
+        if (existingParameter.isPresent()) {
+            parameterRepository.delete(existingParameter.get());
+            return existingParameter;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

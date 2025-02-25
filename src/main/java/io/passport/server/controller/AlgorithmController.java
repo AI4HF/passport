@@ -161,8 +161,8 @@ public class AlgorithmController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.algorithmService.deleteAlgorithm(algorithmId);
-            if (!isDeleted) {
+            Optional<Algorithm> deletedAlgorithm = this.algorithmService.deleteAlgorithm(algorithmId);
+            if (deletedAlgorithm.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
@@ -175,11 +175,11 @@ public class AlgorithmController {
                     "DELETE",
                     "Algorithm",
                     recordId,
-                    null,
+                    deletedAlgorithm.get(),
                     description
             );
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedAlgorithm.get());
 
         } catch (Exception e) {
             log.error("Error deleting Algorithm: {}", e.getMessage(), e);

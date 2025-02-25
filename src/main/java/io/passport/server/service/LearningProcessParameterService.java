@@ -93,12 +93,14 @@ public class LearningProcessParameterService {
      * @param learningProcessParameterId composite ID of LearningProcessParameter to be deleted
      * @return
      */
-    public boolean deleteLearningProcessParameter(LearningProcessParameterId learningProcessParameterId) {
-        if(learningProcessParameterRepository.existsById(learningProcessParameterId)) {
-            learningProcessParameterRepository.deleteById(learningProcessParameterId);
-            return true;
+    public Optional<LearningProcessParameter> deleteLearningProcessParameter(LearningProcessParameterId learningProcessParameterId) {
+        Optional<LearningProcessParameter> existingProcessParameter = learningProcessParameterRepository.findById(learningProcessParameterId);
+        if (existingProcessParameter.isPresent()) {
+            learningProcessParameterRepository.delete(existingProcessParameter.get());
+            return existingProcessParameter;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }

@@ -76,12 +76,14 @@ public class ImplementationService {
      * @param implementationId ID of implementation to be deleted
      * @return
      */
-    public boolean deleteImplementation(Long implementationId) {
-        if(implementationRepository.existsById(implementationId)) {
-            implementationRepository.deleteById(implementationId);
-            return true;
-        }else{
-            return false;
+    public Optional<Implementation> deleteImplementation(Long implementationId) {
+        Optional<Implementation> existingImplementation = implementationRepository.findById(implementationId);
+        if (existingImplementation.isPresent()) {
+            implementationRepository.delete(existingImplementation.get());
+            return existingImplementation;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

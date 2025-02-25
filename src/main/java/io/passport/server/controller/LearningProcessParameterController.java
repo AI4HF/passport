@@ -215,8 +215,8 @@ public class LearningProcessParameterController {
         id.setParameterId(parameterId);
 
         try {
-            boolean isDeleted = this.learningProcessParameterService.deleteLearningProcessParameter(id);
-            if (isDeleted) {
+            Optional<LearningProcessParameter> deletedLearningProcessParameter = this.learningProcessParameterService.deleteLearningProcessParameter(id);
+            if (deletedLearningProcessParameter.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
                 String description = "Deletion of LearningProcessParameter with learningProcessId="
                         + learningProcessId + " and parameterId=" + parameterId;
@@ -227,10 +227,10 @@ public class LearningProcessParameterController {
                         "DELETE",
                         "LearningProcessParameter",
                         compositeId,
-                        null,
+                        deletedLearningProcessParameter.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcessParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

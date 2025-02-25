@@ -205,8 +205,8 @@ public class LearningDatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
-            if (isDeleted) {
+            Optional<LearningDataset> deletedLearningDataset = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
+            if (deletedLearningDataset.isPresent()) {
                 String description = "Deletion of LearningDataset " + learningDatasetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -215,10 +215,10 @@ public class LearningDatasetController {
                         "DELETE",
                         "LearningDataset",
                         learningDatasetId.toString(),
-                        null,
+                        deletedLearningDataset.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

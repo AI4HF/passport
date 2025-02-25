@@ -92,12 +92,13 @@ public class DatasetTransformationStepService {
      * @param stepId ID of DatasetTransformationStep to be deleted
      * @return
      */
-    public boolean deleteDatasetTransformationStep(Long stepId) {
-        if(datasetTransformationStepRepository.existsById(stepId)) {
-            datasetTransformationStepRepository.deleteById(stepId);
-            return true;
+    public Optional<DatasetTransformationStep> deleteDatasetTransformationStep(Long stepId) {
+        Optional<DatasetTransformationStep> existingStep = datasetTransformationStepRepository.findById(stepId);
+        if (existingStep.isPresent()) {
+            datasetTransformationStepRepository.delete(existingStep.get());
+            return existingStep;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
 }

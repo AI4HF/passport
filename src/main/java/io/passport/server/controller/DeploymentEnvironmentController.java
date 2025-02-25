@@ -169,8 +169,8 @@ public class DeploymentEnvironmentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
-            if (isDeleted) {
+            Optional<DeploymentEnvironment> deletedDeploymentEnvironment = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
+            if (deletedDeploymentEnvironment.isPresent()) {
                 String description = "Deletion of DeploymentEnvironment " + deploymentEnvironmentId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -179,10 +179,10 @@ public class DeploymentEnvironmentController {
                         "DELETE",
                         "DeploymentEnvironment",
                         deploymentEnvironmentId.toString(),
-                        null,
+                        deletedDeploymentEnvironment.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDeploymentEnvironment.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -31,7 +31,7 @@ public class StudyController {
     private final StudyService studyService;
     private final KeycloakService keycloakService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     @Autowired
     public StudyController(StudyService studyService,
@@ -204,8 +204,8 @@ public class StudyController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        boolean isDeleted = studyService.deleteStudy(studyId);
-        if (isDeleted) {
+        Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
+        if (deletedStudy.isPresent()) {
             String description = "Deletion of Study " + studyId;
             auditLogBookService.createAuditLog(
                     userId,
@@ -214,10 +214,10 @@ public class StudyController {
                     "DELETE",
                     "Study",
                     studyId.toString(),
-                    null,
+                    deletedStudy.get(),
                     description
             );
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudy.get());
         } else {
             return ResponseEntity.notFound().build();
         }

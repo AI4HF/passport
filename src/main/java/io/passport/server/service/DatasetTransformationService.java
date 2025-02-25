@@ -74,12 +74,13 @@ public class DatasetTransformationService {
      * @param dataTransformationId ID of DatasetTransformation to be deleted
      * @return
      */
-    public boolean deleteDatasetTransformation(Long dataTransformationId) {
-        if(datasetTransformationRepository.existsById(dataTransformationId)) {
-            datasetTransformationRepository.deleteById(dataTransformationId);
-            return true;
+    public Optional<DatasetTransformation> deleteDatasetTransformation(Long dataTransformationId) {
+        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(dataTransformationId);
+        if (existingTransformation.isPresent()) {
+            datasetTransformationRepository.delete(existingTransformation.get());
+            return existingTransformation;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
 }

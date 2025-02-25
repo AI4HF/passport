@@ -188,8 +188,8 @@ public class LearningStageController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningStageService.deleteLearningStage(learningStageId);
-            if (isDeleted) {
+            Optional<LearningStage> deletedLearningStage = this.learningStageService.deleteLearningStage(learningStageId);
+            if (deletedLearningStage.isPresent()) {
                 String description = "Deletion of LearningStage " + learningStageId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -198,10 +198,10 @@ public class LearningStageController {
                         "DELETE",
                         "LearningStage",
                         learningStageId.toString(),
-                        null,
+                        deletedLearningStage.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStage.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -29,7 +29,7 @@ public class ModelDeploymentController {
 
     private final ModelDeploymentService modelDeploymentService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
@@ -205,8 +205,8 @@ public class ModelDeploymentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.modelDeploymentService.deleteModelDeployment(deploymentId);
-            if (isDeleted) {
+            Optional<ModelDeployment> deletedModelDeployment = this.modelDeploymentService.deleteModelDeployment(deploymentId);
+            if (deletedModelDeployment.isPresent()) {
                 String description = "Deletion of ModelDeployment " + deploymentId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -215,10 +215,10 @@ public class ModelDeploymentController {
                         "DELETE",
                         "ModelDeployment",
                         deploymentId.toString(),
-                        null,
+                        deletedModelDeployment.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelDeployment.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

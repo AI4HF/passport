@@ -92,12 +92,14 @@ public class LearningProcessDatasetService {
      * @param learningProcessDatasetId composite ID of LearningProcessDataset to be deleted
      * @return
      */
-    public boolean deleteLearningProcessDataset(LearningProcessDatasetId learningProcessDatasetId) {
-        if(learningProcessDatasetRepository.existsById(learningProcessDatasetId)) {
-            learningProcessDatasetRepository.deleteById(learningProcessDatasetId);
-            return true;
+    public Optional<LearningProcessDataset> deleteLearningProcessDataset(LearningProcessDatasetId learningProcessDatasetId) {
+        Optional<LearningProcessDataset> existingProcessDataset = learningProcessDatasetRepository.findById(learningProcessDatasetId);
+        if (existingProcessDataset.isPresent()) {
+            learningProcessDatasetRepository.delete(existingProcessDataset.get());
+            return existingProcessDataset;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }

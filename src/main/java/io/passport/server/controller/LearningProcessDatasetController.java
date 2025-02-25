@@ -217,8 +217,8 @@ public class LearningProcessDatasetController {
         id.setLearningProcessId(learningProcessId);
 
         try {
-            boolean isDeleted = this.learningProcessDatasetService.deleteLearningProcessDataset(id);
-            if (isDeleted) {
+            Optional<LearningProcessDataset> deletedLearningProcessDataset = this.learningProcessDatasetService.deleteLearningProcessDataset(id);
+            if (deletedLearningProcessDataset.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
                 String description = "Deletion of LearningProcessDataset with learningProcessId="
                         + learningProcessId + " and learningDatasetId=" + learningDatasetId;
@@ -229,10 +229,10 @@ public class LearningProcessDatasetController {
                         "DELETE",
                         "LearningProcessDataset",
                         compositeId,
-                        null,
+                        deletedLearningProcessDataset.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcessDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

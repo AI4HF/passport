@@ -27,7 +27,7 @@ public class StudyOrganizationController {
 
     private final StudyOrganizationService studyOrganizationService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
 
@@ -235,8 +235,8 @@ public class StudyOrganizationController {
 
         try {
             StudyOrganizationId id = new StudyOrganizationId(organizationId, studyId);
-            boolean isDeleted = this.studyOrganizationService.deleteStudyOrganization(id);
-            if (isDeleted) {
+            Optional<StudyOrganization> deletedStudyOrganization = this.studyOrganizationService.deleteStudyOrganization(id);
+            if (deletedStudyOrganization.isPresent()) {
                 String compositeId = "(" + studyId + ", " + organizationId + ")";
                 String description = "Deletion of StudyOrganization with studyId="
                         + studyId + " and organizationId=" + organizationId;
@@ -247,10 +247,10 @@ public class StudyOrganizationController {
                         "DELETE",
                         "StudyOrganization",
                         compositeId,
-                        null,
+                        deletedStudyOrganization.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudyOrganization.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

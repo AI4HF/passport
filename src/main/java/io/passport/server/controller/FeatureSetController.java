@@ -184,8 +184,8 @@ public class FeatureSetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.featureSetService.deleteFeatureSet(featureSetId);
-            if (isDeleted) {
+            Optional<FeatureSet> deletedFeatureSet = this.featureSetService.deleteFeatureSet(featureSetId);
+            if (deletedFeatureSet.isPresent()) {
                 String description = "Deletion of FeatureSet " + featureSetId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -194,10 +194,10 @@ public class FeatureSetController {
                         "DELETE",
                         "FeatureSet",
                         featureSetId.toString(),
-                        null,
+                        deletedFeatureSet.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeatureSet.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -194,8 +194,8 @@ public class DatasetTransformationStepController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
-            if (isDeleted) {
+            Optional<DatasetTransformationStep> deletedDatasetTransformationStep = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
+            if (deletedDatasetTransformationStep.isPresent()) {
                 String description = "Deletion of DatasetTransformationStep " + stepId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -204,10 +204,10 @@ public class DatasetTransformationStepController {
                         "DELETE",
                         "DatasetTransformationStep",
                         stepId.toString(),
-                        null,
+                        deletedDatasetTransformationStep.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDatasetTransformationStep.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

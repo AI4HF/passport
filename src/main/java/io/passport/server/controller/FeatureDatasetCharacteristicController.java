@@ -219,8 +219,8 @@ public class FeatureDatasetCharacteristicController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(id);
-            if (isDeleted) {
+            Optional<FeatureDatasetCharacteristic> deletedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(id);
+            if (deletedFeatureDatasetCharacteristic.isPresent()) {
                 String compositeId = "(" + datasetId + ", " + featureId + ")";
                 String description = "Deletion of FeatureDatasetCharacteristic with datasetId="
                         + datasetId + " and featureId=" + featureId;
@@ -231,10 +231,10 @@ public class FeatureDatasetCharacteristicController {
                         "DELETE",
                         "FeatureDatasetCharacteristic",
                         compositeId,
-                        null,
+                        deletedFeatureDatasetCharacteristic.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeatureDatasetCharacteristic.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

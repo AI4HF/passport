@@ -184,8 +184,8 @@ public class ImplementationController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.implementationService.deleteImplementation(implementationId);
-            if (isDeleted) {
+            Optional<Implementation> deletedImplementation = this.implementationService.deleteImplementation(implementationId);
+            if (deletedImplementation.isPresent()) {
                 String description = "Deletion of Implementation " + implementationId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -194,10 +194,10 @@ public class ImplementationController {
                         "DELETE",
                         "Implementation",
                         implementationId.toString(),
-                        null,
+                        deletedImplementation.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedImplementation.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

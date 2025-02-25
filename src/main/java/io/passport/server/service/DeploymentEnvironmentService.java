@@ -75,12 +75,13 @@ public class DeploymentEnvironmentService {
      * @param deploymentEnvironmentId ID of deployment environment to be deleted
      * @return
      */
-    public boolean deleteDeploymentEnvironment(Long deploymentEnvironmentId) {
-        if(deploymentEnvironmentRepository.existsById(deploymentEnvironmentId)) {
-            deploymentEnvironmentRepository.deleteById(deploymentEnvironmentId);
-            return true;
-        }else{
-            return false;
+    public Optional<DeploymentEnvironment> deleteDeploymentEnvironment(Long deploymentEnvironmentId) {
+        Optional<DeploymentEnvironment> existingEnvironment = deploymentEnvironmentRepository.findById(deploymentEnvironmentId);
+        if (existingEnvironment.isPresent()) {
+            deploymentEnvironmentRepository.delete(existingEnvironment.get());
+            return existingEnvironment;
+        } else {
+            return Optional.empty();
         }
     }
 

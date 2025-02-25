@@ -28,7 +28,7 @@ public class SurveyController {
 
     private final SurveyService surveyService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER);
 
@@ -187,8 +187,8 @@ public class SurveyController {
         }
 
         try {
-            boolean isDeleted = this.surveyService.deleteSurvey(surveyId);
-            if (isDeleted) {
+            Optional<Survey> deletedSurvey = this.surveyService.deleteSurvey(surveyId);
+            if (deletedSurvey.isPresent()) {
                 String description = "Deletion of Survey " + surveyId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -197,10 +197,10 @@ public class SurveyController {
                         "DELETE",
                         "Survey",
                         surveyId.toString(),
-                        null,
+                        deletedSurvey.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedSurvey.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

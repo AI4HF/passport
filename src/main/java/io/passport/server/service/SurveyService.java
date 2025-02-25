@@ -83,12 +83,14 @@ public class SurveyService {
      * @param surveyId ID of survey to be deleted
      * @return
      */
-    public boolean deleteSurvey(Long surveyId) {
-        if(surveyRepository.existsById(surveyId)) {
-            surveyRepository.deleteById(surveyId);
-            return true;
-        }else{
-            return false;
+    public Optional<Survey> deleteSurvey(Long surveyId) {
+        Optional<Survey> existingSurvey = surveyRepository.findById(surveyId);
+        if (existingSurvey.isPresent()) {
+            surveyRepository.delete(existingSurvey.get());
+            return existingSurvey;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

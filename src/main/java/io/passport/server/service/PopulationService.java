@@ -82,14 +82,16 @@ public class PopulationService {
      * @param populationId ID of population to be deleted
      * @return
      */
-    public boolean deletePopulation(Long populationId) {
-        if(populationRepository.existsById(populationId)) {
-            populationRepository.deleteById(populationId);
-            return true;
-        }else{
-            return false;
+    public Optional<Population> deletePopulation(Long populationId) {
+        Optional<Population> existingPopulation = populationRepository.findById(populationId);
+        if (existingPopulation.isPresent()) {
+            populationRepository.delete(existingPopulation.get());
+            return existingPopulation;
+        } else {
+            return Optional.empty();
         }
     }
+
 
     /**
      * Find a population by FeatureSetId
