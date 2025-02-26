@@ -22,7 +22,6 @@ import java.time.Instant;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "auditLogId")
 public class AuditLog {
-
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -35,7 +34,7 @@ public class AuditLog {
     private String personName;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "occurred_at")
     private Instant occurredAt;

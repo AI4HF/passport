@@ -147,7 +147,7 @@ public class KeycloakService {
      * @param studyId Id of the study that has been created.
      * @param ownerId Creator id.
      */
-    public void createStudyGroups(Long studyId, String ownerId) {
+    public void createStudyGroups(String studyId, String ownerId) {
         // Create the main group
         String groupName = "study-" + studyId;
         GroupRepresentation group = new GroupRepresentation();
@@ -186,7 +186,7 @@ public class KeycloakService {
      * @param personnelId the ID of the personnel (user)
      * @param roles the list of roles to assign
      */
-    public void assignPersonnelToStudyGroups(Long studyId, String personnelId, List<String> roles) {
+    public void assignPersonnelToStudyGroups(String studyId, String personnelId, List<String> roles) {
         // Retrieve all subgroups of the study
         GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
         List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);
@@ -265,12 +265,12 @@ public class KeycloakService {
     }
 
     /**
-     * Checks if the user belongs to the 'STUDY_OWNER' group for a given study.
+     * Checks if the user beStrings to the 'STUDY_OWNER' group for a given study.
      * @param studyId  the ID of the study.
      * @param userId   the ID of the user.
-     * @return true if the user belongs to the study owner group, false otherwise.
+     * @return true if the user beStrings to the study owner group, false otherwise.
      */
-    public boolean isUserInStudyOwnerGroup(Long studyId, String userId) {
+    public boolean isUserInStudyOwnerGroup(String studyId, String userId) {
         List<GroupRepresentation> groups = usersResource.get(userId).groups();
         String expectedGroupName = "study-" + studyId + "-STUDY_OWNER";  // Assuming groups are named with this convention
 
@@ -278,7 +278,7 @@ public class KeycloakService {
     }
 
     /**
-     * Check if a personnel belongs to at least one subgroup for a given study
+     * Check if a personnel beStrings to at least one subgroup for a given study
      * by searching for their ID in the members of each subgroup.
      *
      * @param studyId the ID of the study
@@ -286,7 +286,7 @@ public class KeycloakService {
      * @param roles the list of roles to check
      * @return true if the user is a member of at least one of the subgroups, false otherwise
      */
-    public boolean isUserInStudyGroupWithRoles(Long studyId, String personnelId, List<String> roles) {
+    public boolean isUserInStudyGroupWithRoles(String studyId, String personnelId, List<String> roles) {
         // Retrieve the main study group
         GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
         List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * Parameter model for Parameter Table
@@ -18,14 +19,13 @@ import jakarta.persistence.*;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "parameterId")
 public class Parameter {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "parameter_id")
-    private Long parameterId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String parameterId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "name")
     private String name;

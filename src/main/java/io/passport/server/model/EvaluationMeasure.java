@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * EvaluationMeasure model for evaluation_measure Table
@@ -17,14 +18,13 @@ import lombok.Setter;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "measureId")
 public class EvaluationMeasure {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "measure_id")
-    private Long measureId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String measureId;
 
     @Column(name = "model_id")
-    private Long modelId;
+    private String modelId;
 
     @Column(name = "name")
     private String name;

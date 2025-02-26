@@ -12,8 +12,8 @@ import java.io.Serializable;
 @Setter
 public class FeatureDatasetCharacteristicId implements Serializable {
     @Column(name = "dataset_id")
-    private Long datasetId;
+    private String datasetId;
 
     @Column(name = "feature_id")
-    private Long featureId;
+    private String featureId;
 }

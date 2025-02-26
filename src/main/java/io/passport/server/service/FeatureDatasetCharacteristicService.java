@@ -38,7 +38,7 @@ public class FeatureDatasetCharacteristicService {
      * @param datasetId ID of the Dataset
      * @return
      */
-    public List<FeatureDatasetCharacteristic> findByDatasetId(Long datasetId) {
+    public List<FeatureDatasetCharacteristic> findByDatasetId(String datasetId) {
         return featureDatasetCharacteristicRepository.findByIdDatasetId(datasetId);
     }
 
@@ -47,7 +47,7 @@ public class FeatureDatasetCharacteristicService {
      * @param featureId ID of the Feature
      * @return
      */
-    public List<FeatureDatasetCharacteristic> findByFeatureId(Long featureId) {
+    public List<FeatureDatasetCharacteristic> findByFeatureId(String featureId) {
         return featureDatasetCharacteristicRepository.findByIdFeatureId(featureId);
     }
 

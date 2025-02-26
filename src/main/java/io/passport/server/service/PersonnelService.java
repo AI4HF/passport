@@ -53,7 +53,7 @@ public class PersonnelService {
      * @param organizationId ID of the organization
      * @return
      */
-    public List<Personnel> findPersonnelByOrganizationId(Long organizationId) {
+    public List<Personnel> findPersonnelByOrganizationId(String organizationId) {
         return personnelRepository.findByOrganizationId(organizationId);
     }
 

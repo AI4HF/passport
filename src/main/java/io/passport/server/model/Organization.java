@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * Organization model for later use, implemented early to implement Study structure properly.
@@ -22,9 +23,9 @@ import jakarta.persistence.*;
         property = "organizationId")
 public class Organization {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "organization_id")
-    private Long organizationId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String organizationId;
 
     @Column(name = "name")
     private String name;

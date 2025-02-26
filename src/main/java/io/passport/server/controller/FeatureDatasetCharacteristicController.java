@@ -54,9 +54,9 @@ public class FeatureDatasetCharacteristicController {
      */
     @GetMapping
     public ResponseEntity<List<FeatureDatasetCharacteristicDTO>> getFeatureDatasetCharacteristics(
-            @RequestParam(required = false) Long datasetId,
-            @RequestParam(required = false) Long featureId,
-            @RequestParam Long studyId,
+            @RequestParam(required = false) String datasetId,
+            @RequestParam(required = false) String featureId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -100,7 +100,7 @@ public class FeatureDatasetCharacteristicController {
      */
     @PostMapping
     public ResponseEntity<?> createFeatureDatasetCharacteristic(@RequestBody FeatureDatasetCharacteristicDTO featureDatasetCharacteristicDTO,
-                                                                @RequestParam Long studyId,
+                                                                @RequestParam String studyId,
                                                                 @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -112,8 +112,8 @@ public class FeatureDatasetCharacteristicController {
 
             // Composite ID for logging
             if (saved.getId() != null) {
-                Long dsId = saved.getId().getDatasetId();
-                Long ftId = saved.getId().getFeatureId();
+                String dsId = saved.getId().getDatasetId();
+                String ftId = saved.getId().getFeatureId();
                 String compositeId = "(" + dsId + ", " + ftId + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -145,10 +145,10 @@ public class FeatureDatasetCharacteristicController {
      */
     @PutMapping
     public ResponseEntity<?> updateFeatureDatasetCharacteristic(
-            @RequestParam Long datasetId,
-            @RequestParam Long featureId,
+            @RequestParam String datasetId,
+            @RequestParam String featureId,
             @RequestBody FeatureDatasetCharacteristic updatedFeatureDatasetCharacteristic,
-            @RequestParam Long studyId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
@@ -197,9 +197,9 @@ public class FeatureDatasetCharacteristicController {
      */
     @DeleteMapping
     public ResponseEntity<?> deleteFeatureDatasetCharacteristic(
-            @RequestParam Long datasetId,
-            @RequestParam Long featureId,
-            @RequestParam Long studyId,
+            @RequestParam String datasetId,
+            @RequestParam String featureId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();

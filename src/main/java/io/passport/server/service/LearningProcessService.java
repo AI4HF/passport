@@ -37,7 +37,7 @@ public class LearningProcessService {
      * @param studyId ID of the study
      * @return
      */
-    public List<LearningProcess> getAllLearningProcessByStudyId(Long studyId) {
+    public List<LearningProcess> getAllLearningProcessByStudyId(String studyId) {
         return learningProcessRepository.findAllByStudyId(studyId);
     }
 
@@ -46,7 +46,7 @@ public class LearningProcessService {
      * @param learningProcessId ID of the learning process
      * @return
      */
-    public Optional<LearningProcess> findLearningProcessById(Long learningProcessId) {
+    public Optional<LearningProcess> findLearningProcessById(String learningProcessId) {
         return learningProcessRepository.findById(learningProcessId);
     }
 
@@ -65,7 +65,7 @@ public class LearningProcessService {
      * @param updatedLearningProcess learning process to be updated
      * @return
      */
-    public Optional<LearningProcess> updateLearningProcess(Long learningProcessId, LearningProcess updatedLearningProcess) {
+    public Optional<LearningProcess> updateLearningProcess(String learningProcessId, LearningProcess updatedLearningProcess) {
         Optional<LearningProcess> oldLearningProcess = learningProcessRepository.findById(learningProcessId);
         if (oldLearningProcess.isPresent()) {
             LearningProcess learningProcess = oldLearningProcess.get();
@@ -83,7 +83,7 @@ public class LearningProcessService {
      * @param learningProcessId ID of learning process to be deleted
      * @return
      */
-    public Optional<LearningProcess> deleteLearningProcess(Long learningProcessId) {
+    public Optional<LearningProcess> deleteLearningProcess(String learningProcessId) {
         Optional<LearningProcess> existingLearningProcess = learningProcessRepository.findById(learningProcessId);
         if (existingLearningProcess.isPresent()) {
             learningProcessRepository.delete(existingLearningProcess.get());

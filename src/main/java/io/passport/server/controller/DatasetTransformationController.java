@@ -50,7 +50,7 @@ public class DatasetTransformationController {
      * @return List of all DatasetTransformations
      */
     @GetMapping
-    public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam Long studyId,
+    public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam String studyId,
                                                                                     @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,8 +71,8 @@ public class DatasetTransformationController {
      * @return DatasetTransformation or NOT FOUND
      */
     @GetMapping("/{dataTransformationId}")
-    public ResponseEntity<?> getDatasetTransformation(@PathVariable Long dataTransformationId,
-                                                      @RequestParam Long studyId,
+    public ResponseEntity<?> getDatasetTransformation(@PathVariable String dataTransformationId,
+                                                      @RequestParam String studyId,
                                                       @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -93,7 +93,7 @@ public class DatasetTransformationController {
      */
     @PostMapping
     public ResponseEntity<?> createDatasetTransformation(@RequestBody DatasetTransformation datasetTransformation,
-                                                         @RequestParam Long studyId,
+                                                         @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -132,9 +132,9 @@ public class DatasetTransformationController {
      * @return The updated DatasetTransformation or NOT FOUND
      */
     @PutMapping("/{dataTransformationId}")
-    public ResponseEntity<?> updateDatasetTransformation(@PathVariable Long dataTransformationId,
+    public ResponseEntity<?> updateDatasetTransformation(@PathVariable String dataTransformationId,
                                                          @RequestBody DatasetTransformation updatedDatasetTransformation,
-                                                         @RequestParam Long studyId,
+                                                         @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -175,8 +175,8 @@ public class DatasetTransformationController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{dataTransformationId}")
-    public ResponseEntity<?> deleteDatasetTransformation(@PathVariable Long dataTransformationId,
-                                                         @RequestParam Long studyId,
+    public ResponseEntity<?> deleteDatasetTransformation(@PathVariable String dataTransformationId,
+                                                         @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

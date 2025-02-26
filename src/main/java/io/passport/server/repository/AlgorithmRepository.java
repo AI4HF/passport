@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * Algorithm repository for database management.
  */
 @Repository
-public interface AlgorithmRepository extends JpaRepository<Algorithm, Long> {
+public interface AlgorithmRepository extends JpaRepository<Algorithm, String> {
 }

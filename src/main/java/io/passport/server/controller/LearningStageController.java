@@ -51,8 +51,8 @@ public class LearningStageController {
      */
     @GetMapping
     public ResponseEntity<List<LearningStage>> getLearningStages(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long learningProcessId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String learningProcessId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -75,8 +75,8 @@ public class LearningStageController {
      * @return The LearningStage or NOT_FOUND
      */
     @GetMapping("/{learningStageId}")
-    public ResponseEntity<?> getLearningStage(@RequestParam Long studyId,
-                                              @PathVariable Long learningStageId,
+    public ResponseEntity<?> getLearningStage(@RequestParam String studyId,
+                                              @PathVariable String learningStageId,
                                               @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -95,7 +95,7 @@ public class LearningStageController {
      * @return Created LearningStage or BAD_REQUEST on error
      */
     @PostMapping
-    public ResponseEntity<?> createLearningStage(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningStage(@RequestParam String studyId,
                                                  @RequestBody LearningStage learningStage,
                                                  @AuthenticationPrincipal Jwt principal) {
         try {
@@ -134,8 +134,8 @@ public class LearningStageController {
      * @return Updated LearningStage or NOT_FOUND
      */
     @PutMapping("/{learningStageId}")
-    public ResponseEntity<?> updateLearningStage(@RequestParam Long studyId,
-                                                 @PathVariable Long learningStageId,
+    public ResponseEntity<?> updateLearningStage(@RequestParam String studyId,
+                                                 @PathVariable String learningStageId,
                                                  @RequestBody LearningStage updatedLearningStage,
                                                  @AuthenticationPrincipal Jwt principal) {
         try {
@@ -176,8 +176,8 @@ public class LearningStageController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningStageId}")
-    public ResponseEntity<?> deleteLearningStage(@RequestParam Long studyId,
-                                                 @PathVariable Long learningStageId,
+    public ResponseEntity<?> deleteLearningStage(@RequestParam String studyId,
+                                                 @PathVariable String learningStageId,
                                                  @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

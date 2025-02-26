@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.Instant;
 
 /**
@@ -19,17 +21,16 @@ import java.time.Instant;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "modelId")
 public class Model {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "model_id")
-    private Long modelId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String modelId;
 
     @Column(name = "learning_process_id")
-    private Long learningProcessId;
+    private String learningProcessId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "name")
     private String name;
@@ -47,7 +48,7 @@ public class Model {
     private String productIdentifier;
 
     @Column(name = "owner")
-    private Long owner;
+    private String owner;
 
     @Column(name = "trl_level")
     private String trlLevel;

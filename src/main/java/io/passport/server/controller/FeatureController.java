@@ -52,8 +52,8 @@ public class FeatureController {
      */
     @GetMapping
     public ResponseEntity<List<Feature>> getFeatures(
-            @RequestParam(required = false) Long featuresetId,
-            @RequestParam Long studyId,
+            @RequestParam(required = false) String featuresetId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -78,8 +78,8 @@ public class FeatureController {
      * @return The requested Feature or NOT FOUND
      */
     @GetMapping("/{featureId}")
-    public ResponseEntity<?> getFeature(@PathVariable Long featureId,
-                                        @RequestParam Long studyId,
+    public ResponseEntity<?> getFeature(@PathVariable String featureId,
+                                        @RequestParam String studyId,
                                         @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -100,7 +100,7 @@ public class FeatureController {
      */
     @PostMapping
     public ResponseEntity<?> createFeature(@RequestBody Feature feature,
-                                           @RequestParam Long studyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -138,9 +138,9 @@ public class FeatureController {
      * @return Updated Feature or NOT_FOUND
      */
     @PutMapping("/{featureId}")
-    public ResponseEntity<?> updateFeature(@PathVariable Long featureId,
+    public ResponseEntity<?> updateFeature(@PathVariable String featureId,
                                            @RequestBody Feature updatedFeature,
-                                           @RequestParam Long studyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -180,8 +180,8 @@ public class FeatureController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureId}")
-    public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,
-                                           @RequestParam Long studyId,
+    public ResponseEntity<?> deleteFeature(@PathVariable String featureId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

@@ -36,7 +36,7 @@ public class ModelService {
      * Get all models by studyId
      * @param studyId ID of the study
      */
-    public List<Model> getAllModelsByStudyId(Long studyId){
+    public List<Model> getAllModelsByStudyId(String studyId){
         return modelRepository.findByStudyId(studyId);
     }
 
@@ -45,7 +45,7 @@ public class ModelService {
      * @param modelId ID of the model
      * @return
      */
-    public Optional<Model> findModelById(Long modelId) {
+    public Optional<Model> findModelById(String modelId) {
         return modelRepository.findById(modelId);
     }
 
@@ -66,7 +66,7 @@ public class ModelService {
      * @param updatedModel model to be updated
      * @return
      */
-    public Optional<Model> updateModel(Long modelId, Model updatedModel) {
+    public Optional<Model> updateModel(String modelId, Model updatedModel) {
         Optional<Model> oldModel = modelRepository.findById(modelId);
         if (oldModel.isPresent()) {
             Model model = oldModel.get();
@@ -100,7 +100,7 @@ public class ModelService {
      * @param modelId ID of model to be deleted
      * @return
      */
-    public Optional<Model> deleteModel(Long modelId) {
+    public Optional<Model> deleteModel(String modelId) {
         Optional<Model> existingModel = modelRepository.findById(modelId);
         if (existingModel.isPresent()) {
             modelRepository.delete(existingModel.get());

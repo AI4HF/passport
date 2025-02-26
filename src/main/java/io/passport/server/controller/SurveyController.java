@@ -50,8 +50,8 @@ public class SurveyController {
      * @return Survey or 403 if unauthorized
      */
     @GetMapping("/{surveyId}")
-    public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") Long surveyId,
-                                           @RequestParam Long studyId,
+    public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") String surveyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -74,7 +74,7 @@ public class SurveyController {
      * @return List of surveys
      */
     @GetMapping
-    public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") Long studyId,
+    public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") String studyId,
                                                    @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -94,7 +94,7 @@ public class SurveyController {
      */
     @PostMapping
     public ResponseEntity<?> createSurvey(@RequestBody Survey survey,
-                                          @RequestParam Long studyId,
+                                          @RequestParam String studyId,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -133,8 +133,8 @@ public class SurveyController {
      * @return Updated Survey or NOT_FOUND
      */
     @PutMapping("/{surveyId}")
-    public ResponseEntity<?> updateSurvey(@PathVariable Long surveyId,
-                                          @RequestParam Long studyId,
+    public ResponseEntity<?> updateSurvey(@PathVariable String surveyId,
+                                          @RequestParam String studyId,
                                           @RequestBody Survey updatedSurvey,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -174,8 +174,8 @@ public class SurveyController {
      * @return No content if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{surveyId}")
-    public ResponseEntity<?> deleteSurvey(@PathVariable Long surveyId,
-                                          @RequestParam Long studyId,
+    public ResponseEntity<?> deleteSurvey(@PathVariable String surveyId,
+                                          @RequestParam String studyId,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

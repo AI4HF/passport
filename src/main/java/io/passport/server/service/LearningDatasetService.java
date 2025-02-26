@@ -38,7 +38,7 @@ public class LearningDatasetService {
      * @param studyId ID of the study
      * @return
      */
-    public List<LearningDataset> getAllLearningDatasetsByStudyId(Long studyId) {
+    public List<LearningDataset> getAllLearningDatasetsByStudyId(String studyId) {
         return learningDatasetRepository.findAllByStudyId(studyId);
     }
 
@@ -47,7 +47,7 @@ public class LearningDatasetService {
      * @param dataTransformationId ID of the DataTransformation
      * @return
      */
-    public List<LearningDataset> findByDataTransformationId(Long dataTransformationId) {
+    public List<LearningDataset> findByDataTransformationId(String dataTransformationId) {
         return learningDatasetRepository.findByDataTransformationId(dataTransformationId);
     }
 
@@ -56,7 +56,7 @@ public class LearningDatasetService {
      * @param datasetId ID of the Dataset
      * @return
      */
-    public List<LearningDataset> findByDatasetId(Long datasetId) {
+    public List<LearningDataset> findByDatasetId(String datasetId) {
         return learningDatasetRepository.findByDatasetId(datasetId);
     }
 
@@ -65,7 +65,7 @@ public class LearningDatasetService {
      * @param learningDatasetId ID of the LearningDataset
      * @return
      */
-    public Optional<LearningDataset> findLearningDatasetByLearningDatasetId(Long learningDatasetId) {
+    public Optional<LearningDataset> findLearningDatasetByLearningDatasetId(String learningDatasetId) {
         return learningDatasetRepository.findById(learningDatasetId);
     }
 
@@ -74,7 +74,7 @@ public class LearningDatasetService {
      * @param learningDatasetId ID of LearningDataset to be deleted
      * @return
      */
-    public Optional<LearningDataset> deleteLearningDataset(Long learningDatasetId) {
+    public Optional<LearningDataset> deleteLearningDataset(String learningDatasetId) {
         Optional<LearningDataset> existingLearningDataset = learningDatasetRepository.findById(learningDatasetId);
         if (existingLearningDataset.isPresent()) {
             learningDatasetRepository.delete(existingLearningDataset.get());
@@ -96,7 +96,7 @@ public class LearningDatasetService {
         request.getLearningDataset().setDataTransformationId(savedTransformation.getDataTransformationId());
 
         // Find related study and set studyId field of the learning dataset
-        Long relatedStudyId = this.studyService.findRelatedStudyByDatasetId(request.getLearningDataset().getDatasetId()).getId();
+        String relatedStudyId = this.studyService.findRelatedStudyByDatasetId(request.getLearningDataset().getDatasetId()).getId();
         request.getLearningDataset().setStudyId(relatedStudyId);
 
         LearningDataset savedLearningDataset = learningDatasetRepository.save(request.getLearningDataset());

@@ -50,7 +50,7 @@ public class ImplementationController {
      * @return List of Implementation objects
      */
     @GetMapping
-    public ResponseEntity<List<Implementation>> getAllImplementations(@RequestParam Long studyId,
+    public ResponseEntity<List<Implementation>> getAllImplementations(@RequestParam String studyId,
                                                                       @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,8 +71,8 @@ public class ImplementationController {
      * @return Implementation or NOT_FOUND
      */
     @GetMapping("/{implementationId}")
-    public ResponseEntity<?> getImplementation(@RequestParam Long studyId,
-                                               @PathVariable Long implementationId,
+    public ResponseEntity<?> getImplementation(@RequestParam String studyId,
+                                               @PathVariable String implementationId,
                                                @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -91,7 +91,7 @@ public class ImplementationController {
      * @return Created Implementation or BAD_REQUEST on error
      */
     @PostMapping
-    public ResponseEntity<?> createImplementation(@RequestParam Long studyId,
+    public ResponseEntity<?> createImplementation(@RequestParam String studyId,
                                                   @RequestBody Implementation implementation,
                                                   @AuthenticationPrincipal Jwt principal) {
         try {
@@ -130,8 +130,8 @@ public class ImplementationController {
      * @return Updated Implementation or NOT_FOUND
      */
     @PutMapping("/{implementationId}")
-    public ResponseEntity<?> updateImplementation(@RequestParam Long studyId,
-                                                  @PathVariable Long implementationId,
+    public ResponseEntity<?> updateImplementation(@RequestParam String studyId,
+                                                  @PathVariable String implementationId,
                                                   @RequestBody Implementation updatedImplementation,
                                                   @AuthenticationPrincipal Jwt principal) {
         try {
@@ -172,8 +172,8 @@ public class ImplementationController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{implementationId}")
-    public ResponseEntity<?> deleteImplementation(@RequestParam Long studyId,
-                                                  @PathVariable Long implementationId,
+    public ResponseEntity<?> deleteImplementation(@RequestParam String studyId,
+                                                  @PathVariable String implementationId,
                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

@@ -37,7 +37,7 @@ public class ModelDeploymentService {
      * @param studyId ID of the study
      * @return
      */
-    public List<ModelDeployment> getAllModelDeploymentsByStudyId(Long studyId) {
+    public List<ModelDeployment> getAllModelDeploymentsByStudyId(String studyId) {
         return modelDeploymentRepository.findAllByStudyId(studyId);
     }
 
@@ -48,7 +48,7 @@ public class ModelDeploymentService {
      * @param environmentId ID of the deployment environment
      * @return
      */
-    public Optional<ModelDeployment> findModelDeploymentByEnvironmentId(Long environmentId) {
+    public Optional<ModelDeployment> findModelDeploymentByEnvironmentId(String environmentId) {
         return modelDeploymentRepository.findByEnvironmentId(environmentId);
     }
 
@@ -58,7 +58,7 @@ public class ModelDeploymentService {
      * @param deploymentId ID of the model deployment
      * @return
      */
-    public Optional<ModelDeployment> findModelDeploymentByDeploymentId(Long deploymentId) {
+    public Optional<ModelDeployment> findModelDeploymentByDeploymentId(String deploymentId) {
         return modelDeploymentRepository.findById(deploymentId);
     }
 
@@ -83,7 +83,7 @@ public class ModelDeploymentService {
      * @param updatedModelDeployment model deployment to be updated
      * @return
      */
-    public Optional<ModelDeployment> updateModelDeployment(Long deploymentId, ModelDeployment updatedModelDeployment) {
+    public Optional<ModelDeployment> updateModelDeployment(String deploymentId, ModelDeployment updatedModelDeployment) {
         Optional<ModelDeployment> oldModelDeployment = modelDeploymentRepository.findById(deploymentId);
         if (oldModelDeployment.isPresent()) {
             ModelDeployment modelDeployment = oldModelDeployment.get();
@@ -109,7 +109,7 @@ public class ModelDeploymentService {
      * @param deploymentId ID of model deployment to be deleted
      * @return
      */
-    public Optional<ModelDeployment> deleteModelDeployment(Long deploymentId) {
+    public Optional<ModelDeployment> deleteModelDeployment(String deploymentId) {
         Optional<ModelDeployment> existingDeployment = modelDeploymentRepository.findById(deploymentId);
         if (existingDeployment.isPresent()) {
             modelDeploymentRepository.delete(existingDeployment.get());

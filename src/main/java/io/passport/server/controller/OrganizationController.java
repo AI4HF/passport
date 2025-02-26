@@ -87,7 +87,7 @@ public class OrganizationController {
      * @return
      */
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(@PathVariable Long organizationId, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<?> getOrganizationById(@PathVariable String organizationId, @AuthenticationPrincipal Jwt principal) {
 
         // Check role of the user
         if(!this.roleCheckerService.hasAnyRole(principal, allowedRoles)){
@@ -137,7 +137,7 @@ public class OrganizationController {
      * @return
      */
     @PutMapping("/{organizationId}")
-    public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId,
+    public ResponseEntity<?> updateOrganization(@PathVariable String organizationId,
                                                 @RequestBody Organization updatedOrganization,
                                                 @AuthenticationPrincipal Jwt principal) {
         try{
@@ -168,7 +168,7 @@ public class OrganizationController {
      * @return
      */
     @DeleteMapping("/{organizationId}")
-    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId,
+    public ResponseEntity<?> deleteOrganization(@PathVariable String organizationId,
                                                 @AuthenticationPrincipal Jwt principal) {
         try{
 

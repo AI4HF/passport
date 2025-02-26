@@ -52,7 +52,7 @@ public class StudyController {
      * @return List of studies or single
      */
     @GetMapping
-    public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) Long studyId,
+    public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) String studyId,
                                                   @AuthenticationPrincipal Jwt principal) {
 
         List<Study> studies;
@@ -79,7 +79,7 @@ public class StudyController {
      * @return Study or 403 if unauthorized
      */
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> getStudy(@PathVariable String studyId,
                                       @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
@@ -147,7 +147,7 @@ public class StudyController {
      * @return Updated Study or NOT_FOUND
      */
     @PutMapping("/{studyId}")
-    public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> updateStudy(@PathVariable String studyId,
                                          @RequestBody Study updatedStudy,
                                          @AuthenticationPrincipal Jwt principal) {
 
@@ -187,7 +187,7 @@ public class StudyController {
      * @return No content or NOT_FOUND
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> deleteStudy(@PathVariable String studyId,
                                          @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
