@@ -93,12 +93,14 @@ public class ModelParameterService {
      * @param modelParameterId composite ID of ModelParameter to be deleted
      * @return
      */
-    public boolean deleteModelParameter(ModelParameterId modelParameterId) {
-        if(modelParameterRepository.existsById(modelParameterId)) {
-            modelParameterRepository.deleteById(modelParameterId);
-            return true;
+    public Optional<ModelParameter> deleteModelParameter(ModelParameterId modelParameterId) {
+        Optional<ModelParameter> existingModelParameter = modelParameterRepository.findById(modelParameterId);
+        if (existingModelParameter.isPresent()) {
+            modelParameterRepository.delete(existingModelParameter.get());
+            return existingModelParameter;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }
