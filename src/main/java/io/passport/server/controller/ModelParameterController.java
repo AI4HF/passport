@@ -113,6 +113,8 @@ public class ModelParameterController {
                         + mId + " and parameterId=" + pId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
                         "CREATE",
                         "ModelParameter",
                         compositeId,
@@ -161,6 +163,8 @@ public class ModelParameterController {
                             + modelId + " and parameterId=" + parameterId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
+                            principal.getClaim("preferred_username"),
+                            studyId,
                             "UPDATE",
                             "ModelParameter",
                             compositeId,
@@ -201,20 +205,22 @@ public class ModelParameterController {
         ModelParameterId id = new ModelParameterId(modelId, parameterId);
 
         try {
-            boolean isDeleted = this.modelParameterService.deleteModelParameter(id);
-            if (isDeleted) {
+            Optional<ModelParameter> deletedModelParameter = this.modelParameterService.deleteModelParameter(id);
+            if (deletedModelParameter.isPresent()) {
                 String compositeId = "(" + modelId + ", " + parameterId + ")";
                 String description = "Deletion of ModelParameter with modelId="
                         + modelId + " and parameterId=" + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
+                        principal.getClaim("preferred_username"),
+                        studyId,
                         "DELETE",
                         "ModelParameter",
                         compositeId,
-                        null,
+                        deletedModelParameter.get(),
                         description
                 );
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
