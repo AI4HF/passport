@@ -37,7 +37,7 @@ public class DatasetTransformationService {
      * @param dataTransformationId ID of the DatasetTransformation
      * @return
      */
-    public Optional<DatasetTransformation> findDatasetTransformationByDataTransformationId(Long dataTransformationId) {
+    public Optional<DatasetTransformation> findDatasetTransformationByDataTransformationId(String dataTransformationId) {
         return datasetTransformationRepository.findById(dataTransformationId);
     }
 
@@ -56,7 +56,7 @@ public class DatasetTransformationService {
      * @param updatedDatasetTransformation DatasetTransformation to be updated
      * @return
      */
-    public Optional<DatasetTransformation> updateDatasetTransformation(Long dataTransformationId, DatasetTransformation updatedDatasetTransformation) {
+    public Optional<DatasetTransformation> updateDatasetTransformation(String dataTransformationId, DatasetTransformation updatedDatasetTransformation) {
         Optional<DatasetTransformation> oldDatasetTransformation = datasetTransformationRepository.findById(dataTransformationId);
         if (oldDatasetTransformation.isPresent()) {
             DatasetTransformation datasetTransformation = oldDatasetTransformation.get();
@@ -74,7 +74,7 @@ public class DatasetTransformationService {
      * @param dataTransformationId ID of DatasetTransformation to be deleted
      * @return
      */
-    public Optional<DatasetTransformation> deleteDatasetTransformation(Long dataTransformationId) {
+    public Optional<DatasetTransformation> deleteDatasetTransformation(String dataTransformationId) {
         Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(dataTransformationId);
         if (existingTransformation.isPresent()) {
             datasetTransformationRepository.delete(existingTransformation.get());

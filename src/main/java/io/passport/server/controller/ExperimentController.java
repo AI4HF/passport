@@ -48,7 +48,7 @@ public class ExperimentController {
      * @return List of experiments or FORBIDDEN if not authorized
      */
     @GetMapping
-    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") Long studyId,
+    public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") String studyId,
                                                                     @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -66,7 +66,7 @@ public class ExperimentController {
      * @return List of newly created experiments
      */
     @PostMapping
-    public ResponseEntity<?> createExperiments(@RequestParam Long studyId,
+    public ResponseEntity<?> createExperiments(@RequestParam String studyId,
                                                @RequestBody List<Experiment> experiments,
                                                @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

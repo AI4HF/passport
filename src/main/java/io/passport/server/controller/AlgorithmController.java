@@ -45,7 +45,7 @@ public class AlgorithmController {
 
     @GetMapping
     public ResponseEntity<List<Algorithm>> getAllAlgorithms(
-            @RequestParam Long studyId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -60,8 +60,8 @@ public class AlgorithmController {
 
     @GetMapping("/{algorithmId}")
     public ResponseEntity<?> getAlgorithm(
-            @PathVariable Long algorithmId,
-            @RequestParam Long studyId,
+            @PathVariable String algorithmId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -76,7 +76,7 @@ public class AlgorithmController {
     @PostMapping
     public ResponseEntity<?> createAlgorithm(
             @RequestBody Algorithm algorithm,
-            @RequestParam Long studyId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         try {
@@ -113,9 +113,9 @@ public class AlgorithmController {
 
     @PutMapping("/{algorithmId}")
     public ResponseEntity<?> updateAlgorithm(
-            @PathVariable Long algorithmId,
+            @PathVariable String algorithmId,
             @RequestBody Algorithm updatedAlgorithm,
-            @RequestParam Long studyId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         try {
@@ -152,8 +152,8 @@ public class AlgorithmController {
 
     @DeleteMapping("/{algorithmId}")
     public ResponseEntity<?> deleteAlgorithm(
-            @PathVariable Long algorithmId,
-            @RequestParam Long studyId,
+            @PathVariable String algorithmId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         try {

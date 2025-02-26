@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "survey")
@@ -15,14 +16,13 @@ import jakarta.persistence.*;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "surveyId")
 public class Survey {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "survey_id")
-    private Long surveyId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String surveyId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "question")
     private String question;

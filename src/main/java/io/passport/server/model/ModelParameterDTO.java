@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ModelParameterDTO {
-    private Long modelId;
-    private Long parameterId;
+    private String modelId;
+    private String parameterId;
     private String type;
     private String value;
 

@@ -37,7 +37,7 @@ public class StudyOrganizationService {
      * @param studyId ID of the study
      * @return
      */
-    public List<Organization> findOrganizationsByStudyId(Long studyId) {
+    public List<Organization> findOrganizationsByStudyId(String studyId) {
         return this.studyOrganizationRepository.findOrganizationsByStudyId(studyId);
     }
 
@@ -55,7 +55,7 @@ public class StudyOrganizationService {
      * @param organizationId ID of the organization
      * @return
      */
-    public List<Study> findStudiesByOrganizationId(Long organizationId) {
+    public List<Study> findStudiesByOrganizationId(String organizationId) {
         return this.studyOrganizationRepository.findStudiesByOrganizationId(organizationId);
     }
 

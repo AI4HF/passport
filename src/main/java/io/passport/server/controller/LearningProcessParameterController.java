@@ -56,9 +56,9 @@ public class LearningProcessParameterController {
      */
     @GetMapping
     public ResponseEntity<List<LearningProcessParameterDTO>> getLearningProcessParameters(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long learningProcessId,
-            @RequestParam(required = false) Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String learningProcessId,
+            @RequestParam(required = false) String parameterId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -98,7 +98,7 @@ public class LearningProcessParameterController {
      * @return Created LearningProcessParameter
      */
     @PostMapping
-    public ResponseEntity<?> createLearningProcessParameter(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningProcessParameter(@RequestParam String studyId,
                                                             @RequestBody LearningProcessParameterDTO learningProcessParameterDTO,
                                                             @AuthenticationPrincipal Jwt principal) {
         try {
@@ -110,8 +110,8 @@ public class LearningProcessParameterController {
             LearningProcessParameter saved = this.learningProcessParameterService.saveLearningProcessParameter(entity);
 
             if (saved.getId() != null) {
-                Long lpId = saved.getId().getLearningProcessId();
-                Long pId = saved.getId().getParameterId();
+                String lpId = saved.getId().getLearningProcessId();
+                String pId = saved.getId().getParameterId();
                 String compositeId = "(" + lpId + ", " + pId + ")";
                 String description = "Creation of LearningProcessParameter with learningProcessId="
                         + lpId + " and parameterId=" + pId;
@@ -146,9 +146,9 @@ public class LearningProcessParameterController {
      */
     @PutMapping
     public ResponseEntity<?> updateLearningProcessParameter(
-            @RequestParam Long studyId,
-            @RequestParam Long learningProcessId,
-            @RequestParam Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam String learningProcessId,
+            @RequestParam String parameterId,
             @RequestBody LearningProcessParameter updatedLearningProcessParameter,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -201,9 +201,9 @@ public class LearningProcessParameterController {
      */
     @DeleteMapping
     public ResponseEntity<?> deleteLearningProcessParameter(
-            @RequestParam Long studyId,
-            @RequestParam Long learningProcessId,
-            @RequestParam Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam String learningProcessId,
+            @RequestParam String parameterId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

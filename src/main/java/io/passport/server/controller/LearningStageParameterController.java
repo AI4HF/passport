@@ -56,9 +56,9 @@ public class LearningStageParameterController {
      */
     @GetMapping
     public ResponseEntity<List<LearningStageParameterDTO>> getLearningStageParameters(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long learningStageId,
-            @RequestParam(required = false) Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String learningStageId,
+            @RequestParam(required = false) String parameterId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -98,7 +98,7 @@ public class LearningStageParameterController {
      * @return Created LearningStageParameter
      */
     @PostMapping
-    public ResponseEntity<?> createLearningStageParameter(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningStageParameter(@RequestParam String studyId,
                                                           @RequestBody LearningStageParameterDTO learningStageParameterDTO,
                                                           @AuthenticationPrincipal Jwt principal) {
         try {
@@ -110,8 +110,8 @@ public class LearningStageParameterController {
             LearningStageParameter saved = this.learningStageParameterService.saveLearningStageParameter(entity);
 
             if (saved.getId() != null) {
-                Long lsId = saved.getId().getLearningStageId();
-                Long pId = saved.getId().getParameterId();
+                String lsId = saved.getId().getLearningStageId();
+                String pId = saved.getId().getParameterId();
                 String compositeId = "(" + lsId + ", " + pId + ")";
                 String description = "Creation of LearningStageParameter with learningStageId="
                         + lsId + " and parameterId=" + pId;
@@ -146,9 +146,9 @@ public class LearningStageParameterController {
      */
     @PutMapping
     public ResponseEntity<?> updateLearningStageParameter(
-            @RequestParam Long studyId,
-            @RequestParam Long learningStageId,
-            @RequestParam Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam String learningStageId,
+            @RequestParam String parameterId,
             @RequestBody LearningStageParameter updatedLearningStageParameter,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -200,9 +200,9 @@ public class LearningStageParameterController {
      * @return No content or NOT_FOUND
      */
     @DeleteMapping
-    public ResponseEntity<?> deleteLearningStageParameter(@RequestParam Long studyId,
-                                                          @RequestParam Long learningStageId,
-                                                          @RequestParam Long parameterId,
+    public ResponseEntity<?> deleteLearningStageParameter(@RequestParam String studyId,
+                                                          @RequestParam String learningStageId,
+                                                          @RequestParam String parameterId,
                                                           @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

@@ -56,7 +56,7 @@ public class PersonnelController {
      * @return
      */
     @GetMapping()
-    public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<Long> organizationId,
+    public ResponseEntity<List<Personnel>> getPersonnelByOrganizationId(@RequestParam Optional<String> organizationId,
                                                                         @AuthenticationPrincipal Jwt principal) {
 
         List<Personnel> personnel = organizationId
@@ -64,7 +64,7 @@ public class PersonnelController {
                 .orElseGet(this.personnelService::getAllPersonnel);
 
 
-        long totalCount = personnel.size();
+        String totalCount = personnel.size();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));

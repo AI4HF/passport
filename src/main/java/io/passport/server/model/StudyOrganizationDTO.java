@@ -17,9 +17,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class StudyOrganizationDTO {
 
-    private Long organizationId;
+    private String organizationId;
 
-    private Long studyId;
+    private String studyId;
 
     private String personnelId;
 

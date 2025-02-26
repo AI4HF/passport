@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface LearningProcessDatasetRepository extends JpaRepository<LearningProcessDataset, LearningProcessDatasetId> {
-    List<LearningProcessDataset> findByIdLearningProcessId(Long learningProcessId);
-    List<LearningProcessDataset> findByIdLearningDatasetId(Long learningDatasetId);
+    List<LearningProcessDataset> findByIdLearningProcessId(String learningProcessId);
+    List<LearningProcessDataset> findByIdLearningDatasetId(String learningDatasetId);
 }
 

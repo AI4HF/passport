@@ -24,7 +24,7 @@ public class Personnel {
     private String personId;
 
     @Column(name = "organization_id")
-    private Long organizationId;
+    private String organizationId;
 
     @Column(name = "first_name")
     private String firstName;

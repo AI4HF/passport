@@ -50,7 +50,7 @@ public class DatasetController {
      * @return List of datasets, or FORBIDDEN if user not authorized
      */
     @GetMapping
-    public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam String studyId,
                                                                  @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -70,8 +70,8 @@ public class DatasetController {
      * @return Dataset entity or NOT FOUND
      */
     @GetMapping("/{datasetId}")
-    public ResponseEntity<?> getDataset(@PathVariable Long datasetId,
-                                        @RequestParam Long studyId,
+    public ResponseEntity<?> getDataset(@PathVariable String datasetId,
+                                        @RequestParam String studyId,
                                         @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -90,7 +90,7 @@ public class DatasetController {
      */
     @PostMapping
     public ResponseEntity<?> createDataset(@RequestBody Dataset dataset,
-                                           @RequestParam Long studyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -102,7 +102,7 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                String recordId = savedDataset.getDatasetId().toString();
+                String recordId = savedDataset.getDatasetId();
                 String description = "Creation of Dataset " + recordId;
                 auditLogBookService.createAuditLog(
                         personnelId,
@@ -134,9 +134,9 @@ public class DatasetController {
      * @return Updated Dataset or NOT FOUND if not present
      */
     @PutMapping("/{datasetId}")
-    public ResponseEntity<?> updateDataset(@PathVariable Long datasetId,
+    public ResponseEntity<?> updateDataset(@PathVariable String datasetId,
                                            @RequestBody Dataset updatedDataset,
-                                           @RequestParam Long studyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -148,7 +148,7 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                String recordId = savedDataset.getDatasetId().toString();
+                String recordId = savedDataset.getDatasetId();
                 String description = "Update of Dataset " + recordId;
                 auditLogBookService.createAuditLog(
                         personnelId,
@@ -179,8 +179,8 @@ public class DatasetController {
      * @return NO_CONTENT on success, NOT FOUND otherwise
      */
     @DeleteMapping("/{datasetId}")
-    public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,
-                                           @RequestParam Long studyId,
+    public ResponseEntity<?> deleteDataset(@PathVariable String datasetId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -196,7 +196,7 @@ public class DatasetController {
                         studyId,
                         "DELETE",
                         "Dataset",
-                        datasetId.toString(),
+                        datasetId,
                         deletedDataset.get(),
                         description
                 );

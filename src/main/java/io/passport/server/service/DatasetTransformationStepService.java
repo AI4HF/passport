@@ -38,7 +38,7 @@ public class DatasetTransformationStepService {
      * @param dataTransformationId ID of the DatasetTransformation
      * @return
      */
-    public List<DatasetTransformationStep> findByDataTransformationId(Long dataTransformationId) {
+    public List<DatasetTransformationStep> findByDataTransformationId(String dataTransformationId) {
         return datasetTransformationStepRepository.findByDataTransformationId(dataTransformationId);
     }
 
@@ -47,7 +47,7 @@ public class DatasetTransformationStepService {
      * @param stepId ID of the DatasetTransformationStep
      * @return
      */
-    public Optional<DatasetTransformationStep> findDatasetTransformationStepByStepId(Long stepId) {
+    public Optional<DatasetTransformationStep> findDatasetTransformationStepByStepId(String stepId) {
         return datasetTransformationStepRepository.findById(stepId);
     }
 
@@ -68,7 +68,7 @@ public class DatasetTransformationStepService {
      * @param updatedDatasetTransformationStep DatasetTransformationStep to be updated
      * @return
      */
-    public Optional<DatasetTransformationStep> updateDatasetTransformationStep(Long stepId, DatasetTransformationStep updatedDatasetTransformationStep) {
+    public Optional<DatasetTransformationStep> updateDatasetTransformationStep(String stepId, DatasetTransformationStep updatedDatasetTransformationStep) {
         Optional<DatasetTransformationStep> oldDatasetTransformationStep = datasetTransformationStepRepository.findById(stepId);
         if (oldDatasetTransformationStep.isPresent()) {
             DatasetTransformationStep datasetTransformationStep = oldDatasetTransformationStep.get();
@@ -92,7 +92,7 @@ public class DatasetTransformationStepService {
      * @param stepId ID of DatasetTransformationStep to be deleted
      * @return
      */
-    public Optional<DatasetTransformationStep> deleteDatasetTransformationStep(Long stepId) {
+    public Optional<DatasetTransformationStep> deleteDatasetTransformationStep(String stepId) {
         Optional<DatasetTransformationStep> existingStep = datasetTransformationStepRepository.findById(stepId);
         if (existingStep.isPresent()) {
             datasetTransformationStepRepository.delete(existingStep.get());

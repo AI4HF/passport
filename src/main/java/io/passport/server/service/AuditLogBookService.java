@@ -38,7 +38,7 @@ public class AuditLogBookService {
      * @param passportId Connected passport id.
      * @return
      */
-    public List<AuditLogBook> getAuditLogBooksByPassportId(Long passportId) {
+    public List<AuditLogBook> getAuditLogBooksByPassportId(String passportId) {
         return auditLogBookRepository.findByIdPassportId(passportId);
     }
 
@@ -47,7 +47,7 @@ public class AuditLogBookService {
      * @param passportId Connected passport id.
      * @param studyId Connected study id.
      */
-    public void createAuditLogBookEntries(Long passportId, Long studyId) {
+    public void createAuditLogBookEntries(String passportId, String studyId) {
         List<AuditLog> relatedAuditLogs = auditLogRepository.findAll()
                 .stream()
                 .filter(log -> isRelatedToPassport(log, studyId))
@@ -65,7 +65,7 @@ public class AuditLogBookService {
      * @param studyId Compared study id.
      * @return
      */
-    private boolean isRelatedToPassport(AuditLog auditLog, Long studyId) {
+    private boolean isRelatedToPassport(AuditLog auditLog, String studyId) {
         return auditLog.getStudyId().equals(studyId);
     }
 
@@ -94,7 +94,7 @@ public class AuditLogBookService {
     public AuditLog createAuditLog(
             String userId,
             String username,
-            Long studyId,
+            String studyId,
             String actionType,
             String affectedRelation,
             String recordId,

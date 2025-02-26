@@ -34,7 +34,7 @@ public class PopulationService {
      * @param populationId ID of the population
      * @return
      */
-    public Optional<Population> findPopulationById(Long populationId) {
+    public Optional<Population> findPopulationById(String populationId) {
         return populationRepository.findById(populationId);
     }
 
@@ -43,7 +43,7 @@ public class PopulationService {
      * @param studyId ID of the study
      * @return
      */
-    public List<Population> findPopulationByStudyId(Long studyId) {
+    public List<Population> findPopulationByStudyId(String studyId) {
         return populationRepository.findByStudyId(studyId);
     }
 
@@ -62,7 +62,7 @@ public class PopulationService {
      * @param updatedPopulation population to be updated
      * @return
      */
-    public Optional<Population> updatePopulation(Long populationId, Population updatedPopulation) {
+    public Optional<Population> updatePopulation(String populationId, Population updatedPopulation) {
         Optional<Population> oldPopulation = populationRepository.findById(populationId);
         if (oldPopulation.isPresent()) {
             Population population = oldPopulation.get();
@@ -82,7 +82,7 @@ public class PopulationService {
      * @param populationId ID of population to be deleted
      * @return
      */
-    public Optional<Population> deletePopulation(Long populationId) {
+    public Optional<Population> deletePopulation(String populationId) {
         Optional<Population> existingPopulation = populationRepository.findById(populationId);
         if (existingPopulation.isPresent()) {
             populationRepository.delete(existingPopulation.get());
@@ -98,7 +98,7 @@ public class PopulationService {
      * @param featureSetId ID of the featureSet
      * @return
      */
-    public List<Population> getPopulationByFeatureSetId(Long featureSetId) {
+    public List<Population> getPopulationByFeatureSetId(String featureSetId) {
         return this.populationRepository.findByFeatureSetId(featureSetId);
     }
 

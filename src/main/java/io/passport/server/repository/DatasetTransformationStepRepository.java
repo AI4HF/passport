@@ -10,7 +10,7 @@ import java.util.List;
  * DatasetTransformationStep repository for database management.
  */
 @Repository
-public interface DatasetTransformationStepRepository extends JpaRepository<DatasetTransformationStep, Long> {
-    List<DatasetTransformationStep> findByDataTransformationId(Long dataTransformationId);
+public interface DatasetTransformationStepRepository extends JpaRepository<DatasetTransformationStep, String> {
+    List<DatasetTransformationStep> findByDataTransformationId(String dataTransformationId);
 }
 

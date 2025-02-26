@@ -36,8 +36,8 @@ public class StudyPersonnelController {
     }
 
     @GetMapping("/roles")
-    public ResponseEntity<?> getPersonnelRolesByStudyAndOrganization(@RequestParam Long studyId,
-                                                                     @RequestParam Long organizationId,
+    public ResponseEntity<?> getPersonnelRolesByStudyAndOrganization(@RequestParam String studyId,
+                                                                     @RequestParam String organizationId,
                                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -62,8 +62,8 @@ public class StudyPersonnelController {
      * @return ResponseEntity with the personnel data.
      */
     @GetMapping("/personnel")
-    public ResponseEntity<?> getPersonnelByStudyId(@RequestParam Long studyId,
-                                                   @RequestParam Long organizationId,
+    public ResponseEntity<?> getPersonnelByStudyId(@RequestParam String studyId,
+                                                   @RequestParam String organizationId,
                                                    @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
@@ -103,8 +103,8 @@ public class StudyPersonnelController {
 
     @PostMapping("/personnel")
     public ResponseEntity<?> createStudyPersonnelEntries(
-            @RequestParam Long studyId,
-            @RequestParam Long organizationId,
+            @RequestParam String studyId,
+            @RequestParam String organizationId,
             @RequestBody List<PersonnelRoleDTO> personnelRoleList,
             @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {

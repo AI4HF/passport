@@ -38,7 +38,7 @@ public class ModelParameterService {
      * @param modelId ID of the Model
      * @return
      */
-    public List<ModelParameter> findByModelId(Long modelId) {
+    public List<ModelParameter> findByModelId(String modelId) {
         return modelParameterRepository.findByIdModelId(modelId);
     }
 
@@ -47,7 +47,7 @@ public class ModelParameterService {
      * @param parameterId ID of the Parameter
      * @return
      */
-    public List<ModelParameter> findByParameterId(Long parameterId) {
+    public List<ModelParameter> findByParameterId(String parameterId) {
         return modelParameterRepository.findByIdParameterId(parameterId);
     }
 

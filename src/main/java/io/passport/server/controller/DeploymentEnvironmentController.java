@@ -51,8 +51,8 @@ public class DeploymentEnvironmentController {
      */
     @GetMapping("/{environmentId}")
     public ResponseEntity<?> getDeploymentEnvironmentByEnvironmentId(
-            @PathVariable("environmentId") Long environmentId,
-            @RequestParam Long studyId,
+            @PathVariable("environmentId") String environmentId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -73,7 +73,7 @@ public class DeploymentEnvironmentController {
      */
     @PostMapping
     public ResponseEntity<?> createDeploymentEnvironment(@RequestBody DeploymentEnvironment deploymentEnvironment,
-                                                         @RequestParam Long studyId,
+                                                         @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -115,9 +115,9 @@ public class DeploymentEnvironmentController {
      * @return Updated environment or NOT_FOUND
      */
     @PutMapping("/{deploymentEnvironmentId}")
-    public ResponseEntity<?> updateDeploymentEnvironment(@PathVariable Long deploymentEnvironmentId,
+    public ResponseEntity<?> updateDeploymentEnvironment(@PathVariable String deploymentEnvironmentId,
                                                          @RequestBody DeploymentEnvironment updatedDeploymentEnvironment,
-                                                         @RequestParam Long studyId,
+                                                         @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -161,8 +161,8 @@ public class DeploymentEnvironmentController {
      * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
-    public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId,
-                                             @RequestParam Long studyId,
+    public ResponseEntity<?> deletePersonnel(@PathVariable String deploymentEnvironmentId,
+                                             @RequestParam String studyId,
                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

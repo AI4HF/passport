@@ -36,7 +36,7 @@ public class OrganizationService {
      * @param organizationId ID of the organization
      * @return
      */
-    public Optional<Organization> findOrganizationById(Long organizationId) {
+    public Optional<Organization> findOrganizationById(String organizationId) {
         return organizationRepository.findById(organizationId);
     }
 
@@ -64,7 +64,7 @@ public class OrganizationService {
      * @param updatedOrganization organization to be updated
      * @return
      */
-    public Optional<Organization> updateOrganization(Long organizationId, Organization updatedOrganization) {
+    public Optional<Organization> updateOrganization(String organizationId, Organization updatedOrganization) {
         Optional<Organization> oldOrganization = organizationRepository.findById(organizationId);
         if (oldOrganization.isPresent()) {
             Organization organization = oldOrganization.get();
@@ -82,7 +82,7 @@ public class OrganizationService {
      * @param organizationId ID of organization to be deleted
      * @return
      */
-    public boolean deleteOrganization(Long organizationId) {
+    public boolean deleteOrganization(String organizationId) {
         if(organizationRepository.existsById(organizationId)) {
             organizationRepository.deleteById(organizationId);
             return true;

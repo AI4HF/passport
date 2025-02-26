@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LearningStageParameterDTO {
-    private Long learningStageId;
-    private Long parameterId;
+    private String learningStageId;
+    private String parameterId;
     private String type;
     private String value;
 

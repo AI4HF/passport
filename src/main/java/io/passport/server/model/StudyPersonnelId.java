@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 public class StudyPersonnelId implements Serializable {
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "personnel_id")
     private String personnelId;
