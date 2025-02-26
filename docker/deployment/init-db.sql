@@ -442,6 +442,20 @@ VALUES (1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_
         'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
         '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist');
 
+-- Create ModelParameter table
+CREATE TABLE model_parameter
+(
+    model_id          INTEGER REFERENCES learning_stage (learning_stage_id) ON DELETE CASCADE,
+    parameter_id      INTEGER REFERENCES parameter (parameter_id) ON DELETE CASCADE,
+    type              VARCHAR(255),
+    value             VARCHAR(255),
+    PRIMARY KEY (model_id, parameter_id)
+);
+
+-- Insert dummy ModelParameter
+INSERT INTO model_parameter (model_id, parameter_id, type, value)
+VALUES (1, 1, 'string', 'Dummy value for Model Parameter');
+
 
 -- Create deployment_environment table
 CREATE TABLE deployment_environment
