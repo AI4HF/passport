@@ -637,7 +637,7 @@ CREATE TABLE audit_log_book
     audit_log_id VARCHAR(255) REFERENCES audit_log (audit_log_id) ON DELETE CASCADE,
     passport_id INTEGER REFERENCES passport (passport_id) ON DELETE CASCADE,
     PRIMARY KEY (audit_log_id, passport_id)
-)
+);
 
 -- Create evaluation measure table
 CREATE TABLE evaluation_measure
