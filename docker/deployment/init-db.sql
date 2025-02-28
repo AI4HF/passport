@@ -449,7 +449,7 @@ CREATE TABLE model_parameter
     model_id          INTEGER REFERENCES learning_stage (learning_stage_id) ON DELETE CASCADE,
     parameter_id      INTEGER REFERENCES parameter (parameter_id) ON DELETE CASCADE,
     type              VARCHAR(255),
-    value             VARCHAR(255),
+    value             TEXT,
     PRIMARY KEY (model_id, parameter_id)
 );
 
