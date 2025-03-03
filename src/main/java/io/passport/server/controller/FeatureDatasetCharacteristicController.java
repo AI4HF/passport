@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.FeatureDatasetCharacteristic;
-import io.passport.server.model.FeatureDatasetCharacteristicDTO;
-import io.passport.server.model.FeatureDatasetCharacteristicId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.FeatureDatasetCharacteristicService;
 import io.passport.server.service.RoleCheckerService;
@@ -30,9 +27,10 @@ public class FeatureDatasetCharacteristicController {
 
     private static final Logger log = LoggerFactory.getLogger(FeatureDatasetCharacteristicController.class);
 
+    private final String relationName = "Feature Dataset Characteristic";
     private final FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
@@ -117,14 +115,13 @@ public class FeatureDatasetCharacteristicController {
                 Long dsId = saved.getId().getDatasetId();
                 Long ftId = saved.getId().getFeatureId();
                 String compositeId = "(" + dsId + ", " + ftId + ")";
-                String description = "Creation of FeatureDatasetCharacteristic with datasetId=" + dsId
-                        + " and featureId=" + ftId;
+                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "FeatureDatasetCharacteristic",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -171,14 +168,13 @@ public class FeatureDatasetCharacteristicController {
             if (savedOpt.isPresent()) {
                 FeatureDatasetCharacteristic saved = savedOpt.get();
                 String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ")";
-                String description = "Update of FeatureDatasetCharacteristic with datasetId="
-                        + id.getDatasetId() + " and featureId=" + id.getFeatureId();
+                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "FeatureDatasetCharacteristic",
+                        Operation.UPDATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -222,14 +218,13 @@ public class FeatureDatasetCharacteristicController {
             Optional<FeatureDatasetCharacteristic> deletedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(id);
             if (deletedFeatureDatasetCharacteristic.isPresent()) {
                 String compositeId = "(" + datasetId + ", " + featureId + ")";
-                String description = "Deletion of FeatureDatasetCharacteristic with datasetId="
-                        + datasetId + " and featureId=" + featureId;
+                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "FeatureDatasetCharacteristic",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
                         deletedFeatureDatasetCharacteristic.get(),
                         description

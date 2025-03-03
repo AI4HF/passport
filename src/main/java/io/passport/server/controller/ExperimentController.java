@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Experiment;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ExperimentService;
 import io.passport.server.service.RoleCheckerService;
@@ -25,6 +24,7 @@ public class ExperimentController {
 
     private static final Logger log = LoggerFactory.getLogger(ExperimentController.class);
 
+    private final String relationName = "Experiment";
     private final ExperimentService experimentService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -78,13 +78,13 @@ public class ExperimentController {
             String userId = principal.getSubject();
             for (Experiment exp : newExperiments) {
                 String recordId = exp.getExperimentId().toString();
-                String description = "Creation of Experiment " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         userId,
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "Experiment",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         exp,
                         description

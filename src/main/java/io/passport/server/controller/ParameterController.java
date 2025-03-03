@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Parameter;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ParameterService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,6 +26,7 @@ public class ParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(ParameterController.class);
 
+    private final String relationName = "Parameter";
     private final ParameterService parameterService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -104,13 +104,13 @@ public class ParameterController {
             // Audit log
             if (savedParameter.getParameterId() != null) {
                 String recordId = savedParameter.getParameterId().toString();
-                String description = "Creation of Parameter " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "Parameter",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         savedParameter,
                         description
@@ -147,13 +147,13 @@ public class ParameterController {
             if (savedParameterOpt.isPresent()) {
                 Parameter savedParameter = savedParameterOpt.get();
                 String recordId = savedParameter.getParameterId().toString();
-                String description = "Update of Parameter " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "Parameter",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         savedParameter,
                         description
@@ -187,13 +187,13 @@ public class ParameterController {
 
             Optional<Parameter> deletedParameter = this.parameterService.deleteParameter(parameterId);
             if (deletedParameter.isPresent()) {
-                String description = "Deletion of Parameter " + parameterId;
+                String description = Description.DELETION.getDescription(relationName, parameterId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "Parameter",
+                        Operation.DELETE,
+                        relationName,
                         parameterId.toString(),
                         deletedParameter.get(),
                         description

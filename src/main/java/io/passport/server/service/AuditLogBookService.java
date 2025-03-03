@@ -3,6 +3,7 @@ package io.passport.server.service;
 import io.passport.server.model.AuditLog;
 import io.passport.server.model.AuditLogBook;
 import io.passport.server.model.AuditLogBookId;
+import io.passport.server.model.Operation;
 import io.passport.server.repository.AuditLogBookRepository;
 import io.passport.server.repository.AuditLogRepository;
 import io.passport.server.util.JSONUtil;
@@ -95,7 +96,7 @@ public class AuditLogBookService {
             String userId,
             String username,
             Long studyId,
-            String actionType,
+            Operation actionType,
             String affectedRelation,
             String recordId,
             Object entity,
@@ -110,7 +111,7 @@ public class AuditLogBookService {
         auditLog.setPersonId(userId);
         auditLog.setPersonName(username);
         auditLog.setStudyId(studyId);
-        auditLog.setActionType(actionType);
+        auditLog.setActionType(actionType.name());
         auditLog.setAffectedRelation(affectedRelation);
         auditLog.setAffectedRecordId(recordId);
         auditLog.setAffectedRecord(recordData);

@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcessDataset;
-import io.passport.server.model.LearningProcessDatasetDTO;
-import io.passport.server.model.LearningProcessDatasetId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessDatasetService;
 import io.passport.server.service.RoleCheckerService;
@@ -30,6 +27,7 @@ public class LearningProcessDatasetController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningProcessDatasetController.class);
 
+    private final String relationName = "Learning Process Dataset";
     private final LearningProcessDatasetService learningProcessDatasetService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -114,14 +112,13 @@ public class LearningProcessDatasetController {
                 Long lpId = saved.getId().getLearningProcessId();
                 Long ldId = saved.getId().getLearningDatasetId();
                 String compositeId = "(" + lpId + ", " + ldId + ")";
-                String description = "Creation of LearningProcessDataset with learningProcessId="
-                        + lpId + " and learningDatasetId=" + ldId;
+                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningProcessDataset",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -169,14 +166,13 @@ public class LearningProcessDatasetController {
             if (savedOpt.isPresent()) {
                 LearningProcessDataset saved = savedOpt.get();
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
-                String description = "Update of LearningProcessDataset with learningProcessId="
-                        + learningProcessId + " and learningDatasetId=" + learningDatasetId;
+                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningProcessDataset",
+                        Operation.UPDATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -220,14 +216,13 @@ public class LearningProcessDatasetController {
             Optional<LearningProcessDataset> deletedLearningProcessDataset = this.learningProcessDatasetService.deleteLearningProcessDataset(id);
             if (deletedLearningProcessDataset.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
-                String description = "Deletion of LearningProcessDataset with learningProcessId="
-                        + learningProcessId + " and learningDatasetId=" + learningDatasetId;
+                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningProcessDataset",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
                         deletedLearningProcessDataset.get(),
                         description

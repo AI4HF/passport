@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.DatasetTransformation;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DatasetTransformationService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,6 +26,7 @@ public class DatasetTransformationController {
 
     private static final Logger log = LoggerFactory.getLogger(DatasetTransformationController.class);
 
+    private final String relationName = "Dataset Transformation";
     private final DatasetTransformationService datasetTransformationService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -104,13 +104,13 @@ public class DatasetTransformationController {
 
             if (saved.getDataTransformationId() != null) {
                 String recordId = saved.getDataTransformationId().toString();
-                String description = "Creation of DatasetTransformation " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "DatasetTransformation",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -149,13 +149,13 @@ public class DatasetTransformationController {
             if (savedOpt.isPresent()) {
                 DatasetTransformation saved = savedOpt.get();
                 String recordId = saved.getDataTransformationId().toString();
-                String description = "Update of DatasetTransformation " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "DatasetTransformation",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -189,13 +189,13 @@ public class DatasetTransformationController {
 
             Optional<DatasetTransformation> deletedDatasetTransformation = this.datasetTransformationService.deleteDatasetTransformation(dataTransformationId);
             if (deletedDatasetTransformation.isPresent()) {
-                String description = "Deletion of DatasetTransformation " + dataTransformationId;
+                String description = Description.DELETION.getDescription(relationName, dataTransformationId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "DatasetTransformation",
+                        Operation.DELETE,
+                        relationName,
                         dataTransformationId.toString(),
                         deletedDatasetTransformation.get(),
                         description

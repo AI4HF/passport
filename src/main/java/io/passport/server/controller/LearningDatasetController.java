@@ -25,9 +25,10 @@ public class LearningDatasetController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningDatasetController.class);
 
+    private final String relationName = "Learning Dataset";
     private final LearningDatasetService learningDatasetService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
@@ -114,13 +115,13 @@ public class LearningDatasetController {
             LearningDataset newLd = createdDTO.getLearningDataset();
             if (newLd != null && newLd.getLearningDatasetId() != null) {
                 String recordId = newLd.getLearningDatasetId().toString();
-                String description = "Creation of LearningDataset " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningDataset",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         newLd,
                         description
@@ -166,13 +167,13 @@ public class LearningDatasetController {
                 LearningDatasetandTransformationDTO updatedDTO = updatedOpt.get();
                 LearningDataset updatedLd = updatedDTO.getLearningDataset();
                 String recordId = updatedLd.getLearningDatasetId().toString();
-                String description = "Update of LearningDataset " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningDataset",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         updatedLd,
                         description
@@ -207,13 +208,13 @@ public class LearningDatasetController {
 
             Optional<LearningDataset> deletedLearningDataset = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
             if (deletedLearningDataset.isPresent()) {
-                String description = "Deletion of LearningDataset " + learningDatasetId;
+                String description = Description.DELETION.getDescription(relationName, learningDatasetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningDataset",
+                        Operation.DELETE,
+                        relationName,
                         learningDatasetId.toString(),
                         deletedLearningDataset.get(),
                         description

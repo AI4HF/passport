@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningStageParameter;
-import io.passport.server.model.LearningStageParameterDTO;
-import io.passport.server.model.LearningStageParameterId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningStageParameterService;
 import io.passport.server.service.RoleCheckerService;
@@ -30,9 +27,10 @@ public class LearningStageParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningStageParameterController.class);
 
+    private final String relationName = "Learning Stage Parameter";
     private final LearningStageParameterService learningStageParameterService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -113,14 +111,13 @@ public class LearningStageParameterController {
                 Long lsId = saved.getId().getLearningStageId();
                 Long pId = saved.getId().getParameterId();
                 String compositeId = "(" + lsId + ", " + pId + ")";
-                String description = "Creation of LearningStageParameter with learningStageId="
-                        + lsId + " and parameterId=" + pId;
+                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningStageParameter",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -167,14 +164,13 @@ public class LearningStageParameterController {
             if (savedOpt.isPresent()) {
                 LearningStageParameter saved = savedOpt.get();
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
-                String description = "Update of LearningStageParameter with learningStageId="
-                        + learningStageId + " and parameterId=" + parameterId;
+                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningStageParameter",
+                        Operation.UPDATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -217,14 +213,13 @@ public class LearningStageParameterController {
             Optional<LearningStageParameter> deletedLearningStageParameter = this.learningStageParameterService.deleteLearningStageParameter(id);
             if (deletedLearningStageParameter.isPresent()) {
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
-                String description = "Deletion of LearningStageParameter with learningStageId="
-                        + learningStageId + " and parameterId=" + parameterId;
+                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningStageParameter",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
                         deletedLearningStageParameter.get(),
                         description

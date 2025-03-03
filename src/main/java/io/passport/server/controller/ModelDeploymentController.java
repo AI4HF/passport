@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.ModelDeployment;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ModelDeploymentService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,6 +26,7 @@ public class ModelDeploymentController {
 
     private static final Logger log = LoggerFactory.getLogger(ModelDeploymentController.class);
 
+    private final String relationName = "Model Deployment";
     private final ModelDeploymentService modelDeploymentService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -121,13 +121,13 @@ public class ModelDeploymentController {
             ModelDeployment saved = this.modelDeploymentService.saveModelDeployment(modelDeployment);
             if (saved.getDeploymentId() != null) {
                 String recordId = saved.getDeploymentId().toString();
-                String description = "Creation of ModelDeployment " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "ModelDeployment",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -166,13 +166,13 @@ public class ModelDeploymentController {
             if (savedOpt.isPresent()) {
                 ModelDeployment saved = savedOpt.get();
                 String recordId = saved.getDeploymentId().toString();
-                String description = "Update of ModelDeployment " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "ModelDeployment",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -207,13 +207,13 @@ public class ModelDeploymentController {
 
             Optional<ModelDeployment> deletedModelDeployment = this.modelDeploymentService.deleteModelDeployment(deploymentId);
             if (deletedModelDeployment.isPresent()) {
-                String description = "Deletion of ModelDeployment " + deploymentId;
+                String description = Description.DELETION.getDescription(relationName, deploymentId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "ModelDeployment",
+                        Operation.DELETE,
+                        relationName,
                         deploymentId.toString(),
                         deletedModelDeployment.get(),
                         description

@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Implementation;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ImplementationService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,9 +26,10 @@ public class ImplementationController {
 
     private static final Logger log = LoggerFactory.getLogger(ImplementationController.class);
 
+    private final String relationName = "Implementation";
     private final ImplementationService implementationService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -102,13 +102,13 @@ public class ImplementationController {
             Implementation saved = this.implementationService.saveImplementation(implementation);
             if (saved.getImplementationId() != null) {
                 String recordId = saved.getImplementationId().toString();
-                String description = "Creation of Implementation " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "Implementation",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -145,13 +145,13 @@ public class ImplementationController {
             if (savedOpt.isPresent()) {
                 Implementation saved = savedOpt.get();
                 String recordId = saved.getImplementationId().toString();
-                String description = "Update of Implementation " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "Implementation",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -186,13 +186,13 @@ public class ImplementationController {
 
             Optional<Implementation> deletedImplementation = this.implementationService.deleteImplementation(implementationId);
             if (deletedImplementation.isPresent()) {
-                String description = "Deletion of Implementation " + implementationId;
+                String description = Description.DELETION.getDescription(relationName, implementationId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "Implementation",
+                        Operation.DELETE,
+                        relationName,
                         implementationId.toString(),
                         deletedImplementation.get(),
                         description

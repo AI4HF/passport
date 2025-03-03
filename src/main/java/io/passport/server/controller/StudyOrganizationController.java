@@ -25,6 +25,7 @@ public class StudyOrganizationController {
 
     private static final Logger log = LoggerFactory.getLogger(StudyOrganizationController.class);
 
+    private final String relationName = "Study Organization";
     private final StudyOrganizationService studyOrganizationService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -144,14 +145,13 @@ public class StudyOrganizationController {
                 Long orgId = saved.getId().getOrganizationId();
                 Long stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
-                String description = "Creation of StudyOrganization with studyId="
-                        + stdId + " and organizationId=" + orgId;
+                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "StudyOrganization",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -194,14 +194,13 @@ public class StudyOrganizationController {
                 Long orgId = saved.getId().getOrganizationId();
                 Long stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
-                String description = "Update of StudyOrganization with studyId="
-                        + stdId + " and organizationId=" + orgId;
+                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "StudyOrganization",
+                        Operation.UPDATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -238,14 +237,13 @@ public class StudyOrganizationController {
             Optional<StudyOrganization> deletedStudyOrganization = this.studyOrganizationService.deleteStudyOrganization(id);
             if (deletedStudyOrganization.isPresent()) {
                 String compositeId = "(" + studyId + ", " + organizationId + ")";
-                String description = "Deletion of StudyOrganization with studyId="
-                        + studyId + " and organizationId=" + organizationId;
+                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "StudyOrganization",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
                         deletedStudyOrganization.get(),
                         description

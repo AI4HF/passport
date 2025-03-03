@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Role;
-import io.passport.server.model.Study;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.KeycloakService;
 import io.passport.server.service.RoleCheckerService;
@@ -28,6 +27,7 @@ public class StudyController {
 
     private static final Logger log = LoggerFactory.getLogger(StudyController.class);
 
+    private final String relationName = "Study";
     private final StudyService studyService;
     private final KeycloakService keycloakService;
     private final RoleCheckerService roleCheckerService;
@@ -118,16 +118,15 @@ public class StudyController {
             keycloakService.createStudyGroups(savedStudy.getId(), ownerId);
             keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
-            // Audit log
             if (savedStudy.getId() != null) {
                 String recordId = savedStudy.getId().toString();
-                String description = "Creation of Study " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         ownerId,
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         savedStudy.getId(),
-                        "CREATE",
-                        "Study",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         savedStudy,
                         description
@@ -167,13 +166,13 @@ public class StudyController {
         if (savedStudyOpt.isPresent()) {
             Study savedStudy = savedStudyOpt.get();
             String recordId = savedStudy.getId().toString();
-            String description = "Update of Study " + recordId;
+            String description = Description.UPDATE.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     userId,
-                    principal.getClaim("preferred_username"),
+                    principal.getClaim(TokenClaim.USERNAME.getValue()),
                     studyId,
-                    "UPDATE",
-                    "Study",
+                    Operation.UPDATE,
+                    relationName,
                     recordId,
                     savedStudy,
                     description
@@ -206,13 +205,13 @@ public class StudyController {
 
         Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
         if (deletedStudy.isPresent()) {
-            String description = "Deletion of Study " + studyId;
+            String description = Description.DELETION.getDescription(relationName, studyId.toString());
             auditLogBookService.createAuditLog(
                     userId,
                     username,
                     studyId,
-                    "DELETE",
-                    "Study",
+                    Operation.DELETE,
+                    relationName,
                     studyId.toString(),
                     deletedStudy.get(),
                     description

@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Algorithm;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AlgorithmService;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,6 +26,7 @@ public class AlgorithmController {
 
     private static final Logger log = LoggerFactory.getLogger(AlgorithmController.class);
 
+    private final String relationName = "Algorithm";
     private final AlgorithmService algorithmService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -91,13 +91,13 @@ public class AlgorithmController {
             }
 
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
-            String description = "Creation of Algorithm " + recordId;
+            String description = Description.CREATION.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
-                    principal.getClaim("preferred_username"),
+                    principal.getClaim(TokenClaim.USERNAME.getValue()),
                     studyId,
-                    "CREATE",
-                    "Algorithm",
+                    Operation.CREATE,
+                    relationName,
                     recordId,
                     savedAlgorithm,
                     description
@@ -130,13 +130,13 @@ public class AlgorithmController {
             Algorithm savedAlgorithm = savedAlgorithmOpt.get();
 
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
-            String description = "Update of Algorithm " + recordId;
+            String description = Description.UPDATE.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
-                    principal.getClaim("preferred_username"),
+                    principal.getClaim(TokenClaim.USERNAME.getValue()),
                     studyId,
-                    "UPDATE",
-                    "Algorithm",
+                    Operation.UPDATE,
+                    relationName,
                     recordId,
                     savedAlgorithm,
                     description
@@ -167,13 +167,13 @@ public class AlgorithmController {
             }
 
             String recordId = String.valueOf(algorithmId);
-            String description = "Deletion of Algorithm " + recordId;
+            String description = Description.DELETION.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
-                    principal.getClaim("preferred_username"),
+                    principal.getClaim(TokenClaim.USERNAME.getValue()),
                     studyId,
-                    "DELETE",
-                    "Algorithm",
+                    Operation.DELETE,
+                    relationName,
                     recordId,
                     deletedAlgorithm.get(),
                     description

@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcessParameter;
-import io.passport.server.model.LearningProcessParameterDTO;
-import io.passport.server.model.LearningProcessParameterId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessParameterService;
 import io.passport.server.service.RoleCheckerService;
@@ -30,9 +27,10 @@ public class LearningProcessParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningProcessParameterController.class);
 
+    private final String relationName = "Learning Process Parameter";
     private final LearningProcessParameterService learningProcessParameterService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -113,14 +111,13 @@ public class LearningProcessParameterController {
                 Long lpId = saved.getId().getLearningProcessId();
                 Long pId = saved.getId().getParameterId();
                 String compositeId = "(" + lpId + ", " + pId + ")";
-                String description = "Creation of LearningProcessParameter with learningProcessId="
-                        + lpId + " and parameterId=" + pId;
+                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningProcessParameter",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -167,14 +164,13 @@ public class LearningProcessParameterController {
             if (savedOpt.isPresent()) {
                 LearningProcessParameter saved = savedOpt.get();
                 String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
-                String description = "Update of LearningProcessParameter with learningProcessId="
-                        + learningProcessId + " and parameterId=" + parameterId;
+                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningProcessParameter",
+                        Operation.UPDATE,
+                        relationName,
                         compositeId,
                         saved,
                         description
@@ -218,14 +214,13 @@ public class LearningProcessParameterController {
             Optional<LearningProcessParameter> deletedLearningProcessParameter = this.learningProcessParameterService.deleteLearningProcessParameter(id);
             if (deletedLearningProcessParameter.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
-                String description = "Deletion of LearningProcessParameter with learningProcessId="
-                        + learningProcessId + " and parameterId=" + parameterId;
+                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningProcessParameter",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
                         deletedLearningProcessParameter.get(),
                         description

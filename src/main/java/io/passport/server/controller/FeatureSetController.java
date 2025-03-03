@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.FeatureSet;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.FeatureSetService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,9 +26,10 @@ public class FeatureSetController {
 
     private static final Logger log = LoggerFactory.getLogger(FeatureSetController.class);
 
+    private final String relationName = "Feature Set";
     private final FeatureSetService featureSetService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
 
@@ -102,13 +102,13 @@ public class FeatureSetController {
             FeatureSet saved = this.featureSetService.saveFeatureSet(featureSet);
             if (saved.getFeaturesetId() != null) {
                 String recordId = saved.getFeaturesetId().toString();
-                String description = "Creation of FeatureSet " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "FeatureSet",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -145,13 +145,13 @@ public class FeatureSetController {
             if (savedOpt.isPresent()) {
                 FeatureSet saved = savedOpt.get();
                 String recordId = saved.getFeaturesetId().toString();
-                String description = "Update of FeatureSet " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "FeatureSet",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -186,13 +186,12 @@ public class FeatureSetController {
 
             Optional<FeatureSet> deletedFeatureSet = this.featureSetService.deleteFeatureSet(featureSetId);
             if (deletedFeatureSet.isPresent()) {
-                String description = "Deletion of FeatureSet " + featureSetId;
+                String description = Description.DELETION.getDescription(relationName, featureSetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
-                        studyId,
-                        "DELETE",
-                        "FeatureSet",
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId, Operation.DELETE,
+                        relationName,
                         featureSetId.toString(),
                         deletedFeatureSet.get(),
                         description

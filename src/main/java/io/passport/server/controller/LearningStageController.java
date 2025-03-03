@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningStage;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningStageService;
 import io.passport.server.service.RoleCheckerService;
@@ -26,9 +25,10 @@ public class LearningStageController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningStageController.class);
 
+    private final String relationName = "Learning Stage";
     private final LearningStageService learningStageService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -106,13 +106,13 @@ public class LearningStageController {
             LearningStage saved = this.learningStageService.saveLearningStage(learningStage);
             if (saved.getLearningStageId() != null) {
                 String recordId = saved.getLearningStageId().toString();
-                String description = "Creation of LearningStage " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningStage",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -149,13 +149,13 @@ public class LearningStageController {
             if (savedOpt.isPresent()) {
                 LearningStage saved = savedOpt.get();
                 String recordId = saved.getLearningStageId().toString();
-                String description = "Update of LearningStage " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningStage",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -190,13 +190,13 @@ public class LearningStageController {
 
             Optional<LearningStage> deletedLearningStage = this.learningStageService.deleteLearningStage(learningStageId);
             if (deletedLearningStage.isPresent()) {
-                String description = "Deletion of LearningStage " + learningStageId;
+                String description = Description.DELETION.getDescription(relationName, learningStageId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningStage",
+                        Operation.DELETE,
+                        relationName,
                         learningStageId.toString(),
                         deletedLearningStage.get(),
                         description

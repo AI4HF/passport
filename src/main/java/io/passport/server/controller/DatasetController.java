@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Dataset;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DatasetService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,6 +26,7 @@ public class DatasetController {
 
     private static final Logger log = LoggerFactory.getLogger(DatasetController.class);
 
+    private final String relationName = "Dataset";
     private final DatasetService datasetService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -103,13 +103,13 @@ public class DatasetController {
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
                 String recordId = savedDataset.getDatasetId().toString();
-                String description = "Creation of Dataset " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         personnelId,
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "Dataset",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         savedDataset,
                         description
@@ -149,13 +149,13 @@ public class DatasetController {
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
                 String recordId = savedDataset.getDatasetId().toString();
-                String description = "Update of Dataset " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         personnelId,
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "Dataset",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         savedDataset,
                         description
@@ -189,13 +189,13 @@ public class DatasetController {
 
             Optional<Dataset> deletedDataset = this.datasetService.deleteDataset(datasetId);
             if (deletedDataset.isPresent()) {
-                String description = "Deletion of Dataset " + datasetId;
+                String description = Description.DELETION.getDescription(relationName, datasetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "Dataset",
+                        Operation.DELETE,
+                        relationName,
                         datasetId.toString(),
                         deletedDataset.get(),
                         description

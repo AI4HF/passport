@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.Role;
-import io.passport.server.model.Survey;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.SurveyService;
@@ -26,6 +25,7 @@ public class SurveyController {
 
     private static final Logger log = LoggerFactory.getLogger(SurveyController.class);
 
+    private final String relationName = "Survey";
     private final SurveyService surveyService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
@@ -103,16 +103,15 @@ public class SurveyController {
         try {
             Survey savedSurvey = this.surveyService.saveSurvey(survey);
 
-            // Audit log
             if (savedSurvey.getSurveyId() != null) {
                 String recordId = savedSurvey.getSurveyId().toString();
-                String description = "Creation of Survey " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "Survey",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         savedSurvey,
                         description
@@ -149,13 +148,13 @@ public class SurveyController {
             if (savedSurveyOpt.isPresent()) {
                 Survey savedSurvey = savedSurveyOpt.get();
                 String recordId = savedSurvey.getSurveyId().toString();
-                String description = "Update of Survey " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "Survey",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         savedSurvey,
                         description
@@ -189,13 +188,13 @@ public class SurveyController {
         try {
             Optional<Survey> deletedSurvey = this.surveyService.deleteSurvey(surveyId);
             if (deletedSurvey.isPresent()) {
-                String description = "Deletion of Survey " + surveyId;
+                String description = Description.DELETION.getDescription(relationName, surveyId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "Survey",
+                        Operation.DELETE,
+                        relationName,
                         surveyId.toString(),
                         deletedSurvey.get(),
                         description

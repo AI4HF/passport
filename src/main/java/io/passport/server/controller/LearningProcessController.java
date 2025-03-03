@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcess;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessService;
 import io.passport.server.service.RoleCheckerService;
@@ -27,9 +26,10 @@ public class LearningProcessController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningProcessController.class);
 
+    private final String relationName = "Learning Process";
     private final LearningProcessService learningProcessService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -102,13 +102,13 @@ public class LearningProcessController {
             LearningProcess saved = this.learningProcessService.saveLearningProcess(learningProcess);
             if (saved.getLearningProcessId() != null) {
                 String recordId = saved.getLearningProcessId().toString();
-                String description = "Creation of LearningProcess " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "LearningProcess",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -147,13 +147,13 @@ public class LearningProcessController {
             if (savedOpt.isPresent()) {
                 LearningProcess saved = savedOpt.get();
                 String recordId = saved.getLearningProcessId().toString();
-                String description = "Update of LearningProcess " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "LearningProcess",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -187,13 +187,13 @@ public class LearningProcessController {
 
             Optional<LearningProcess> deletedLearningProcess = this.learningProcessService.deleteLearningProcess(learningProcessId);
             if (deletedLearningProcess.isPresent()) {
-                String description = "Deletion of LearningProcess " + learningProcessId;
+                String description = Description.DELETION.getDescription(relationName, learningProcessId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "LearningProcess",
+                        Operation.DELETE,
+                        relationName,
                         learningProcessId.toString(),
                         deletedLearningProcess.get(),
                         description

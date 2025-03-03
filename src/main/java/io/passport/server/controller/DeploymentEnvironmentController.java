@@ -1,7 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.DeploymentEnvironment;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DeploymentEnvironmentService;
 import io.passport.server.service.RoleCheckerService;
@@ -26,9 +25,10 @@ public class DeploymentEnvironmentController {
 
     private static final Logger log = LoggerFactory.getLogger(DeploymentEnvironmentController.class);
 
+    private final String relationName = "Deployment Environment";
     private final DeploymentEnvironmentService deploymentEnvironmentService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
@@ -85,13 +85,13 @@ public class DeploymentEnvironmentController {
 
             if (saved.getEnvironmentId() != null) {
                 String recordId = saved.getEnvironmentId().toString();
-                String description = "Creation of DeploymentEnvironment " + recordId;
+                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "DeploymentEnvironment",
+                        Operation.CREATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -130,13 +130,13 @@ public class DeploymentEnvironmentController {
             if (savedOpt.isPresent()) {
                 DeploymentEnvironment saved = savedOpt.get();
                 String recordId = saved.getEnvironmentId().toString();
-                String description = "Update of DeploymentEnvironment " + recordId;
+                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "UPDATE",
-                        "DeploymentEnvironment",
+                        Operation.UPDATE,
+                        relationName,
                         recordId,
                         saved,
                         description
@@ -171,13 +171,13 @@ public class DeploymentEnvironmentController {
 
             Optional<DeploymentEnvironment> deletedDeploymentEnvironment = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
             if (deletedDeploymentEnvironment.isPresent()) {
-                String description = "Deletion of DeploymentEnvironment " + deploymentEnvironmentId;
+                String description = Description.DELETION.getDescription(relationName, deploymentEnvironmentId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "DeploymentEnvironment",
+                        Operation.DELETE,
+                        relationName,
                         deploymentEnvironmentId.toString(),
                         deletedDeploymentEnvironment.get(),
                         description
