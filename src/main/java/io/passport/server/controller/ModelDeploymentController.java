@@ -121,7 +121,6 @@ public class ModelDeploymentController {
             ModelDeployment saved = this.modelDeploymentService.saveModelDeployment(modelDeployment);
             if (saved.getDeploymentId() != null) {
                 String recordId = saved.getDeploymentId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -129,8 +128,7 @@ public class ModelDeploymentController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -166,7 +164,6 @@ public class ModelDeploymentController {
             if (savedOpt.isPresent()) {
                 ModelDeployment saved = savedOpt.get();
                 String recordId = saved.getDeploymentId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -174,8 +171,7 @@ public class ModelDeploymentController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -207,7 +203,6 @@ public class ModelDeploymentController {
 
             Optional<ModelDeployment> deletedModelDeployment = this.modelDeploymentService.deleteModelDeployment(deploymentId);
             if (deletedModelDeployment.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, deploymentId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -215,8 +210,7 @@ public class ModelDeploymentController {
                         Operation.DELETE,
                         relationName,
                         deploymentId.toString(),
-                        deletedModelDeployment.get(),
-                        description
+                        deletedModelDeployment.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelDeployment.get());
             } else {

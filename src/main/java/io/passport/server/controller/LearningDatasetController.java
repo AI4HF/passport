@@ -115,7 +115,6 @@ public class LearningDatasetController {
             LearningDataset newLd = createdDTO.getLearningDataset();
             if (newLd != null && newLd.getLearningDatasetId() != null) {
                 String recordId = newLd.getLearningDatasetId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -123,8 +122,7 @@ public class LearningDatasetController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        newLd,
-                        description
+                        newLd
                 );
             }
 
@@ -167,7 +165,6 @@ public class LearningDatasetController {
                 LearningDatasetandTransformationDTO updatedDTO = updatedOpt.get();
                 LearningDataset updatedLd = updatedDTO.getLearningDataset();
                 String recordId = updatedLd.getLearningDatasetId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -175,8 +172,7 @@ public class LearningDatasetController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        updatedLd,
-                        description
+                        updatedLd
                 );
                 return ResponseEntity.ok(updatedDTO);
             } else {
@@ -208,7 +204,6 @@ public class LearningDatasetController {
 
             Optional<LearningDataset> deletedLearningDataset = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
             if (deletedLearningDataset.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, learningDatasetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -216,8 +211,7 @@ public class LearningDatasetController {
                         Operation.DELETE,
                         relationName,
                         learningDatasetId.toString(),
-                        deletedLearningDataset.get(),
-                        description
+                        deletedLearningDataset.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningDataset.get());
             } else {

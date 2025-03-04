@@ -101,10 +101,8 @@ public class ParameterController {
 
             Parameter savedParameter = this.parameterService.saveParameter(parameter);
 
-            // Audit log
             if (savedParameter.getParameterId() != null) {
                 String recordId = savedParameter.getParameterId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -112,8 +110,7 @@ public class ParameterController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        savedParameter,
-                        description
+                        savedParameter
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedParameter);
@@ -147,7 +144,6 @@ public class ParameterController {
             if (savedParameterOpt.isPresent()) {
                 Parameter savedParameter = savedParameterOpt.get();
                 String recordId = savedParameter.getParameterId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -155,8 +151,7 @@ public class ParameterController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        savedParameter,
-                        description
+                        savedParameter
                 );
                 return ResponseEntity.ok(savedParameter);
             } else {
@@ -187,7 +182,6 @@ public class ParameterController {
 
             Optional<Parameter> deletedParameter = this.parameterService.deleteParameter(parameterId);
             if (deletedParameter.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, parameterId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -195,8 +189,7 @@ public class ParameterController {
                         Operation.DELETE,
                         relationName,
                         parameterId.toString(),
-                        deletedParameter.get(),
-                        description
+                        deletedParameter.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedParameter.get());
             } else {

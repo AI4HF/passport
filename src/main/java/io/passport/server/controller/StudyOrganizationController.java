@@ -145,7 +145,6 @@ public class StudyOrganizationController {
                 Long orgId = saved.getId().getOrganizationId();
                 Long stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
-                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -153,8 +152,7 @@ public class StudyOrganizationController {
                         Operation.CREATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
@@ -194,7 +192,6 @@ public class StudyOrganizationController {
                 Long orgId = saved.getId().getOrganizationId();
                 Long stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
-                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -202,8 +199,7 @@ public class StudyOrganizationController {
                         Operation.UPDATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok().body(responseDTO);
             } else {
@@ -237,7 +233,6 @@ public class StudyOrganizationController {
             Optional<StudyOrganization> deletedStudyOrganization = this.studyOrganizationService.deleteStudyOrganization(id);
             if (deletedStudyOrganization.isPresent()) {
                 String compositeId = "(" + studyId + ", " + organizationId + ")";
-                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -245,8 +240,7 @@ public class StudyOrganizationController {
                         Operation.DELETE,
                         relationName,
                         compositeId,
-                        deletedStudyOrganization.get(),
-                        description
+                        deletedStudyOrganization.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudyOrganization.get());
             } else {

@@ -105,7 +105,6 @@ public class SurveyController {
 
             if (savedSurvey.getSurveyId() != null) {
                 String recordId = savedSurvey.getSurveyId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -113,8 +112,7 @@ public class SurveyController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        savedSurvey,
-                        description
+                        savedSurvey
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedSurvey);
@@ -148,7 +146,6 @@ public class SurveyController {
             if (savedSurveyOpt.isPresent()) {
                 Survey savedSurvey = savedSurveyOpt.get();
                 String recordId = savedSurvey.getSurveyId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -156,8 +153,7 @@ public class SurveyController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        savedSurvey,
-                        description
+                        savedSurvey
                 );
                 return ResponseEntity.ok(savedSurvey);
             } else {
@@ -188,7 +184,6 @@ public class SurveyController {
         try {
             Optional<Survey> deletedSurvey = this.surveyService.deleteSurvey(surveyId);
             if (deletedSurvey.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, surveyId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -196,8 +191,7 @@ public class SurveyController {
                         Operation.DELETE,
                         relationName,
                         surveyId.toString(),
-                        deletedSurvey.get(),
-                        description
+                        deletedSurvey.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedSurvey.get());
             } else {

@@ -111,7 +111,6 @@ public class DatasetTransformationStepController {
 
             if (saved.getStepId() != null) {
                 String recordId = saved.getStepId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -119,8 +118,7 @@ public class DatasetTransformationStepController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -156,7 +154,6 @@ public class DatasetTransformationStepController {
             if (savedOpt.isPresent()) {
                 DatasetTransformationStep saved = savedOpt.get();
                 String recordId = saved.getStepId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -164,8 +161,7 @@ public class DatasetTransformationStepController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -196,7 +192,6 @@ public class DatasetTransformationStepController {
 
             Optional<DatasetTransformationStep> deletedDatasetTransformationStep = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
             if (deletedDatasetTransformationStep.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, stepId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -204,8 +199,7 @@ public class DatasetTransformationStepController {
                         Operation.DELETE,
                         relationName,
                         stepId.toString(),
-                        deletedDatasetTransformationStep.get(),
-                        description
+                        deletedDatasetTransformationStep.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDatasetTransformationStep.get());
             } else {

@@ -100,10 +100,8 @@ public class PopulationController {
         try {
             Population savedPopulation = this.populationService.savePopulation(population);
 
-            // Audit log
             if (savedPopulation.getPopulationId() != null) {
                 String recordId = savedPopulation.getPopulationId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -111,8 +109,7 @@ public class PopulationController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        savedPopulation,
-                        description
+                        savedPopulation
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPopulation);
@@ -150,7 +147,6 @@ public class PopulationController {
             if (savedPopulationOpt.isPresent()) {
                 Population savedPopulation = savedPopulationOpt.get();
                 String recordId = savedPopulation.getPopulationId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -158,8 +154,7 @@ public class PopulationController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        savedPopulation,
-                        description
+                        savedPopulation
                 );
                 return ResponseEntity.ok(savedPopulation);
             } else {
@@ -193,7 +188,6 @@ public class PopulationController {
         try {
             Optional<Population> deletedPopulation = this.populationService.deletePopulation(populationId);
             if (deletedPopulation.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, populationId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -201,8 +195,7 @@ public class PopulationController {
                         Operation.DELETE,
                         relationName,
                         populationId.toString(),
-                        deletedPopulation.get(),
-                        description
+                        deletedPopulation.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedPopulation.get());
             } else {

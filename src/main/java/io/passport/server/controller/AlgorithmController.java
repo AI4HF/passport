@@ -91,7 +91,6 @@ public class AlgorithmController {
             }
 
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
-            String description = Description.CREATION.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -99,8 +98,7 @@ public class AlgorithmController {
                     Operation.CREATE,
                     relationName,
                     recordId,
-                    savedAlgorithm,
-                    description
+                    savedAlgorithm
             );
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedAlgorithm);
@@ -130,7 +128,6 @@ public class AlgorithmController {
             Algorithm savedAlgorithm = savedAlgorithmOpt.get();
 
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
-            String description = Description.UPDATE.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -138,8 +135,7 @@ public class AlgorithmController {
                     Operation.UPDATE,
                     relationName,
                     recordId,
-                    savedAlgorithm,
-                    description
+                    savedAlgorithm
             );
 
             return ResponseEntity.ok(savedAlgorithm);
@@ -167,7 +163,6 @@ public class AlgorithmController {
             }
 
             String recordId = String.valueOf(algorithmId);
-            String description = Description.DELETION.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -175,8 +170,7 @@ public class AlgorithmController {
                     Operation.DELETE,
                     relationName,
                     recordId,
-                    deletedAlgorithm.get(),
-                    description
+                    deletedAlgorithm.get()
             );
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedAlgorithm.get());

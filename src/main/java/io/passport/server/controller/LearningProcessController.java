@@ -102,7 +102,6 @@ public class LearningProcessController {
             LearningProcess saved = this.learningProcessService.saveLearningProcess(learningProcess);
             if (saved.getLearningProcessId() != null) {
                 String recordId = saved.getLearningProcessId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -110,8 +109,7 @@ public class LearningProcessController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -147,7 +145,6 @@ public class LearningProcessController {
             if (savedOpt.isPresent()) {
                 LearningProcess saved = savedOpt.get();
                 String recordId = saved.getLearningProcessId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -155,8 +152,7 @@ public class LearningProcessController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -187,7 +183,6 @@ public class LearningProcessController {
 
             Optional<LearningProcess> deletedLearningProcess = this.learningProcessService.deleteLearningProcess(learningProcessId);
             if (deletedLearningProcess.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, learningProcessId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -195,8 +190,7 @@ public class LearningProcessController {
                         Operation.DELETE,
                         relationName,
                         learningProcessId.toString(),
-                        deletedLearningProcess.get(),
-                        description
+                        deletedLearningProcess.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcess.get());
             } else {

@@ -103,7 +103,6 @@ public class DatasetController {
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
                 String recordId = savedDataset.getDatasetId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         personnelId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -111,8 +110,8 @@ public class DatasetController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        savedDataset,
-                        description
+                        savedDataset
+                        
                 );
                 return ResponseEntity.ok(savedDataset);
             } else {
@@ -149,7 +148,6 @@ public class DatasetController {
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
                 String recordId = savedDataset.getDatasetId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         personnelId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -157,8 +155,8 @@ public class DatasetController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        savedDataset,
-                        description
+                        savedDataset
+                        
                 );
                 return ResponseEntity.ok(savedDataset);
             } else {
@@ -189,7 +187,6 @@ public class DatasetController {
 
             Optional<Dataset> deletedDataset = this.datasetService.deleteDataset(datasetId);
             if (deletedDataset.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, datasetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -197,8 +194,7 @@ public class DatasetController {
                         Operation.DELETE,
                         relationName,
                         datasetId.toString(),
-                        deletedDataset.get(),
-                        description
+                        deletedDataset.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDataset.get());
             } else {

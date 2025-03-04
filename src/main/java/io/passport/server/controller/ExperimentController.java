@@ -78,7 +78,6 @@ public class ExperimentController {
             String userId = principal.getSubject();
             for (Experiment exp : newExperiments) {
                 String recordId = exp.getExperimentId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         userId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -86,8 +85,7 @@ public class ExperimentController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        exp,
-                        description
+                        exp
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(newExperiments);

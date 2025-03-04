@@ -112,7 +112,6 @@ public class LearningProcessDatasetController {
                 Long lpId = saved.getId().getLearningProcessId();
                 Long ldId = saved.getId().getLearningDatasetId();
                 String compositeId = "(" + lpId + ", " + ldId + ")";
-                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -120,8 +119,7 @@ public class LearningProcessDatasetController {
                         Operation.CREATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -166,7 +164,6 @@ public class LearningProcessDatasetController {
             if (savedOpt.isPresent()) {
                 LearningProcessDataset saved = savedOpt.get();
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
-                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -174,8 +171,7 @@ public class LearningProcessDatasetController {
                         Operation.UPDATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -216,7 +212,6 @@ public class LearningProcessDatasetController {
             Optional<LearningProcessDataset> deletedLearningProcessDataset = this.learningProcessDatasetService.deleteLearningProcessDataset(id);
             if (deletedLearningProcessDataset.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
-                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -224,8 +219,7 @@ public class LearningProcessDatasetController {
                         Operation.DELETE,
                         relationName,
                         compositeId,
-                        deletedLearningProcessDataset.get(),
-                        description
+                        deletedLearningProcessDataset.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcessDataset.get());
             } else {

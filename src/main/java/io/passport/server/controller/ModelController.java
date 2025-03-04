@@ -105,7 +105,6 @@ public class ModelController {
             Model saved = this.modelService.saveModel(model);
             if (saved.getModelId() != null) {
                 String recordId = saved.getModelId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -113,8 +112,7 @@ public class ModelController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -148,7 +146,6 @@ public class ModelController {
             if (savedOpt.isPresent()) {
                 Model saved = savedOpt.get();
                 String recordId = saved.getModelId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -156,8 +153,7 @@ public class ModelController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -188,7 +184,6 @@ public class ModelController {
 
             Optional<Model> deletedModel = this.modelService.deleteModel(modelId);
             if (deletedModel.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, modelId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -196,8 +191,7 @@ public class ModelController {
                         Operation.DELETE,
                         relationName,
                         modelId.toString(),
-                        deletedModel.get(),
-                        description
+                        deletedModel.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModel.get());
             } else {

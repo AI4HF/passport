@@ -102,7 +102,6 @@ public class ImplementationController {
             Implementation saved = this.implementationService.saveImplementation(implementation);
             if (saved.getImplementationId() != null) {
                 String recordId = saved.getImplementationId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -110,8 +109,7 @@ public class ImplementationController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -145,7 +143,6 @@ public class ImplementationController {
             if (savedOpt.isPresent()) {
                 Implementation saved = savedOpt.get();
                 String recordId = saved.getImplementationId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -153,8 +150,7 @@ public class ImplementationController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -186,7 +182,6 @@ public class ImplementationController {
 
             Optional<Implementation> deletedImplementation = this.implementationService.deleteImplementation(implementationId);
             if (deletedImplementation.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, implementationId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -194,8 +189,7 @@ public class ImplementationController {
                         Operation.DELETE,
                         relationName,
                         implementationId.toString(),
-                        deletedImplementation.get(),
-                        description
+                        deletedImplementation.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedImplementation.get());
             } else {

@@ -1,9 +1,6 @@
 package io.passport.server.service;
 
-import io.passport.server.model.AuditLog;
-import io.passport.server.model.AuditLogBook;
-import io.passport.server.model.AuditLogBookId;
-import io.passport.server.model.Operation;
+import io.passport.server.model.*;
 import io.passport.server.repository.AuditLogBookRepository;
 import io.passport.server.repository.AuditLogRepository;
 import io.passport.server.util.JSONUtil;
@@ -89,7 +86,6 @@ public class AuditLogBookService {
      * @param affectedRelation  The table/collection name (e.g. "Algorithm").
      * @param recordId          The primary key ID of the affected record.
      * @param entity            The updated/created entity; can be null or a full object.
-     * @param description       A short description of the operation.
      * @return                  The saved AuditLog entity.
      */
     public AuditLog createAuditLog(
@@ -99,9 +95,14 @@ public class AuditLogBookService {
             Operation actionType,
             String affectedRelation,
             String recordId,
-            Object entity,
-            String description
+            Object entity
     ) {
+        String description = switch (actionType) {
+            case CREATE -> Description.CREATION.getDescription(affectedRelation, recordId);
+            case UPDATE -> Description.UPDATE.getDescription(affectedRelation, recordId);
+            case DELETE -> Description.DELETION.getDescription(affectedRelation, recordId);
+            default -> null;
+        };
 
         String recordData = (entity != null)
                 ? JSONUtil.objectToJsonSafely(entity)

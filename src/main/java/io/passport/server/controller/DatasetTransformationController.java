@@ -104,7 +104,6 @@ public class DatasetTransformationController {
 
             if (saved.getDataTransformationId() != null) {
                 String recordId = saved.getDataTransformationId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -112,8 +111,7 @@ public class DatasetTransformationController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -149,7 +147,6 @@ public class DatasetTransformationController {
             if (savedOpt.isPresent()) {
                 DatasetTransformation saved = savedOpt.get();
                 String recordId = saved.getDataTransformationId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -157,8 +154,7 @@ public class DatasetTransformationController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -189,7 +185,6 @@ public class DatasetTransformationController {
 
             Optional<DatasetTransformation> deletedDatasetTransformation = this.datasetTransformationService.deleteDatasetTransformation(dataTransformationId);
             if (deletedDatasetTransformation.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, dataTransformationId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -197,8 +192,7 @@ public class DatasetTransformationController {
                         Operation.DELETE,
                         relationName,
                         dataTransformationId.toString(),
-                        deletedDatasetTransformation.get(),
-                        description
+                        deletedDatasetTransformation.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDatasetTransformation.get());
             } else {

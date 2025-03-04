@@ -85,7 +85,6 @@ public class DeploymentEnvironmentController {
 
             if (saved.getEnvironmentId() != null) {
                 String recordId = saved.getEnvironmentId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -93,8 +92,7 @@ public class DeploymentEnvironmentController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -130,7 +128,6 @@ public class DeploymentEnvironmentController {
             if (savedOpt.isPresent()) {
                 DeploymentEnvironment saved = savedOpt.get();
                 String recordId = saved.getEnvironmentId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -138,8 +135,7 @@ public class DeploymentEnvironmentController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -171,7 +167,6 @@ public class DeploymentEnvironmentController {
 
             Optional<DeploymentEnvironment> deletedDeploymentEnvironment = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
             if (deletedDeploymentEnvironment.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, deploymentEnvironmentId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -179,8 +174,7 @@ public class DeploymentEnvironmentController {
                         Operation.DELETE,
                         relationName,
                         deploymentEnvironmentId.toString(),
-                        deletedDeploymentEnvironment.get(),
-                        description
+                        deletedDeploymentEnvironment.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDeploymentEnvironment.get());
             } else {

@@ -111,7 +111,6 @@ public class LearningStageParameterController {
                 Long lsId = saved.getId().getLearningStageId();
                 Long pId = saved.getId().getParameterId();
                 String compositeId = "(" + lsId + ", " + pId + ")";
-                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -119,8 +118,7 @@ public class LearningStageParameterController {
                         Operation.CREATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -164,7 +162,6 @@ public class LearningStageParameterController {
             if (savedOpt.isPresent()) {
                 LearningStageParameter saved = savedOpt.get();
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
-                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -172,8 +169,7 @@ public class LearningStageParameterController {
                         Operation.UPDATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -213,7 +209,6 @@ public class LearningStageParameterController {
             Optional<LearningStageParameter> deletedLearningStageParameter = this.learningStageParameterService.deleteLearningStageParameter(id);
             if (deletedLearningStageParameter.isPresent()) {
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
-                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -221,8 +216,7 @@ public class LearningStageParameterController {
                         Operation.DELETE,
                         relationName,
                         compositeId,
-                        deletedLearningStageParameter.get(),
-                        description
+                        deletedLearningStageParameter.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStageParameter.get());
             } else {

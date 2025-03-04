@@ -120,7 +120,6 @@ public class StudyController {
 
             if (savedStudy.getId() != null) {
                 String recordId = savedStudy.getId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         ownerId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -128,8 +127,7 @@ public class StudyController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        savedStudy,
-                        description
+                        savedStudy
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedStudy);
@@ -166,7 +164,6 @@ public class StudyController {
         if (savedStudyOpt.isPresent()) {
             Study savedStudy = savedStudyOpt.get();
             String recordId = savedStudy.getId().toString();
-            String description = Description.UPDATE.getDescription(relationName, recordId);
             auditLogBookService.createAuditLog(
                     userId,
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -174,8 +171,7 @@ public class StudyController {
                     Operation.UPDATE,
                     relationName,
                     recordId,
-                    savedStudy,
-                    description
+                    savedStudy
             );
             return ResponseEntity.ok(savedStudy);
         } else {
@@ -205,7 +201,6 @@ public class StudyController {
 
         Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
         if (deletedStudy.isPresent()) {
-            String description = Description.DELETION.getDescription(relationName, studyId.toString());
             auditLogBookService.createAuditLog(
                     userId,
                     username,
@@ -213,8 +208,7 @@ public class StudyController {
                     Operation.DELETE,
                     relationName,
                     studyId.toString(),
-                    deletedStudy.get(),
-                    description
+                    deletedStudy.get()
             );
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudy.get());
         } else {

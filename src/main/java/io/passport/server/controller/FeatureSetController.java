@@ -102,7 +102,6 @@ public class FeatureSetController {
             FeatureSet saved = this.featureSetService.saveFeatureSet(featureSet);
             if (saved.getFeaturesetId() != null) {
                 String recordId = saved.getFeaturesetId().toString();
-                String description = Description.CREATION.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -110,8 +109,7 @@ public class FeatureSetController {
                         Operation.CREATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -145,7 +143,6 @@ public class FeatureSetController {
             if (savedOpt.isPresent()) {
                 FeatureSet saved = savedOpt.get();
                 String recordId = saved.getFeaturesetId().toString();
-                String description = Description.UPDATE.getDescription(relationName, recordId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -153,8 +150,7 @@ public class FeatureSetController {
                         Operation.UPDATE,
                         relationName,
                         recordId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -186,15 +182,13 @@ public class FeatureSetController {
 
             Optional<FeatureSet> deletedFeatureSet = this.featureSetService.deleteFeatureSet(featureSetId);
             if (deletedFeatureSet.isPresent()) {
-                String description = Description.DELETION.getDescription(relationName, featureSetId.toString());
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId, Operation.DELETE,
                         relationName,
                         featureSetId.toString(),
-                        deletedFeatureSet.get(),
-                        description
+                        deletedFeatureSet.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeatureSet.get());
             } else {

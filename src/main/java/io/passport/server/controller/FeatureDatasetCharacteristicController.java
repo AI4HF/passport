@@ -115,7 +115,6 @@ public class FeatureDatasetCharacteristicController {
                 Long dsId = saved.getId().getDatasetId();
                 Long ftId = saved.getId().getFeatureId();
                 String compositeId = "(" + dsId + ", " + ftId + ")";
-                String description = Description.CREATION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -123,8 +122,7 @@ public class FeatureDatasetCharacteristicController {
                         Operation.CREATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -168,7 +166,6 @@ public class FeatureDatasetCharacteristicController {
             if (savedOpt.isPresent()) {
                 FeatureDatasetCharacteristic saved = savedOpt.get();
                 String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ")";
-                String description = Description.UPDATE.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -176,8 +173,7 @@ public class FeatureDatasetCharacteristicController {
                         Operation.UPDATE,
                         relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
                 return ResponseEntity.ok(saved);
             } else {
@@ -218,7 +214,6 @@ public class FeatureDatasetCharacteristicController {
             Optional<FeatureDatasetCharacteristic> deletedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(id);
             if (deletedFeatureDatasetCharacteristic.isPresent()) {
                 String compositeId = "(" + datasetId + ", " + featureId + ")";
-                String description = Description.DELETION.getDescription(relationName, compositeId);
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -226,8 +221,7 @@ public class FeatureDatasetCharacteristicController {
                         Operation.DELETE,
                         relationName,
                         compositeId,
-                        deletedFeatureDatasetCharacteristic.get(),
-                        description
+                        deletedFeatureDatasetCharacteristic.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeatureDatasetCharacteristic.get());
             } else {
