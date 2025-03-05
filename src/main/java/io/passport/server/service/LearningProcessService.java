@@ -83,12 +83,14 @@ public class LearningProcessService {
      * @param learningProcessId ID of learning process to be deleted
      * @return
      */
-    public boolean deleteLearningProcess(Long learningProcessId) {
-        if(learningProcessRepository.existsById(learningProcessId)) {
-            learningProcessRepository.deleteById(learningProcessId);
-            return true;
-        }else{
-            return false;
+    public Optional<LearningProcess> deleteLearningProcess(Long learningProcessId) {
+        Optional<LearningProcess> existingLearningProcess = learningProcessRepository.findById(learningProcessId);
+        if (existingLearningProcess.isPresent()) {
+            learningProcessRepository.delete(existingLearningProcess.get());
+            return existingLearningProcess;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

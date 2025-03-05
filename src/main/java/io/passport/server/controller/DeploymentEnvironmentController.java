@@ -1,10 +1,9 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.DeploymentEnvironment;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.DeploymentEnvironmentService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +25,29 @@ public class DeploymentEnvironmentController {
 
     private static final Logger log = LoggerFactory.getLogger(DeploymentEnvironmentController.class);
 
+    private final String relationName = "Deployment Environment";
     private final DeploymentEnvironmentService deploymentEnvironmentService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
     @Autowired
-    public DeploymentEnvironmentController(DeploymentEnvironmentService deploymentEnvironmentService, RoleCheckerService roleCheckerService) {
+    public DeploymentEnvironmentController(DeploymentEnvironmentService deploymentEnvironmentService,
+                                           RoleCheckerService roleCheckerService,
+                                           AuditLogBookService auditLogBookService) {
         this.deploymentEnvironmentService = deploymentEnvironmentService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read DeploymentEnvironment by environmentId
-     * @param environmentId ID of the deployment environment.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Retrieves a DeploymentEnvironment by its environmentId.
+     *
+     * @param environmentId ID of the deployment environment
+     * @param studyId       ID of the study for authorization
+     * @param principal     Jwt principal containing user info
+     * @return The requested DeploymentEnvironment or NOT_FOUND
      */
     @GetMapping("/{environmentId}")
     public ResponseEntity<?> getDeploymentEnvironmentByEnvironmentId(
@@ -53,18 +59,19 @@ public class DeploymentEnvironmentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<DeploymentEnvironment> deploymentEnvironment = this.deploymentEnvironmentService.findDeploymentEnvironmentById(environmentId);
-        return deploymentEnvironment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<DeploymentEnvironment> envOpt = this.deploymentEnvironmentService.findDeploymentEnvironmentById(environmentId);
+        return envOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create a Deployment environment.
-     * @param deploymentEnvironment DeploymentEnvironment model instance to be created.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Creates a new DeploymentEnvironment.
+     *
+     * @param deploymentEnvironment The environment to create
+     * @param studyId               ID of the study for authorization
+     * @param principal             Jwt principal containing user info
+     * @return Created environment or BAD_REQUEST
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createDeploymentEnvironment(@RequestBody DeploymentEnvironment deploymentEnvironment,
                                                          @RequestParam Long studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
@@ -73,22 +80,37 @@ public class DeploymentEnvironmentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            DeploymentEnvironment savedDevelopmentEnvironment = this.deploymentEnvironmentService
+            DeploymentEnvironment saved = this.deploymentEnvironmentService
                     .saveDevelopmentEnvironment(deploymentEnvironment);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedDevelopmentEnvironment);
+
+            if (saved.getEnvironmentId() != null) {
+                String recordId = saved.getEnvironmentId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating DeploymentEnvironment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update Deployment environment.
-     * @param deploymentEnvironmentId ID of the deployment environment that is to be updated.
-     * @param updatedDeploymentEnvironment DeploymentEnvironment model instance with updated details.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Updates an existing DeploymentEnvironment by ID.
+     *
+     * @param deploymentEnvironmentId      ID of the environment to update
+     * @param updatedDeploymentEnvironment Updated environment data
+     * @param studyId                      ID of the study for authorization
+     * @param principal                    Jwt principal containing user info
+     * @return Updated environment or NOT_FOUND
      */
     @PutMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> updateDeploymentEnvironment(@PathVariable Long deploymentEnvironmentId,
@@ -100,20 +122,39 @@ public class DeploymentEnvironmentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<DeploymentEnvironment> savedDeploymentEnvironment = this.deploymentEnvironmentService.updateDeploymentEnvironment(deploymentEnvironmentId, updatedDeploymentEnvironment);
-            return savedDeploymentEnvironment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<DeploymentEnvironment> savedOpt =
+                    this.deploymentEnvironmentService.updateDeploymentEnvironment(deploymentEnvironmentId, updatedDeploymentEnvironment);
+
+            if (savedOpt.isPresent()) {
+                DeploymentEnvironment saved = savedOpt.get();
+                String recordId = saved.getEnvironmentId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating DeploymentEnvironment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete a deployment environment by DeploymentEnvironment ID.
-     * @param deploymentEnvironmentId ID of the deployment environment that is to be deleted.
-     * @param studyId ID of the study
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return
+     * Deletes a DeploymentEnvironment by its ID.
+     *
+     * @param deploymentEnvironmentId ID of the environment to delete
+     * @param studyId                 ID of the study for authorization
+     * @param principal               Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId,
@@ -124,12 +165,24 @@ public class DeploymentEnvironmentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<DeploymentEnvironment> deletedDeploymentEnvironment = this.deploymentEnvironmentService.deleteDeploymentEnvironment(deploymentEnvironmentId);
+            if (deletedDeploymentEnvironment.isPresent()) {
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        deploymentEnvironmentId.toString(),
+                        deletedDeploymentEnvironment.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDeploymentEnvironment.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting DeploymentEnvironment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
-

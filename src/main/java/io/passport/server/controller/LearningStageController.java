@@ -1,10 +1,9 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningStage;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningStageService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +24,30 @@ import java.util.Optional;
 public class LearningStageController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningStageController.class);
+
+    private final String relationName = "Learning Stage";
     private final LearningStageService learningStageService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningStageController(LearningStageService learningStageService, RoleCheckerService roleCheckerService) {
+    public LearningStageController(LearningStageService learningStageService,
+                                   RoleCheckerService roleCheckerService,
+                                   AuditLogBookService auditLogBookService) {
         this.learningStageService = learningStageService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
      * Retrieves learning stages, optionally filtered by the learningProcessId.
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId the ID of the learning process (optional)
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return a list of learning stages
+     *
+     * @param studyId           ID of the study for authorization
+     * @param learningProcessId Optional ID of the learning process to filter
+     * @param principal         Jwt principal containing user info
+     * @return List of LearningStages
      */
     @GetMapping
     public ResponseEntity<List<LearningStage>> getLearningStages(
@@ -52,7 +59,7 @@ public class LearningStageController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<LearningStage> learningStages = learningProcessId != null
+        List<LearningStage> learningStages = (learningProcessId != null)
                 ? learningStageService.findLearningStagesByProcessId(learningProcessId)
                 : learningStageService.getAllLearningStages();
 
@@ -60,33 +67,34 @@ public class LearningStageController {
     }
 
     /**
-     * Read a learning stage by id
-     * @param studyId ID of the study for authorization
-     * @param learningStageId ID of the learning stage
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with LearningStage data or not found status
+     * Retrieves a single LearningStage by its ID.
+     *
+     * @param studyId         ID of the study for authorization
+     * @param learningStageId ID of the LearningStage
+     * @param principal       Jwt principal containing user info
+     * @return The LearningStage or NOT_FOUND
      */
     @GetMapping("/{learningStageId}")
     public ResponseEntity<?> getLearningStage(@RequestParam Long studyId,
                                               @PathVariable Long learningStageId,
                                               @AuthenticationPrincipal Jwt principal) {
-
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<LearningStage> learningStage = this.learningStageService.findLearningStageById(learningStageId);
-        return learningStage.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<LearningStage> lsOpt = this.learningStageService.findLearningStageById(learningStageId);
+        return lsOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create LearningStage.
-     * @param studyId ID of the study for authorization
-     * @param learningStage LearningStage model instance to be created
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with the created LearningStage
+     * Creates a new LearningStage.
+     *
+     * @param studyId       ID of the study for authorization
+     * @param learningStage LearningStage model to create
+     * @param principal     Jwt principal containing user info
+     * @return Created LearningStage or BAD_REQUEST on error
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningStage(@RequestParam Long studyId,
                                                  @RequestBody LearningStage learningStage,
                                                  @AuthenticationPrincipal Jwt principal) {
@@ -95,21 +103,35 @@ public class LearningStageController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningStage savedLearningStage = this.learningStageService.saveLearningStage(learningStage);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningStage);
+            LearningStage saved = this.learningStageService.saveLearningStage(learningStage);
+            if (saved.getLearningStageId() != null) {
+                String recordId = saved.getLearningStageId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating LearningStage: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update LearningStage.
-     * @param studyId ID of the study for authorization
-     * @param learningStageId ID of the learning stage that is to be updated
-     * @param updatedLearningStage LearningStage model instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with the updated LearningStage or not found status
+     * Updates an existing LearningStage by learningStageId.
+     *
+     * @param studyId              ID of the study for authorization
+     * @param learningStageId      ID of the LearningStage to update
+     * @param updatedLearningStage Updated details
+     * @param principal            Jwt principal containing user info
+     * @return Updated LearningStage or NOT_FOUND
      */
     @PutMapping("/{learningStageId}")
     public ResponseEntity<?> updateLearningStage(@RequestParam Long studyId,
@@ -121,20 +143,37 @@ public class LearningStageController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<LearningStage> savedLearningStage = this.learningStageService.updateLearningStage(learningStageId, updatedLearningStage);
-            return savedLearningStage.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<LearningStage> savedOpt = this.learningStageService.updateLearningStage(learningStageId, updatedLearningStage);
+            if (savedOpt.isPresent()) {
+                LearningStage saved = savedOpt.get();
+                String recordId = saved.getLearningStageId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating LearningStage: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete LearningStage by ID.
-     * @param studyId ID of the study for authorization
-     * @param learningStageId ID of the learning stage that is to be deleted
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with no content status or not found status
+     * Deletes a LearningStage by its ID.
+     *
+     * @param studyId         ID of the study for authorization
+     * @param learningStageId ID of the LearningStage to delete
+     * @param principal       Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningStageId}")
     public ResponseEntity<?> deleteLearningStage(@RequestParam Long studyId,
@@ -145,10 +184,24 @@ public class LearningStageController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningStageService.deleteLearningStage(learningStageId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<LearningStage> deletedLearningStage = this.learningStageService.deleteLearningStage(learningStageId);
+            if (deletedLearningStage.isPresent()) {
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        learningStageId.toString(),
+                        deletedLearningStage.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStage.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningStage: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

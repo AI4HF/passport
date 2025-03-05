@@ -100,12 +100,14 @@ public class ModelService {
      * @param modelId ID of model to be deleted
      * @return
      */
-    public boolean deleteModel(Long modelId) {
-        if(modelRepository.existsById(modelId)) {
-            modelRepository.deleteById(modelId);
-            return true;
-        }else{
-            return false;
+    public Optional<Model> deleteModel(Long modelId) {
+        Optional<Model> existingModel = modelRepository.findById(modelId);
+        if (existingModel.isPresent()) {
+            modelRepository.delete(existingModel.get());
+            return existingModel;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

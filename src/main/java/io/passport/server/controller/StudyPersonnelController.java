@@ -3,7 +3,6 @@ package io.passport.server.controller;
 import io.passport.server.model.*;
 import io.passport.server.service.RoleCheckerService;
 import io.passport.server.service.StudyPersonnelService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,9 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.ModelDeployment;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.ModelDeploymentService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,38 +25,48 @@ import java.util.Optional;
 public class ModelDeploymentController {
 
     private static final Logger log = LoggerFactory.getLogger(ModelDeploymentController.class);
+
+    private final String relationName = "Model Deployment";
     private final ModelDeploymentService modelDeploymentService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.ML_ENGINEER);
 
     @Autowired
-    public ModelDeploymentController(ModelDeploymentService modelDeploymentService, RoleCheckerService roleCheckerService) {
+    public ModelDeploymentController(ModelDeploymentService modelDeploymentService,
+                                     RoleCheckerService roleCheckerService,
+                                     AuditLogBookService auditLogBookService) {
         this.modelDeploymentService = modelDeploymentService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Retrieve model deployments filtered by environmentId or studyId.
-     * @param environmentId Optional ID of the environment
-     * @param studyId ID of the study for authorization
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return List of ModelDeployments
+     * Retrieves ModelDeployments, optionally filtered by environmentId or studyId.
+     *
+     * @param environmentId Optional environment ID to filter by
+     * @param studyId       Optional study ID for authorization / filter
+     * @param principal     Jwt principal containing user info
+     * @return List of ModelDeployment objects
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
             @RequestParam(required = false) Long environmentId,
             @RequestParam(required = false) Long studyId,
             @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<ModelDeployment> modelDeployments;
-
         if (environmentId != null) {
-            Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
-            modelDeployments = modelDeployment.map(List::of).orElseGet(List::of);
+            Optional<ModelDeployment> mdOpt = this.modelDeploymentService.findModelDeploymentByEnvironmentId(environmentId);
+            modelDeployments = mdOpt.map(List::of).orElseGet(List::of);
         } else if (studyId != null) {
             modelDeployments = this.modelDeploymentService.getAllModelDeploymentsByStudyId(studyId);
         } else {
@@ -66,39 +75,41 @@ public class ModelDeploymentController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(modelDeployments.size()));
-
         return ResponseEntity.ok().headers(headers).body(modelDeployments);
     }
 
     /**
-     * Read a ModelDeployment by ID.
-     * @param studyId ID of the study for authorization
-     * @param deploymentId ID of the model deployment
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ModelDeployment or not found status
+     * Retrieves a single ModelDeployment by its deploymentId.
+     *
+     * @param studyId      ID of the study for authorization
+     * @param deploymentId ID of the ModelDeployment
+     * @param principal    Jwt principal containing user info
+     * @return ModelDeployment or NOT_FOUND
      */
     @GetMapping("/{deploymentId}")
     public ResponseEntity<?> getModelDeployment(@RequestParam Long studyId,
                                                 @PathVariable Long deploymentId,
                                                 @AuthenticationPrincipal Jwt principal) {
-
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<ModelDeployment> modelDeployment = this.modelDeploymentService.findModelDeploymentByDeploymentId(deploymentId);
-
-        return modelDeployment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<ModelDeployment> mdOpt = this.modelDeploymentService.findModelDeploymentByDeploymentId(deploymentId);
+        return mdOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create a new ModelDeployment.
-     * @param studyId ID of the study for authorization
-     * @param modelDeployment ModelDeployment model instance to be created
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return Created ModelDeployment
+     * Creates a new ModelDeployment.
+     *
+     * @param studyId         ID of the study for authorization
+     * @param modelDeployment ModelDeployment instance to create
+     * @param principal       Jwt principal containing user info
+     * @return Created ModelDeployment or BAD_REQUEST on error
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createModelDeployment(@RequestParam Long studyId,
                                                    @RequestBody ModelDeployment modelDeployment,
                                                    @AuthenticationPrincipal Jwt principal) {
@@ -107,21 +118,35 @@ public class ModelDeploymentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            ModelDeployment savedModelDeployment = this.modelDeploymentService.saveModelDeployment(modelDeployment);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedModelDeployment);
+            ModelDeployment saved = this.modelDeploymentService.saveModelDeployment(modelDeployment);
+            if (saved.getDeploymentId() != null) {
+                String recordId = saved.getDeploymentId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating ModelDeployment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update ModelDeployment by ID.
-     * @param studyId ID of the study for authorization
-     * @param deploymentId ID of the model deployment
-     * @param updatedModelDeployment ModelDeployment instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return Updated ModelDeployment or not found status
+     * Updates an existing ModelDeployment by deploymentId.
+     *
+     * @param studyId                ID of the study for authorization
+     * @param deploymentId           ID of the ModelDeployment to update
+     * @param updatedModelDeployment Updated details
+     * @param principal              Jwt principal containing user info
+     * @return Updated ModelDeployment or NOT_FOUND
      */
     @PutMapping("/{deploymentId}")
     public ResponseEntity<?> updateModelDeployment(@RequestParam Long studyId,
@@ -133,20 +158,39 @@ public class ModelDeploymentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<ModelDeployment> savedModelDeployment = this.modelDeploymentService.updateModelDeployment(deploymentId, updatedModelDeployment);
-            return savedModelDeployment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<ModelDeployment> savedOpt = this.modelDeploymentService
+                    .updateModelDeployment(deploymentId, updatedModelDeployment);
+
+            if (savedOpt.isPresent()) {
+                ModelDeployment saved = savedOpt.get();
+                String recordId = saved.getDeploymentId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating ModelDeployment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete ModelDeployment by ID.
-     * @param studyId ID of the study for authorization
-     * @param deploymentId ID of the model deployment
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return No content or not found status
+     * Deletes a ModelDeployment by its deploymentId.
+     *
+     * @param studyId      ID of the study for authorization
+     * @param deploymentId ID of the ModelDeployment to delete
+     * @param principal    Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentId}")
     public ResponseEntity<?> deleteModelDeployment(@RequestParam Long studyId,
@@ -157,10 +201,24 @@ public class ModelDeploymentController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.modelDeploymentService.deleteModelDeployment(deploymentId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<ModelDeployment> deletedModelDeployment = this.modelDeploymentService.deleteModelDeployment(deploymentId);
+            if (deletedModelDeployment.isPresent()) {
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        deploymentId.toString(),
+                        deletedModelDeployment.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelDeployment.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting ModelDeployment: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

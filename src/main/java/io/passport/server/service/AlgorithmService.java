@@ -72,16 +72,17 @@ public class AlgorithmService {
     }
 
     /**
-     * Delete an algorithm
-     * @param algorithmId ID of algorithm to be deleted
-     * @return
+     * Delete an algorithm and return the deleted entity.
+     * @param algorithmId ID of the algorithm to be deleted.
+     * @return Optional containing the deleted algorithm if found, otherwise empty.
      */
-    public boolean deleteAlgorithm(Long algorithmId) {
-        if(algorithmRepository.existsById(algorithmId)) {
-            algorithmRepository.deleteById(algorithmId);
-            return true;
+    public Optional<Algorithm> deleteAlgorithm(Long algorithmId) {
+        Optional<Algorithm> existingAlgorithm = algorithmRepository.findById(algorithmId);
+        if (existingAlgorithm.isPresent()) {
+            algorithmRepository.delete(existingAlgorithm.get());
+            return existingAlgorithm;
         }else{
-            return false;
+            return Optional.empty();
         }
     }
 }

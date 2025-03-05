@@ -94,12 +94,14 @@ public class StudyOrganizationService {
      * @param studyOrganizationId ID of study organization to be deleted
      * @return
      */
-    public boolean deleteStudyOrganization(StudyOrganizationId studyOrganizationId) {
-        if(studyOrganizationRepository.existsById(studyOrganizationId)) {
-            studyOrganizationRepository.deleteById(studyOrganizationId);
-            return true;
-        }else{
-            return false;
+    public Optional<StudyOrganization> deleteStudyOrganization(StudyOrganizationId studyOrganizationId) {
+        Optional<StudyOrganization> existingOrganization = studyOrganizationRepository.findById(studyOrganizationId);
+        if (existingOrganization.isPresent()) {
+            studyOrganizationRepository.delete(existingOrganization.get());
+            return existingOrganization;
+        } else {
+            return Optional.empty();
         }
     }
+
 }

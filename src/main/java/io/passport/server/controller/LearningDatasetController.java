@@ -1,9 +1,9 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningDatasetService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +22,32 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/learning-dataset")
 public class LearningDatasetController {
+
     private static final Logger log = LoggerFactory.getLogger(LearningDatasetController.class);
+
+    private final String relationName = "Learning Dataset";
     private final LearningDatasetService learningDatasetService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningDatasetController(LearningDatasetService learningDatasetService, RoleCheckerService roleCheckerService) {
+    public LearningDatasetController(LearningDatasetService learningDatasetService,
+                                     RoleCheckerService roleCheckerService,
+                                     AuditLogBookService auditLogBookService) {
         this.learningDatasetService = learningDatasetService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read a LearningDataset by id
-     * @param studyId ID of the study for authorization
+     * Reads a LearningDataset by its ID.
+     *
+     * @param studyId           ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with LearningDataset
+     * @param principal         Jwt principal containing user info
+     * @return The requested LearningDataset or NOT_FOUND
      */
     @GetMapping("/{learningDatasetId}")
     public ResponseEntity<?> getLearningDataset(@RequestParam Long studyId,
@@ -48,19 +57,20 @@ public class LearningDatasetController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<LearningDataset> learningDataset = this.learningDatasetService.findLearningDatasetByLearningDatasetId(learningDatasetId);
-        return learningDataset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<LearningDataset> ldOpt = this.learningDatasetService.findLearningDatasetByLearningDatasetId(learningDatasetId);
+        return ldOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Read all LearningDatasets or filtered by dataTransformationId and/or datasetId
-     * @param studyId ID of the study for authorization
-     * @param dataTransformationId ID of the DataTransformation (optional)
-     * @param datasetId ID of the Dataset (optional)
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with list of LearningDatasets
+     * Reads all LearningDatasets, or filters by dataTransformationId and/or datasetId if provided.
+     *
+     * @param studyId              ID of the study for authorization
+     * @param dataTransformationId Optional DataTransformation ID
+     * @param datasetId            Optional Dataset ID
+     * @param principal            Jwt principal containing user info
+     * @return List of LearningDatasets
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
             @RequestParam Long studyId,
             @RequestParam(required = false) Long dataTransformationId,
@@ -72,7 +82,6 @@ public class LearningDatasetController {
         }
 
         List<LearningDataset> datasets;
-
         if (dataTransformationId != null) {
             datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
         } else if (datasetId != null) {
@@ -80,18 +89,18 @@ public class LearningDatasetController {
         } else {
             datasets = this.learningDatasetService.getAllLearningDatasetsByStudyId(studyId);
         }
-
         return ResponseEntity.ok().body(datasets);
     }
 
     /**
-     * Create LearningDataset with corresponding Dataset Transformation.
-     * @param studyId ID of the study for authorization
-     * @param request LearningDataset and Transformation model instance to be created
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with created LearningDatasetAndTransformationDTO
+     * Creates a new LearningDataset along with a DatasetTransformation.
+     *
+     * @param studyId   ID of the study for authorization
+     * @param request   DTO containing both LearningDataset and Transformation info
+     * @param principal Jwt principal containing user info
+     * @return Created LearningDatasetandTransformationDTO
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam Long studyId,
                                                                      @RequestBody LearningDatasetandTransformationDTO request,
                                                                      @AuthenticationPrincipal Jwt principal) {
@@ -100,21 +109,39 @@ public class LearningDatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningDatasetandTransformationDTO response = learningDatasetService.createLearningDatasetAndTransformation(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            LearningDatasetandTransformationDTO createdDTO =
+                    learningDatasetService.createLearningDatasetAndTransformation(request);
+
+            LearningDataset newLd = createdDTO.getLearningDataset();
+            if (newLd != null && newLd.getLearningDatasetId() != null) {
+                String recordId = newLd.getLearningDatasetId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        recordId,
+                        newLd
+                );
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdDTO);
+
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Error creating LearningDataset with transformation: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update both DatasetTransformation and LearningDataset in a single transaction.
-     * @param studyId ID of the study for authorization
-     * @param learningDatasetId ID of the LearningDataset to be updated
-     * @param request LearningDatasetAndTransformationRequest containing updated DatasetTransformation and LearningDataset
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with updated LearningDataset and DatasetTransformation
+     * Updates a LearningDataset and its DatasetTransformation in a single transaction.
+     *
+     * @param studyId           ID of the study for authorization
+     * @param learningDatasetId ID of the LearningDataset to update
+     * @param request           DTO containing updated LearningDataset and Transformation
+     * @param principal         Jwt principal containing user info
+     * @return Updated LearningDatasetandTransformationDTO or NOT_FOUND
      */
     @PutMapping("/{learningDatasetId}")
     public ResponseEntity<?> updateLearningDatasetWithTransformation(
@@ -131,25 +158,40 @@ public class LearningDatasetController {
             LearningDataset learningDataset = request.getLearningDataset();
             learningDataset.setLearningDatasetId(learningDatasetId);
 
-            Optional<LearningDatasetandTransformationDTO> updatedEntities = learningDatasetService.updateLearningDatasetWithTransformation(transformation, learningDataset);
+            Optional<LearningDatasetandTransformationDTO> updatedOpt =
+                    learningDatasetService.updateLearningDatasetWithTransformation(transformation, learningDataset);
 
-            if (updatedEntities.isPresent()) {
-                return ResponseEntity.ok().body(updatedEntities.get());
+            if (updatedOpt.isPresent()) {
+                LearningDatasetandTransformationDTO updatedDTO = updatedOpt.get();
+                LearningDataset updatedLd = updatedDTO.getLearningDataset();
+                String recordId = updatedLd.getLearningDatasetId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        recordId,
+                        updatedLd
+                );
+                return ResponseEntity.ok(updatedDTO);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("LearningDataset or DatasetTransformation not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("LearningDataset or DatasetTransformation not found");
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Error updating LearningDataset with transformation: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete by LearningDataset ID.
-     * @param studyId ID of the study for authorization
-     * @param learningDatasetId ID of the LearningDataset that is to be deleted
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity
+     * Deletes a LearningDataset by its ID.
+     *
+     * @param studyId           ID of the study for authorization
+     * @param learningDatasetId ID of the LearningDataset to delete
+     * @param principal         Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningDatasetId}")
     public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,
@@ -160,10 +202,24 @@ public class LearningDatasetController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<LearningDataset> deletedLearningDataset = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
+            if (deletedLearningDataset.isPresent()) {
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        learningDatasetId.toString(),
+                        deletedLearningDataset.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningDataset.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningDataset: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

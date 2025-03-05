@@ -1,10 +1,9 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningProcess;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningProcessService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +23,33 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/learning-process")
 public class LearningProcessController {
+
     private static final Logger log = LoggerFactory.getLogger(LearningProcessController.class);
+
+    private final String relationName = "Learning Process";
     private final LearningProcessService learningProcessService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningProcessController(LearningProcessService learningProcessService, RoleCheckerService roleCheckerService) {
+    public LearningProcessController(LearningProcessService learningProcessService,
+                                     RoleCheckerService roleCheckerService,
+                                     AuditLogBookService auditLogBookService) {
         this.learningProcessService = learningProcessService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read all learning processes by studyId
-     * @param studyId ID of the study for authorization
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with list of LearningProcesses
+     * Reads all learning processes by a given studyId.
+     *
+     * @param studyId   ID of the study
+     * @param principal Jwt principal containing user info
+     * @return List of LearningProcess objects
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
                                                                                   @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -51,38 +59,38 @@ public class LearningProcessController {
         List<LearningProcess> learningProcesses = this.learningProcessService.getAllLearningProcessByStudyId(studyId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(learningProcesses.size()));
-
         return ResponseEntity.ok().headers(headers).body(learningProcesses);
     }
 
     /**
-     * Read a learning process by id
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId ID of the learning process
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with LearningProcess
+     * Reads a single LearningProcess by its ID.
+     *
+     * @param studyId           ID of the study for authorization
+     * @param learningProcessId ID of the LearningProcess
+     * @param principal         Jwt principal containing user info
+     * @return The LearningProcess or NOT_FOUND
      */
     @GetMapping("/{learningProcessId}")
     public ResponseEntity<?> getLearningProcess(@RequestParam Long studyId,
                                                 @PathVariable Long learningProcessId,
                                                 @AuthenticationPrincipal Jwt principal) {
-
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<LearningProcess> learningProcess = this.learningProcessService.findLearningProcessById(learningProcessId);
-        return learningProcess.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<LearningProcess> lpOpt = this.learningProcessService.findLearningProcessById(learningProcessId);
+        return lpOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Create LearningProcess.
-     * @param studyId ID of the study for authorization
-     * @param learningProcess LearningProcess model instance to be created
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with created LearningProcess
+     * Creates a new LearningProcess.
+     *
+     * @param studyId         ID of the study for authorization
+     * @param learningProcess LearningProcess model to create
+     * @param principal       Jwt principal containing user info
+     * @return Created LearningProcess or BAD_REQUEST on error
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningProcess(@RequestParam Long studyId,
                                                    @RequestBody LearningProcess learningProcess,
                                                    @AuthenticationPrincipal Jwt principal) {
@@ -91,21 +99,35 @@ public class LearningProcessController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningProcess savedLearningProcess = this.learningProcessService.saveLearningProcess(learningProcess);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningProcess);
+            LearningProcess saved = this.learningProcessService.saveLearningProcess(learningProcess);
+            if (saved.getLearningProcessId() != null) {
+                String recordId = saved.getLearningProcessId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating LearningProcess: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Update LearningProcess.
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId ID of the learning process that is to be updated
-     * @param updatedLearningProcess LearningProcess model instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with updated LearningProcess
+     * Updates an existing LearningProcess by learningProcessId.
+     *
+     * @param studyId                ID of the study for authorization
+     * @param learningProcessId      ID of the LearningProcess to update
+     * @param updatedLearningProcess Updated details
+     * @param principal              Jwt principal containing user info
+     * @return Updated LearningProcess or NOT_FOUND
      */
     @PutMapping("/{learningProcessId}")
     public ResponseEntity<?> updateLearningProcess(@RequestParam Long studyId,
@@ -117,20 +139,38 @@ public class LearningProcessController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<LearningProcess> savedLearningProcess = this.learningProcessService.updateLearningProcess(learningProcessId, updatedLearningProcess);
-            return savedLearningProcess.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<LearningProcess> savedOpt =
+                    this.learningProcessService.updateLearningProcess(learningProcessId, updatedLearningProcess);
+
+            if (savedOpt.isPresent()) {
+                LearningProcess saved = savedOpt.get();
+                String recordId = saved.getLearningProcessId().toString();
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        recordId,
+                        saved
+                );
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating LearningProcess: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Delete by LearningProcess ID.
-     * @param studyId ID of the study for authorization
-     * @param learningProcessId ID of the learning process that is to be deleted
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity
+     * Deletes a LearningProcess by its ID.
+     *
+     * @param studyId           ID of the study for authorization
+     * @param learningProcessId ID of the LearningProcess to delete
+     * @param principal         Jwt principal containing user info
+     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningProcessId}")
     public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,
@@ -141,10 +181,23 @@ public class LearningProcessController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.learningProcessService.deleteLearningProcess(learningProcessId);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<LearningProcess> deletedLearningProcess = this.learningProcessService.deleteLearningProcess(learningProcessId);
+            if (deletedLearningProcess.isPresent()) {
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        learningProcessId.toString(),
+                        deletedLearningProcess.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcess.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningProcess: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

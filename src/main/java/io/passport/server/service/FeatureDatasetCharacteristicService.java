@@ -94,12 +94,14 @@ public class FeatureDatasetCharacteristicService {
      * @param featureDatasetCharacteristicId composite ID of FeatureDatasetCharacteristic to be deleted
      * @return
      */
-    public boolean deleteFeatureDatasetCharacteristic(FeatureDatasetCharacteristicId featureDatasetCharacteristicId) {
-        if(featureDatasetCharacteristicRepository.existsById(featureDatasetCharacteristicId)) {
-            featureDatasetCharacteristicRepository.deleteById(featureDatasetCharacteristicId);
-            return true;
+    public Optional<FeatureDatasetCharacteristic> deleteFeatureDatasetCharacteristic(FeatureDatasetCharacteristicId featureDatasetCharacteristicId) {
+        Optional<FeatureDatasetCharacteristic> existingCharacteristic = featureDatasetCharacteristicRepository.findById(featureDatasetCharacteristicId);
+        if (existingCharacteristic.isPresent()) {
+            featureDatasetCharacteristicRepository.delete(existingCharacteristic.get());
+            return existingCharacteristic;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }

@@ -1,12 +1,9 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.LearningStageParameterDTO;
-import io.passport.server.model.LearningStageParameter;
-import io.passport.server.model.LearningStageParameterId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.LearningStageParameterService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,25 +27,32 @@ public class LearningStageParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(LearningStageParameterController.class);
 
+    private final String relationName = "Learning Stage Parameter";
     private final LearningStageParameterService learningStageParameterService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
+
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public LearningStageParameterController(LearningStageParameterService learningStageParameterService, RoleCheckerService roleCheckerService) {
+    public LearningStageParameterController(LearningStageParameterService learningStageParameterService,
+                                            RoleCheckerService roleCheckerService,
+                                            AuditLogBookService auditLogBookService) {
         this.learningStageParameterService = learningStageParameterService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
      * Retrieve LearningStageParameters filtered by learningStageId and/or parameterId.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage (optional)
-     * @param parameterId ID of the Parameter (optional)
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return List of LearningStageParameters
+     * @param parameterId     ID of the Parameter (optional)
+     * @param principal       Jwt principal containing user info
+     * @return List of LearningStageParameterDTO
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LearningStageParameterDTO>> getLearningStageParameters(
             @RequestParam Long studyId,
             @RequestParam(required = false) Long learningStageId,
@@ -60,13 +64,12 @@ public class LearningStageParameterController {
         }
 
         List<LearningStageParameter> parameters;
-
         if (learningStageId != null && parameterId != null) {
             LearningStageParameterId id = new LearningStageParameterId();
-            id.setLearningStageId(learningStageId);
             id.setParameterId(parameterId);
-            Optional<LearningStageParameter> parameter = this.learningStageParameterService.findLearningStageParameterById(id);
-            parameters = parameter.map(List::of).orElseGet(List::of);
+            id.setLearningStageId(learningStageId);
+            Optional<LearningStageParameter> one = this.learningStageParameterService.findLearningStageParameterById(id);
+            parameters = one.map(List::of).orElseGet(List::of);
         } else if (learningStageId != null) {
             parameters = this.learningStageParameterService.findByLearningStageId(learningStageId);
         } else if (parameterId != null) {
@@ -81,18 +84,18 @@ public class LearningStageParameterController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(dtos.size()));
-
         return ResponseEntity.ok().headers(headers).body(dtos);
     }
 
     /**
      * Create a new LearningStageParameter.
-     * @param studyId ID of the study for authorization
-     * @param learningStageParameterDTO DTO containing LearningStageParameter data
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with created LearningStageParameter
+     *
+     * @param studyId                   ID of the study for authorization
+     * @param learningStageParameterDTO DTO containing data
+     * @param principal                 Jwt principal containing user info
+     * @return Created LearningStageParameter
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<?> createLearningStageParameter(@RequestParam Long studyId,
                                                           @RequestBody LearningStageParameterDTO learningStageParameterDTO,
                                                           @AuthenticationPrincipal Jwt principal) {
@@ -101,25 +104,42 @@ public class LearningStageParameterController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            LearningStageParameter learningStageParameter = new LearningStageParameter(learningStageParameterDTO);
-            LearningStageParameter savedLearningStageParameter = this.learningStageParameterService.saveLearningStageParameter(learningStageParameter);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedLearningStageParameter);
+            LearningStageParameter entity = new LearningStageParameter(learningStageParameterDTO);
+            LearningStageParameter saved = this.learningStageParameterService.saveLearningStageParameter(entity);
+
+            if (saved.getId() != null) {
+                Long lsId = saved.getId().getLearningStageId();
+                Long pId = saved.getId().getParameterId();
+                String compositeId = "(" + lsId + ", " + pId + ")";
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.CREATE,
+                        relationName,
+                        compositeId,
+                        saved
+                );
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error creating LearningStageParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
      * Update LearningStageParameter using composite ID.
-     * @param studyId ID of the study for authorization
-     * @param learningStageId ID of the LearningStage
-     * @param parameterId ID of the Parameter
-     * @param updatedLearningStageParameter LearningStageParameter model instance with updated details
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with updated LearningStageParameter or not found status
+     *
+     * @param studyId                       ID of the study for authorization
+     * @param learningStageId               ID of the LearningStage
+     * @param parameterId                   ID of the Parameter
+     * @param updatedLearningStageParameter Updated data
+     * @param principal                     Jwt principal containing user info
+     * @return Updated LearningStageParameter or NOT_FOUND
      */
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<?> updateLearningStageParameter(
             @RequestParam Long studyId,
             @RequestParam Long learningStageId,
@@ -136,23 +156,42 @@ public class LearningStageParameterController {
         id.setLearningStageId(learningStageId);
 
         try {
-            Optional<LearningStageParameter> savedLearningStageParameter = this.learningStageParameterService.updateLearningStageParameter(id, updatedLearningStageParameter);
-            return savedLearningStageParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Optional<LearningStageParameter> savedOpt =
+                    this.learningStageParameterService.updateLearningStageParameter(id, updatedLearningStageParameter);
+
+            if (savedOpt.isPresent()) {
+                LearningStageParameter saved = savedOpt.get();
+                String compositeId = "(" + learningStageId + ", " + parameterId + ")";
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.UPDATE,
+                        relationName,
+                        compositeId,
+                        saved
+                );
+                return ResponseEntity.ok(saved);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error updating LearningStageParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
      * Delete LearningStageParameter by composite ID.
-     * @param studyId ID of the study for authorization
+     *
+     * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage
-     * @param parameterId ID of the Parameter
-     * @param principal KeycloakPrincipal object that holds access token
-     * @return ResponseEntity with no content status or not found status
+     * @param parameterId     ID of the Parameter
+     * @param principal       Jwt principal containing user info
+     * @return No content or NOT_FOUND
      */
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteLearningStageParameter(@RequestParam Long studyId,
                                                           @RequestParam Long learningStageId,
                                                           @RequestParam Long parameterId,
@@ -163,14 +202,29 @@ public class LearningStageParameterController {
         }
 
         LearningStageParameterId id = new LearningStageParameterId();
-        id.setLearningStageId(learningStageId);
         id.setParameterId(parameterId);
+        id.setLearningStageId(learningStageId);
 
         try {
-            boolean isDeleted = this.learningStageParameterService.deleteLearningStageParameter(id);
-            return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            Optional<LearningStageParameter> deletedLearningStageParameter = this.learningStageParameterService.deleteLearningStageParameter(id);
+            if (deletedLearningStageParameter.isPresent()) {
+                String compositeId = "(" + learningStageId + ", " + parameterId + ")";
+                auditLogBookService.createAuditLog(
+                        principal.getSubject(),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        studyId,
+                        Operation.DELETE,
+                        relationName,
+                        compositeId,
+                        deletedLearningStageParameter.get()
+                );
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStageParameter.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error deleting LearningStageParameter: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

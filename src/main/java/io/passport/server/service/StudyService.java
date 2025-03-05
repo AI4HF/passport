@@ -87,14 +87,16 @@ public class StudyService {
      * @param studyId ID of study to be deleted
      * @return
      */
-    public boolean deleteStudy(Long studyId) {
-        if(studyRepository.existsById(studyId)) {
-            studyRepository.deleteById(studyId);
-            return true;
-        }else{
-            return false;
+    public Optional<Study> deleteStudy(Long studyId) {
+        Optional<Study> existingStudy = studyRepository.findById(studyId);
+        if (existingStudy.isPresent()) {
+            studyRepository.delete(existingStudy.get());
+            return existingStudy;
+        } else {
+            return Optional.empty();
         }
     }
+
 
     /**
      * Find a Study by datasetId

@@ -96,12 +96,14 @@ public class FeatureService {
      * @param featureId ID of Feature to be deleted
      * @return
      */
-    public boolean deleteFeature(Long featureId) {
-        if(featureRepository.existsById(featureId)) {
-            featureRepository.deleteById(featureId);
-            return true;
+    public Optional<Feature> deleteFeature(Long featureId) {
+        Optional<Feature> existingFeature = featureRepository.findById(featureId);
+        if (existingFeature.isPresent()) {
+            featureRepository.delete(existingFeature.get());
+            return existingFeature;
         } else {
-            return false;
+            return Optional.empty();
         }
     }
+
 }
