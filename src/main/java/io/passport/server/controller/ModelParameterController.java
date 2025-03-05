@@ -1,9 +1,6 @@
 package io.passport.server.controller;
 
-import io.passport.server.model.ModelParameter;
-import io.passport.server.model.ModelParameterDTO;
-import io.passport.server.model.ModelParameterId;
-import io.passport.server.model.Role;
+import io.passport.server.model.*;
 import io.passport.server.service.AuditLogBookService; // <-- NEW
 import io.passport.server.service.ModelParameterService;
 import io.passport.server.service.RoleCheckerService;
@@ -30,9 +27,10 @@ public class ModelParameterController {
 
     private static final Logger log = LoggerFactory.getLogger(ModelParameterController.class);
 
+    private final String relationName = "Model Parameter";
     private final ModelParameterService modelParameterService;
     private final RoleCheckerService roleCheckerService;
-    private final AuditLogBookService auditLogBookService; // <-- NEW
+    private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
@@ -109,17 +107,14 @@ public class ModelParameterController {
                 Long mId = saved.getId().getModelId();
                 Long pId = saved.getId().getParameterId();
                 String compositeId = "(" + mId + ", " + pId + ")";
-                String description = "Creation of ModelParameter with modelId="
-                        + mId + " and parameterId=" + pId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "CREATE",
-                        "ModelParameter",
+                        Operation.CREATE,
+                        relationName,
                         compositeId,
-                        saved,
-                        description
+                        saved
                 );
             }
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -159,17 +154,14 @@ public class ModelParameterController {
                 ModelParameter saved = savedOpt.get();
                 if (saved.getId() != null) {
                     String compositeId = "(" + modelId + ", " + parameterId + ")";
-                    String description = "Update of ModelParameter with modelId="
-                            + modelId + " and parameterId=" + parameterId;
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
-                            principal.getClaim("preferred_username"),
+                            principal.getClaim(TokenClaim.USERNAME.getValue()),
                             studyId,
-                            "UPDATE",
-                            "ModelParameter",
+                            Operation.UPDATE,
+                            relationName,
                             compositeId,
-                            saved,
-                            description
+                            saved
                     );
                 }
                 return ResponseEntity.ok(saved);
@@ -208,17 +200,14 @@ public class ModelParameterController {
             Optional<ModelParameter> deletedModelParameter = this.modelParameterService.deleteModelParameter(id);
             if (deletedModelParameter.isPresent()) {
                 String compositeId = "(" + modelId + ", " + parameterId + ")";
-                String description = "Deletion of ModelParameter with modelId="
-                        + modelId + " and parameterId=" + parameterId;
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
-                        principal.getClaim("preferred_username"),
+                        principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId,
-                        "DELETE",
-                        "ModelParameter",
+                        Operation.DELETE,
+                        relationName,
                         compositeId,
-                        deletedModelParameter.get(),
-                        description
+                        deletedModelParameter.get()
                 );
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelParameter.get());
             } else {
