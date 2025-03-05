@@ -271,7 +271,7 @@ CREATE TABLE parameter
 
 -- Insert dummy parameter
 INSERT INTO parameter (name, study_id, description, data_type)
-VALUES ('test_parameter', 1, 'test_description', 'string');
+VALUES ('Number of Folds', 1, 'Number of folds for Gradient-boosted trees.', 'int');
 
 
 -- Create algorithm table
@@ -335,7 +335,7 @@ CREATE TABLE implementation
 
 -- Insert dummy implementation
 INSERT INTO implementation (algorithm_id, software, name, description)
-VALUES (1, 'test_software', 'test_name', 'test_description');
+VALUES (1, 'Spark MLlib', 'Gradient-boosted Tree Regression', 'Implementation of Gradient-boosted tree regression with Spark MLlib v3.5');
 
 -- Create model LearningProcess table
 CREATE TABLE learning_process
@@ -348,7 +348,7 @@ CREATE TABLE learning_process
 
 -- Insert dummy LearningProcess
 INSERT INTO learning_process (study_id, implementation_id, description)
-VALUES (1, 1, 'test_description');
+VALUES (1, 1, 'ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.');
 
 -- Create model LearningStage table
 CREATE TABLE learning_stage
@@ -362,7 +362,7 @@ CREATE TABLE learning_stage
 
 -- Insert dummy LearningStage
 INSERT INTO learning_stage (learning_process_id, learning_stage_name, description, dataset_percentage)
-VALUES (1, 'test_name', 'test_description', 50);
+VALUES (1, 'Training', 'Training stage/phase', 50);
 
 -- Create LearningProcessDataset table
 CREATE TABLE learning_process_dataset
@@ -375,7 +375,7 @@ CREATE TABLE learning_process_dataset
 
 -- Insert dummy LearningProcessDataset
 INSERT INTO learning_process_dataset (learning_process_id, learning_dataset_id, description)
-VALUES (1, 1, 'This is a dummy description for the Learning Process Dataset relation.');
+VALUES (1, 1, 'Building a HF risk prediction model with Gradient-boosted tree regression.');
 
 -- Create LearningProcessParameter table
 CREATE TABLE learning_process_parameter
@@ -389,7 +389,7 @@ CREATE TABLE learning_process_parameter
 
 -- Insert dummy LearningProcessParameter
 INSERT INTO learning_process_parameter (learning_process_id, parameter_id, type, value)
-VALUES (1, 1, 'string', 'Dummy value for Learning Process Parameter');
+VALUES (1, 1, 'int', '1');
 
 -- Create LearningStageParameter table
 CREATE TABLE learning_stage_parameter
@@ -403,7 +403,7 @@ CREATE TABLE learning_stage_parameter
 
 -- Insert dummy LearningStageParameter
 INSERT INTO learning_stage_parameter (learning_stage_id, parameter_id, type, value)
-VALUES (1, 1, 'string', 'Dummy value for Learning Stage Parameter');
+VALUES (1, 1, 'int', '2');
 
 -- Create model table
 CREATE TABLE model
@@ -437,9 +437,10 @@ INSERT INTO model (learning_process_id, study_id, name, version, tag, model_type
                    owner, trl_level, license, primary_use, secondary_use, intended_users, counter_indications,
                    ethical_considerations, limitations, fairness_constraints, created_at, created_by,
                    last_updated_at, last_updated_by)
-VALUES (1, 1, 'test_name', 'test_version', 'test_tag', 'test_model_type', 'test_product_identifier', 1,
-        'test_trl_level', 'test_license', 'test_primary_use', 'test_secondary_use', 'test_intended_users',
-        'test_counter_indications', 'test_ethical_considerations', 'test_limitations', 'test_fariness_constraints',
+VALUES (1, 1, 'HF risk prediction model 1 (for 7-day readmission risk)', '1.0', 'Production', 'prediction', 'AI4HFModel001', 1,
+        'TRL4', 'RAIL-<DAMS>', 'Predicting 7-day readmission risk for Heart Failure patients.', 'Early intervention recommendations.', 'Healthcare providers, Data scientists',
+        'Not recommended for cases with incomplete patient history.', 'Privacy and consent considerations', 'This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.',
+        'Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.',
         '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist');
 
 -- Create ModelParameter table
@@ -454,7 +455,7 @@ CREATE TABLE model_parameter
 
 -- Insert dummy ModelParameter
 INSERT INTO model_parameter (model_id, parameter_id, type, value)
-VALUES (1, 1, 'string', 'Dummy value for Model Parameter');
+VALUES (1, 1, 'int', '3');
 
 
 -- Create deployment_environment table
@@ -526,10 +527,10 @@ VALUES
          "connectivityDetails": "Secure HTTPS communication is established using TLS/SSL protocols."
        },
        "modelDetails": {
-         "name": "test_name",
-         "version": "test_version",
-         "modelType": "test_model_type",
-         "productIdentifier": "test_product_identifier"
+         "name": "HF risk prediction model 1 (for 7-day readmission risk)",
+         "version": "1.0",
+         "modelType": "prediction",
+         "productIdentifier": "AI4HFModel001"
        },
        "studyDetails": {
          "id": 1,
@@ -540,9 +541,9 @@ VALUES
        },
        "parameters": [
          {
-           "name": "test_parameter",
-           "description": "test_description",
-           "dataType": "string"
+           "name": "Number of folds",
+           "description": "Number of folds for Gradient-boosted trees",
+           "dataType": "int"
          }
        ],
        "populationDetails": [
@@ -604,12 +605,12 @@ VALUES
        "learningProcessesWithStages": [
          {
            "learningProcess": {
-             "description": "test_description"
+             "description": "ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data."
            },
            "learningStages": [
              {
-               "learningStageName": "test_name",
-               "description": "test_description",
+               "learningStageName": "training",
+               "description": "Training stage/phase",
                "datasetPercentage": 50
              }
            ]
@@ -651,4 +652,4 @@ CREATE TABLE evaluation_measure
 
 -- Insert dummy evaluation measure
 INSERT INTO evaluation_measure (model_id, name, value, data_type, description)
-VALUES (1, 'test_name', 'test_value', 'test_data_type', 'test_description');
+VALUES (1, 'Accuracy', '0.77', 'float', 'Accuracy of Model with ID model1');
