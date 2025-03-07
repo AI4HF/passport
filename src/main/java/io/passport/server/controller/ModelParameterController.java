@@ -74,6 +74,9 @@ public class ModelParameterController {
         } else {
             parameters = this.modelParameterService.getAllModelParameters();
         }
+        if (modelId != null && parameterId != null && parameters.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
         List<ModelParameterDTO> dtos = parameters.stream()
                 .map(ModelParameterDTO::new)
