@@ -223,7 +223,7 @@ public class FeatureDatasetCharacteristicController {
                         compositeId,
                         deletedFeatureDatasetCharacteristic.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeatureDatasetCharacteristic.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedFeatureDatasetCharacteristic.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

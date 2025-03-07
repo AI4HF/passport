@@ -221,7 +221,7 @@ public class LearningProcessDatasetController {
                         compositeId,
                         deletedLearningProcessDataset.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcessDataset.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningProcessDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

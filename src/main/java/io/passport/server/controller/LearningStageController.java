@@ -173,7 +173,7 @@ public class LearningStageController {
      * @param studyId         ID of the study for authorization
      * @param learningStageId ID of the LearningStage to delete
      * @param principal       Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningStageId}")
     public ResponseEntity<?> deleteLearningStage(@RequestParam Long studyId,
@@ -195,7 +195,7 @@ public class LearningStageController {
                         learningStageId.toString(),
                         deletedLearningStage.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStage.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningStage.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

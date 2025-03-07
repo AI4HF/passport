@@ -197,7 +197,7 @@ public class PopulationController {
                         populationId.toString(),
                         deletedPopulation.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedPopulation.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedPopulation.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

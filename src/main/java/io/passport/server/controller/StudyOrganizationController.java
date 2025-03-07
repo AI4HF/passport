@@ -242,7 +242,7 @@ public class StudyOrganizationController {
                         compositeId,
                         deletedStudyOrganization.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudyOrganization.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedStudyOrganization.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

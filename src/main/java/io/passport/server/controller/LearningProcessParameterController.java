@@ -219,7 +219,7 @@ public class LearningProcessParameterController {
                         compositeId,
                         deletedLearningProcessParameter.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcessParameter.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningProcessParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
