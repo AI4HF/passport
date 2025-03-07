@@ -65,8 +65,8 @@ public class ModelParameterController {
         List<ModelParameter> parameters;
         if (modelId != null && parameterId != null) {
             ModelParameterId id = new ModelParameterId(modelId, parameterId);
-            Optional<ModelParameter> one = this.modelParameterService.findModelParameterById(id);
-            parameters = one.map(List::of).orElseGet(List::of);
+            Optional<ModelParameter> modelParameter = this.modelParameterService.findModelParameterById(id);
+            parameters = modelParameter.map(List::of).orElseGet(List::of);
         } else if (modelId != null) {
             parameters = this.modelParameterService.findByModelId(modelId);
         } else if (parameterId != null) {
