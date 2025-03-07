@@ -193,7 +193,7 @@ public class SurveyController {
                         surveyId.toString(),
                         deletedSurvey.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedSurvey.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedSurvey.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

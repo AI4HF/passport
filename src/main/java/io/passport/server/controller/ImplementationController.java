@@ -169,7 +169,7 @@ public class ImplementationController {
      * @param studyId          ID of the study for authorization
      * @param implementationId ID of the Implementation to delete
      * @param principal        Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{implementationId}")
     public ResponseEntity<?> deleteImplementation(@RequestParam Long studyId,
@@ -191,7 +191,7 @@ public class ImplementationController {
                         implementationId.toString(),
                         deletedImplementation.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedImplementation.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedImplementation.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

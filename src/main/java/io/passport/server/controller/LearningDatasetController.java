@@ -191,7 +191,7 @@ public class LearningDatasetController {
      * @param studyId           ID of the study for authorization
      * @param learningDatasetId ID of the LearningDataset to delete
      * @param principal         Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningDatasetId}")
     public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,
@@ -213,7 +213,7 @@ public class LearningDatasetController {
                         learningDatasetId.toString(),
                         deletedLearningDataset.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningDataset.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

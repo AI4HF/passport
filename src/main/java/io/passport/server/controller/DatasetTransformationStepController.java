@@ -179,7 +179,7 @@ public class DatasetTransformationStepController {
      * @param stepId    ID of the step to delete
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{stepId}")
     public ResponseEntity<?> deleteDatasetTransformationStep(@PathVariable Long stepId,
@@ -201,7 +201,7 @@ public class DatasetTransformationStepController {
                         stepId.toString(),
                         deletedDatasetTransformationStep.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDatasetTransformationStep.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformationStep.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

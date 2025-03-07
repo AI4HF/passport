@@ -170,7 +170,7 @@ public class LearningProcessController {
      * @param studyId           ID of the study for authorization
      * @param learningProcessId ID of the LearningProcess to delete
      * @param principal         Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningProcessId}")
     public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,
@@ -192,7 +192,7 @@ public class LearningProcessController {
                         learningProcessId.toString(),
                         deletedLearningProcess.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningProcess.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningProcess.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

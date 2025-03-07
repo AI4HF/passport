@@ -177,7 +177,7 @@ public class FeatureController {
      * @param featureId ID of the Feature to delete
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureId}")
     public ResponseEntity<?> deleteFeature(@PathVariable Long featureId,
@@ -199,7 +199,7 @@ public class FeatureController {
                         featureId.toString(),
                         deletedFeature.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedFeature.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedFeature.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -171,7 +171,7 @@ public class ModelController {
      * @param studyId   ID of the study for authorization
      * @param modelId   ID of the Model to delete
      * @param principal Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{modelId}")
     public ResponseEntity<?> deleteModel(@RequestParam Long studyId,
@@ -193,7 +193,7 @@ public class ModelController {
                         modelId.toString(),
                         deletedModel.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModel.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedModel.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

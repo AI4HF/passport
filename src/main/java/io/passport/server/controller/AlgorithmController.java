@@ -173,7 +173,7 @@ public class AlgorithmController {
                     deletedAlgorithm.get()
             );
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedAlgorithm.get());
+            return ResponseEntity.status(HttpStatus.OK).body(deletedAlgorithm.get());
 
         } catch (Exception e) {
             log.error("Error deleting Algorithm: {}", e.getMessage(), e);

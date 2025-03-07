@@ -210,7 +210,7 @@ public class StudyController {
                     studyId.toString(),
                     deletedStudy.get()
             );
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedStudy.get());
+            return ResponseEntity.status(HttpStatus.OK).body(deletedStudy.get());
         } else {
             return ResponseEntity.notFound().build();
         }

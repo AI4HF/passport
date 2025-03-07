@@ -154,7 +154,7 @@ public class DeploymentEnvironmentController {
      * @param deploymentEnvironmentId ID of the environment to delete
      * @param studyId                 ID of the study for authorization
      * @param principal               Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentEnvironmentId}")
     public ResponseEntity<?> deletePersonnel(@PathVariable Long deploymentEnvironmentId,
@@ -176,7 +176,7 @@ public class DeploymentEnvironmentController {
                         deploymentEnvironmentId.toString(),
                         deletedDeploymentEnvironment.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDeploymentEnvironment.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedDeploymentEnvironment.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

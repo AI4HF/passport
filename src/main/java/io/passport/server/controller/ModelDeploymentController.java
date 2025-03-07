@@ -190,7 +190,7 @@ public class ModelDeploymentController {
      * @param studyId      ID of the study for authorization
      * @param deploymentId ID of the ModelDeployment to delete
      * @param principal    Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentId}")
     public ResponseEntity<?> deleteModelDeployment(@RequestParam Long studyId,
@@ -212,7 +212,7 @@ public class ModelDeploymentController {
                         deploymentId.toString(),
                         deletedModelDeployment.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelDeployment.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedModelDeployment.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

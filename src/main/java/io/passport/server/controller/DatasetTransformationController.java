@@ -172,7 +172,7 @@ public class DatasetTransformationController {
      * @param dataTransformationId ID of the DatasetTransformation to delete
      * @param studyId              ID of the study for authorization
      * @param principal            Jwt principal containing user info
-     * @return NO_CONTENT if deleted, NOT_FOUND otherwise
+     * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{dataTransformationId}")
     public ResponseEntity<?> deleteDatasetTransformation(@PathVariable Long dataTransformationId,
@@ -194,7 +194,7 @@ public class DatasetTransformationController {
                         dataTransformationId.toString(),
                         deletedDatasetTransformation.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDatasetTransformation.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformation.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

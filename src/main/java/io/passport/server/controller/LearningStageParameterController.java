@@ -218,7 +218,7 @@ public class LearningStageParameterController {
                         compositeId,
                         deletedLearningStageParameter.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedLearningStageParameter.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedLearningStageParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

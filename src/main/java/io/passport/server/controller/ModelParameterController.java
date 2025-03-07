@@ -209,7 +209,7 @@ public class ModelParameterController {
                         compositeId,
                         deletedModelParameter.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedModelParameter.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedModelParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

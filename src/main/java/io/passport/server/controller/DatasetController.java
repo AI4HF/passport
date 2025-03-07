@@ -174,7 +174,7 @@ public class DatasetController {
      * @param datasetId ID of the Dataset to delete
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return NO_CONTENT on success, NOT FOUND otherwise
+     * @return OK on success, NOT FOUND otherwise
      */
     @DeleteMapping("/{datasetId}")
     public ResponseEntity<?> deleteDataset(@PathVariable Long datasetId,
@@ -196,7 +196,7 @@ public class DatasetController {
                         datasetId.toString(),
                         deletedDataset.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedDataset.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedDataset.get());
             } else {
                 return ResponseEntity.notFound().build();
             }

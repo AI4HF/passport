@@ -191,7 +191,7 @@ public class ParameterController {
                         parameterId.toString(),
                         deletedParameter.get()
                 );
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedParameter.get());
+                return ResponseEntity.status(HttpStatus.OK).body(deletedParameter.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
