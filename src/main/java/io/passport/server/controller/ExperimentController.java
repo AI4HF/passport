@@ -77,7 +77,7 @@ public class ExperimentController {
 
             String userId = principal.getSubject();
             for (Experiment exp : newExperiments) {
-                String recordId = exp.getExperimentId().toString();
+                String recordId = exp.getExperimentId();
                 auditLogBookService.createAuditLog(
                         userId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),

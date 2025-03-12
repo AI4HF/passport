@@ -102,7 +102,7 @@ public class ParameterController {
             Parameter savedParameter = this.parameterService.saveParameter(parameter);
 
             if (savedParameter.getParameterId() != null) {
-                String recordId = savedParameter.getParameterId().toString();
+                String recordId = savedParameter.getParameterId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -143,7 +143,7 @@ public class ParameterController {
             Optional<Parameter> savedParameterOpt = this.parameterService.updateParameter(parameterId, updatedParameter);
             if (savedParameterOpt.isPresent()) {
                 Parameter savedParameter = savedParameterOpt.get();
-                String recordId = savedParameter.getParameterId().toString();
+                String recordId = savedParameter.getParameterId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -188,7 +188,7 @@ public class ParameterController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        parameterId.toString(),
+                        parameterId,
                         deletedParameter.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedParameter.get());

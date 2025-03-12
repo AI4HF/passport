@@ -84,7 +84,7 @@ public class DeploymentEnvironmentController {
                     .saveDevelopmentEnvironment(deploymentEnvironment);
 
             if (saved.getEnvironmentId() != null) {
-                String recordId = saved.getEnvironmentId().toString();
+                String recordId = saved.getEnvironmentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -127,7 +127,7 @@ public class DeploymentEnvironmentController {
 
             if (savedOpt.isPresent()) {
                 DeploymentEnvironment saved = savedOpt.get();
-                String recordId = saved.getEnvironmentId().toString();
+                String recordId = saved.getEnvironmentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -173,7 +173,7 @@ public class DeploymentEnvironmentController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        deploymentEnvironmentId.toString(),
+                        deploymentEnvironmentId,
                         deletedDeploymentEnvironment.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDeploymentEnvironment.get());

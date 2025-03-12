@@ -104,7 +104,7 @@ public class SurveyController {
             Survey savedSurvey = this.surveyService.saveSurvey(survey);
 
             if (savedSurvey.getSurveyId() != null) {
-                String recordId = savedSurvey.getSurveyId().toString();
+                String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -145,7 +145,7 @@ public class SurveyController {
             Optional<Survey> savedSurveyOpt = this.surveyService.updateSurvey(surveyId, updatedSurvey);
             if (savedSurveyOpt.isPresent()) {
                 Survey savedSurvey = savedSurveyOpt.get();
-                String recordId = savedSurvey.getSurveyId().toString();
+                String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -190,7 +190,7 @@ public class SurveyController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        surveyId.toString(),
+                        surveyId,
                         deletedSurvey.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedSurvey.get());

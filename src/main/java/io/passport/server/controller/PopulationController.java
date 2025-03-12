@@ -101,7 +101,7 @@ public class PopulationController {
             Population savedPopulation = this.populationService.savePopulation(population);
 
             if (savedPopulation.getPopulationId() != null) {
-                String recordId = savedPopulation.getPopulationId().toString();
+                String recordId = savedPopulation.getPopulationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -146,7 +146,7 @@ public class PopulationController {
 
             if (savedPopulationOpt.isPresent()) {
                 Population savedPopulation = savedPopulationOpt.get();
-                String recordId = savedPopulation.getPopulationId().toString();
+                String recordId = savedPopulation.getPopulationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -194,7 +194,7 @@ public class PopulationController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        populationId.toString(),
+                        populationId,
                         deletedPopulation.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedPopulation.get());

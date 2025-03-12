@@ -103,7 +103,7 @@ public class DatasetTransformationController {
             DatasetTransformation saved = this.datasetTransformationService.saveDatasetTransformation(datasetTransformation);
 
             if (saved.getDataTransformationId() != null) {
-                String recordId = saved.getDataTransformationId().toString();
+                String recordId = saved.getDataTransformationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -146,7 +146,7 @@ public class DatasetTransformationController {
 
             if (savedOpt.isPresent()) {
                 DatasetTransformation saved = savedOpt.get();
-                String recordId = saved.getDataTransformationId().toString();
+                String recordId = saved.getDataTransformationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -191,7 +191,7 @@ public class DatasetTransformationController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        dataTransformationId.toString(),
+                        dataTransformationId,
                         deletedDatasetTransformation.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformation.get());

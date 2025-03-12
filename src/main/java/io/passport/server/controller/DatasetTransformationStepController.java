@@ -110,7 +110,7 @@ public class DatasetTransformationStepController {
                     .saveDatasetTransformationStep(datasetTransformationStep);
 
             if (saved.getStepId() != null) {
-                String recordId = saved.getStepId().toString();
+                String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -153,7 +153,7 @@ public class DatasetTransformationStepController {
 
             if (savedOpt.isPresent()) {
                 DatasetTransformationStep saved = savedOpt.get();
-                String recordId = saved.getStepId().toString();
+                String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -198,7 +198,7 @@ public class DatasetTransformationStepController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        stepId.toString(),
+                        stepId,
                         deletedDatasetTransformationStep.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformationStep.get());

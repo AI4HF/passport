@@ -120,7 +120,7 @@ public class ModelDeploymentController {
 
             ModelDeployment saved = this.modelDeploymentService.saveModelDeployment(modelDeployment);
             if (saved.getDeploymentId() != null) {
-                String recordId = saved.getDeploymentId().toString();
+                String recordId = saved.getDeploymentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -163,7 +163,7 @@ public class ModelDeploymentController {
 
             if (savedOpt.isPresent()) {
                 ModelDeployment saved = savedOpt.get();
-                String recordId = saved.getDeploymentId().toString();
+                String recordId = saved.getDeploymentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -209,7 +209,7 @@ public class ModelDeploymentController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        deploymentId.toString(),
+                        deploymentId,
                         deletedModelDeployment.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedModelDeployment.get());

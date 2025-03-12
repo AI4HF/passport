@@ -101,7 +101,7 @@ public class ImplementationController {
 
             Implementation saved = this.implementationService.saveImplementation(implementation);
             if (saved.getImplementationId() != null) {
-                String recordId = saved.getImplementationId().toString();
+                String recordId = saved.getImplementationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -142,7 +142,7 @@ public class ImplementationController {
             Optional<Implementation> savedOpt = this.implementationService.updateImplementation(implementationId, updatedImplementation);
             if (savedOpt.isPresent()) {
                 Implementation saved = savedOpt.get();
-                String recordId = saved.getImplementationId().toString();
+                String recordId = saved.getImplementationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -188,7 +188,7 @@ public class ImplementationController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        implementationId.toString(),
+                        implementationId,
                         deletedImplementation.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedImplementation.get());

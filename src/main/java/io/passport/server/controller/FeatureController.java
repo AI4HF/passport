@@ -109,7 +109,7 @@ public class FeatureController {
 
             Feature saved = this.featureService.saveFeature(feature);
             if (saved.getFeatureId() != null) {
-                String recordId = saved.getFeatureId().toString();
+                String recordId = saved.getFeatureId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -150,7 +150,7 @@ public class FeatureController {
             Optional<Feature> savedOpt = this.featureService.updateFeature(featureId, updatedFeature);
             if (savedOpt.isPresent()) {
                 Feature saved = savedOpt.get();
-                String recordId = saved.getFeatureId().toString();
+                String recordId = saved.getFeatureId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -196,7 +196,7 @@ public class FeatureController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        featureId.toString(),
+                        featureId,
                         deletedFeature.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedFeature.get());

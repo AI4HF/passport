@@ -90,7 +90,7 @@ public class AlgorithmController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-            String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
+            String recordId = savedAlgorithm.getAlgorithmId();
             auditLogBookService.createAuditLog(
                     principal.getSubject(),
                     principal.getClaim(TokenClaim.USERNAME.getValue()),

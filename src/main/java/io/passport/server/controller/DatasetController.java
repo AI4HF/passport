@@ -102,7 +102,7 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                String recordId = savedDataset.getDatasetId().toString();
+                String recordId = savedDataset.getDatasetId();
                 auditLogBookService.createAuditLog(
                         personnelId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -147,7 +147,7 @@ public class DatasetController {
 
             if (savedDatasetOpt.isPresent()) {
                 Dataset savedDataset = savedDatasetOpt.get();
-                String recordId = savedDataset.getDatasetId().toString();
+                String recordId = savedDataset.getDatasetId();
                 auditLogBookService.createAuditLog(
                         personnelId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -193,7 +193,7 @@ public class DatasetController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        datasetId.toString(),
+                        datasetId,
                         deletedDataset.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDataset.get());

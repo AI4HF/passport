@@ -64,7 +64,7 @@ public class PersonnelController {
                 .orElseGet(this.personnelService::getAllPersonnel);
 
 
-        String totalCount = personnel.size();
+        int totalCount = personnel.size();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(totalCount));

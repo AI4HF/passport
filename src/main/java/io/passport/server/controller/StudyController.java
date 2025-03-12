@@ -119,7 +119,7 @@ public class StudyController {
             keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
             if (savedStudy.getId() != null) {
-                String recordId = savedStudy.getId().toString();
+                String recordId = savedStudy.getId();
                 auditLogBookService.createAuditLog(
                         ownerId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -163,7 +163,7 @@ public class StudyController {
         Optional<Study> savedStudyOpt = studyService.updateStudy(studyId, updatedStudy);
         if (savedStudyOpt.isPresent()) {
             Study savedStudy = savedStudyOpt.get();
-            String recordId = savedStudy.getId().toString();
+            String recordId = savedStudy.getId();
             auditLogBookService.createAuditLog(
                     userId,
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -207,7 +207,7 @@ public class StudyController {
                     studyId,
                     Operation.DELETE,
                     relationName,
-                    studyId.toString(),
+                    studyId,
                     deletedStudy.get()
             );
             return ResponseEntity.status(HttpStatus.OK).body(deletedStudy.get());
