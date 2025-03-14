@@ -9,7 +9,7 @@ from ai4hf_passport_models import LearningStage, EvaluationMeasure, Model, Learn
 import pandas as pd
 
 # Example usage of sklearn library
-dataset = pd.read_csv('Social_Network_Ads.csv')
+dataset = pd.read_csv('../test-data/Social_Network_Ads.csv')
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, -1].values
 
