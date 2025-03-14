@@ -16,6 +16,8 @@ import java.time.Instant;
  */
 @Entity
 @Table(name = "featureset")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @JsonIdentityInfo(
@@ -25,6 +27,7 @@ public class FeatureSet {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "featureset_id")
     private String featuresetId;
 
     @Column(name = "experiment_id")

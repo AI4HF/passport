@@ -17,6 +17,8 @@ import java.time.Instant;
  */
 @Entity
 @Table(name = "model_deployment")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @JsonIdentityInfo(

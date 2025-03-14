@@ -26,7 +26,7 @@ public class StudyOrganization {
     private String responsiblePersonnelId;
 
     @Column(name = "population_Id")
-    private Long populationId;
+    private String populationId;
 
     public StudyOrganization(StudyOrganizationDTO studyOrganizationDTO) {
         //Construct ID

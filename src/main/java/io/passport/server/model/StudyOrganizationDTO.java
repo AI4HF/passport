@@ -25,7 +25,7 @@ public class StudyOrganizationDTO {
 
     private Set<Role> roles;
 
-    private Long populationId;
+    private String populationId;
 
     public StudyOrganizationDTO(StudyOrganization studyOrganization) {
         this.organizationId = studyOrganization.getId().getOrganizationId();

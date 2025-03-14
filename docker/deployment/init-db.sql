@@ -283,7 +283,7 @@ CREATE TABLE model
 -- Create model_parameter table
 CREATE TABLE model_parameter
 (
-    model_id     VARCHAR(255) REFERENCES learning_stage (learning_stage_id) ON DELETE CASCADE,
+    model_id     VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
     parameter_id VARCHAR(255) REFERENCES parameter (parameter_id) ON DELETE CASCADE,
     type         VARCHAR(255),
     value        VARCHAR(255),
@@ -373,11 +373,11 @@ VALUES
 -- Insert into personnel
 INSERT INTO personnel (person_id, organization_id, first_name, last_name, email)
 VALUES
-    ('initial_study_owner', 'initial_organization', 'John', 'Doe', 'study_owner@gmail.com'),
-    ('initial_data_engineer', 'initial_organization', 'Okan', 'Mercan', 'data_engineer@gmail.com'),
-    ('initial_data_scientist', 'initial_organization', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
-    ('initial_quality_assurance_specialist', 'initial_organization', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
-    ('initial_survey_manager', 'initial_organization', 'Senan', 'Postaci', 'survey_manager@gmail.com');
+    ('study_owner', 'initial_organization', 'John', 'Doe', 'study_owner@gmail.com'),
+    ('data_engineer', 'initial_organization', 'Okan', 'Mercan', 'data_engineer@gmail.com'),
+    ('data_scientist', 'initial_organization', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
+    ('quality_assurance_specialist', 'initial_organization', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
+    ('survey_manager', 'initial_organization', 'Senan', 'Postaci', 'survey_manager@gmail.com');
 
 -- Insert into study
 INSERT INTO study (study_id, name, description, objectives, ethics, owner)
@@ -387,7 +387,7 @@ VALUES
      'Predicting risk factors for acute HF…',
      'Evaluating the risk prediction for acute HF',
      'Approved by Ethical Board on 2023-01-15, Application Number: 123',
-     'initial_study_owner');
+     'study_owner');
 
 -- Insert into population
 INSERT INTO population (population_id, study_id, population_url, description, characteristics)
@@ -417,11 +417,11 @@ VALUES
 -- Insert into study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role)
 VALUES
-    ('initial_study', 'initial_study_owner', 'STUDY_OWNER'),
-    ('initial_study', 'initial_data_scientist', 'DATA_SCIENTIST'),
-    ('initial_study', 'initial_survey_manager', 'SURVEY_MANAGER'),
-    ('initial_study', 'initial_quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
-    ('initial_study', 'initial_data_engineer', 'DATA_ENGINEER');
+    ('initial_study', 'study_owner', 'STUDY_OWNER'),
+    ('initial_study', 'data_scientist', 'DATA_SCIENTIST'),
+    ('initial_study', 'survey_manager', 'SURVEY_MANAGER'),
+    ('initial_study', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
+    ('initial_study', 'data_engineer', 'DATA_ENGINEER');
 
 -- Insert into study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id)
@@ -429,7 +429,7 @@ VALUES
     ('initial_study',
      'initial_organization',
      'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST',
-     'initial_study_owner',
+     'study_owner',
      'initial_population');
 
 -- Insert into featureset
@@ -451,9 +451,9 @@ VALUES
      'https://datatools4heart.eu/feature-sets/study1-features',
      'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.',
      '2023-01-01 00:00:00',
-     'initial_data_engineer',
+     'data_engineer',
      '2023-01-01 00:00:00',
-     'initial_data_engineer');
+     'data_engineer');
 
 -- Insert into feature
 INSERT INTO feature (
@@ -486,9 +486,9 @@ VALUES
      '',
      'Automatic Collection from Government Database',
      '2023-01-01 00:00:00',
-     'initial_data_engineer',
+     'data_engineer',
      '2023-01-01 00:00:00',
-     'initial_data_engineer');
+     'data_engineer');
 
 -- Insert into dataset
 INSERT INTO dataset (
@@ -519,9 +519,9 @@ VALUES
      1562,
      false,
      '2023-01-01 00:00:00',
-     'initial_data_engineer',
+     'data_engineer',
      '2023-01-01 00:00:00',
-     'initial_data_engineer');
+     'data_engineer');
 
 -- Insert into dataset_transformation
 INSERT INTO dataset_transformation (
@@ -555,9 +555,9 @@ VALUES
      'Normalization',
      'Decimal values are normalized between 0 and 1.',
      '2023-01-01 00:00:00',
-     'initial_data_engineer',
+     'data_engineer',
      '2023-01-01 00:00:00',
-     'initial_data_engineer');
+     'data_engineer');
 
 -- Insert into learning_dataset
 INSERT INTO learning_dataset (
@@ -746,9 +746,9 @@ VALUES
      'test_limitations',
      'test_fariness_constraints',
      '2023-01-01 00:00:00',
-     'initial_data_scientist',
+     'data_scientist',
      '2023-01-02 00:00:00',
-     'initial_data_scientist');
+     'data_scientist');
 
 -- Insert into model_parameter
 INSERT INTO model_parameter (
@@ -758,7 +758,7 @@ INSERT INTO model_parameter (
     value
 )
 VALUES
-    ('initial_learning_stage',
+    ('initial_model',
      'initial_parameter',
      'string',
      'Dummy value for Model Parameter');
@@ -801,9 +801,9 @@ VALUES
      'Instances of false positives in predicting rare events.',
      'RUNNING',
      '2023-01-01 00:00:00',
-     'initial_data_scientist',
+     'data_scientist',
      '2023-01-01 00:00:00',
-     'initial_data_scientist');
+     'data_scientist');
 
 -- Insert into passport
 INSERT INTO passport (
@@ -821,9 +821,9 @@ VALUES
      'initial_model_deployment',
      'initial_study',
      '2023-01-01 00:00:00',
-     'initial_quality_assurance_specialist',
+     'quality_assurance_specialist',
      '2023-01-01 00:00:00',
-     'initial_quality_assurance_specialist',
+     'quality_assurance_specialist',
      '{
        "deploymentDetails": {
          "tags": "Production",

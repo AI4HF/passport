@@ -519,13 +519,13 @@
   "groups": [
     {
       "id": "dab241d3-fb34-417b-85b5-3dce135739b4",
-      "name": "study-1",
-      "path": "/study-1",
+      "name": "study-initial_study",
+      "path": "/study-initial_study",
       "subGroups": [
         {
           "id": "7b22fe9f-7c43-407e-a87c-a4b4318c9698",
           "name": "DATA_ENGINEER",
-          "path": "/study-1/DATA_ENGINEER",
+          "path": "/study-initial_study/DATA_ENGINEER",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -535,7 +535,7 @@
         {
           "id": "37b4a0c9-eeea-4209-857c-28869614e2f0",
           "name": "DATA_SCIENTIST",
-          "path": "/study-1/DATA_SCIENTIST",
+          "path": "/study-initial_study/DATA_SCIENTIST",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -546,7 +546,7 @@
         {
           "id": "ef1f8e4a-e31f-45c8-9c5f-679d1e8e97f2",
           "name": "ML_ENGINEER",
-          "path": "/study-1/ML_ENGINEER",
+          "path": "/study-initial_study/ML_ENGINEER",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -556,7 +556,7 @@
         {
           "id": "f45d9074-3c19-4122-a40f-53761fb01980",
           "name": "QUALITY_ASSURANCE_SPECIALIST",
-          "path": "/study-1/QUALITY_ASSURANCE_SPECIALIST",
+          "path": "/study-initial_study/QUALITY_ASSURANCE_SPECIALIST",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -566,7 +566,7 @@
         {
           "id": "cd3775d6-4b34-494a-9980-2ba9b7f5e669",
           "name": "STUDY_OWNER",
-          "path": "/study-1/STUDY_OWNER",
+          "path": "/study-initial_study/STUDY_OWNER",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -576,7 +576,7 @@
         {
           "id": "d82f24a0-fb81-45b3-a8c9-98ec1d2557a7",
           "name": "SURVEY_MANAGER",
-          "path": "/study-1/SURVEY_MANAGER",
+          "path": "/study-initial_study/SURVEY_MANAGER",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -708,7 +708,7 @@
         "STUDY_OWNER"
       ],
       "groups": [
-        "/study-1/STUDY_OWNER"
+        "/study-initial_study/STUDY_OWNER"
       ]
     },
     {
@@ -726,7 +726,7 @@
         "DATA_ENGINEER"
       ],
       "groups": [
-        "/study-1/DATA_ENGINEER"
+        "/study-initial_study/DATA_ENGINEER"
       ]
     },
     {
@@ -744,7 +744,7 @@
         "ML_ENGINEER"
       ],
       "groups": [
-        "/study-1/ML_ENGINEER"
+        "/study-initial_study/ML_ENGINEER"
       ]
     },
     {
@@ -762,7 +762,7 @@
         "DATA_SCIENTIST"
       ],
       "groups": [
-        "/study-1/DATA_SCIENTIST"
+        "/study-initial_study/DATA_SCIENTIST"
       ]
     },
     {
@@ -780,7 +780,7 @@
         "SURVEY_MANAGER"
       ],
       "groups": [
-        "/study-1/SURVEY_MANAGER"
+        "/study-initial_study/SURVEY_MANAGER"
       ]
     },
     {
@@ -798,7 +798,7 @@
         "QUALITY_ASSURANCE_SPECIALIST"
       ],
       "groups": [
-        "/study-1/QUALITY_ASSURANCE_SPECIALIST"
+        "/study-initial_study/QUALITY_ASSURANCE_SPECIALIST"
       ]
     }
   ],

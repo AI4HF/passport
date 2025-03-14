@@ -14,6 +14,8 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "study")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @JsonIdentityInfo(
@@ -23,6 +25,7 @@ public class Study {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "study_id")
     private String id;
 
     @Column(name= "name")
