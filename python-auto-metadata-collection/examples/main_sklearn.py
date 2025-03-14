@@ -1,13 +1,20 @@
-import pandas as pd
+import sys
+import os
+
+# Add 'lib' directory to Python's module search path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
+
 from ai4hf_passport_sklearn import SKLearnMetadataCollectionAPI
 from ai4hf_passport_models import LearningStage, EvaluationMeasure, Model, LearningStageType, EvaluationMeasureType
+import pandas as pd
+
 # Example usage of sklearn library
 dataset = pd.read_csv('Social_Network_Ads.csv')
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, -1].values
 
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.30, random_state = 0)
 
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()

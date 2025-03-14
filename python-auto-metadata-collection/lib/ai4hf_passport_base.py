@@ -24,6 +24,25 @@ class BaseMetadataCollectionAPI:
                            "organization_id": self.organization_id, "username": self.username, 
                           "password": self.password, "token": self.token})
     
+    def _refreshTokenAndRetry(self, response, headers, payload, url):
+        """
+        If token is expired, refresh token and retry
+
+        :param response: Response object from previous request.
+        :param headers: Headers object from previous request.
+        :param payload: Payload object from previous request.
+        :param url: The url to sent.
+
+        :return response: Response algorithm object from the server.
+        """
+                
+        if response.status_code == 401:  # Token expired, refresh and retry
+            self.token = self._authenticate()
+            headers["Authorization"] = f"Bearer {self.token}"
+            return requests.post(url, json=payload, headers=headers)
+        else:
+            return response
+    
     def _authenticate(self) -> str:
         """
         Authenticate with login endpoint and retrieve an access token.
@@ -53,10 +72,8 @@ class BaseMetadataCollectionAPI:
                    "subType": algorithm.subType, "type": algorithm.type}
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         response_json = response.json()
@@ -78,10 +95,8 @@ class BaseMetadataCollectionAPI:
                    "software": implementation.software, "description": implementation.description}
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         response_json = response.json()
@@ -120,10 +135,8 @@ class BaseMetadataCollectionAPI:
         
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         response_json = response.json()
@@ -167,10 +180,8 @@ class BaseMetadataCollectionAPI:
         
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         return response.json()
@@ -209,10 +220,8 @@ class BaseMetadataCollectionAPI:
         
         response = requests.post(url, json=payload, headers=headers)
  
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         response_json = response.json()
@@ -288,10 +297,8 @@ class BaseMetadataCollectionAPI:
 
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
             
         response.raise_for_status()
         return response.json()
@@ -351,10 +358,8 @@ class BaseMetadataCollectionAPI:
                    "dataType": parameter.dataType, "description": parameter.description}
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
         
         response.raise_for_status()
         response_json: dict = response.json()
@@ -377,10 +382,8 @@ class BaseMetadataCollectionAPI:
         
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 401:  # Token expired, refresh and retry
-            self.token = self._authenticate()
-            headers["Authorization"] = f"Bearer {self.token}"
-            response = requests.post(url, json=payload, headers=headers)
+        # If token is expired, retry
+        response = self._refreshTokenAndRetry(response, headers, payload, url)
         
         response.raise_for_status()
         response_json: dict = response.json()
