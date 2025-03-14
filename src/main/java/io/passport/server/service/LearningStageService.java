@@ -37,7 +37,7 @@ public class LearningStageService {
      * @param learningProcessId ID of the learning process
      * @return
      */
-    public List<LearningStage> findLearningStagesByProcessId(Long learningProcessId) {
+    public List<LearningStage> findLearningStagesByProcessId(String learningProcessId) {
         return learningStageRepository.findByLearningProcessId(learningProcessId);
     }
 
@@ -46,7 +46,7 @@ public class LearningStageService {
      * @param learningStageId ID of the learning stage
      * @return
      */
-    public Optional<LearningStage> findLearningStageById(Long learningStageId) {
+    public Optional<LearningStage> findLearningStageById(String learningStageId) {
         return learningStageRepository.findById(learningStageId);
     }
 
@@ -65,7 +65,7 @@ public class LearningStageService {
      * @param updatedLearningStage learning stage to be updated
      * @return
      */
-    public Optional<LearningStage> updateLearningStage(Long learningStageId, LearningStage updatedLearningStage) {
+    public Optional<LearningStage> updateLearningStage(String learningStageId, LearningStage updatedLearningStage) {
         Optional<LearningStage> oldLearningStage = learningStageRepository.findById(learningStageId);
         if (oldLearningStage.isPresent()) {
             LearningStage learningStage = oldLearningStage.get();
@@ -85,7 +85,7 @@ public class LearningStageService {
      * @param learningStageId ID of learning stage to be deleted
      * @return
      */
-    public Optional<LearningStage> deleteLearningStage(Long learningStageId) {
+    public Optional<LearningStage> deleteLearningStage(String learningStageId) {
         Optional<LearningStage> existingStage = learningStageRepository.findById(learningStageId);
         if (existingStage.isPresent()) {
             learningStageRepository.delete(existingStage.get());

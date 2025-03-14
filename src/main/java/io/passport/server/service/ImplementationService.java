@@ -37,7 +37,7 @@ public class ImplementationService {
      * @param implementationId ID of the implementation
      * @return
      */
-    public Optional<Implementation> findImplementationById(Long implementationId) {
+    public Optional<Implementation> findImplementationById(String implementationId) {
         return implementationRepository.findById(implementationId);
     }
 
@@ -56,7 +56,7 @@ public class ImplementationService {
      * @param updatedImplementation implementation to be updated
      * @return
      */
-    public Optional<Implementation> updateImplementation(Long implementationId, Implementation updatedImplementation) {
+    public Optional<Implementation> updateImplementation(String implementationId, Implementation updatedImplementation) {
         Optional<Implementation> oldImplementation = implementationRepository.findById(implementationId);
         if (oldImplementation.isPresent()) {
             Implementation implementation = oldImplementation.get();
@@ -76,7 +76,7 @@ public class ImplementationService {
      * @param implementationId ID of implementation to be deleted
      * @return
      */
-    public Optional<Implementation> deleteImplementation(Long implementationId) {
+    public Optional<Implementation> deleteImplementation(String implementationId) {
         Optional<Implementation> existingImplementation = implementationRepository.findById(implementationId);
         if (existingImplementation.isPresent()) {
             implementationRepository.delete(existingImplementation.get());

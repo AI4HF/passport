@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface LearningStageParameterRepository extends JpaRepository<LearningStageParameter, LearningStageParameterId> {
-    List<LearningStageParameter> findByIdLearningStageId(Long learningStageId);
-    List<LearningStageParameter> findByIdParameterId(Long parameterId);
+    List<LearningStageParameter> findByIdLearningStageId(String learningStageId);
+    List<LearningStageParameter> findByIdParameterId(String parameterId);
 }
 

@@ -52,7 +52,7 @@ public class DatasetService {
      * @param studyId ID of the study
      * @return
      */
-    public List<Dataset> getAllDatasetsByStudyId(Long studyId) {
+    public List<Dataset> getAllDatasetsByStudyId(String studyId) {
         return datasetRepository.findDatasetByStudyId(studyId);
     }
 
@@ -61,7 +61,7 @@ public class DatasetService {
      * @param datasetId ID of the Dataset
      * @return
      */
-    public Optional<Dataset> findDatasetByDatasetId(Long datasetId) {
+    public Optional<Dataset> findDatasetByDatasetId(String datasetId) {
         return datasetRepository.findById(datasetId);
     }
 
@@ -91,7 +91,7 @@ public class DatasetService {
      * @param personnelId ID of the personnel
      * @return
      */
-    public Optional<Dataset> updateDataset(Long datasetId, Dataset updatedDataset, String personnelId) {
+    public Optional<Dataset> updateDataset(String datasetId, Dataset updatedDataset, String personnelId) {
         Optional<Dataset> oldDataset = datasetRepository.findById(datasetId);
         Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
         if (oldDataset.isPresent() && personnel.isPresent()) {
@@ -119,7 +119,7 @@ public class DatasetService {
      * @param datasetId ID of Dataset to be deleted
      * @return
      */
-    public Optional<Dataset> deleteDataset(Long datasetId) {
+    public Optional<Dataset> deleteDataset(String datasetId) {
         Optional<Dataset> existingDataset = datasetRepository.findById(datasetId);
         if (existingDataset.isPresent()) {
             datasetRepository.delete(existingDataset.get());

@@ -50,8 +50,8 @@ public class LearningDatasetController {
      * @return The requested LearningDataset or NOT_FOUND
      */
     @GetMapping("/{learningDatasetId}")
-    public ResponseEntity<?> getLearningDataset(@RequestParam Long studyId,
-                                                @PathVariable Long learningDatasetId,
+    public ResponseEntity<?> getLearningDataset(@RequestParam String studyId,
+                                                @PathVariable String learningDatasetId,
                                                 @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -72,9 +72,9 @@ public class LearningDatasetController {
      */
     @GetMapping
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long dataTransformationId,
-            @RequestParam(required = false) Long datasetId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String dataTransformationId,
+            @RequestParam(required = false) String datasetId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -93,7 +93,7 @@ public class LearningDatasetController {
     }
 
     /**
-     * Creates a new LearningDataset along with a DatasetTransformation.
+     * Creates a new LearningDataset aString with a DatasetTransformation.
      *
      * @param studyId   ID of the study for authorization
      * @param request   DTO containing both LearningDataset and Transformation info
@@ -101,7 +101,7 @@ public class LearningDatasetController {
      * @return Created LearningDatasetandTransformationDTO
      */
     @PostMapping
-    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningDatasetWithTransformation(@RequestParam String studyId,
                                                                      @RequestBody LearningDatasetandTransformationDTO request,
                                                                      @AuthenticationPrincipal Jwt principal) {
         try {
@@ -114,7 +114,7 @@ public class LearningDatasetController {
 
             LearningDataset newLd = createdDTO.getLearningDataset();
             if (newLd != null && newLd.getLearningDatasetId() != null) {
-                String recordId = newLd.getLearningDatasetId().toString();
+                String recordId = newLd.getLearningDatasetId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -145,8 +145,8 @@ public class LearningDatasetController {
      */
     @PutMapping("/{learningDatasetId}")
     public ResponseEntity<?> updateLearningDatasetWithTransformation(
-            @RequestParam Long studyId,
-            @PathVariable Long learningDatasetId,
+            @RequestParam String studyId,
+            @PathVariable String learningDatasetId,
             @RequestBody LearningDatasetandTransformationDTO request,
             @AuthenticationPrincipal Jwt principal) {
         try {
@@ -164,7 +164,7 @@ public class LearningDatasetController {
             if (updatedOpt.isPresent()) {
                 LearningDatasetandTransformationDTO updatedDTO = updatedOpt.get();
                 LearningDataset updatedLd = updatedDTO.getLearningDataset();
-                String recordId = updatedLd.getLearningDatasetId().toString();
+                String recordId = updatedLd.getLearningDatasetId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -194,8 +194,8 @@ public class LearningDatasetController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningDatasetId}")
-    public ResponseEntity<?> deleteLearningDataset(@RequestParam Long studyId,
-                                                   @PathVariable Long learningDatasetId,
+    public ResponseEntity<?> deleteLearningDataset(@RequestParam String studyId,
+                                                   @PathVariable String learningDatasetId,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -210,7 +210,7 @@ public class LearningDatasetController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        learningDatasetId.toString(),
+                        learningDatasetId,
                         deletedLearningDataset.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedLearningDataset.get());

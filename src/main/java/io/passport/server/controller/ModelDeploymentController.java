@@ -52,8 +52,8 @@ public class ModelDeploymentController {
      */
     @GetMapping
     public ResponseEntity<List<ModelDeployment>> getModelDeployments(
-            @RequestParam(required = false) Long environmentId,
-            @RequestParam(required = false) Long studyId,
+            @RequestParam(required = false) String environmentId,
+            @RequestParam(required = false) String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
@@ -87,8 +87,8 @@ public class ModelDeploymentController {
      * @return ModelDeployment or NOT_FOUND
      */
     @GetMapping("/{deploymentId}")
-    public ResponseEntity<?> getModelDeployment(@RequestParam Long studyId,
-                                                @PathVariable Long deploymentId,
+    public ResponseEntity<?> getModelDeployment(@RequestParam String studyId,
+                                                @PathVariable String deploymentId,
                                                 @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
@@ -110,7 +110,7 @@ public class ModelDeploymentController {
      * @return Created ModelDeployment or BAD_REQUEST on error
      */
     @PostMapping
-    public ResponseEntity<?> createModelDeployment(@RequestParam Long studyId,
+    public ResponseEntity<?> createModelDeployment(@RequestParam String studyId,
                                                    @RequestBody ModelDeployment modelDeployment,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
@@ -120,7 +120,7 @@ public class ModelDeploymentController {
 
             ModelDeployment saved = this.modelDeploymentService.saveModelDeployment(modelDeployment);
             if (saved.getDeploymentId() != null) {
-                String recordId = saved.getDeploymentId().toString();
+                String recordId = saved.getDeploymentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -149,8 +149,8 @@ public class ModelDeploymentController {
      * @return Updated ModelDeployment or NOT_FOUND
      */
     @PutMapping("/{deploymentId}")
-    public ResponseEntity<?> updateModelDeployment(@RequestParam Long studyId,
-                                                   @PathVariable Long deploymentId,
+    public ResponseEntity<?> updateModelDeployment(@RequestParam String studyId,
+                                                   @PathVariable String deploymentId,
                                                    @RequestBody ModelDeployment updatedModelDeployment,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
@@ -163,7 +163,7 @@ public class ModelDeploymentController {
 
             if (savedOpt.isPresent()) {
                 ModelDeployment saved = savedOpt.get();
-                String recordId = saved.getDeploymentId().toString();
+                String recordId = saved.getDeploymentId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -193,8 +193,8 @@ public class ModelDeploymentController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{deploymentId}")
-    public ResponseEntity<?> deleteModelDeployment(@RequestParam Long studyId,
-                                                   @PathVariable Long deploymentId,
+    public ResponseEntity<?> deleteModelDeployment(@RequestParam String studyId,
+                                                   @PathVariable String deploymentId,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -209,7 +209,7 @@ public class ModelDeploymentController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        deploymentId.toString(),
+                        deploymentId,
                         deletedModelDeployment.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedModelDeployment.get());

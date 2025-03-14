@@ -52,8 +52,8 @@ public class DatasetTransformationStepController {
      */
     @GetMapping
     public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationSteps(
-            @RequestParam(required = false) Long dataTransformationId,
-            @RequestParam Long studyId,
+            @RequestParam(required = false) String dataTransformationId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -78,8 +78,8 @@ public class DatasetTransformationStepController {
      * @return The requested step or NOT_FOUND
      */
     @GetMapping("/{stepId}")
-    public ResponseEntity<?> getDatasetTransformationStep(@PathVariable Long stepId,
-                                                          @RequestParam Long studyId,
+    public ResponseEntity<?> getDatasetTransformationStep(@PathVariable String stepId,
+                                                          @RequestParam String studyId,
                                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -99,7 +99,7 @@ public class DatasetTransformationStepController {
      */
     @PostMapping
     public ResponseEntity<?> createDatasetTransformationStep(@RequestBody DatasetTransformationStep datasetTransformationStep,
-                                                             @RequestParam Long studyId,
+                                                             @RequestParam String studyId,
                                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -110,7 +110,7 @@ public class DatasetTransformationStepController {
                     .saveDatasetTransformationStep(datasetTransformationStep);
 
             if (saved.getStepId() != null) {
-                String recordId = saved.getStepId().toString();
+                String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -139,9 +139,9 @@ public class DatasetTransformationStepController {
      * @return Updated step or NOT_FOUND
      */
     @PutMapping("/{stepId}")
-    public ResponseEntity<?> updateDatasetTransformationStep(@PathVariable Long stepId,
+    public ResponseEntity<?> updateDatasetTransformationStep(@PathVariable String stepId,
                                                              @RequestBody DatasetTransformationStep updatedDatasetTransformationStep,
-                                                             @RequestParam Long studyId,
+                                                             @RequestParam String studyId,
                                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -153,7 +153,7 @@ public class DatasetTransformationStepController {
 
             if (savedOpt.isPresent()) {
                 DatasetTransformationStep saved = savedOpt.get();
-                String recordId = saved.getStepId().toString();
+                String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -182,8 +182,8 @@ public class DatasetTransformationStepController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{stepId}")
-    public ResponseEntity<?> deleteDatasetTransformationStep(@PathVariable Long stepId,
-                                                             @RequestParam Long studyId,
+    public ResponseEntity<?> deleteDatasetTransformationStep(@PathVariable String stepId,
+                                                             @RequestParam String studyId,
                                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -198,7 +198,7 @@ public class DatasetTransformationStepController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        stepId.toString(),
+                        stepId,
                         deletedDatasetTransformationStep.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformationStep.get());

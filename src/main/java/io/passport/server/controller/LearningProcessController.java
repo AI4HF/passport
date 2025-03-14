@@ -50,7 +50,7 @@ public class LearningProcessController {
      * @return List of LearningProcess objects
      */
     @GetMapping
-    public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<List<LearningProcess>> getAllLearningProcessesByStudyId(@RequestParam String studyId,
                                                                                   @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,8 +71,8 @@ public class LearningProcessController {
      * @return The LearningProcess or NOT_FOUND
      */
     @GetMapping("/{learningProcessId}")
-    public ResponseEntity<?> getLearningProcess(@RequestParam Long studyId,
-                                                @PathVariable Long learningProcessId,
+    public ResponseEntity<?> getLearningProcess(@RequestParam String studyId,
+                                                @PathVariable String learningProcessId,
                                                 @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -91,7 +91,7 @@ public class LearningProcessController {
      * @return Created LearningProcess or BAD_REQUEST on error
      */
     @PostMapping
-    public ResponseEntity<?> createLearningProcess(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningProcess(@RequestParam String studyId,
                                                    @RequestBody LearningProcess learningProcess,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
@@ -101,7 +101,7 @@ public class LearningProcessController {
 
             LearningProcess saved = this.learningProcessService.saveLearningProcess(learningProcess);
             if (saved.getLearningProcessId() != null) {
-                String recordId = saved.getLearningProcessId().toString();
+                String recordId = saved.getLearningProcessId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -130,8 +130,8 @@ public class LearningProcessController {
      * @return Updated LearningProcess or NOT_FOUND
      */
     @PutMapping("/{learningProcessId}")
-    public ResponseEntity<?> updateLearningProcess(@RequestParam Long studyId,
-                                                   @PathVariable Long learningProcessId,
+    public ResponseEntity<?> updateLearningProcess(@RequestParam String studyId,
+                                                   @PathVariable String learningProcessId,
                                                    @RequestBody LearningProcess updatedLearningProcess,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
@@ -144,7 +144,7 @@ public class LearningProcessController {
 
             if (savedOpt.isPresent()) {
                 LearningProcess saved = savedOpt.get();
-                String recordId = saved.getLearningProcessId().toString();
+                String recordId = saved.getLearningProcessId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -173,8 +173,8 @@ public class LearningProcessController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{learningProcessId}")
-    public ResponseEntity<?> deleteLearningProcess(@RequestParam Long studyId,
-                                                   @PathVariable Long learningProcessId,
+    public ResponseEntity<?> deleteLearningProcess(@RequestParam String studyId,
+                                                   @PathVariable String learningProcessId,
                                                    @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -189,7 +189,7 @@ public class LearningProcessController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        learningProcessId.toString(),
+                        learningProcessId,
                         deletedLearningProcess.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedLearningProcess.get());

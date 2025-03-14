@@ -78,7 +78,7 @@ public class PassportService {
      * @param studyId ID of the related study
      * @return
      */
-    public List<Passport> findPassportsByStudyId(Long studyId) {
+    public List<Passport> findPassportsByStudyId(String studyId) {
         return passportRepository.findAllByStudyId(studyId);
     }
 
@@ -87,7 +87,7 @@ public class PassportService {
      * @param passportId ID of passport to be deleted
      * @return
      */
-    public boolean deletePassport(Long passportId) {
+    public boolean deletePassport(String passportId) {
         if(passportRepository.existsById(passportId)) {
             passportRepository.deleteById(passportId);
             return true;
@@ -152,7 +152,7 @@ public class PassportService {
     /**
      * Fetch Passport by ID.
      */
-    public Passport getPassportById(Long passportId) {
+    public Passport getPassportById(String passportId) {
         return passportRepository.findById(passportId)
                 .orElseThrow(() -> new RuntimeException("Passport not found"));
     }

@@ -10,6 +10,6 @@ import java.util.List;
  * Feature repository for database management.
  */
 @Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
-    List<Feature> findByFeaturesetId(Long featuresetId);
+public interface FeatureRepository extends JpaRepository<Feature, String> {
+    List<Feature> findByFeaturesetId(String featuresetId);
 }

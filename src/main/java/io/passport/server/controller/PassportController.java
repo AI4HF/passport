@@ -44,7 +44,7 @@ public class PassportController {
      * @return List of Passports
      */
     @GetMapping()
-    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<List<Passport>> getAllPassportsByStudyId(@RequestParam String studyId,
                                                                    @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -66,8 +66,8 @@ public class PassportController {
      * @return No content or not found status
      */
     @DeleteMapping("/{passportId}")
-    public ResponseEntity<?> deletePassport(@PathVariable Long passportId,
-                                            @RequestParam Long studyId,
+    public ResponseEntity<?> deletePassport(@PathVariable String passportId,
+                                            @RequestParam String studyId,
                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -91,7 +91,7 @@ public class PassportController {
      */
     @PostMapping
     public ResponseEntity<?> createPassport(@RequestBody PassportWithDetailSelection passport,
-                                            @RequestParam Long studyId,
+                                            @RequestParam String studyId,
                                             @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -115,8 +115,8 @@ public class PassportController {
      * @return Passport object
      */
     @GetMapping("/{passportId}")
-    public ResponseEntity<Passport> getPassport(@PathVariable Long passportId,
-                                                @RequestParam Long studyId,
+    public ResponseEntity<Passport> getPassport(@PathVariable String passportId,
+                                                @RequestParam String studyId,
                                                 @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -139,7 +139,7 @@ public class PassportController {
      */
     @PostMapping(value = "/sign-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> signPdf(@RequestParam("pdf") MultipartFile file,
-                                     @RequestParam Long studyId,
+                                     @RequestParam String studyId,
                                      @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

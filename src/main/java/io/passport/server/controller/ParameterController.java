@@ -50,7 +50,7 @@ public class ParameterController {
      * @return List of Parameters
      */
     @GetMapping
-    public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<List<Parameter>> getAllParametersByStudyId(@RequestParam String studyId,
                                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,8 +71,8 @@ public class ParameterController {
      * @return Parameter entity or not found
      */
     @GetMapping("/{parameterId}")
-    public ResponseEntity<?> getParameterById(@PathVariable Long parameterId,
-                                              @RequestParam Long studyId,
+    public ResponseEntity<?> getParameterById(@PathVariable String parameterId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -92,7 +92,7 @@ public class ParameterController {
      */
     @PostMapping
     public ResponseEntity<?> createParameter(@RequestBody Parameter parameter,
-                                             @RequestParam Long studyId,
+                                             @RequestParam String studyId,
                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -102,7 +102,7 @@ public class ParameterController {
             Parameter savedParameter = this.parameterService.saveParameter(parameter);
 
             if (savedParameter.getParameterId() != null) {
-                String recordId = savedParameter.getParameterId().toString();
+                String recordId = savedParameter.getParameterId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -131,9 +131,9 @@ public class ParameterController {
      * @return Updated parameter
      */
     @PutMapping("/{parameterId}")
-    public ResponseEntity<?> updateParameter(@PathVariable Long parameterId,
+    public ResponseEntity<?> updateParameter(@PathVariable String parameterId,
                                              @RequestBody Parameter updatedParameter,
-                                             @RequestParam Long studyId,
+                                             @RequestParam String studyId,
                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -143,7 +143,7 @@ public class ParameterController {
             Optional<Parameter> savedParameterOpt = this.parameterService.updateParameter(parameterId, updatedParameter);
             if (savedParameterOpt.isPresent()) {
                 Parameter savedParameter = savedParameterOpt.get();
-                String recordId = savedParameter.getParameterId().toString();
+                String recordId = savedParameter.getParameterId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -172,8 +172,8 @@ public class ParameterController {
      * @return No content or not found status
      */
     @DeleteMapping("/{parameterId}")
-    public ResponseEntity<?> deleteParameter(@PathVariable Long parameterId,
-                                             @RequestParam Long studyId,
+    public ResponseEntity<?> deleteParameter(@PathVariable String parameterId,
+                                             @RequestParam String studyId,
                                              @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -188,7 +188,7 @@ public class ParameterController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        parameterId.toString(),
+                        parameterId,
                         deletedParameter.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedParameter.get());

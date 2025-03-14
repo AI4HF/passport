@@ -38,7 +38,7 @@ public class FeatureSetService {
      * @param studyId ID of the study
      * @return
      */
-    public List<FeatureSet> getAllFeatureSetsByStudyId(Long studyId) {
+    public List<FeatureSet> getAllFeatureSetsByStudyId(String studyId) {
         return featureSetRepository.findFeatureSetByStudyId(studyId);
     }
 
@@ -47,7 +47,7 @@ public class FeatureSetService {
      * @param featureSetId ID of the FeatureSet
      * @return
      */
-    public Optional<FeatureSet> findFeatureSetByFeatureSetId(Long featureSetId) {
+    public Optional<FeatureSet> findFeatureSetByFeatureSetId(String featureSetId) {
         return featureSetRepository.findById(featureSetId);
     }
 
@@ -68,7 +68,7 @@ public class FeatureSetService {
      * @param updatedFeatureSet FeatureSet to be updated
      * @return
      */
-    public Optional<FeatureSet> updateFeatureSet(Long featureSetId, FeatureSet updatedFeatureSet) {
+    public Optional<FeatureSet> updateFeatureSet(String featureSetId, FeatureSet updatedFeatureSet) {
         Optional<FeatureSet> oldFeatureSet = featureSetRepository.findById(featureSetId);
         if (oldFeatureSet.isPresent()) {
             FeatureSet featureSet = oldFeatureSet.get();
@@ -89,7 +89,7 @@ public class FeatureSetService {
      * @param featureSetId ID of FeatureSet to be deleted
      * @return
      */
-    public Optional<FeatureSet> deleteFeatureSet(Long featureSetId) {
+    public Optional<FeatureSet> deleteFeatureSet(String featureSetId) {
         Optional<FeatureSet> existingFeatureSet = featureSetRepository.findById(featureSetId);
         if (existingFeatureSet.isPresent()) {
             featureSetRepository.delete(existingFeatureSet.get());

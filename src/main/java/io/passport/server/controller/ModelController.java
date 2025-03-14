@@ -49,7 +49,7 @@ public class ModelController {
      * @return List of Model objects
      */
     @GetMapping
-    public ResponseEntity<List<Model>> getAllModels(@RequestParam Long studyId,
+    public ResponseEntity<List<Model>> getAllModels(@RequestParam String studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
@@ -71,8 +71,8 @@ public class ModelController {
      * @return The requested Model or NOT_FOUND
      */
     @GetMapping("/{modelId}")
-    public ResponseEntity<?> getModelById(@RequestParam Long studyId,
-                                          @PathVariable Long modelId,
+    public ResponseEntity<?> getModelById(@RequestParam String studyId,
+                                          @PathVariable String modelId,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
@@ -94,7 +94,7 @@ public class ModelController {
      * @return Created Model or BAD_REQUEST on error
      */
     @PostMapping
-    public ResponseEntity<?> createModel(@RequestParam Long studyId,
+    public ResponseEntity<?> createModel(@RequestParam String studyId,
                                          @RequestBody Model model,
                                          @AuthenticationPrincipal Jwt principal) {
         try {
@@ -104,7 +104,7 @@ public class ModelController {
 
             Model saved = this.modelService.saveModel(model);
             if (saved.getModelId() != null) {
-                String recordId = saved.getModelId().toString();
+                String recordId = saved.getModelId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -133,8 +133,8 @@ public class ModelController {
      * @return Updated Model or NOT_FOUND
      */
     @PutMapping("/{modelId}")
-    public ResponseEntity<?> updateModel(@RequestParam Long studyId,
-                                         @PathVariable Long modelId,
+    public ResponseEntity<?> updateModel(@RequestParam String studyId,
+                                         @PathVariable String modelId,
                                          @RequestBody Model updatedModel,
                                          @AuthenticationPrincipal Jwt principal) {
         try {
@@ -145,7 +145,7 @@ public class ModelController {
             Optional<Model> savedOpt = this.modelService.updateModel(modelId, updatedModel);
             if (savedOpt.isPresent()) {
                 Model saved = savedOpt.get();
-                String recordId = saved.getModelId().toString();
+                String recordId = saved.getModelId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -174,8 +174,8 @@ public class ModelController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{modelId}")
-    public ResponseEntity<?> deleteModel(@RequestParam Long studyId,
-                                         @PathVariable Long modelId,
+    public ResponseEntity<?> deleteModel(@RequestParam String studyId,
+                                         @PathVariable String modelId,
                                          @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -190,7 +190,7 @@ public class ModelController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        modelId.toString(),
+                        modelId,
                         deletedModel.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedModel.get());

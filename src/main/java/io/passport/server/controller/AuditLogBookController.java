@@ -44,8 +44,8 @@ public class AuditLogBookController {
      * @return
      */
     @GetMapping("/{passportId}")
-    public ResponseEntity<?> getAuditLogsByPassportId(@PathVariable Long passportId,
-                                                      @RequestParam Long studyId,
+    public ResponseEntity<?> getAuditLogsByPassportId(@PathVariable String passportId,
+                                                      @RequestParam String studyId,
                                                       @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -65,8 +65,8 @@ public class AuditLogBookController {
      */
     @PostMapping("")
     public ResponseEntity<?> createAuditLogBookEntries(
-            @RequestParam Long passportId,
-            @RequestParam Long studyId,
+            @RequestParam String passportId,
+            @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal
     ) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -90,7 +90,7 @@ public class AuditLogBookController {
      */
     @PostMapping("/audit-logs")
     public ResponseEntity<?> getAuditLogsByIds(@RequestBody List<String> auditLogIds,
-                                               @RequestParam Long studyId,
+                                               @RequestParam String studyId,
                                                @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

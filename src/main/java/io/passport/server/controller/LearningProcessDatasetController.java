@@ -54,9 +54,9 @@ public class LearningProcessDatasetController {
      */
     @GetMapping
     public ResponseEntity<List<LearningProcessDatasetDTO>> getLearningProcessDatasets(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long learningProcessId,
-            @RequestParam(required = false) Long learningDatasetId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String learningProcessId,
+            @RequestParam(required = false) String learningDatasetId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -97,7 +97,7 @@ public class LearningProcessDatasetController {
      * @return Created LearningProcessDataset
      */
     @PostMapping
-    public ResponseEntity<?> createLearningProcessDataset(@RequestParam Long studyId,
+    public ResponseEntity<?> createLearningProcessDataset(@RequestParam String studyId,
                                                           @RequestBody LearningProcessDatasetDTO learningProcessDatasetDTO,
                                                           @AuthenticationPrincipal Jwt principal) {
         try {
@@ -109,8 +109,8 @@ public class LearningProcessDatasetController {
             LearningProcessDataset saved = this.learningProcessDatasetService.saveLearningProcessDataset(entity);
 
             if (saved.getId() != null) {
-                Long lpId = saved.getId().getLearningProcessId();
-                Long ldId = saved.getId().getLearningDatasetId();
+                String lpId = saved.getId().getLearningProcessId();
+                String ldId = saved.getId().getLearningDatasetId();
                 String compositeId = "(" + lpId + ", " + ldId + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -142,9 +142,9 @@ public class LearningProcessDatasetController {
      */
     @PutMapping
     public ResponseEntity<?> updateLearningProcessDataset(
-            @RequestParam Long studyId,
-            @RequestParam Long learningProcessId,
-            @RequestParam Long learningDatasetId,
+            @RequestParam String studyId,
+            @RequestParam String learningProcessId,
+            @RequestParam String learningDatasetId,
             @RequestBody LearningProcessDataset updatedLearningProcessDataset,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -195,9 +195,9 @@ public class LearningProcessDatasetController {
      */
     @DeleteMapping
     public ResponseEntity<?> deleteLearningProcessDataset(
-            @RequestParam Long studyId,
-            @RequestParam Long learningProcessId,
-            @RequestParam Long learningDatasetId,
+            @RequestParam String studyId,
+            @RequestParam String learningProcessId,
+            @RequestParam String learningDatasetId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

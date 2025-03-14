@@ -53,9 +53,9 @@ public class ModelParameterController {
      */
     @GetMapping
     public ResponseEntity<List<ModelParameterDTO>> getModelParameters(
-            @RequestParam Long studyId,
-            @RequestParam(required = false) Long modelId,
-            @RequestParam(required = false) Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam(required = false) String modelId,
+            @RequestParam(required = false) String parameterId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -95,7 +95,7 @@ public class ModelParameterController {
      * @return Created ModelParameter
      */
     @PostMapping
-    public ResponseEntity<?> createModelParameter(@RequestParam Long studyId,
+    public ResponseEntity<?> createModelParameter(@RequestParam String studyId,
                                                   @RequestBody ModelParameterDTO modelParameterDTO,
                                                   @AuthenticationPrincipal Jwt principal) {
         try {
@@ -107,8 +107,8 @@ public class ModelParameterController {
             ModelParameter saved = this.modelParameterService.saveModelParameter(entity);
 
             if (saved.getId() != null) {
-                Long mId = saved.getId().getModelId();
-                Long pId = saved.getId().getParameterId();
+                String mId = saved.getId().getModelId();
+                String pId = saved.getId().getParameterId();
                 String compositeId = "(" + mId + ", " + pId + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -139,9 +139,9 @@ public class ModelParameterController {
      */
     @PutMapping
     public ResponseEntity<?> updateModelParameter(
-            @RequestParam Long studyId,
-            @RequestParam Long modelId,
-            @RequestParam Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam String modelId,
+            @RequestParam String parameterId,
             @RequestBody ModelParameter updatedModelParameter,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -188,9 +188,9 @@ public class ModelParameterController {
      */
     @DeleteMapping
     public ResponseEntity<?> deleteModelParameter(
-            @RequestParam Long studyId,
-            @RequestParam Long modelId,
-            @RequestParam Long parameterId,
+            @RequestParam String studyId,
+            @RequestParam String modelId,
+            @RequestParam String parameterId,
             @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

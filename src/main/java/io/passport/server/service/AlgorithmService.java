@@ -37,7 +37,7 @@ public class AlgorithmService {
      * @param algorithmId ID of the algorithm
      * @return
      */
-    public Optional<Algorithm> findAlgorithmById(Long algorithmId) {
+    public Optional<Algorithm> findAlgorithmById(String algorithmId) {
         return algorithmRepository.findById(algorithmId);
     }
 
@@ -56,7 +56,7 @@ public class AlgorithmService {
      * @param updatedAlgorithm algorithm to be updated
      * @return
      */
-    public Optional<Algorithm> updateAlgorithm(Long algorithmId, Algorithm updatedAlgorithm) {
+    public Optional<Algorithm> updateAlgorithm(String algorithmId, Algorithm updatedAlgorithm) {
         Optional<Algorithm> oldAlgorithm = algorithmRepository.findById(algorithmId);
         if (oldAlgorithm.isPresent()) {
             Algorithm algorithm = oldAlgorithm.get();
@@ -76,7 +76,7 @@ public class AlgorithmService {
      * @param algorithmId ID of the algorithm to be deleted.
      * @return Optional containing the deleted algorithm if found, otherwise empty.
      */
-    public Optional<Algorithm> deleteAlgorithm(Long algorithmId) {
+    public Optional<Algorithm> deleteAlgorithm(String algorithmId) {
         Optional<Algorithm> existingAlgorithm = algorithmRepository.findById(algorithmId);
         if (existingAlgorithm.isPresent()) {
             algorithmRepository.delete(existingAlgorithm.get());

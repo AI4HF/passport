@@ -17,15 +17,15 @@ import java.util.Set;
 @NoArgsConstructor
 public class StudyOrganizationDTO {
 
-    private Long organizationId;
+    private String organizationId;
 
-    private Long studyId;
+    private String studyId;
 
     private String personnelId;
 
     private Set<Role> roles;
 
-    private Long populationId;
+    private String populationId;
 
     public StudyOrganizationDTO(StudyOrganization studyOrganization) {
         this.organizationId = studyOrganization.getId().getOrganizationId();

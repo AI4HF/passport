@@ -8,6 +8,6 @@ import java.util.List;
 /**
  * Parameter repository for database management.
  */
-public interface ParameterRepository extends JpaRepository<Parameter, Long> {
-    List<Parameter> findAllByStudyId(Long studyId);
+public interface ParameterRepository extends JpaRepository<Parameter, String> {
+    List<Parameter> findAllByStudyId(String studyId);
 }

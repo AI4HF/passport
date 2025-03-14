@@ -1,10 +1,14 @@
 package io.passport.server.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnTransformer;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.Instant;
 import java.util.Map;
 
@@ -15,18 +19,20 @@ import java.util.Map;
 @Table(name = "passport")
 @Getter
 @Setter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "passportId")
 public class Passport {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "passport_id")
-    private Long passportId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String passportId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "deployment_id")
-    private Long deploymentId;
+    private String deploymentId;
 
     @Column(name = "created_at")
     private Instant createdAt;

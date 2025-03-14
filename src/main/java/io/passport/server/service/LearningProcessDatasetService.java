@@ -38,7 +38,7 @@ public class LearningProcessDatasetService {
      * @param learningProcessId ID of the LearningProcess
      * @return
      */
-    public List<LearningProcessDataset> findByLearningProcessId(Long learningProcessId) {
+    public List<LearningProcessDataset> findByLearningProcessId(String learningProcessId) {
         return learningProcessDatasetRepository.findByIdLearningProcessId(learningProcessId);
     }
 
@@ -47,7 +47,7 @@ public class LearningProcessDatasetService {
      * @param learningDatasetId ID of the LearningDataset
      * @return
      */
-    public List<LearningProcessDataset> findByLearningDatasetId(Long learningDatasetId) {
+    public List<LearningProcessDataset> findByLearningDatasetId(String learningDatasetId) {
         return learningProcessDatasetRepository.findByIdLearningDatasetId(learningDatasetId);
     }
 

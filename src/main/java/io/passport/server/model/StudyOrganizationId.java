@@ -16,8 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class StudyOrganizationId implements Serializable {
     @Column(name = "organization_id")
-    private Long organizationId;
+    private String organizationId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 }

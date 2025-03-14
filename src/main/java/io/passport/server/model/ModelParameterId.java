@@ -14,8 +14,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ModelParameterId implements Serializable {
     @Column(name = "model_id")
-    private Long modelId;
+    private String modelId;
 
     @Column(name = "parameter_id")
-    private Long parameterId;
+    private String parameterId;
 }

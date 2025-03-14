@@ -39,7 +39,7 @@ public class ExperimentService {
      * @param studyId ID of the study
      * @return
      */
-    public List<Experiment> findExperimentByStudyId(Long studyId) {
+    public List<Experiment> findExperimentByStudyId(String studyId) {
         return this.experimentRepository.findByStudyId(studyId);
     }
 
@@ -51,7 +51,7 @@ public class ExperimentService {
      * @return
      */
     @Transactional
-    public List<Experiment> createExperimentEntries(Long studyId, List<Experiment> experimentList) {
+    public List<Experiment> createExperimentEntries(String studyId, List<Experiment> experimentList) {
         // Clear existing entries
         clearExperimentEntriesByStudyId(studyId);
 
@@ -71,7 +71,7 @@ public class ExperimentService {
      * @return
      */
     @Transactional
-    public void clearExperimentEntriesByStudyId(Long studyId) {
+    public void clearExperimentEntriesByStudyId(String studyId) {
         experimentRepository.deleteAllByStudyId(studyId);
     }
 }

@@ -19,10 +19,10 @@ public interface StudyOrganizationRepository extends JpaRepository<StudyOrganiza
     // Join with organization table and get related organizations for the study
     @Query("SELECT new Organization(o.organizationId, o.name, o.address, o.organizationAdminId)  " +
             "FROM Organization o, StudyOrganization so WHERE so.id.organizationId = o.organizationId AND so.id.studyId = :studyId")
-    List<Organization> findOrganizationsByStudyId(@Param("studyId") Long studyId);
+    List<Organization> findOrganizationsByStudyId(@Param("studyId") String studyId);
 
     // Join with study table and get related organizations for the organization
     @Query("SELECT new Study(s.id, s.name, s.description, s.objectives, s.ethics, s.owner)  " +
             "FROM Study s, StudyOrganization so WHERE so.id.studyId = s.id AND so.id.organizationId = :organizationId")
-    List<Study> findStudiesByOrganizationId(@Param("organizationId") Long organizationId);
+    List<Study> findStudiesByOrganizationId(@Param("organizationId") String organizationId);
 }

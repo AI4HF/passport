@@ -1,8 +1,12 @@
 package io.passport.server.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.Instant;
 
 /**
@@ -12,14 +16,17 @@ import java.time.Instant;
 @Table(name = "dataset_transformation_step")
 @Getter
 @Setter
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "stepId")
 public class DatasetTransformationStep {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "step_id")
-    private Long stepId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String stepId;
 
     @Column(name = "data_transformation_id")
-    private Long dataTransformationId;
+    private String dataTransformationId;
 
     @Column(name = "input_features")
     private String inputFeatures;

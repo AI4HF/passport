@@ -38,7 +38,7 @@ public class StudyService {
      * @param studyId ID of the study
      * @return
      */
-    public Optional<Study> findStudyByStudyId(Long studyId) {
+    public Optional<Study> findStudyByStudyId(String studyId) {
         return studyRepository.findById(studyId);
     }
 
@@ -66,7 +66,7 @@ public class StudyService {
      * @param updatedStudy study to be updated
      * @return
      */
-    public Optional<Study> updateStudy(Long studyId, Study updatedStudy) {
+    public Optional<Study> updateStudy(String studyId, Study updatedStudy) {
         Optional<Study> oldStudy = studyRepository.findById(studyId);
         if (oldStudy.isPresent()) {
             Study study = oldStudy.get();
@@ -87,7 +87,7 @@ public class StudyService {
      * @param studyId ID of study to be deleted
      * @return
      */
-    public Optional<Study> deleteStudy(Long studyId) {
+    public Optional<Study> deleteStudy(String studyId) {
         Optional<Study> existingStudy = studyRepository.findById(studyId);
         if (existingStudy.isPresent()) {
             studyRepository.delete(existingStudy.get());
@@ -103,7 +103,7 @@ public class StudyService {
      * @param datasetId ID of the Dataset
      * @return
      */
-    public Study findRelatedStudyByDatasetId(Long datasetId) {
+    public Study findRelatedStudyByDatasetId(String datasetId) {
         return studyRepository.findByDatasetId(datasetId);
     }
 }

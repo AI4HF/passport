@@ -45,7 +45,7 @@ public class StudyPersonnelService {
      * @param organizationId The ID of the organization.
      * @return A Map of personnel IDs to their roles.
      */
-    public Map<String, List<String>> getPersonnelRolesByStudyAndOrganization(Long studyId, Long organizationId) {
+    public Map<String, List<String>> getPersonnelRolesByStudyAndOrganization(String studyId, String organizationId) {
         List<StudyPersonnel> studyPersonnelList =
                 studyPersonnelRepository.findStudyPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
 
@@ -63,7 +63,7 @@ public class StudyPersonnelService {
      * @param organizationId ID of the organization
      * @return
      */
-    public List<Personnel> findPersonnelByStudyIdAndOrganizationId(Long studyId, Long organizationId){
+    public List<Personnel> findPersonnelByStudyIdAndOrganizationId(String studyId, String organizationId){
         return this.studyPersonnelRepository.findPersonnelByStudyIdAndOrganizationId(studyId, organizationId);
     }
 
@@ -84,7 +84,7 @@ public class StudyPersonnelService {
      * @param personnelIdList ID list for personnel
      */
     @Transactional
-    public void clearStudyPersonnelEntriesByStudyIdAndPersonnelId(Long studyId, List<String> personnelIdList) {
+    public void clearStudyPersonnelEntriesByStudyIdAndPersonnelId(String studyId, List<String> personnelIdList) {
         String studyName = "study-" + studyId;
 
         List<StudyPersonnel> studyPersonnelList = studyPersonnelRepository.findByStudyIdAndPersonnelIdList(studyId, personnelIdList);
@@ -105,7 +105,7 @@ public class StudyPersonnelService {
      * @param personnelRoleMap Map of Personnel and their corresponding roles
      */
     @Transactional
-    public void createStudyPersonnelEntries(Long studyId, Long organizationId, Map<String, List<String>> personnelRoleMap) {
+    public void createStudyPersonnelEntries(String studyId, String organizationId, Map<String, List<String>> personnelRoleMap) {
         // Fetch existing personnel for the organization and clear their StudyPersonnel entries
         List<String> personnelIdList = this.personnelService.findPersonnelByOrganizationId(organizationId).stream()
                 .map(Personnel::getPersonId).collect(Collectors.toList());

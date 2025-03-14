@@ -10,7 +10,7 @@ import java.util.List;
  * LearningProcess repository for database management.
  */
 @Repository
-public interface LearningProcessRepository extends JpaRepository<LearningProcess, Long> {
+public interface LearningProcessRepository extends JpaRepository<LearningProcess, String> {
 
-    List<LearningProcess> findAllByStudyId(Long studyId);
+    List<LearningProcess> findAllByStudyId(String studyId);
 }
