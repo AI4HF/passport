@@ -590,51 +590,42 @@ VALUES
      'decimal');
 
 -- Insert into parameter
-INSERT INTO parameter (
-    parameter_id,
-    name,
-    study_id,
-    description,
-    data_type
-)
-VALUES
-    ('initial_parameter',
-     'test_parameter',
-     'initial_study',
-     'test_description',
-     'string');
+INSERT INTO parameter (parameter_id, name, study_id, description, data_type)
+VALUES ('initial_parameter', 'Number of Folds', 'initial_study', 'Number of folds for Gradient-boosted trees.', 'int');
 
 -- Insert into algorithm
-INSERT INTO algorithm (
-    algorithm_id,
-    name,
-    objective_function,
-    type,
-    subtype
-)
-VALUES
-    ('initial_algorithm',
-     'Simple Linear Regression',
-     'Placeholder Objective Function',
-     'Regression',
-     'Simple Linear Regression');
+INSERT INTO algorithm (algorithm_id, name, objective_function, type, subtype)
+VALUES ('simple_linear_regression', 'Simple Linear Regression', 'Placeholder Objective Function', 'Regression', 'Simple Linear Regression'),
+       ('multiple_linear_regression', 'Multiple Linear Regression', 'Placeholder Objective Function', 'Regression', 'Multiple Linear Regression'),
+       ('polynomial_regression', 'Polynomial Regression', 'Placeholder Objective Function', 'Regression', 'Polynomial Regression'),
+       ('support_vector_regression_svr', 'Support Vector Regression (SVR)', 'Placeholder Objective Function', 'Regression', 'Support Vector Regression (SVR)'),
+       ('decision_tree_regression', 'Decision Tree Regression', 'Placeholder Objective Function', 'Regression', 'Decision Tree Regression'),
+       ('random_forest_regression', 'Random Forest Regression', 'Placeholder Objective Function', 'Regression', 'Random Forest Regression'),
+       ('logistic_regression', 'Logistic Regression', 'Placeholder Objective Function', 'Classification', 'Logistic Regression'),
+       ('k_nearest_neighbours_knn', 'K-Nearest Neighbours (K-NN)', 'Placeholder Objective Function', 'Classification', 'K-Nearest Neighbours (K-NN)'),
+       ('support_vector_machine_svm', 'Support Vector Machine (SVM)', 'Placeholder Objective Function', 'Classification', 'Support Vector Machine (SVM)'),
+       ('kernel_svm', 'Kernel SVM', 'Placeholder Objective Function', 'Classification', 'Kernel SVM'),
+       ('naive_bayes', 'Naive Bayes', 'Placeholder Objective Function', 'Classification', 'Naive Bayes'),
+       ('decision_tree_classification', 'Decision Tree Classification', 'Placeholder Objective Function', 'Classification', 'Decision Tree Classification'),
+       ('random_forest_classification', 'Random Forest Classification', 'Placeholder Objective Function', 'Classification', 'Random Forest Classification'),
+       ('k_means_clustering', 'K-Means Clustering', 'Placeholder Objective Function', 'Clustering', 'K-Means Clustering'),
+       ('hierarchical_clustering', 'Hierarchical Clustering', 'Placeholder Objective Function', 'Clustering', 'Hierarchical Clustering'),
+       ('apriori', 'Apriori', 'Placeholder Objective Function', 'Association Rule Learning', 'Apriori'),
+       ('eclat', 'Eclat', 'Placeholder Objective Function', 'Association Rule Learning', 'Eclat'),
+       ('upper_confidence_bounds_ucb', 'Upper Confidence Bounds (UCB)', 'Placeholder Objective Function', 'Reinforcement Learning', 'Upper Confidence Bounds (UCB)'),
+       ('thompson_sampling', 'Thompson Sampling', 'Placeholder Objective Function', 'Reinforcement Learning', 'Thompson Sampling'),
+       ('artificial_neural_networks_ann', 'Artificial Neural Networks (ANN)', 'Placeholder Objective Function', 'Deep Learning', 'Artificial Neural Networks (ANN)'),
+       ('convolutional_neural_networks_cnn', 'Convolutional Neural Networks (CNN)', 'Placeholder Objective Function', 'Deep Learning', 'Convolutional Neural Networks (CNN)'),
+       ('recurrent_neural_networks_rnn', 'Recurrent Neural Networks (RNN)', 'Placeholder Objective Function', 'Deep Learning', 'Recurrent Neural Networks (RNN)'),
+       ('principal_component_analysis_pca', 'Principal Component Analysis (PCA)', 'Placeholder Objective Function', 'Dimensionality Reduction', 'Principal Component Analysis (PCA)'),
+       ('linear_discriminant_analysis_lda', 'Linear Discriminant Analysis (LDA)', 'Placeholder Objective Function', 'Dimensionality Reduction', 'Linear Discriminant Analysis (LDA)'),
+       ('kernel_pca', 'Kernel PCA', 'Placeholder Objective Function', 'Dimensionality Reduction', 'Kernel PCA');
 
--- (Optional) more algorithm inserts if needed
 
 -- Insert into implementation
-INSERT INTO implementation (
-    implementation_id,
-    algorithm_id,
-    software,
-    name,
-    description
-)
-VALUES
-    ('initial_implementation',
-     'initial_algorithm',
-     'test_software',
-     'test_name',
-     'test_description');
+INSERT INTO implementation (implementation_id, algorithm_id, software, name, description)
+VALUES ('initial_implementation', 'simple_linear_regression', 'Spark MLlib', 'Gradient-boosted Tree Regression', 'Implementation of Gradient-boosted tree regression with Spark MLlib v3.5');
+
 
 -- Insert into learning_process
 INSERT INTO learning_process (
@@ -647,7 +638,7 @@ VALUES
     ('initial_learning_process',
      'initial_study',
      'initial_implementation',
-     'test_description');
+     'ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.');
 
 -- Insert into learning_stage
 INSERT INTO learning_stage (
@@ -660,8 +651,7 @@ INSERT INTO learning_stage (
 VALUES
     ('initial_learning_stage',
      'initial_learning_process',
-     'test_name',
-     'test_description',
+     'Training', 'Training stage/phase',
      50);
 
 -- Insert into learning_process_dataset
@@ -673,7 +663,7 @@ INSERT INTO learning_process_dataset (
 VALUES
     ('initial_learning_process',
      'initial_learning_dataset',
-     'This is a dummy description for the Learning Process Dataset relation.');
+     'Building a HF risk prediction model with Gradient-boosted tree regression.');
 
 -- Insert into learning_process_parameter
 INSERT INTO learning_process_parameter (
@@ -685,8 +675,8 @@ INSERT INTO learning_process_parameter (
 VALUES
     ('initial_learning_process',
      'initial_parameter',
-     'string',
-     'Dummy value for Learning Process Parameter');
+     'int',
+     '1');
 
 -- Insert into learning_stage_parameter
 INSERT INTO learning_stage_parameter (
@@ -698,8 +688,8 @@ INSERT INTO learning_stage_parameter (
 VALUES
     ('initial_learning_stage',
      'initial_parameter',
-     'string',
-     'Dummy value for Learning Stage Parameter');
+     'int',
+     '2');
 
 -- Insert into model
 INSERT INTO model (
@@ -730,25 +720,11 @@ VALUES
     ('initial_model',
      'initial_learning_process',
      'initial_study',
-     'test_name',
-     'test_version',
-     'test_tag',
-     'test_model_type',
-     'test_product_identifier',
-     'initial_organization',
-     'test_trl_level',
-     'test_license',
-     'test_primary_use',
-     'test_secondary_use',
-     'test_intended_users',
-     'test_counter_indications',
-     'test_ethical_considerations',
-     'test_limitations',
-     'test_fariness_constraints',
-     '2023-01-01 00:00:00',
-     'data_scientist',
-     '2023-01-02 00:00:00',
-     'data_scientist');
+     'HF risk prediction model 1 (for 7-day readmission risk)', '1.0', 'Production', 'prediction', 'AI4HFModel001', 'initial_organization',
+     'TRL4', 'RAIL-<DAMS>', 'Predicting 7-day readmission risk for Heart Failure patients.', 'Early intervention recommendations.', 'Healthcare providers, Data scientists',
+     'Not recommended for cases with incomplete patient history.', 'Privacy and consent considerations', 'This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.',
+     'Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.',
+     '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist');
 
 -- Insert into model_parameter
 INSERT INTO model_parameter (
@@ -760,8 +736,8 @@ INSERT INTO model_parameter (
 VALUES
     ('initial_model',
      'initial_parameter',
-     'string',
-     'Dummy value for Model Parameter');
+     'int',
+     '3');
 
 -- Insert into deployment_environment
 INSERT INTO deployment_environment (
@@ -838,10 +814,10 @@ VALUES
          "connectivityDetails": "Secure HTTPS communication is established using TLS/SSL protocols."
        },
        "modelDetails": {
-         "name": "test_name",
-         "version": "test_version",
-         "modelType": "test_model_type",
-         "productIdentifier": "test_product_identifier"
+         "name": "HF Risk Score",
+         "version": "1.0",
+         "modelType": "Classification",
+         "productIdentifier": "PID001"
        },
        "studyDetails": {
          "id": "initial_study",
@@ -849,7 +825,89 @@ VALUES
          "description": "Predicting risk factors for acute HF…",
          "objectives": "Evaluating the risk prediction for acute HF",
          "ethics": "Approved by Ethical Board on 2023-01-15, Application Number: 123"
-       }
+       },
+       "parameters": [
+         {
+           "name": "Number of Estimators",
+           "description": "Number of Trees in Random Forest",
+           "dataType": "int"
+         }
+       ],
+       "populationDetails": [
+         {
+           "populationUrl": "https://datatools4heart.eu/cohorts/study1",
+           "description": "Patients hospitalized with a primary discharge diagnosis of heart failure.",
+           "characteristics": "500 participants, 70% aged 20-30 years."
+         }
+       ],
+       "surveys": [
+         {
+           "question": "Is this service tested by any third party?",
+           "answer": "Yes",
+           "category": "Testing"
+         }
+       ],
+       "experiments": [
+         {
+           "researchQuestion": "A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge."
+         }
+       ],
+       "datasetsWithLearningDatasets": [
+         {
+           "dataset": {
+             "title": "HF Risk Dataset",
+             "description": "Dataset for HF Risk Prediction factors",
+             "version": "0.1",
+             "referenceEntity": "Encounter",
+             "numOfRecords": 1562,
+             "synthetic": false
+           },
+           "learningDatasets": [
+             {
+               "description": "Finalized learning dataset for HF Risk Prediction Model Teaching"
+             }
+           ]
+         }
+       ],
+       "featureSetsWithFeatures": [
+         {
+           "featureSet": {
+             "title": "Feature set for AI4HFsubstudy 2 - Risk score prediction for acute HF in the emergency department. ",
+             "description": "Feature set containing feature information used in risk score prediction for acute HF in the emergency department.",
+             "featuresetURL": "https://datatools4heart.eu/feature-sets/study1-features",
+             "createdAt": "1970-01-20 10:35:20",
+             "createdBy": "data_engineer",
+             "lastUpdatedAt": "1970-01-20 10:35:20",
+             "lastUpdatedBy": "data_engineer"
+           },
+           "features": [
+             {
+               "title": "age",
+               "description": "Age of the patient at reference point (at the time of admission)",
+               "dataType": "integer",
+               "featureType": "numerical",
+               "mandatory": true,
+               "isUnique": false,
+               "units": "years",
+               "dataCollection": "Automatic Collection from Government Database"
+             }
+           ]
+         }
+       ],
+       "learningProcessesWithStages": [
+         {
+           "learningProcess": {
+             "description": "This model generates a risk score that helps clinicians evaluate potential heart failure risks."
+           },
+           "learningStages": [
+             {
+               "learningStageName": "Model Training",
+               "description": "Trains the model on the dataset",
+               "datasetPercentage": 50
+             }
+           ]
+         }
+       ]
      }');
 
 -- Insert into evaluation_measure
@@ -864,7 +922,4 @@ INSERT INTO evaluation_measure (
 VALUES
     ('initial_evaluation_measure',
      'initial_model',
-     'test_name',
-     'test_value',
-     'test_data_type',
-     'test_description');
+     'Accuracy', '0.77', 'float', 'Accuracy of Model with ID model1');
