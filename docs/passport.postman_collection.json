@@ -177,13 +177,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population/initial_population",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
 								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -227,12 +233,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/population",
+							"raw": "{{passportBackend}}/population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -253,13 +265,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/population/initial_population",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
 								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -271,13 +289,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population/initial_population",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
 								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -699,13 +723,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey/initial_survey",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
 								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -717,12 +747,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey",
+							"raw": "{{passportBackend}}/survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -766,13 +802,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/survey/initial_survey",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
 								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -793,12 +835,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/survey",
+							"raw": "{{passportBackend}}/survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -810,13 +858,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey/initial_survey",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
 								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -833,12 +887,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter",
+							"raw": "{{passportBackend}}/parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -850,13 +910,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter/initial_parameter",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
 								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -877,12 +943,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/parameter",
+							"raw": "{{passportBackend}}/parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -903,13 +975,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/parameter/initial_parameter",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
 								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -921,13 +999,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter/initial_parameter",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
 								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -990,7 +1074,7 @@
 					"response": []
 				},
 				{
-					"name": "create a parameter",
+					"name": "create an evaluation measure",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1022,7 +1106,7 @@
 					"response": []
 				},
 				{
-					"name": "update a parameter",
+					"name": "update an evaluation measure",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1055,7 +1139,7 @@
 					"response": []
 				},
 				{
-					"name": "delete a parameter",
+					"name": "delete an evaluation measure",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -1089,12 +1173,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset",
+							"raw": "{{passportBackend}}/featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1106,13 +1196,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset/initial_featureset",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
 								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1133,12 +1229,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/featureset",
+							"raw": "{{passportBackend}}/featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1159,13 +1261,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/featureset/initial_featureset",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
 								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1177,13 +1285,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset/initial_featureset",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
 								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1200,12 +1314,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset",
+							"raw": "{{passportBackend}}/dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1217,13 +1337,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset/initial_dataset",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
 								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1244,12 +1370,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset",
+							"raw": "{{passportBackend}}/dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1270,13 +1402,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset/initial_dataset",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
 								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1288,13 +1426,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset/initial_dataset",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
 								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1311,12 +1455,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1328,7 +1478,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?featureId=initial_feature",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1339,6 +1489,10 @@
 								{
 									"key": "featureId",
 									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1351,7 +1505,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1362,6 +1516,10 @@
 								{
 									"key": "datasetId",
 									"value": "initial_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1374,7 +1532,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1389,6 +1547,10 @@
 								{
 									"key": "featureId",
 									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1410,12 +1572,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1436,7 +1604,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1451,6 +1619,10 @@
 								{
 									"key": "featureId",
 									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1463,7 +1635,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1478,6 +1650,10 @@
 								{
 									"key": "featureId",
 									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1495,12 +1671,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"raw": "{{passportBackend}}/dataset-transformation-step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1512,13 +1694,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step",
 								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1530,7 +1718,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=initial_dataset_transformation",
+							"raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1541,6 +1729,10 @@
 								{
 									"key": "dataTransformationId",
 									"value": "initial_dataset_transformation"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1562,12 +1754,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"raw": "{{passportBackend}}/dataset-transformation-step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1588,13 +1786,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step",
 								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1606,13 +1810,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step",
 								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1680,7 +1890,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization/studies?organizationId=initial_organization",
+							"raw": "{{passportBackend}}/studyOrganization/studies?organizationId=initial_organization&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1692,6 +1902,10 @@
 								{
 									"key": "organizationId",
 									"value": "initial_organization"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1798,12 +2012,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation",
+							"raw": "{{passportBackend}}/dataset-transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1815,13 +2035,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation",
+							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation",
 								"initial_dataset_transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1833,13 +2059,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation",
+							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation",
 								"initial_dataset_transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1856,13 +2088,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset",
+							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset",
 								"initial_learning_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1874,7 +2112,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset?datasetId=initial_dataset",
+							"raw": "{{passportBackend}}/learning-dataset?datasetId=initial_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1885,6 +2123,10 @@
 								{
 									"key": "datasetId",
 									"value": "initial_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1897,7 +2139,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset?dataTransformationId=initial_dataset_transformation",
+							"raw": "{{passportBackend}}/learning-dataset?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1908,6 +2150,10 @@
 								{
 									"key": "dataTransformationId",
 									"value": "initial_dataset_transformation"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1920,12 +2166,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset",
+							"raw": "{{passportBackend}}/learning-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1946,12 +2198,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset",
+							"raw": "{{passportBackend}}/learning-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1972,13 +2230,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset",
+							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset",
 								"initial_learning_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1995,12 +2259,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature",
+							"raw": "{{passportBackend}}/feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2012,13 +2282,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature/initial_feature",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
 								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2030,7 +2306,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature?featureSetId=initial_featureset",
+							"raw": "{{passportBackend}}/feature?featureSetId=initial_featureset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2041,6 +2317,10 @@
 								{
 									"key": "featureSetId",
 									"value": "initial_featureset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2062,12 +2342,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature",
+							"raw": "{{passportBackend}}/feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2088,13 +2374,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature/initial_feature",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
 								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2106,13 +2398,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature/initial_feature",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
 								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2129,12 +2427,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm",
+							"raw": "{{passportBackend}}/algorithm?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2146,13 +2450,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/simple_linear_regression",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
 								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2173,12 +2483,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/algorithm",
+							"raw": "{{passportBackend}}/algorithm?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2199,13 +2515,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/simple_linear_regression",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
 								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2217,13 +2539,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/simple_linear_regression",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
 								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2240,12 +2568,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation",
+							"raw": "{{passportBackend}}/implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2257,13 +2591,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation/initial_implementation",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
 								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2284,12 +2624,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/implementation",
+							"raw": "{{passportBackend}}/implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2310,13 +2656,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/implementation/initial_implementation",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
 								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2328,13 +2680,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation/initial_implementation",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
 								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2351,12 +2709,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process",
+							"raw": "{{passportBackend}}/learning-process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2368,13 +2732,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/initial_learning_process",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
 								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2395,12 +2765,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process",
+							"raw": "{{passportBackend}}/learning-process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2421,13 +2797,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/initial_learning_process",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
 								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2439,13 +2821,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/initial_learning_process",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
 								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2462,12 +2850,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2479,7 +2873,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_dataset&learningDatasetId=initial_learning_dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_dataset&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2494,6 +2888,10 @@
 								{
 									"key": "learningDatasetId",
 									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2515,12 +2913,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2541,7 +2945,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2556,6 +2960,10 @@
 								{
 									"key": "learningDatasetId",
 									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2568,7 +2976,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2583,6 +2991,10 @@
 								{
 									"key": "learningDatasetId",
 									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2600,12 +3012,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2617,7 +3035,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2632,6 +3050,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2653,12 +3075,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2679,7 +3107,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2694,6 +3122,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2706,7 +3138,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2721,6 +3153,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2738,12 +3174,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage",
+							"raw": "{{passportBackend}}/learning-stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2755,7 +3197,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage?learningProcessId=initial_learning_process",
+							"raw": "{{passportBackend}}/learning-stage?learningProcessId=initial_learning_process&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2766,6 +3208,10 @@
 								{
 									"key": "learningProcessId",
 									"value": "initial_learning_process"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2778,13 +3224,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
 								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2805,12 +3257,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage",
+							"raw": "{{passportBackend}}/learning-stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2831,13 +3289,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
 								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2849,13 +3313,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
 								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2872,12 +3342,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2889,7 +3365,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2904,6 +3380,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2925,12 +3405,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2951,7 +3437,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2966,6 +3452,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2978,7 +3468,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2993,6 +3483,10 @@
 								{
 									"key": "parameterId",
 									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -3010,12 +3504,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model",
+							"raw": "{{passportBackend}}/model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3027,13 +3527,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model/initial_model",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
 								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3077,12 +3583,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/model",
+							"raw": "{{passportBackend}}/model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3103,13 +3615,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/model/initial_model",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
 								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3121,13 +3639,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model/initial_model",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
 								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3154,13 +3678,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
 								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3182,13 +3712,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
 								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3219,13 +3755,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"raw": "{{passportBackend}}/deploymentEnvironment/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3256,13 +3798,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
 								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3289,12 +3837,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment",
+							"raw": "{{passportBackend}}/modelDeployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3316,13 +3870,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3344,7 +3904,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/environment/initial_deployment_environment",
+							"raw": "{{passportBackend}}/modelDeployment/environment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -3352,6 +3912,12 @@
 								"modelDeployment",
 								"environment",
 								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3373,13 +3939,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3410,13 +3982,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/",
+							"raw": "{{passportBackend}}/modelDeployment/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3447,13 +4025,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3480,12 +4064,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport",
+							"raw": "{{passportBackend}}/passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3507,13 +4097,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport/initial_passport",
+							"raw": "{{passportBackend}}/passport/initial_passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
 								"initial_passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3535,13 +4131,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport/initial_passport",
+							"raw": "{{passportBackend}}/passport/initial_passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
 								"initial_passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3572,13 +4174,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/passport/",
+							"raw": "{{passportBackend}}/passport/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
