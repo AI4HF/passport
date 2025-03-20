@@ -201,15 +201,6 @@ public class StudyController {
 
         Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
         if (deletedStudy.isPresent()) {
-            auditLogBookService.createAuditLog(
-                    userId,
-                    username,
-                    studyId,
-                    Operation.DELETE,
-                    relationName,
-                    studyId,
-                    deletedStudy.get()
-            );
             return ResponseEntity.status(HttpStatus.OK).body(deletedStudy.get());
         } else {
             return ResponseEntity.notFound().build();

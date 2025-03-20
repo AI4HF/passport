@@ -109,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -117,13 +117,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/study/",
+							"raw": "{{passportBackend}}/study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
-								"study",
-								""
+								"study"
 							]
 						}
 					},
@@ -146,7 +145,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"study_owner\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -225,7 +224,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\":\"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1test\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+							"raw": "{\r\n    \"studyId\":\"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -257,7 +256,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1test\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+							"raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -384,7 +383,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": \"initial_organization\",\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"STUDY_OWNER\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": \"initial_organization\",\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    },\r\n    \"isStudyOwner\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -410,7 +409,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"firstName\": \"Okan\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"STUDY_OWNER\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"firstName\": \"Okan\",\r\n    \"lastName\": \"Mercan\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -418,13 +417,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/personnel/service-account-admin",
+							"raw": "{{passportBackend}}/personnel/study_owner",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"service-account-admin"
+								"study_owner"
 							]
 						}
 					},
@@ -436,13 +435,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/service-account-admin",
+							"raw": "{{passportBackend}}/personnel/study_owner",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"service-account-admin"
+								"study_owner"
 							]
 						}
 					},
@@ -518,7 +517,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\",\r\n    \"organizationAdminId\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -544,7 +543,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"testOrganization\",\r\n    \"address\": \"testAddress\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -617,7 +616,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"studyId\": \"initial_study\",\r\n        \"researchQuestion\": \"research question 1 for test purpose\"\r\n    },\r\n    {\r\n        \"studyId\": \"initial_study\",\r\n        \"researchQuestion\": \"research question 3 for test purpose\"\r\n    }\r\n]",
+							"raw": "[\r\n    {\r\n        \"studyId\": \"initial_study\",\r\n        \"researchQuestion\": \"A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.\"\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -682,7 +681,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"John\",\r\n        \"lastName\": \"Doe\",\r\n        \"role\": \"Data Scientist\",\r\n        \"email\": \"John.doe@emailhost.com\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"study owner\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    }\r\n]",
+							"raw": "[\r\n    {\r\n        \"personId\": \"study_owner\",\r\n        \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"]\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -935,7 +934,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test_parameter_2\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_2\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Number of Folds\",\r\n    \"studyId\": \"initial_study\",\r\n    \"dataType\": \"int\",\r\n    \"description\": \"Number of folds for Gradient-boosted trees.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -967,7 +966,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test_parameter_3\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_3\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Number of Folds\",\r\n    \"studyId\": \"initial_study\",\r\n    \"dataType\": \"int\",\r\n    \"description\": \"Number of folds for Gradient-boosted trees.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1080,7 +1079,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\t\"modelId\": \"initial_model\",\r\n    \"name\": \"test_evaluation_measure_2\",\r\n\t\t\"value\": \"test_evaluation_measure_2\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_2\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1112,7 +1111,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"test_evaluation_measure_3\",\r\n\t\"value\": \"test_evaluation_measure_3\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_3\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1253,7 +1252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department. 2\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features 2\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department. 2\"\r\n}",
+							"raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1362,7 +1361,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1562,\r\n    \"synthetic\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1394,7 +1393,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1562,\r\n    \"synthetic\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1564,7 +1563,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1919,7 +1918,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"study_owner\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1945,7 +1944,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\", \"DATA_ENGINEER\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"study_owner\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\", \"DATA_ENGINEER\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2190,7 +2189,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_dataset\",\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_dataset\",\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2222,7 +2221,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_study\",\r\n        \"dataTransformationId\": \"initial_data_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_study\",\r\n        \"dataTransformationId\": \"initial_data_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2616,7 +2615,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"New Implementation\",\r\n    \"description\": \"Description of the implementation\"\r\n}",
+							"raw": "{\r\n    \"algorithmId\": \"simple_linear_regression\",\r\n    \"software\": \"Spark MLlib\",\r\n    \"name\": \"Gradient-boosted Tree Regression\",\r\n    \"description\": \"Implementation of Gradient-boosted tree regression with Spark MLlib v3.5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2648,7 +2647,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Updated Implementation\",\r\n    \"description\": \"Updated description of the implementation\"\r\n}",
+							"raw": "{\r\n    \"algorithmId\": \"simple_linear_regression\",\r\n    \"software\": \"Spark MLlib\",\r\n    \"name\": \"Gradient-boosted Tree Regression\",\r\n    \"description\": \"Implementation of Gradient-boosted tree regression with Spark MLlib v3.5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2757,7 +2756,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"New Learning Process\",\r\n    \"description\": \"Description of the learning process\"\r\n}",
+							"raw": "{\r\n    \"implementationId\": \"initial_implementation\",\r\n    \"studyId\": \"initial_study\",\r\n    \"description\": \"ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2789,7 +2788,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Updated Learning Process\",\r\n    \"description\": \"Updated description of the learning process\"\r\n}",
+							"raw": "{\r\n    \"implementationId\": \"initial_implementation\",\r\n    \"studyId\": \"initial_study\",\r\n    \"description\": \"ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2905,7 +2904,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"data\": \"New Dataset\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"description\": \"Building a HF risk prediction model with Gradient-boosted tree regression.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2937,7 +2936,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"data\": \"Updated Dataset\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"description\": \"Building a HF risk prediction model with Gradient-boosted tree regression.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3067,7 +3066,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"type\": \"int\",\r\n    \"value\": \"1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3099,7 +3098,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"type\": \"int\",\r\n    \"value\": \"1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3249,7 +3248,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"stageName\": \"New Learning Stage\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningStageName\": \"Training\",\r\n    \"description\": \"Training stage/phase\",\r\n    \"datasetPercentage\": 50\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3281,7 +3280,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"stageName\": \"Updated Learning Stage\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningStageName\": \"Training\",\r\n    \"description\": \"Training stage/phase\",\r\n    \"datasetPercentage\": 50\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3397,7 +3396,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"2\",\r\n    \"type\": \"int\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3429,7 +3428,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"2\",\r\n    \"type\": \"int\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3575,7 +3574,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3607,7 +3606,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3790,7 +3789,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
+							"raw": "{\r\n\t\"title\": \"Production Environment\",\r\n\t\"description\": \"Main Production Environment \",\r\n\t\"hardwareProperties\": \"Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3974,7 +3973,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"data_scientist\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4017,7 +4016,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"UPDATED - Production\",\r\n\t\"identifiedFailures\": \"UPDATED - Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"UPDATED - RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"data_scientist\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4227,12 +4226,12 @@
 						},
 						{
 							"key": "username",
-							"value": "data_scientist",
+							"value": "study_owner",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "data_scientist",
+							"value": "study_owner",
 							"type": "text"
 						},
 						{
