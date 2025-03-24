@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * DeploymentEnvironment repository for database management.
  */
-public interface DeploymentEnvironmentRepository extends JpaRepository<DeploymentEnvironment, Long> {
+public interface DeploymentEnvironmentRepository extends JpaRepository<DeploymentEnvironment, String> {
 }

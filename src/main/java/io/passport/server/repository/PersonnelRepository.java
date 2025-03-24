@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface PersonnelRepository extends JpaRepository<Personnel, String> {
 
-    List<Personnel> findByOrganizationId(Long organizationId);
+    List<Personnel> findByOrganizationId(String organizationId);
 }

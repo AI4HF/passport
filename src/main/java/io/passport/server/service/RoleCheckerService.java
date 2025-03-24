@@ -51,7 +51,7 @@ public class RoleCheckerService {
      * @param allowedRoles List of roles allowed to access the study
      * @return true if the user is a member of one of the allowed roles for the given study, false otherwise
      */
-    public boolean isUserAuthorizedForStudy(Long studyId, Jwt principal, List<Role> allowedRoles) {
+    public boolean isUserAuthorizedForStudy(String studyId, Jwt principal, List<Role> allowedRoles) {
         String personnelId = principal.getSubject();
         List<String> allowedRoleNames = allowedRoles.stream().map(Role::toString).collect(Collectors.toList());
 

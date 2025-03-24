@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "24e5d6d5-a6f2-4fe2-97e6-c8267006c324",
+		"_postman_id": "89fcde70-d8ca-48bc-93d3-74e331442b18",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19580401",
-		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-24e5d6d5-a6f2-4fe2-97e6-c8267006c324?action=share&source=collection_link&creator=19580401"
+		"_exporter_id": "42580487"
 	},
 	"item": [
 		{
@@ -53,13 +52,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/study/1",
+							"raw": "{{passportBackend}}/study/initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"study",
-								"1"
+								"initial_study"
 							]
 						}
 					},
@@ -81,13 +80,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/study/1",
+							"raw": "{{passportBackend}}/study/initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"study",
-								"1"
+								"initial_study"
 							]
 						}
 					},
@@ -110,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,13 +117,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/study/",
+							"raw": "{{passportBackend}}/study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
-								"study",
-								""
+								"study"
 							]
 						}
 					},
@@ -147,7 +145,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"name\": \"Risk score for acute HF in the emergency department\",\r\n\t\"description\": \"Predicting risk factors for acute HF…\",\r\n\t\"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n\t\"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\",\r\n\t\"owner\": \"study_owner\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -155,13 +153,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/study/1",
+							"raw": "{{passportBackend}}/study/initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"study",
-								"1"
+								"initial_study"
 							]
 						}
 					},
@@ -178,13 +176,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population/1",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
-								"1"
+								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -196,7 +200,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population?studyId=1",
+							"raw": "{{passportBackend}}/population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -206,7 +210,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -220,7 +224,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1test\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+							"raw": "{\r\n    \"studyId\":\"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -228,12 +232,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/population",
+							"raw": "{{passportBackend}}/population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -246,7 +256,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1test\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+							"raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,13 +264,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/population/1",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
-								"1"
+								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -272,13 +288,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/population/1",
+							"raw": "{{passportBackend}}/population/initial_population?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"population",
-								"1"
+								"initial_population"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -337,7 +359,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel?organizationId=1",
+							"raw": "{{passportBackend}}/personnel?organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -347,7 +369,7 @@
 							"query": [
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -361,7 +383,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"STUDY_OWNER\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"personnel\": {\r\n        \"organizationId\": \"initial_organization\",\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    },\r\n    \"credentials\": {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"\r\n    },\r\n    \"isStudyOwner\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -387,7 +409,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"firstName\": \"Okan2\",\r\n    \"lastName\": \"Mercan\",\r\n    \"role\": \"STUDY_OWNER\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"firstName\": \"Okan\",\r\n    \"lastName\": \"Mercan\",\r\n    \"email\": \"okan@srdc.com.tr\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -395,13 +417,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/personnel/service-account-admin",
+							"raw": "{{passportBackend}}/personnel/study_owner",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"service-account-admin"
+								"study_owner"
 							]
 						}
 					},
@@ -413,13 +435,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/personnel/service-account-admin",
+							"raw": "{{passportBackend}}/personnel/study_owner",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"personnel",
-								"service-account-admin"
+								"study_owner"
 							]
 						}
 					},
@@ -476,13 +498,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/organization/1",
+							"raw": "{{passportBackend}}/organization/initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"organization",
-								"1"
+								"initial_organization"
 							]
 						}
 					},
@@ -495,7 +517,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\",\r\n    \"organizationAdminId\": \"service-account-admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -521,7 +543,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"testOrganization\",\r\n    \"address\": \"testAddress\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Amsterdam UMC\",\r\n    \"address\": \"Address of Amsterdam UMC\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -529,13 +551,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/organization/1",
+							"raw": "{{passportBackend}}/organization/initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"organization",
-								"1"
+								"initial_organization"
 							]
 						}
 					},
@@ -547,13 +569,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/organization/1",
+							"raw": "{{passportBackend}}/organization/initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"organization",
-								"1"
+								"initial_organization"
 							]
 						}
 					},
@@ -570,7 +592,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/experiment?studyId=1",
+							"raw": "{{passportBackend}}/experiment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -580,7 +602,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -594,7 +616,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"studyId\": 1,\r\n        \"researchQuestion\": \"research question 1 for test purpose\"\r\n    },\r\n    {\r\n        \"studyId\": 1,\r\n        \"researchQuestion\": \"research question 3 for test purpose\"\r\n    }\r\n]",
+							"raw": "[\r\n    {\r\n        \"studyId\": \"initial_study\",\r\n        \"researchQuestion\": \"A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.\"\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -602,7 +624,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/experiment?studyId=1",
+							"raw": "{{passportBackend}}/experiment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -612,7 +634,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -630,7 +652,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1&organizationId=1",
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=initial_study&organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -641,11 +663,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -659,7 +681,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"John\",\r\n        \"lastName\": \"Doe\",\r\n        \"role\": \"Data Scientist\",\r\n        \"email\": \"John.doe@emailhost.com\"\r\n    },\r\n    {\r\n        \"id\": 3,\r\n        \"organizationId\": 1,\r\n        \"firstName\": \"Okan\",\r\n        \"lastName\": \"Mercan\",\r\n        \"role\": \"study owner\",\r\n        \"email\": \"okan@srdc.com.tr\"\r\n    }\r\n]",
+							"raw": "[\r\n    {\r\n        \"personId\": \"study_owner\",\r\n        \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"]\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -667,7 +689,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=1&organizationId=1",
+							"raw": "{{passportBackend}}/studyPersonnel/personnel?studyId=initial_study&organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -678,11 +700,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -700,13 +722,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey/1",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
-								"1"
+								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -718,12 +746,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey",
+							"raw": "{{passportBackend}}/survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -735,7 +769,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey?studyId=1",
+							"raw": "{{passportBackend}}/survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -745,7 +779,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -759,7 +793,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"updateTest\",\r\n    \"answer\": \"updateTest\",\r\n    \"category\": \"updateTest\"\r\n}",
+							"raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"question\": \"Is this service tested by any third party?\",\r\n    \"answer\": \"Yes\",\r\n    \"category\": \"Testing\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -767,13 +801,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/survey/1",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
-								"1"
+								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -786,7 +826,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studyId\": 1,\r\n    \"question\": \"Is this service tested by any third party?\",\r\n    \"answer\": \"Yes\",\r\n    \"category\": \"Testing\"\r\n}",
+							"raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"question\": \"Is this service tested by any third party?\",\r\n    \"answer\": \"Yes\",\r\n    \"category\": \"Testing\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -794,12 +834,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/survey",
+							"raw": "{{passportBackend}}/survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -811,13 +857,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/survey/1",
+							"raw": "{{passportBackend}}/survey/initial_survey?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"survey",
-								"1"
+								"initial_survey"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -834,12 +886,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter",
+							"raw": "{{passportBackend}}/parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -851,13 +909,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter/1",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
-								"1"
+								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -870,7 +934,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test_parameter_2\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_2\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Number of Folds\",\r\n    \"studyId\": \"initial_study\",\r\n    \"dataType\": \"int\",\r\n    \"description\": \"Number of folds for Gradient-boosted trees.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -878,12 +942,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/parameter",
+							"raw": "{{passportBackend}}/parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -896,7 +966,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test_parameter_3\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_3\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Number of Folds\",\r\n    \"studyId\": \"initial_study\",\r\n    \"dataType\": \"int\",\r\n    \"description\": \"Number of folds for Gradient-boosted trees.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -904,13 +974,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/parameter/2",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
-								"2"
+								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -922,13 +998,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/parameter/2",
+							"raw": "{{passportBackend}}/parameter/initial_parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"parameter",
-								"2"
+								"initial_parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -945,18 +1027,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/evaluation-measure/1?studyId=1",
+							"raw": "{{passportBackend}}/evaluation-measure/initial_evaluation_measure?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"evaluation-measure",
-								"1"
+								"initial_evaluation_measure"
 							],
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -969,7 +1051,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/evaluation-measure?studyId=1&modelId=1",
+							"raw": "{{passportBackend}}/evaluation-measure?studyId=initial_study&modelId=initial_model",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -979,11 +1061,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "modelId",
-									"value": "1"
+									"value": "initial_model"
 								}
 							]
 						}
@@ -991,13 +1073,13 @@
 					"response": []
 				},
 				{
-					"name": "create a parameter",
+					"name": "create an evaluation measure",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\t\"modelId\": 1,\r\n    \"name\": \"test_evaluation_measure_2\",\r\n\t\t\"value\": \"test_evaluation_measure_2\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_2\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1005,7 +1087,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/evaluation-measure?studyId=1",
+							"raw": "{{passportBackend}}/evaluation-measure?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1015,7 +1097,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1023,13 +1105,13 @@
 					"response": []
 				},
 				{
-					"name": "update a parameter",
+					"name": "update an evaluation measure",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": 1,\r\n    \"name\": \"test_evaluation_measure_3\",\r\n\t\"value\": \"test_evaluation_measure_3\",\r\n    \"dataType\": \"string\",\r\n    \"description\": \"test_description_3\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1037,18 +1119,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/evaluation-measure/2?studyId=1",
+							"raw": "{{passportBackend}}/evaluation-measure/initial_evaluation_measure?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"evaluation-measure",
-								"2"
+								"initial_evaluation_measure"
 							],
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1056,23 +1138,23 @@
 					"response": []
 				},
 				{
-					"name": "delete a parameter",
+					"name": "delete an evaluation measure",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/evaluation-measure/2?studyId=1",
+							"raw": "{{passportBackend}}/evaluation-measure/initial_evaluation_measure?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"evaluation-measure",
-								"2"
+								"initial_evaluation_measure"
 							],
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1090,12 +1172,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset",
+							"raw": "{{passportBackend}}/featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1107,13 +1195,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset/1",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
-								"1"
+								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1126,7 +1220,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"experimentId\": 1,\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
+							"raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1134,12 +1228,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/featureset",
+							"raw": "{{passportBackend}}/featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1152,7 +1252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"experimentId\": 1,\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department. 2\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features 2\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department. 2\"\r\n}",
+							"raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1160,13 +1260,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/featureset/1",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
-								"1"
+								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1178,13 +1284,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/featureset/1",
+							"raw": "{{passportBackend}}/featureset/initial_featureset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"featureset",
-								"1"
+								"initial_featureset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1201,12 +1313,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset",
+							"raw": "{{passportBackend}}/dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1218,13 +1336,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset/1",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
-								"1"
+								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1237,7 +1361,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"populationId\": 1,\r\n    \"organizationId\": 1,\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1562,\r\n    \"synthetic\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1245,12 +1369,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset",
+							"raw": "{{passportBackend}}/dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1263,7 +1393,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"populationId\": 1,\r\n    \"organizationId\": 1,\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1565,\r\n    \"synthetic\": true\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"populationId\": \"initial_population\",\r\n    \"organizationId\": \"initial_organization\",\r\n    \"title\": \"HF Risk Dataset\",\r\n    \"description\": \"Dataset for HF Risk Prediction factors\",\r\n    \"version\": \"0.1\",\r\n    \"referenceEntity\": \"Encounter\",\r\n    \"numOfRecords\": 1562,\r\n    \"synthetic\": false\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1271,13 +1401,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset/1",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
-								"1"
+								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1289,13 +1425,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset/1",
+							"raw": "{{passportBackend}}/dataset/initial_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset",
-								"1"
+								"initial_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1312,12 +1454,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1329,7 +1477,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?featureId=1",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1339,7 +1487,11 @@
 							"query": [
 								{
 									"key": "featureId",
-									"value": "1"
+									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1352,7 +1504,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1362,7 +1514,11 @@
 							"query": [
 								{
 									"key": "datasetId",
-									"value": "1"
+									"value": "initial_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1375,7 +1531,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1385,11 +1541,15 @@
 							"query": [
 								{
 									"key": "datasetId",
-									"value": "1"
+									"value": "initial_dataset"
 								},
 								{
 									"key": "featureId",
-									"value": "1"
+									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1403,7 +1563,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1411,12 +1571,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature-dataset-characteristic"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1429,7 +1595,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1437,7 +1603,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1447,11 +1613,15 @@
 							"query": [
 								{
 									"key": "datasetId",
-									"value": "1"
+									"value": "initial_dataset"
 								},
 								{
 									"key": "featureId",
-									"value": "1"
+									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1464,7 +1634,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=1&featureId=1",
+							"raw": "{{passportBackend}}/feature-dataset-characteristic?datasetId=initial_dataset&featureId=initial_feature&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1474,11 +1644,15 @@
 							"query": [
 								{
 									"key": "datasetId",
-									"value": "1"
+									"value": "initial_dataset"
 								},
 								{
 									"key": "featureId",
-									"value": "1"
+									"value": "initial_feature"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1496,12 +1670,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"raw": "{{passportBackend}}/dataset-transformation-step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1513,13 +1693,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step/1",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step",
-								"1"
+								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1531,7 +1717,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=1",
+							"raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1541,7 +1727,11 @@
 							"query": [
 								{
 									"key": "dataTransformationId",
-									"value": "1"
+									"value": "initial_dataset_transformation"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1555,7 +1745,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1563,12 +1753,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"raw": "{{passportBackend}}/dataset-transformation-step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1581,7 +1777,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetId\": 1,\r\n    \"featureId\": 1,\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
+							"raw": "{\r\n    \"datasetId\": \"initial_dataset\",\r\n    \"featureId\": \"initial_feature\",\r\n    \"characteristicName\": \"variance\",\r\n    \"value\": \"11.2\",\r\n    \"valueDataType\": \"decimal\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1589,13 +1785,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step/1",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation-step",
-								"1"
+								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1607,12 +1809,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation-step",
+							"raw": "{{passportBackend}}/dataset-transformation-step/initial_dataset_transformation_step?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
-								"dataset-transformation-step"
+								"dataset-transformation-step",
+								"initial_dataset_transformation_step"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1629,7 +1838,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization/organizations?studyId=1",
+							"raw": "{{passportBackend}}/studyOrganization/organizations?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1640,7 +1849,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1653,7 +1862,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"raw": "{{passportBackend}}/studyOrganization?studyId=initial_study&organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1663,11 +1872,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -1680,7 +1889,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization/studies?organizationId=1",
+							"raw": "{{passportBackend}}/studyOrganization/studies?organizationId=initial_organization&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1691,7 +1900,11 @@
 							"query": [
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1705,7 +1918,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"studyId\": 1,\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"],\r\n    \"populationId\": 1\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"study_owner\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1731,7 +1944,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"organizationId\": 1,\r\n    \"studyId\": 1,\r\n    \"personnelId\": \"service-account-admin\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\", \"DATA_ENGINEER\"],\r\n    \"populationId\": 1\r\n}",
+							"raw": "{\r\n    \"organizationId\": \"initial_organization\",\r\n    \"studyId\": \"initial_study\",\r\n    \"personnelId\": \"study_owner\",\r\n    \"roles\": [\"STUDY_OWNER\", \"DATA_SCIENTIST\", \"DATA_ENGINEER\"],\r\n    \"populationId\": \"initial_population\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1739,7 +1952,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"raw": "{{passportBackend}}/studyOrganization?studyId=initial_study&organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1749,11 +1962,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -1766,7 +1979,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/studyOrganization?studyId=1&organizationId=1",
+							"raw": "{{passportBackend}}/studyOrganization?studyId=initial_study&organizationId=initial_organization",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1776,11 +1989,11 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								},
 								{
 									"key": "organizationId",
-									"value": "1"
+									"value": "initial_organization"
 								}
 							]
 						}
@@ -1798,12 +2011,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation",
+							"raw": "{{passportBackend}}/dataset-transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1815,13 +2034,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation/1",
+							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation",
-								"1"
+								"initial_dataset_transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1833,13 +2058,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/dataset-transformation/1",
+							"raw": "{{passportBackend}}/dataset-transformation/initial_dataset_transformation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"dataset-transformation",
-								"1"
+								"initial_dataset_transformation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1856,13 +2087,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset/1",
+							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset",
-								"1"
+								"initial_learning_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1874,7 +2111,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset?datasetId=1",
+							"raw": "{{passportBackend}}/learning-dataset?datasetId=initial_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1884,7 +2121,11 @@
 							"query": [
 								{
 									"key": "datasetId",
-									"value": "1"
+									"value": "initial_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1897,7 +2138,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset?dataTransformationId=1",
+							"raw": "{{passportBackend}}/learning-dataset?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -1907,7 +2148,11 @@
 							"query": [
 								{
 									"key": "dataTransformationId",
-									"value": "1"
+									"value": "initial_dataset_transformation"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -1920,12 +2165,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset",
+							"raw": "{{passportBackend}}/learning-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1938,7 +2189,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": 1,\r\n        \"dataTransformationId\": 1,\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_dataset\",\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1946,12 +2197,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset",
+							"raw": "{{passportBackend}}/learning-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1964,7 +2221,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": 1,\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": 1,\r\n        \"dataTransformationId\": 1,\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_study\",\r\n        \"dataTransformationId\": \"initial_data_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1972,13 +2229,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-dataset/1",
+							"raw": "{{passportBackend}}/learning-dataset/initial_learning_dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-dataset",
-								"1"
+								"initial_learning_dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -1995,12 +2258,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature",
+							"raw": "{{passportBackend}}/feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2012,13 +2281,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature/1",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
-								"1"
+								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2030,7 +2305,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature?featureSetId=1",
+							"raw": "{{passportBackend}}/feature?featureSetId=initial_featureset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2040,7 +2315,11 @@
 							"query": [
 								{
 									"key": "featureSetId",
-									"value": "1"
+									"value": "initial_featureset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2054,7 +2333,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2062,12 +2341,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature",
+							"raw": "{{passportBackend}}/feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2080,7 +2365,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"featuresetId\": 1,\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
+							"raw": "{\r\n    \"featuresetId\": \"initial_featureset\",\r\n    \"title\": \"age\",\r\n    \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n    \"dataType\": \"integer\",\r\n    \"featureType\": \"numerical\",\r\n    \"mandatory\": true,\r\n    \"isUnique\": true,\r\n    \"units\": \"years\",\r\n    \"equipment\": \"\",\r\n    \"dataCollection\": \"Automatic Collection from Government Database\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2088,13 +2373,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/feature/1",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
-								"1"
+								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2106,13 +2397,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/feature/1",
+							"raw": "{{passportBackend}}/feature/initial_feature?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"feature",
-								"1"
+								"initial_feature"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2129,12 +2426,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm",
+							"raw": "{{passportBackend}}/algorithm?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2146,13 +2449,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/1",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
-								"1"
+								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2173,12 +2482,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/algorithm",
+							"raw": "{{passportBackend}}/algorithm?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2199,13 +2514,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/1",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
-								"1"
+								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2217,13 +2538,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/algorithm/1",
+							"raw": "{{passportBackend}}/algorithm/simple_linear_regression?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"algorithm",
-								"1"
+								"simple_linear_regression"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2240,12 +2567,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation",
+							"raw": "{{passportBackend}}/implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2257,13 +2590,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation/1",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
-								"1"
+								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2276,7 +2615,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"New Implementation\",\r\n    \"description\": \"Description of the implementation\"\r\n}",
+							"raw": "{\r\n    \"algorithmId\": \"simple_linear_regression\",\r\n    \"software\": \"Spark MLlib\",\r\n    \"name\": \"Gradient-boosted Tree Regression\",\r\n    \"description\": \"Implementation of Gradient-boosted tree regression with Spark MLlib v3.5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2284,12 +2623,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/implementation",
+							"raw": "{{passportBackend}}/implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2302,7 +2647,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Updated Implementation\",\r\n    \"description\": \"Updated description of the implementation\"\r\n}",
+							"raw": "{\r\n    \"algorithmId\": \"simple_linear_regression\",\r\n    \"software\": \"Spark MLlib\",\r\n    \"name\": \"Gradient-boosted Tree Regression\",\r\n    \"description\": \"Implementation of Gradient-boosted tree regression with Spark MLlib v3.5\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2310,13 +2655,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/implementation/1",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
-								"1"
+								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2328,13 +2679,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/implementation/1",
+							"raw": "{{passportBackend}}/implementation/initial_implementation?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"implementation",
-								"1"
+								"initial_implementation"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2351,12 +2708,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process",
+							"raw": "{{passportBackend}}/learning-process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2368,13 +2731,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/1",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
-								"1"
+								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2387,7 +2756,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"New Learning Process\",\r\n    \"description\": \"Description of the learning process\"\r\n}",
+							"raw": "{\r\n    \"implementationId\": \"initial_implementation\",\r\n    \"studyId\": \"initial_study\",\r\n    \"description\": \"ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2395,12 +2764,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process",
+							"raw": "{{passportBackend}}/learning-process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2413,7 +2788,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Updated Learning Process\",\r\n    \"description\": \"Updated description of the learning process\"\r\n}",
+							"raw": "{\r\n    \"implementationId\": \"initial_implementation\",\r\n    \"studyId\": \"initial_study\",\r\n    \"description\": \"ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2421,13 +2796,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/1",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
-								"1"
+								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2439,13 +2820,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process/1",
+							"raw": "{{passportBackend}}/learning-process/initial_learning_process?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process",
-								"1"
+								"initial_learning_process"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2462,12 +2849,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2479,7 +2872,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_dataset&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2489,11 +2882,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_dataset"
 								},
 								{
 									"key": "learningDatasetId",
-									"value": "1"
+									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2507,7 +2904,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"learningDatasetId\": 1,\r\n    \"data\": \"New Dataset\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"description\": \"Building a HF risk prediction model with Gradient-boosted tree regression.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2515,12 +2912,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset",
+							"raw": "{{passportBackend}}/learning-process-dataset?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-dataset"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2533,7 +2936,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"learningDatasetId\": 1,\r\n    \"data\": \"Updated Dataset\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningDatasetId\": \"initial_learning_dataset\",\r\n    \"description\": \"Building a HF risk prediction model with Gradient-boosted tree regression.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2541,7 +2944,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2551,11 +2954,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
 								},
 								{
 									"key": "learningDatasetId",
-									"value": "1"
+									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2568,7 +2975,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=1&learningDatasetId=1",
+							"raw": "{{passportBackend}}/learning-process-dataset?learningProcessId=initial_learning_process&learningDatasetId=initial_learning_dataset&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2578,11 +2985,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
 								},
 								{
 									"key": "learningDatasetId",
-									"value": "1"
+									"value": "initial_learning_dataset"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2600,12 +3011,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2617,7 +3034,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2627,11 +3044,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2645,7 +3066,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"type\": \"int\",\r\n    \"value\": \"1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2653,12 +3074,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter",
+							"raw": "{{passportBackend}}/learning-process-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-process-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2671,7 +3098,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"type\": \"int\",\r\n    \"value\": \"1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2679,7 +3106,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2689,11 +3116,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2706,7 +3137,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-process-parameter?learningProcessId=initial_learning_process&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2716,11 +3147,15 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2738,12 +3173,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage",
+							"raw": "{{passportBackend}}/learning-stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2755,7 +3196,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage?learningProcessId=1",
+							"raw": "{{passportBackend}}/learning-stage?learningProcessId=initial_learning_process&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2765,7 +3206,11 @@
 							"query": [
 								{
 									"key": "learningProcessId",
-									"value": "1"
+									"value": "initial_learning_process"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2778,13 +3223,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/1",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
-								"1"
+								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2797,7 +3248,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"stageName\": \"New Learning Stage\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningStageName\": \"Training\",\r\n    \"description\": \"Training stage/phase\",\r\n    \"datasetPercentage\": 50\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2805,12 +3256,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage",
+							"raw": "{{passportBackend}}/learning-stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2823,7 +3280,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"stageName\": \"Updated Learning Stage\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"learningStageName\": \"Training\",\r\n    \"description\": \"Training stage/phase\",\r\n    \"datasetPercentage\": 50\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2831,13 +3288,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/1",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
-								"1"
+								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2849,13 +3312,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage/1",
+							"raw": "{{passportBackend}}/learning-stage/initial_learning_stage?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage",
-								"1"
+								"initial_learning_stage"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2872,12 +3341,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2889,7 +3364,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2899,11 +3374,15 @@
 							"query": [
 								{
 									"key": "learningStageId",
-									"value": "1"
+									"value": "initial_learning_stage"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2917,7 +3396,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningStageId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"New Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"2\",\r\n    \"type\": \"int\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2925,12 +3404,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter",
+							"raw": "{{passportBackend}}/learning-stage-parameter?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"learning-stage-parameter"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -2943,7 +3428,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningStageId\": 1,\r\n    \"parameterId\": 1,\r\n    \"value\": \"Updated Parameter Value\"\r\n}",
+							"raw": "{\r\n    \"learningStageId\": \"initial_learning_stage\",\r\n    \"parameterId\": \"initial_parameter\",\r\n    \"value\": \"2\",\r\n    \"type\": \"int\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2951,7 +3436,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2961,11 +3446,15 @@
 							"query": [
 								{
 									"key": "learningStageId",
-									"value": "1"
+									"value": "initial_learning_stage"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -2978,7 +3467,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=1&parameterId=1",
+							"raw": "{{passportBackend}}/learning-stage-parameter?learningStageId=initial_learning_stage&parameterId=initial_parameter&studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -2988,11 +3477,15 @@
 							"query": [
 								{
 									"key": "learningStageId",
-									"value": "1"
+									"value": "initial_learning_stage"
 								},
 								{
 									"key": "parameterId",
-									"value": "1"
+									"value": "initial_parameter"
+								},
+								{
+									"key": "studyId",
+									"value": "initial_study"
 								}
 							]
 						}
@@ -3010,12 +3503,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model",
+							"raw": "{{passportBackend}}/model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3027,13 +3526,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model/1",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
-								"1"
+								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3045,7 +3550,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model?studyId=1",
+							"raw": "{{passportBackend}}/model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
@@ -3055,7 +3560,7 @@
 							"query": [
 								{
 									"key": "studyId",
-									"value": "1"
+									"value": "initial_study"
 								}
 							]
 						}
@@ -3069,7 +3574,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"studyId\": 1,\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"service-account-admin\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3077,12 +3582,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/model",
+							"raw": "{{passportBackend}}/model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3095,7 +3606,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": 1,\r\n    \"studyId\": 1,\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"service-account-admin\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"service-account-admin\",\r\n    \"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3103,13 +3614,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/model/1",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
-								"1"
+								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3121,13 +3638,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/model/1",
+							"raw": "{{passportBackend}}/model/initial_model?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"model",
-								"1"
+								"initial_model"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3154,13 +3677,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
-								"1"
+								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3182,13 +3711,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
-								"1"
+								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3219,13 +3754,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"raw": "{{passportBackend}}/deploymentEnvironment/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3245,104 +3786,6 @@
 							]
 						},
 						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"deploymentEnvironment",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "deployment environment",
-			"item": [
-				{
-					"name": "get a deployment environment",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"deploymentEnvironment",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete a deployment environment",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"deploymentEnvironment",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create a deployment environment",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -3354,50 +3797,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/",
+							"raw": "{{passportBackend}}/deploymentEnvironment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"deploymentEnvironment",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update a deployment environment",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+								"initial_deployment_environment"
+							],
+							"query": [
 								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
+									"key": "studyId",
+									"value": "initial_study"
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\t\"title\": \"UPDATED - Production Environment\",\r\n\t\"description\": \"UPDATED - Main Production Environment \",\r\n\t\"hardwareProperties\": \"UPDATED - Disk: 512 GB, RAM: 32 GB \",\r\n\t\"softwareProperties\": \"UPDATED - OS: Windows, Cloud Services: Google Cloud Platform\",\r\n\t\"connectivityDetails\": \"UPDATED - Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication \"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{passportBackend}}/deploymentEnvironment/1",
-							"host": [
-								"{{passportBackend}}"
-							],
-							"path": [
-								"deploymentEnvironment",
-								"1"
 							]
 						}
 					},
@@ -3424,12 +3836,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment",
+							"raw": "{{passportBackend}}/modelDeployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3451,13 +3869,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/1",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
-								"1"
+								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3479,14 +3903,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/environment/1",
+							"raw": "{{passportBackend}}/modelDeployment/environment/initial_deployment_environment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								"environment",
-								"1"
+								"initial_deployment_environment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3508,13 +3938,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/1",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
-								"1"
+								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3537,7 +3973,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": 1,\r\n\t\"environmentId\": 1,\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"data_scientist\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3545,13 +3981,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/",
+							"raw": "{{passportBackend}}/modelDeployment/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3574,7 +4016,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"modelId\": 1,\r\n\t\"environmentId\": 1,\r\n\t\"tags\": \"UPDATED - Production\",\r\n\t\"identifiedFailures\": \"UPDATED - Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"UPDATED - RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"service-account-admin\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"service-account-admin\"\r\n}",
+							"raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n\t\"environmentId\": \"initial_deployment_environment\",\r\n\t\"tags\": \"Production\",\r\n\t\"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n\t\"status\": \"RUNNING\",\r\n\t\"createdAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"createdBy\": \"data_scientist\",\r\n\t\"lastUpdatedAt\": \"2023-01-01T00:00:00.000Z\",\r\n\t\"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3582,13 +4024,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/modelDeployment/1",
+							"raw": "{{passportBackend}}/modelDeployment/initial_model_deployment?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"modelDeployment",
-								"1"
+								"initial_model_deployment"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3615,12 +4063,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport",
+							"raw": "{{passportBackend}}/passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3642,13 +4096,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport/1",
+							"raw": "{{passportBackend}}/passport/initial_passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
-								"1"
+								"initial_passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3670,13 +4130,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{passportBackend}}/passport/1",
+							"raw": "{{passportBackend}}/passport/initial_passport?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
-								"1"
+								"initial_passport"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3699,7 +4165,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"passport\": {\r\n        \"deploymentId\": 1,\r\n        \"studyId\": 1,\r\n        \"createdBy\": \"quality_assurance_specialist\",\r\n        \"approvedBy\": \"quality_assurance_specialist\"\r\n    },\r\n    \"passportDetailsSelection\": {\r\n        \"modelDetails\": true,\r\n        \"modelDeploymentDetails\": true,\r\n        \"environmentDetails\": true,\r\n        \"datasets\": true,\r\n        \"featureSets\": false,\r\n        \"learningProcessDetails\": true,\r\n        \"parameterDetails\": false,\r\n        \"populationDetails\": false,\r\n        \"experimentDetails\": true,\r\n        \"surveyDetails\": true,\r\n        \"studyDetails\": true\r\n    }\r\n}",
+							"raw": "{\r\n    \"passport\": {\r\n        \"deploymentId\": \"initial_model_deployment\",\r\n        \"studyId\": \"initial_study\",\r\n        \"createdBy\": \"quality_assurance_specialist\",\r\n        \"approvedBy\": \"quality_assurance_specialist\"\r\n    },\r\n    \"passportDetailsSelection\": {\r\n        \"modelDetails\": true,\r\n        \"modelDeploymentDetails\": true,\r\n        \"environmentDetails\": true,\r\n        \"datasets\": true,\r\n        \"featureSets\": false,\r\n        \"learningProcessDetails\": true,\r\n        \"parameterDetails\": false,\r\n        \"populationDetails\": false,\r\n        \"experimentDetails\": true,\r\n        \"surveyDetails\": true,\r\n        \"studyDetails\": true\r\n    },\r\n    \"detailsJson\": {\r\n       \"deploymentDetails\": {\r\n         \"tags\": \"Production\",\r\n         \"identifiedFailures\": \"Instances of false positives in predicting rare events.\",\r\n         \"status\": \"RUNNING\"\r\n       },\r\n       \"environmentDetails\": {\r\n         \"title\": \"Production Environment\",\r\n         \"description\": \"Main Production Environment\",\r\n         \"hardwareProperties\": \"Disk: 512 GB, RAM: 32 GB\",\r\n         \"softwareProperties\": \"OS: Windows, Cloud Services: Google Cloud Platform\",\r\n         \"connectivityDetails\": \"Secure HTTPS communication is established using TLS/SSL protocols.\"\r\n       },\r\n       \"modelDetails\": {\r\n         \"name\": \"HF Risk Score\",\r\n         \"version\": \"1.0\",\r\n         \"modelType\": \"Classification\",\r\n         \"productIdentifier\": \"PID001\"\r\n       },\r\n       \"studyDetails\": {\r\n         \"id\": \"initial_study\",\r\n         \"name\": \"Risk score for acute HF in the emergency department\",\r\n         \"description\": \"Predicting risk factors for acute HF…\",\r\n         \"objectives\": \"Evaluating the risk prediction for acute HF\",\r\n         \"ethics\": \"Approved by Ethical Board on 2023-01-15, Application Number: 123\"\r\n       },\r\n       \"parameters\": [\r\n         {\r\n           \"name\": \"Number of Estimators\",\r\n           \"description\": \"Number of Trees in Random Forest\",\r\n           \"dataType\": \"int\"\r\n         }\r\n       ],\r\n       \"populationDetails\": [\r\n         {\r\n           \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n           \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure.\",\r\n           \"characteristics\": \"500 participants, 70% aged 20-30 years.\"\r\n         }\r\n       ],\r\n       \"surveys\": [\r\n         {\r\n           \"question\": \"Is this service tested by any third party?\",\r\n           \"answer\": \"Yes\",\r\n           \"category\": \"Testing\"\r\n         }\r\n       ],\r\n       \"experiments\": [\r\n         {\r\n           \"researchQuestion\": \"A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.\"\r\n         }\r\n       ],\r\n       \"datasetsWithLearningDatasets\": [\r\n         {\r\n           \"dataset\": {\r\n             \"title\": \"HF Risk Dataset\",\r\n             \"description\": \"Dataset for HF Risk Prediction factors\",\r\n             \"version\": \"0.1\",\r\n             \"referenceEntity\": \"Encounter\",\r\n             \"numOfRecords\": 1562,\r\n             \"synthetic\": false\r\n           },\r\n           \"learningDatasets\": [\r\n             {\r\n               \"description\": \"Finalized learning dataset for HF Risk Prediction Model Teaching\"\r\n             }\r\n           ]\r\n         }\r\n       ],\r\n       \"featureSetsWithFeatures\": [\r\n         {\r\n           \"featureSet\": {\r\n             \"title\": \"Feature set for AI4HFsubstudy 2 - Risk score prediction for acute HF in the emergency department. \",\r\n             \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\",\r\n             \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n             \"createdAt\": \"1970-01-20 10:35:20\",\r\n             \"createdBy\": \"data_engineer\",\r\n             \"lastUpdatedAt\": \"1970-01-20 10:35:20\",\r\n             \"lastUpdatedBy\": \"data_engineer\"\r\n           },\r\n           \"features\": [\r\n             {\r\n               \"title\": \"age\",\r\n               \"description\": \"Age of the patient at reference point (at the time of admission)\",\r\n               \"dataType\": \"integer\",\r\n               \"featureType\": \"numerical\",\r\n               \"mandatory\": true,\r\n               \"isUnique\": false,\r\n               \"units\": \"years\",\r\n               \"dataCollection\": \"Automatic Collection from Government Database\"\r\n             }\r\n           ]\r\n         }\r\n       ],\r\n       \"learningProcessesWithStages\": [\r\n         {\r\n           \"learningProcess\": {\r\n             \"description\": \"This model generates a risk score that helps clinicians evaluate potential heart failure risks.\"\r\n           },\r\n           \"learningStages\": [\r\n             {\r\n               \"learningStageName\": \"Model Training\",\r\n               \"description\": \"Trains the model on the dataset\",\r\n               \"datasetPercentage\": 50\r\n             }\r\n           ]\r\n         }\r\n       ]\r\n     }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3707,13 +4173,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{passportBackend}}/passport/",
+							"raw": "{{passportBackend}}/passport/?studyId=initial_study",
 							"host": [
 								"{{passportBackend}}"
 							],
 							"path": [
 								"passport",
 								""
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
 							]
 						}
 					},
@@ -3754,12 +4226,12 @@
 						},
 						{
 							"key": "username",
-							"value": "data_scientist",
+							"value": "study_owner",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "data_scientist",
+							"value": "study_owner",
 							"type": "text"
 						},
 						{

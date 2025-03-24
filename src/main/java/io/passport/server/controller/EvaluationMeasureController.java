@@ -42,8 +42,8 @@ public class EvaluationMeasureController {
      * @return List of EvaluationMeasures
      */
     @GetMapping()
-    public ResponseEntity<List<EvaluationMeasure>> getAllEvaluationMeasuresByModelId(@RequestParam Long modelId,
-                                                                                     @RequestParam Long studyId,
+    public ResponseEntity<List<EvaluationMeasure>> getAllEvaluationMeasuresByModelId(@RequestParam String modelId,
+                                                                                     @RequestParam String studyId,
                                                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -65,8 +65,8 @@ public class EvaluationMeasureController {
      * @return EvaluationMeasure entity or not found
      */
     @GetMapping("/{evaluationMeasureId}")
-    public ResponseEntity<?> getEvaluationMeasureById(@PathVariable Long evaluationMeasureId,
-                                                      @RequestParam Long studyId,
+    public ResponseEntity<?> getEvaluationMeasureById(@PathVariable String evaluationMeasureId,
+                                                      @RequestParam String studyId,
                                                       @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -85,7 +85,7 @@ public class EvaluationMeasureController {
      */
     @PostMapping()
     public ResponseEntity<?> createEvaluationMeasure(@RequestBody EvaluationMeasure evaluationMeasure,
-                                                     @RequestParam Long studyId,
+                                                     @RequestParam String studyId,
                                                      @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -109,9 +109,9 @@ public class EvaluationMeasureController {
      * @return Updated EvaluationMeasure
      */
     @PutMapping("/{evaluationMeasureId}")
-    public ResponseEntity<?> updateEvaluationMeasure(@PathVariable Long evaluationMeasureId,
+    public ResponseEntity<?> updateEvaluationMeasure(@PathVariable String evaluationMeasureId,
                                                      @RequestBody EvaluationMeasure updatedEvaluationMeasure,
-                                                     @RequestParam Long studyId,
+                                                     @RequestParam String studyId,
                                                      @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -134,8 +134,8 @@ public class EvaluationMeasureController {
      * @return No content or not found status
      */
     @DeleteMapping("/{evaluationMeasureId}")
-    public ResponseEntity<?> deleteEvaluationMeasure(@PathVariable Long evaluationMeasureId,
-                                                     @RequestParam Long studyId,
+    public ResponseEntity<?> deleteEvaluationMeasure(@PathVariable String evaluationMeasureId,
+                                                     @RequestParam String studyId,
                                                      @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {

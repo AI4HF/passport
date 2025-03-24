@@ -12,11 +12,11 @@ import java.util.List;
  * FeatureSet repository for database management.
  */
 @Repository
-public interface FeatureSetRepository extends JpaRepository<FeatureSet, Long> {
+public interface FeatureSetRepository extends JpaRepository<FeatureSet, String> {
 
     // Join with experiment table and get related featureSets for the study
     @Query("SELECT new FeatureSet(fs.featuresetId, fs.experimentId, fs.title, fs.featuresetURL, fs.description, fs.createdAt, fs.createdBy, fs.lastUpdatedAt, fs.lastUpdatedBy)  " +
             "FROM FeatureSet fs, Experiment e WHERE fs.experimentId = e.experimentId AND e.studyId = :studyId")
-    List<FeatureSet> findFeatureSetByStudyId(@Param("studyId") Long studyId);
+    List<FeatureSet> findFeatureSetByStudyId(@Param("studyId") String studyId);
 
 }

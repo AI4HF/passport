@@ -10,8 +10,8 @@ import java.io.Serializable;
 @Setter
 public class LearningProcessParameterId implements Serializable {
     @Column(name = "learning_process_id")
-    private Long learningProcessId;
+    private String learningProcessId;
 
     @Column(name = "parameter_id")
-    private Long parameterId;
+    private String parameterId;
 }

@@ -36,7 +36,7 @@ public class ParameterService {
      * @param studyId The ID of the study
      * @return
      */
-    public List<Parameter> findParametersByStudyId(Long studyId) {
+    public List<Parameter> findParametersByStudyId(String studyId) {
         return parameterRepository.findAllByStudyId(studyId);
     }
 
@@ -45,7 +45,7 @@ public class ParameterService {
      * @param parameterId ID of the parameter
      * @return
      */
-    public Optional<Parameter> findParameterById(Long parameterId) {
+    public Optional<Parameter> findParameterById(String parameterId) {
         return parameterRepository.findById(parameterId);
     }
 
@@ -64,7 +64,7 @@ public class ParameterService {
      * @param updatedParameter parameter to be updated
      * @return
      */
-    public Optional<Parameter> updateParameter(Long parameterId, Parameter updatedParameter) {
+    public Optional<Parameter> updateParameter(String parameterId, Parameter updatedParameter) {
         Optional<Parameter> oldParameter = parameterRepository.findById(parameterId);
         if (oldParameter.isPresent()) {
             Parameter parameter = oldParameter.get();
@@ -83,7 +83,7 @@ public class ParameterService {
      * @param parameterId ID of parameter to be deleted
      * @return
      */
-    public Optional<Parameter> deleteParameter(Long parameterId) {
+    public Optional<Parameter> deleteParameter(String parameterId) {
         Optional<Parameter> existingParameter = parameterRepository.findById(parameterId);
         if (existingParameter.isPresent()) {
             parameterRepository.delete(existingParameter.get());

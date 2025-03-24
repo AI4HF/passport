@@ -38,7 +38,7 @@ public class LearningProcessParameterService {
      * @param learningProcessId ID of the LearningProcess
      * @return
      */
-    public List<LearningProcessParameter> findByLearningProcessId(Long learningProcessId) {
+    public List<LearningProcessParameter> findByLearningProcessId(String learningProcessId) {
         return learningProcessParameterRepository.findByIdLearningProcessId(learningProcessId);
     }
 
@@ -47,7 +47,7 @@ public class LearningProcessParameterService {
      * @param parameterId ID of the Parameter
      * @return
      */
-    public List<LearningProcessParameter> findByParameterId(Long parameterId) {
+    public List<LearningProcessParameter> findByParameterId(String parameterId) {
         return learningProcessParameterRepository.findByIdParameterId(parameterId);
     }
 

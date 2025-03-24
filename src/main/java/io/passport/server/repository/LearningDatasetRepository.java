@@ -10,8 +10,8 @@ import java.util.List;
  * LearningDataset repository for database management.
  */
 @Repository
-public interface LearningDatasetRepository extends JpaRepository<LearningDataset, Long> {
-    List<LearningDataset> findByDataTransformationId(Long dataTransformationId);
-    List<LearningDataset> findByDatasetId(Long datasetId);
-    List<LearningDataset> findAllByStudyId(Long studyId);
+public interface LearningDatasetRepository extends JpaRepository<LearningDataset, String> {
+    List<LearningDataset> findByDataTransformationId(String dataTransformationId);
+    List<LearningDataset> findByDatasetId(String datasetId);
+    List<LearningDataset> findAllByStudyId(String studyId);
 }

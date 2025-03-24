@@ -38,7 +38,7 @@ public class LearningStageParameterService {
      * @param learningStageId ID of the LearningStage
      * @return
      */
-    public List<LearningStageParameter> findByLearningStageId(Long learningStageId) {
+    public List<LearningStageParameter> findByLearningStageId(String learningStageId) {
         return learningStageParameterRepository.findByIdLearningStageId(learningStageId);
     }
 
@@ -47,7 +47,7 @@ public class LearningStageParameterService {
      * @param parameterId ID of the Parameter
      * @return
      */
-    public List<LearningStageParameter> findByParameterId(Long parameterId) {
+    public List<LearningStageParameter> findByParameterId(String parameterId) {
         return learningStageParameterRepository.findByIdParameterId(parameterId);
     }
 

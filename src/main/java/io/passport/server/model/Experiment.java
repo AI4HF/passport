@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * Experiment model for Experiment Table.
@@ -16,20 +17,17 @@ import jakarta.persistence.*;
 @Table(name = "experiment")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "experimentId")
 public class Experiment {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "experiment_id")
-    private Long experimentId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String experimentId;
 
     @Column(name = "study_id")
-    private Long studyId;
+    private String studyId;
 
     @Column(name = "research_question")
     private String researchQuestion;

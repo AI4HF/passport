@@ -50,8 +50,8 @@ public class SurveyController {
      * @return Survey or 403 if unauthorized
      */
     @GetMapping("/{surveyId}")
-    public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") Long surveyId,
-                                           @RequestParam Long studyId,
+    public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") String surveyId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -74,7 +74,7 @@ public class SurveyController {
      * @return List of surveys
      */
     @GetMapping
-    public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") Long studyId,
+    public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") String studyId,
                                                    @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -94,7 +94,7 @@ public class SurveyController {
      */
     @PostMapping
     public ResponseEntity<?> createSurvey(@RequestBody Survey survey,
-                                          @RequestParam Long studyId,
+                                          @RequestParam String studyId,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -104,7 +104,7 @@ public class SurveyController {
             Survey savedSurvey = this.surveyService.saveSurvey(survey);
 
             if (savedSurvey.getSurveyId() != null) {
-                String recordId = savedSurvey.getSurveyId().toString();
+                String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -133,8 +133,8 @@ public class SurveyController {
      * @return Updated Survey or NOT_FOUND
      */
     @PutMapping("/{surveyId}")
-    public ResponseEntity<?> updateSurvey(@PathVariable Long surveyId,
-                                          @RequestParam Long studyId,
+    public ResponseEntity<?> updateSurvey(@PathVariable String surveyId,
+                                          @RequestParam String studyId,
                                           @RequestBody Survey updatedSurvey,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -145,7 +145,7 @@ public class SurveyController {
             Optional<Survey> savedSurveyOpt = this.surveyService.updateSurvey(surveyId, updatedSurvey);
             if (savedSurveyOpt.isPresent()) {
                 Survey savedSurvey = savedSurveyOpt.get();
-                String recordId = savedSurvey.getSurveyId().toString();
+                String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -174,8 +174,8 @@ public class SurveyController {
      * @return No content if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{surveyId}")
-    public ResponseEntity<?> deleteSurvey(@PathVariable Long surveyId,
-                                          @RequestParam Long studyId,
+    public ResponseEntity<?> deleteSurvey(@PathVariable String surveyId,
+                                          @RequestParam String studyId,
                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -190,7 +190,7 @@ public class SurveyController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        surveyId.toString(),
+                        surveyId,
                         deletedSurvey.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedSurvey.get());

@@ -12,6 +12,6 @@ import java.util.List;
  */
 @Repository
 public interface LearningProcessParameterRepository extends JpaRepository<LearningProcessParameter, LearningProcessParameterId> {
-    List<LearningProcessParameter> findByIdLearningProcessId(Long learningProcessId);
-    List<LearningProcessParameter> findByIdParameterId(Long parameterId);
+    List<LearningProcessParameter> findByIdLearningProcessId(String learningProcessId);
+    List<LearningProcessParameter> findByIdParameterId(String parameterId);
 }

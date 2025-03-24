@@ -12,6 +12,6 @@ import java.util.List;
  */
 @Repository
 public interface ModelParameterRepository extends JpaRepository<ModelParameter, ModelParameterId> {
-    List<ModelParameter> findByIdModelId(Long modelId);
-    List<ModelParameter> findByIdParameterId(Long parameterId);
+    List<ModelParameter> findByIdModelId(String modelId);
+    List<ModelParameter> findByIdParameterId(String parameterId);
 }

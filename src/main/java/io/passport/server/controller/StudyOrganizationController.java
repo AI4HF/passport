@@ -50,8 +50,8 @@ public class StudyOrganizationController {
      * @return StudyOrganizationDTO or NOT_FOUND
      */
     @GetMapping
-    public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam Long studyId,
-                                                                       @RequestParam Long organizationId,
+    public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam String studyId,
+                                                                       @RequestParam String organizationId,
                                                                        @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -80,7 +80,7 @@ public class StudyOrganizationController {
      * @return List of Organization or BAD_REQUEST
      */
     @GetMapping("/organizations")
-    public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam String studyId,
                                                        @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -104,8 +104,8 @@ public class StudyOrganizationController {
      * @return List of Study or BAD_REQUEST
      */
     @GetMapping("/studies")
-    public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam Long organizationId,
-                                                        @RequestParam Long studyId,
+    public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam String organizationId,
+                                                        @RequestParam String studyId,
                                                         @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -130,7 +130,7 @@ public class StudyOrganizationController {
     @PostMapping
     public ResponseEntity<?> createStudyOrganization(@RequestBody StudyOrganizationDTO studyOrganizationDTO,
                                                      @AuthenticationPrincipal Jwt principal) {
-        Long studyId = studyOrganizationDTO.getStudyId();
+        String studyId = studyOrganizationDTO.getStudyId();
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -142,8 +142,8 @@ public class StudyOrganizationController {
             StudyOrganizationDTO responseDTO = new StudyOrganizationDTO(saved);
 
             if (saved.getId() != null) {
-                Long orgId = saved.getId().getOrganizationId();
-                Long stdId = saved.getId().getStudyId();
+                String orgId = saved.getId().getOrganizationId();
+                String stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -173,8 +173,8 @@ public class StudyOrganizationController {
      * @return Updated StudyOrganizationDTO or NOT_FOUND
      */
     @PutMapping
-    public ResponseEntity<?> updateStudyOrganization(@RequestParam Long studyId,
-                                                     @RequestParam Long organizationId,
+    public ResponseEntity<?> updateStudyOrganization(@RequestParam String studyId,
+                                                     @RequestParam String organizationId,
                                                      @RequestBody StudyOrganizationDTO updatedStudyOrganizationDTO,
                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -189,8 +189,8 @@ public class StudyOrganizationController {
             if (savedOpt.isPresent()) {
                 StudyOrganization saved = savedOpt.get();
                 StudyOrganizationDTO responseDTO = new StudyOrganizationDTO(saved);
-                Long orgId = saved.getId().getOrganizationId();
-                Long stdId = saved.getId().getStudyId();
+                String orgId = saved.getId().getOrganizationId();
+                String stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
@@ -221,8 +221,8 @@ public class StudyOrganizationController {
      * @return No content or NOT_FOUND
      */
     @DeleteMapping
-    public ResponseEntity<?> deleteStudyOrganization(@RequestParam Long studyId,
-                                                     @RequestParam Long organizationId,
+    public ResponseEntity<?> deleteStudyOrganization(@RequestParam String studyId,
+                                                     @RequestParam String organizationId,
                                                      @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

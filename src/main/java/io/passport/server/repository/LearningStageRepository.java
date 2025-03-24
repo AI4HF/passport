@@ -11,6 +11,6 @@ import java.util.List;
  * LearningStage repository for database management.
  */
 @Repository
-public interface LearningStageRepository extends JpaRepository<LearningStage, Long> {
-    List<LearningStage> findByLearningProcessId(Long learningProcessId);
+public interface LearningStageRepository extends JpaRepository<LearningStage, String> {
+    List<LearningStage> findByLearningProcessId(String learningProcessId);
 }

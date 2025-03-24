@@ -11,12 +11,12 @@ import java.util.List;
  * Study repository for database management.
  */
 @Repository
-public interface StudyRepository extends JpaRepository<Study, Long> {
+public interface StudyRepository extends JpaRepository<Study, String> {
 
     // Join with population table and get related Study for the dataset
     @Query("SELECT new Study(s.id, s.name, s.description, s.objectives, s.ethics, s.owner)  " +
             "FROM Dataset d, Study s, Population p WHERE d.populationId = p.populationId AND p.studyId = s.id AND d.datasetId = :datasetId")
-    Study findByDatasetId(@Param("datasetId") Long datasetId);
+    Study findByDatasetId(@Param("datasetId") String datasetId);
 
     List<Study> findByOwner(String owner);
 }

@@ -9,6 +9,6 @@ import java.util.List;
 /**
  * Survey repository for database management.
  */
-public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    List<Survey> findAllByStudyId(Long StudyId);
+public interface SurveyRepository extends JpaRepository<Survey, String> {
+    List<Survey> findAllByStudyId(String StudyId);
 }

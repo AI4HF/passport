@@ -8,6 +8,6 @@ import java.util.List;
 /**
  * EvaluationMeasure repository for database management.
  */
-public interface EvaluationMeasureRepository extends JpaRepository<EvaluationMeasure, Long> {
-    List<EvaluationMeasure> findAllByModelId(Long modelId);
+public interface EvaluationMeasureRepository extends JpaRepository<EvaluationMeasure, String> {
+    List<EvaluationMeasure> findAllByModelId(String modelId);
 }

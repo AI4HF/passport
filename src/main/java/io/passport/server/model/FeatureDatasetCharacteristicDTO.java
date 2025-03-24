@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FeatureDatasetCharacteristicDTO {
-    private Long datasetId;
-    private Long featureId;
+    private String datasetId;
+    private String featureId;
     private String characteristicName;
     private String value;
     private String valueDataType;

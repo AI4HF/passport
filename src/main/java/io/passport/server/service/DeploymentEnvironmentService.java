@@ -29,7 +29,7 @@ public class DeploymentEnvironmentService {
      * @param environmentId ID of the deployment environment
      * @return
      */
-    public Optional<DeploymentEnvironment> findDeploymentEnvironmentById(Long environmentId) {
+    public Optional<DeploymentEnvironment> findDeploymentEnvironmentById(String environmentId) {
         return deploymentEnvironmentRepository.findById(environmentId);
     }
 
@@ -53,7 +53,7 @@ public class DeploymentEnvironmentService {
      * @param updatedDeploymentEnvironment environment to be updated
      * @return
      */
-    public Optional<DeploymentEnvironment> updateDeploymentEnvironment(Long deploymentEnvironmentId, DeploymentEnvironment updatedDeploymentEnvironment) {
+    public Optional<DeploymentEnvironment> updateDeploymentEnvironment(String deploymentEnvironmentId, DeploymentEnvironment updatedDeploymentEnvironment) {
         Optional<DeploymentEnvironment> oldDeploymentEnvironment = deploymentEnvironmentRepository.findById(deploymentEnvironmentId);
         if (oldDeploymentEnvironment.isPresent()) {
             DeploymentEnvironment deploymentEnvironment = oldDeploymentEnvironment.get();
@@ -75,7 +75,7 @@ public class DeploymentEnvironmentService {
      * @param deploymentEnvironmentId ID of deployment environment to be deleted
      * @return
      */
-    public Optional<DeploymentEnvironment> deleteDeploymentEnvironment(Long deploymentEnvironmentId) {
+    public Optional<DeploymentEnvironment> deleteDeploymentEnvironment(String deploymentEnvironmentId) {
         Optional<DeploymentEnvironment> existingEnvironment = deploymentEnvironmentRepository.findById(deploymentEnvironmentId);
         if (existingEnvironment.isPresent()) {
             deploymentEnvironmentRepository.delete(existingEnvironment.get());

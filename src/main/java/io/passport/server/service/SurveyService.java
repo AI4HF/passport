@@ -35,7 +35,7 @@ public class SurveyService {
      * @param surveyId ID of the survey
      * @return
      */
-    public Optional<Survey> findSurveyById(Long surveyId) {
+    public Optional<Survey> findSurveyById(String surveyId) {
         return surveyRepository.findById(surveyId);
     }
 
@@ -44,7 +44,7 @@ public class SurveyService {
      * @param studyId ID of the study
      * @return
      */
-    public List<Survey> findSurveysByStudyId(Long studyId) {
+    public List<Survey> findSurveysByStudyId(String studyId) {
         return surveyRepository.findAllByStudyId(studyId);
     }
 
@@ -63,7 +63,7 @@ public class SurveyService {
      * @param updatedSurvey survey to be updated
      * @return
      */
-    public Optional<Survey> updateSurvey(Long surveyId, Survey updatedSurvey) {
+    public Optional<Survey> updateSurvey(String surveyId, Survey updatedSurvey) {
         Optional<Survey> oldSurvey = surveyRepository.findById(surveyId);
         if(oldSurvey.isPresent()) {
             Survey survey = oldSurvey.get();
@@ -83,7 +83,7 @@ public class SurveyService {
      * @param surveyId ID of survey to be deleted
      * @return
      */
-    public Optional<Survey> deleteSurvey(Long surveyId) {
+    public Optional<Survey> deleteSurvey(String surveyId) {
         Optional<Survey> existingSurvey = surveyRepository.findById(surveyId);
         if (existingSurvey.isPresent()) {
             surveyRepository.delete(existingSurvey.get());

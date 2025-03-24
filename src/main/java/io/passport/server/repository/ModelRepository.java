@@ -8,6 +8,6 @@ import java.util.List;
 /**
  * Model repository for database management.
  */
-public interface ModelRepository extends JpaRepository<Model, Long> {
-    List<Model> findByStudyId(Long studyId);
+public interface ModelRepository extends JpaRepository<Model, String> {
+    List<Model> findByStudyId(String studyId);
 }

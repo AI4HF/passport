@@ -10,6 +10,6 @@ import java.util.List;
  * Passport repository for database management.
  */
 @Repository
-public interface PassportRepository extends JpaRepository<Passport, Long> {
-    List<Passport> findAllByStudyId(Long studyId);
+public interface PassportRepository extends JpaRepository<Passport, String> {
+    List<Passport> findAllByStudyId(String studyId);
 }

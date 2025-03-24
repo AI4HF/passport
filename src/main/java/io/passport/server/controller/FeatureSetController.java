@@ -50,7 +50,7 @@ public class FeatureSetController {
      * @return List of FeatureSets or FORBIDDEN if not authorized
      */
     @GetMapping
-    public ResponseEntity<List<FeatureSet>> getAllFeatureSetsByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<List<FeatureSet>> getAllFeatureSetsByStudyId(@RequestParam String studyId,
                                                                        @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,8 +71,8 @@ public class FeatureSetController {
      * @return FeatureSet or NOT_FOUND
      */
     @GetMapping("/{featureSetId}")
-    public ResponseEntity<?> getFeatureSet(@PathVariable Long featureSetId,
-                                           @RequestParam Long studyId,
+    public ResponseEntity<?> getFeatureSet(@PathVariable String featureSetId,
+                                           @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -92,7 +92,7 @@ public class FeatureSetController {
      */
     @PostMapping
     public ResponseEntity<?> createFeatureSet(@RequestBody FeatureSet featureSet,
-                                              @RequestParam Long studyId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -101,7 +101,7 @@ public class FeatureSetController {
 
             FeatureSet saved = this.featureSetService.saveFeatureSet(featureSet);
             if (saved.getFeaturesetId() != null) {
-                String recordId = saved.getFeaturesetId().toString();
+                String recordId = saved.getFeaturesetId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -130,9 +130,9 @@ public class FeatureSetController {
      * @return Updated FeatureSet or NOT_FOUND
      */
     @PutMapping("/{featureSetId}")
-    public ResponseEntity<?> updateFeatureSet(@PathVariable Long featureSetId,
+    public ResponseEntity<?> updateFeatureSet(@PathVariable String featureSetId,
                                               @RequestBody FeatureSet updatedFeatureSet,
-                                              @RequestParam Long studyId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -142,7 +142,7 @@ public class FeatureSetController {
             Optional<FeatureSet> savedOpt = this.featureSetService.updateFeatureSet(featureSetId, updatedFeatureSet);
             if (savedOpt.isPresent()) {
                 FeatureSet saved = savedOpt.get();
-                String recordId = saved.getFeaturesetId().toString();
+                String recordId = saved.getFeaturesetId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -172,8 +172,8 @@ public class FeatureSetController {
      * @return OK if deleted, NOT_FOUND otherwise
      */
     @DeleteMapping("/{featureSetId}")
-    public ResponseEntity<?> deleteFeatureSet(@PathVariable Long featureSetId,
-                                              @RequestParam Long studyId,
+    public ResponseEntity<?> deleteFeatureSet(@PathVariable String featureSetId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -187,7 +187,7 @@ public class FeatureSetController {
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
                         studyId, Operation.DELETE,
                         relationName,
-                        featureSetId.toString(),
+                        featureSetId,
                         deletedFeatureSet.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedFeatureSet.get());

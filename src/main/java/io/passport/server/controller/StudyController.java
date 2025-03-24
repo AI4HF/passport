@@ -52,7 +52,7 @@ public class StudyController {
      * @return List of studies or single
      */
     @GetMapping
-    public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) Long studyId,
+    public ResponseEntity<List<Study>> getStudies(@RequestParam(required = false) String studyId,
                                                   @AuthenticationPrincipal Jwt principal) {
 
         List<Study> studies;
@@ -79,7 +79,7 @@ public class StudyController {
      * @return Study or 403 if unauthorized
      */
     @GetMapping("/{studyId}")
-    public ResponseEntity<?> getStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> getStudy(@PathVariable String studyId,
                                       @AuthenticationPrincipal Jwt principal) {
 
         if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
@@ -119,7 +119,7 @@ public class StudyController {
             keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
             if (savedStudy.getId() != null) {
-                String recordId = savedStudy.getId().toString();
+                String recordId = savedStudy.getId();
                 auditLogBookService.createAuditLog(
                         ownerId,
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -147,7 +147,7 @@ public class StudyController {
      * @return Updated Study or NOT_FOUND
      */
     @PutMapping("/{studyId}")
-    public ResponseEntity<?> updateStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> updateStudy(@PathVariable String studyId,
                                          @RequestBody Study updatedStudy,
                                          @AuthenticationPrincipal Jwt principal) {
 
@@ -163,7 +163,7 @@ public class StudyController {
         Optional<Study> savedStudyOpt = studyService.updateStudy(studyId, updatedStudy);
         if (savedStudyOpt.isPresent()) {
             Study savedStudy = savedStudyOpt.get();
-            String recordId = savedStudy.getId().toString();
+            String recordId = savedStudy.getId();
             auditLogBookService.createAuditLog(
                     userId,
                     principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -187,7 +187,7 @@ public class StudyController {
      * @return No content or NOT_FOUND
      */
     @DeleteMapping("/{studyId}")
-    public ResponseEntity<?> deleteStudy(@PathVariable Long studyId,
+    public ResponseEntity<?> deleteStudy(@PathVariable String studyId,
                                          @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -201,15 +201,6 @@ public class StudyController {
 
         Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
         if (deletedStudy.isPresent()) {
-            auditLogBookService.createAuditLog(
-                    userId,
-                    username,
-                    studyId,
-                    Operation.DELETE,
-                    relationName,
-                    studyId.toString(),
-                    deletedStudy.get()
-            );
             return ResponseEntity.status(HttpStatus.OK).body(deletedStudy.get());
         } else {
             return ResponseEntity.notFound().build();

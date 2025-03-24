@@ -50,8 +50,8 @@ public class PopulationController {
      * @return ResponseEntity with the population data.
      */
     @GetMapping("/{populationId}")
-    public ResponseEntity<?> getPopulationById(@PathVariable("populationId") Long populationId,
-                                               @RequestParam Long studyId,
+    public ResponseEntity<?> getPopulationById(@PathVariable("populationId") String populationId,
+                                               @RequestParam String studyId,
                                                @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -69,7 +69,7 @@ public class PopulationController {
      * @return ResponseEntity with the list of populations.
      */
     @GetMapping
-    public ResponseEntity<?> getPopulationByStudyId(@RequestParam Long studyId,
+    public ResponseEntity<?> getPopulationByStudyId(@RequestParam String studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -90,7 +90,7 @@ public class PopulationController {
      */
     @PostMapping
     public ResponseEntity<?> createPopulation(@RequestBody Population population,
-                                              @RequestParam Long studyId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
@@ -101,7 +101,7 @@ public class PopulationController {
             Population savedPopulation = this.populationService.savePopulation(population);
 
             if (savedPopulation.getPopulationId() != null) {
-                String recordId = savedPopulation.getPopulationId().toString();
+                String recordId = savedPopulation.getPopulationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -131,9 +131,9 @@ public class PopulationController {
      * @return ResponseEntity with the updated population data.
      */
     @PutMapping("/{populationId}")
-    public ResponseEntity<?> updatePopulation(@PathVariable Long populationId,
+    public ResponseEntity<?> updatePopulation(@PathVariable String populationId,
                                               @RequestBody Population updatedPopulation,
-                                              @RequestParam Long studyId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
@@ -146,7 +146,7 @@ public class PopulationController {
 
             if (savedPopulationOpt.isPresent()) {
                 Population savedPopulation = savedPopulationOpt.get();
-                String recordId = savedPopulation.getPopulationId().toString();
+                String recordId = savedPopulation.getPopulationId();
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -177,8 +177,8 @@ public class PopulationController {
      * @return ResponseEntity with no content if successful.
      */
     @DeleteMapping("/{populationId}")
-    public ResponseEntity<?> deletePopulation(@PathVariable Long populationId,
-                                              @RequestParam Long studyId,
+    public ResponseEntity<?> deletePopulation(@PathVariable String populationId,
+                                              @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
         List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
@@ -194,7 +194,7 @@ public class PopulationController {
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        populationId.toString(),
+                        populationId,
                         deletedPopulation.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedPopulation.get());

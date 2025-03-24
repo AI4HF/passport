@@ -36,7 +36,7 @@ public class EvaluationMeasureService {
      * @param modelId The ID of the model
      * @return
      */
-    public List<EvaluationMeasure> findEvaluationMeasuresByModelId(Long modelId) {
+    public List<EvaluationMeasure> findEvaluationMeasuresByModelId(String modelId) {
         return evaluationMeasureRepository.findAllByModelId(modelId);
     }
 
@@ -45,7 +45,7 @@ public class EvaluationMeasureService {
      * @param measureId ID of the EvaluationMeasure
      * @return
      */
-    public Optional<EvaluationMeasure> findEvaluationMeasureById(Long measureId) {
+    public Optional<EvaluationMeasure> findEvaluationMeasureById(String measureId) {
         return evaluationMeasureRepository.findById(measureId);
     }
 
@@ -64,7 +64,7 @@ public class EvaluationMeasureService {
      * @param updatedEvaluationMeasure EvaluationMeasure to be updated
      * @return
      */
-    public Optional<EvaluationMeasure> updateEvaluationMeasure(Long measureId, EvaluationMeasure updatedEvaluationMeasure) {
+    public Optional<EvaluationMeasure> updateEvaluationMeasure(String measureId, EvaluationMeasure updatedEvaluationMeasure) {
         Optional<EvaluationMeasure> oldEvaluationMeasure = evaluationMeasureRepository.findById(measureId);
         if (oldEvaluationMeasure.isPresent()) {
             EvaluationMeasure evaluationMeasure = oldEvaluationMeasure.get();
@@ -85,7 +85,7 @@ public class EvaluationMeasureService {
      * @param measureId ID of EvaluationMeasure to be deleted
      * @return
      */
-    public boolean deleteEvaluationMeasure(Long measureId) {
+    public boolean deleteEvaluationMeasure(String measureId) {
         if(evaluationMeasureRepository.existsById(measureId)){
             evaluationMeasureRepository.deleteById(measureId);
             return true;

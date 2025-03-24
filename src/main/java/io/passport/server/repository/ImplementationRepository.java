@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * Implementation repository for database management.
  */
 @Repository
-public interface ImplementationRepository extends JpaRepository<Implementation, Long> {
+public interface ImplementationRepository extends JpaRepository<Implementation, String> {
 }

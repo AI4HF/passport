@@ -28,8 +28,8 @@ classifier.fit(X_train, y_train)
 # Construct an api client for interacting with AI4HF passport server
 api_client = SKLearnMetadataCollectionAPI(
         passport_server_url="http://localhost:80/ai4hf/passport/api",
-        study_id="1",
-        organization_id="1",
+        study_id="initial_study",
+        organization_id="initial_organization",
         username="data_scientist",
         password="data_scientist"
     )

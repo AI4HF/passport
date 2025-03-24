@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * DatasetTransformation repository for database management.
  */
 @Repository
-public interface DatasetTransformationRepository extends JpaRepository<DatasetTransformation, Long> {
+public interface DatasetTransformationRepository extends JpaRepository<DatasetTransformation, String> {
 
 }

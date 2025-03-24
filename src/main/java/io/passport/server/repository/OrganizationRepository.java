@@ -10,7 +10,7 @@ import java.util.List;
  * Organization repository for database management.
  */
 @Repository
-public interface OrganizationRepository extends JpaRepository<Organization, Long> {
+public interface OrganizationRepository extends JpaRepository<Organization, String> {
 
     List<Organization> findByOrganizationAdminId(String organizationAdminId);
 }

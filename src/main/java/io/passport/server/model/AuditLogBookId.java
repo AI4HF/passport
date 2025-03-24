@@ -20,7 +20,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class AuditLogBookId implements Serializable {
 
-    private Long passportId;
+    private String passportId;
 
     private String auditLogId;
 }

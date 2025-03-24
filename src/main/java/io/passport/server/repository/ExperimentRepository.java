@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * Experiment repository for database management.
  */
-public interface ExperimentRepository extends JpaRepository<Experiment, Long> {
-    List<Experiment> findByStudyId(Long studyId);
-    void deleteAllByStudyId(Long studyId);
+public interface ExperimentRepository extends JpaRepository<Experiment, String> {
+    List<Experiment> findByStudyId(String studyId);
+    void deleteAllByStudyId(String studyId);
 
     // Join with studyPersonnel table and get related experiments for the personnel
     @Query("SELECT new Experiment(e.experimentId, e.studyId, e.researchQuestion)  " +
