@@ -46,23 +46,40 @@ public class ExperimentService {
 
     /**
      * Clear all old Experiment entries related to the study and create new ones.
+     * Avoid deletion and recreation of Experiments with recurring Research Questions.
      * @param studyId ID of the study
      * @param experimentList list of experiment to be used in Experiment entries
      * @return
      */
     @Transactional
     public List<Experiment> createExperimentEntries(String studyId, List<Experiment> experimentList) {
-        // Clear existing entries
-        clearExperimentEntriesByStudyId(studyId);
+        List<String> incomingQuestions = experimentList.stream()
+                .map(Experiment::getResearchQuestion)
+                .distinct()
+                .toList();
 
-        List<Experiment> ExperimentEntries = experimentList.stream().map((experiment -> {
-            Experiment newExperiment = new Experiment();
-            newExperiment.setStudyId(studyId);
-            newExperiment.setResearchQuestion(experiment.getResearchQuestion());
-            return newExperiment;
-        })).collect(Collectors.toList());
+        List<Experiment> existingExperiments = experimentRepository.findByStudyId(studyId);
 
-        return experimentRepository.saveAll(ExperimentEntries);
+        List<Experiment> toDelete = existingExperiments.stream()
+                .filter(e -> !incomingQuestions.contains(e.getResearchQuestion()))
+                .toList();
+        experimentRepository.deleteAll(toDelete);
+
+        List<String> existingQuestions = existingExperiments.stream()
+                .map(Experiment::getResearchQuestion)
+                .toList();
+
+        List<Experiment> toInsert = experimentList.stream()
+                .filter(e -> !existingQuestions.contains(e.getResearchQuestion()))
+                .map(e -> {
+                    Experiment newExperiment = new Experiment();
+                    newExperiment.setStudyId(studyId);
+                    newExperiment.setResearchQuestion(e.getResearchQuestion());
+                    return newExperiment;
+                })
+                .toList();
+
+        return experimentRepository.saveAll(toInsert);
     }
 
     /**
