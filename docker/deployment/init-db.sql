@@ -239,7 +239,7 @@ CREATE TABLE learning_process_parameter
     learning_process_id VARCHAR(255) REFERENCES learning_process (learning_process_id) ON DELETE CASCADE,
     parameter_id        VARCHAR(255) REFERENCES parameter (parameter_id) ON DELETE CASCADE,
     type                VARCHAR(255),
-    value               VARCHAR(255),
+    value               TEXT,
     PRIMARY KEY (learning_process_id, parameter_id)
 );
 
@@ -249,7 +249,7 @@ CREATE TABLE learning_stage_parameter
     learning_stage_id VARCHAR(255) REFERENCES learning_stage (learning_stage_id) ON DELETE CASCADE,
     parameter_id      VARCHAR(255) REFERENCES parameter (parameter_id) ON DELETE CASCADE,
     type              VARCHAR(255),
-    value             VARCHAR(255),
+    value             TEXT,
     PRIMARY KEY (learning_stage_id, parameter_id)
 );
 
@@ -286,7 +286,7 @@ CREATE TABLE model_parameter
     model_id     VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
     parameter_id VARCHAR(255) REFERENCES parameter (parameter_id) ON DELETE CASCADE,
     type         VARCHAR(255),
-    value        VARCHAR(255),
+    value        TEXT,
     PRIMARY KEY (model_id, parameter_id)
 );
 
