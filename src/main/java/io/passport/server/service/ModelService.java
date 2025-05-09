@@ -72,6 +72,7 @@ public class ModelService {
             Model model = oldModel.get();
             model.setModelId(modelId);
             model.setLearningProcessId(updatedModel.getLearningProcessId());
+            model.setExperimentId(updatedModel.getExperimentId());
             model.setName(updatedModel.getName());
             model.setVersion(updatedModel.getVersion());
             model.setTag(updatedModel.getTag());

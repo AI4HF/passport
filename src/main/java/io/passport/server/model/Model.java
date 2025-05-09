@@ -32,6 +32,9 @@ public class Model {
     @Column(name = "study_id")
     private String studyId;
 
+    @Column(name = "experiment_id")
+    private String experimentId;
+
     @Column(name = "name")
     private String name;
 

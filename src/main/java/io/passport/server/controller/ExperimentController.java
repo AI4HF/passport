@@ -29,7 +29,7 @@ public class ExperimentController {
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
 
-    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER);
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER, Role.DATA_SCIENTIST);
 
     @Autowired
     public ExperimentController(ExperimentService experimentService,
