@@ -45,33 +45,22 @@ public class ExperimentService {
 
 
     /**
-     * Clear all old Experiment entries related to the study and create new ones.
+     * Create new experiments
      * @param studyId ID of the study
      * @param experimentList list of experiment to be used in Experiment entries
      * @return
      */
     @Transactional
     public List<Experiment> createExperimentEntries(String studyId, List<Experiment> experimentList) {
-        // Clear existing entries
-        clearExperimentEntriesByStudyId(studyId);
 
         List<Experiment> ExperimentEntries = experimentList.stream().map((experiment -> {
             Experiment newExperiment = new Experiment();
+            newExperiment.setExperimentId(experiment.getExperimentId());
             newExperiment.setStudyId(studyId);
             newExperiment.setResearchQuestion(experiment.getResearchQuestion());
             return newExperiment;
         })).collect(Collectors.toList());
 
         return experimentRepository.saveAll(ExperimentEntries);
-    }
-
-    /**
-     * Delete all Experiment entries related to the study.
-     * @param studyId ID of the study
-     * @return
-     */
-    @Transactional
-    public void clearExperimentEntriesByStudyId(String studyId) {
-        experimentRepository.deleteAllByStudyId(studyId);
     }
 }

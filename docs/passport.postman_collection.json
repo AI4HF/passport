@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "89fcde70-d8ca-48bc-93d3-74e331442b18",
+		"_postman_id": "2a88e6ae-0926-4e36-a3ed-5856205d2fb5",
 		"name": "passport",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "42580487"
+		"_exporter_id": "19580401",
+		"_collection_link": "https://www.postman.com/crimson-space-281400/workspace/ai4hf-passport/collection/19580401-2a88e6ae-0926-4e36-a3ed-5856205d2fb5?action=share&source=collection_link&creator=19580401"
 	},
 	"item": [
 		{
@@ -3574,7 +3575,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3606,7 +3607,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
+							"raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4226,12 +4227,12 @@
 						},
 						{
 							"key": "username",
-							"value": "study_owner",
+							"value": "data_scientist",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "study_owner",
+							"value": "data_scientist",
 							"type": "text"
 						},
 						{
@@ -4293,12 +4294,12 @@
 	"variable": [
 		{
 			"key": "passportBackend",
-			"value": "http://localhost:8080",
+			"value": "http://localhost:80/ai4hf/passport/api",
 			"type": "string"
 		},
 		{
 			"key": "keycloakUrl",
-			"value": "http://localhost:8081",
+			"value": "http://localhost:80",
 			"type": "string"
 		},
 		{
