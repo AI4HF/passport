@@ -1,3 +1,29 @@
+# AI Product Passport
+
+<div align="center" style="background-color: white">
+  <a href="https://www.ai4hf.com/">
+    <img height="60px" src="readme-assets/ai4hf_logo.svg" alt="AI4HF Project"/>
+  </a>
+</div>
+
+<br/>
+
+<p align="center">
+  <a href="https://github.com/AI4HF/passport">
+    <img src="https://img.shields.io/github/license/AI4HF/passport" alt="License">
+  </a>
+  <a href="https://github.com/AI4HF/passport/releases">
+    <img src="https://img.shields.io/github/v/release/AI4HF/passport" alt="Releases">
+  </a>
+</p>
+
+<br/>
+
+This repository contains the source code and deployment scripts of the backend of the AI Product Passport developed under the [AI4HF](https://www.ai4hf.com/) project. 
+
+The AI Product Passport is one of the traceability tools for post-deployment AI monitoring. It aims to enhance transparency, traceability, and comprehensive documentation of AI models used within the production environments. Its validation and testing has been carried out for the healthcare sector where different predictive AI models have been deployed into hospital environments. Each deployment of each AI model has its AI Product Passport instance. 
+
+
 # Passport 
 
 To start using the REST methods, follow the instructions below:
