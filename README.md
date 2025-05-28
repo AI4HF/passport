@@ -24,7 +24,7 @@ This repository contains the source code and deployment scripts of the backend o
 The AI Product Passport is one of the traceability tools for post-deployment AI monitoring. It aims to enhance transparency, traceability, and comprehensive documentation of AI models used within the production environments. Its validation and testing has been carried out for the healthcare sector where different predictive AI models have been deployed into hospital environments. Each deployment of each AI model has its AI Product Passport instance. 
 
 
-# Passport 
+# Passport Server
 
 To start using the REST methods, follow the instructions below:
 - Firstly, run the ```docker compose up```  command via console while in the docker folder.
