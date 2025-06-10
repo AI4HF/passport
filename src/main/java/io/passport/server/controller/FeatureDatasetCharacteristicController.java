@@ -125,7 +125,7 @@ public class FeatureDatasetCharacteristicController {
                         saved
                 );
             }
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new FeatureDatasetCharacteristicDTO(saved));
 
         } catch (Exception e) {
             log.error("Error creating FeatureDatasetCharacteristic: {}", e.getMessage(), e);
@@ -175,7 +175,7 @@ public class FeatureDatasetCharacteristicController {
                         compositeId,
                         saved
                 );
-                return ResponseEntity.ok(saved);
+                return ResponseEntity.ok(new FeatureDatasetCharacteristicDTO(saved));
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -223,7 +223,7 @@ public class FeatureDatasetCharacteristicController {
                         compositeId,
                         deletedFeatureDatasetCharacteristic.get()
                 );
-                return ResponseEntity.status(HttpStatus.OK).body(deletedFeatureDatasetCharacteristic.get());
+                return ResponseEntity.status(HttpStatus.OK).body(new FeatureDatasetCharacteristicDTO(deletedFeatureDatasetCharacteristic.get()));
             } else {
                 return ResponseEntity.notFound().build();
             }
