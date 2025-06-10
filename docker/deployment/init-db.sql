@@ -172,7 +172,7 @@ CREATE TABLE feature_dataset_characteristic
     characteristic_name VARCHAR(255),
     value               VARCHAR(255),
     value_data_type     VARCHAR(255),
-    PRIMARY KEY (dataset_id, feature_id)
+    PRIMARY KEY (dataset_id, feature_id, characteristic_name)
 );
 
 -- Create parameter table
