@@ -76,7 +76,7 @@ public class FeatureService {
             feature.setTitle(updatedFeature.getTitle());
             feature.setDescription(updatedFeature.getDescription());
             feature.setDataType(updatedFeature.getDataType());
-            feature.setFeatureType(updatedFeature.getFeatureType());
+            feature.setIsOutcome(updatedFeature.getIsOutcome());
             feature.setMandatory(updatedFeature.getMandatory());
             feature.setIsUnique(updatedFeature.getIsUnique());
             feature.setUnits(updatedFeature.getUnits());
