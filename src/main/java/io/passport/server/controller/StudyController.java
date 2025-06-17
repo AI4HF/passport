@@ -194,7 +194,7 @@ public class StudyController {
         }
 
         String userId = principal.getSubject();
-        String username = principal.getClaim("preferred_username");
+        // String username = principal.getClaim("preferred_username");
         if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

@@ -1,14 +1,17 @@
 package io.passport.server.service;
 
-import io.passport.server.model.*;
-import io.passport.server.repository.StudyOrganizationRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.passport.server.model.Organization;
+import io.passport.server.model.Study;
+import io.passport.server.model.StudyOrganization;
+import io.passport.server.model.StudyOrganizationId;
+import io.passport.server.repository.StudyOrganizationRepository;
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service class for StudyOrganization management.

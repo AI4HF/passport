@@ -1,13 +1,13 @@
 package io.passport.server.service;
 
-import io.passport.server.model.Population;
-import io.passport.server.repository.PopulationRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.List;
-import java.util.Optional;
+import io.passport.server.model.Population;
+import io.passport.server.repository.PopulationRepository;
 
 /**
  * Service class for population management.

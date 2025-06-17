@@ -4,7 +4,6 @@ import io.passport.server.model.Organization;
 import io.passport.server.model.Role;
 import io.passport.server.service.OrganizationService;
 import io.passport.server.service.RoleCheckerService;
-import org.keycloak.KeycloakPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

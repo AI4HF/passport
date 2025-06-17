@@ -40,8 +40,8 @@ public class PersonnelController {
     /**
      * List of authorized roles for this endpoint
      */
-    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.ML_ENGINEER,
-            Role.ORGANIZATION_ADMIN, Role.QUALITY_ASSURANCE_SPECIALIST, Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+    // private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.ML_ENGINEER,
+    //         Role.ORGANIZATION_ADMIN, Role.QUALITY_ASSURANCE_SPECIALIST, Role.STUDY_OWNER, Role.SURVEY_MANAGER);
 
     @Autowired
     public PersonnelController(PersonnelService personnelService, RoleCheckerService roleCheckerService) {

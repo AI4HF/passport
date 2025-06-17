@@ -1,7 +1,6 @@
 package io.passport.server.repository;
 
 import io.passport.server.model.LearningStage;
-import io.passport.server.model.LearningStageParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
