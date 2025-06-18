@@ -37,8 +37,8 @@ public class Feature {
     @Column(name = "data_type")
     private String dataType;
 
-    @Column(name = "feature_type")
-    private String featureType;
+    @Column(name = "isOutcome")
+    private Boolean isOutcome;
 
     @Column(name = "mandatory")
     private Boolean mandatory;

@@ -92,8 +92,7 @@ public class PopulationController {
     public ResponseEntity<?> createPopulation(@RequestBody Population population,
                                               @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -135,8 +134,7 @@ public class PopulationController {
                                               @RequestBody Population updatedPopulation,
                                               @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -180,8 +178,8 @@ public class PopulationController {
     public ResponseEntity<?> deletePopulation(@PathVariable String populationId,
                                               @RequestParam String studyId,
                                               @AuthenticationPrincipal Jwt principal) {
-        List<Role> lesserAllowedRoles = List.of(Role.STUDY_OWNER);
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, lesserAllowedRoles)) {
+
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
