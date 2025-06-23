@@ -31,7 +31,7 @@ public class DatasetTransformationStepController {
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService; // <-- NEW
 
-    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER);
+    private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
 
     @Autowired
     public DatasetTransformationStepController(DatasetTransformationStepService datasetTransformationStepService,
