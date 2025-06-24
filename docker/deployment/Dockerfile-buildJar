@@ -17,7 +17,7 @@ ENV PASSPORT_HOME /usr/local/passport
 RUN mkdir -p "$PASSPORT_HOME"
 WORKDIR $PASSPORT_HOME
 
-COPY --from=builder $PASSPORT_HOME/target/passport-2.3.1-SNAPSHOT.jar .
+COPY --from=builder $PASSPORT_HOME/target/passport-2.3.1.jar .
 
 COPY docker/deployment/docker-entrypoint.sh .
 
