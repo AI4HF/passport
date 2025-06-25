@@ -369,21 +369,21 @@ CREATE TABLE evaluation_measure
 -- Insert into organization
 INSERT INTO organization (organization_id, name, address, organization_admin_id)
 VALUES
-    ('initial_organization', 'Amsterdam UMC', 'Address of Amsterdam UMC', 'service-account-admin');
+    ('0197a6f5-bb48-7855-b248-95697e913f22', 'Amsterdam UMC', 'Address of Amsterdam UMC', 'service-account-admin');
 
 -- Insert into personnel
 INSERT INTO personnel (person_id, organization_id, first_name, last_name, email)
 VALUES
-    ('study_owner', 'initial_organization', 'John', 'Doe', 'study_owner@gmail.com'),
-    ('data_engineer', 'initial_organization', 'Okan', 'Mercan', 'data_engineer@gmail.com'),
-    ('data_scientist', 'initial_organization', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
-    ('quality_assurance_specialist', 'initial_organization', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
-    ('survey_manager', 'initial_organization', 'Senan', 'Postaci', 'survey_manager@gmail.com');
+    ('study_owner', '0197a6f5-bb48-7855-b248-95697e913f22', 'John', 'Doe', 'study_owner@gmail.com'),
+    ('data_engineer', '0197a6f5-bb48-7855-b248-95697e913f22', 'Okan', 'Mercan', 'data_engineer@gmail.com'),
+    ('data_scientist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
+    ('quality_assurance_specialist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
+    ('survey_manager', '0197a6f5-bb48-7855-b248-95697e913f22', 'Senan', 'Postaci', 'survey_manager@gmail.com');
 
 -- Insert into study
 INSERT INTO study (study_id, name, description, objectives, ethics, owner)
 VALUES
-    ('initial_study',
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'Risk score for acute HF in the emergency department',
      'Predicting risk factors for acute HF…',
      'Evaluating the risk prediction for acute HF',
@@ -393,8 +393,8 @@ VALUES
 -- Insert into population
 INSERT INTO population (population_id, study_id, population_url, description, characteristics)
 VALUES
-    ('initial_population',
-     'initial_study',
+    ('0197a6f8-fbc4-7652-ae5d-d52eaa0a48db',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'https://datatools4heart.eu/cohorts/study1',
      'Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.',
      'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.');
@@ -402,15 +402,15 @@ VALUES
 -- Insert into experiment
 INSERT INTO experiment (experiment_id, study_id, research_question)
 VALUES
-    ('initial_experiment',
-     'initial_study',
+    ('0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.');
 
 -- Insert into survey
 INSERT INTO survey (survey_id, study_id, question, answer, category)
 VALUES
-    ('initial_survey',
-     'initial_study',
+    ('0197a6f9-7fd7-775b-bfb6-f371e4fc2509',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'Is this service tested by any third party?',
      'Yes',
      'Testing');
@@ -418,20 +418,20 @@ VALUES
 -- Insert into study_personnel
 INSERT INTO study_personnel (study_id, personnel_id, role)
 VALUES
-    ('initial_study', 'study_owner', 'STUDY_OWNER'),
-    ('initial_study', 'data_scientist', 'DATA_SCIENTIST'),
-    ('initial_study', 'survey_manager', 'SURVEY_MANAGER'),
-    ('initial_study', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
-    ('initial_study', 'data_engineer', 'DATA_ENGINEER');
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'study_owner', 'STUDY_OWNER'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_scientist', 'DATA_SCIENTIST'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'survey_manager', 'SURVEY_MANAGER'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_engineer', 'DATA_ENGINEER');
 
 -- Insert into study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id)
 VALUES
-    ('initial_study',
-     'initial_organization',
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
+     '0197a6f5-bb48-7855-b248-95697e913f22',
      'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST',
      'study_owner',
-     'initial_population');
+     '0197a6f8-fbc4-7652-ae5d-d52eaa0a48db');
 
 -- Insert into featureset
 INSERT INTO featureset (
@@ -446,8 +446,8 @@ INSERT INTO featureset (
     last_updated_by
 )
 VALUES
-    ('initial_featureset',
-     'initial_experiment',
+    ('0197a6f9-d45e-70ec-b744-b7ff2bd87b3d',
+     '0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
      'Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.',
      'https://datatools4heart.eu/feature-sets/study1-features',
      'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.',
@@ -475,8 +475,8 @@ INSERT INTO feature (
     last_updated_by
 )
 VALUES
-    ('initial_feature',
-     'initial_featureset',
+    ('0197a6fa-177f-7360-b2ce-272f2eb675b7',
+     '0197a6f9-d45e-70ec-b744-b7ff2bd87b3d',
      'age',
      'Age of the patient at reference point (at the time of admission)',
      'integer',
@@ -509,10 +509,10 @@ INSERT INTO dataset (
     last_updated_by
 )
 VALUES
-    ('initial_dataset',
-     'initial_featureset',
-     'initial_population',
-     'initial_organization',
+    ('0197a6fa-6507-775b-99d9-f8808e10052d',
+     '0197a6f9-d45e-70ec-b744-b7ff2bd87b3d',
+     '0197a6f8-fbc4-7652-ae5d-d52eaa0a48db',
+     '0197a6f5-bb48-7855-b248-95697e913f22',
      'HF Risk Dataset',
      'Dataset for HF Risk Prediction factors',
      '0.1',
@@ -531,7 +531,7 @@ INSERT INTO dataset_transformation (
     description
 )
 VALUES
-    ('initial_dataset_transformation',
+    ('0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
      'Dataset Smoothening and Normalization',
      'Dataset is transformed by smoothening and normalization.');
 
@@ -549,8 +549,8 @@ INSERT INTO dataset_transformation_step (
     last_updated_by
 )
 VALUES
-    ('initial_dataset_transformation_step',
-     'initial_dataset_transformation',
+    ('0197a6fa-6507-775b-99d9-f8808e10052d_transformation_step',
+     '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
      'feature1',
      'feature1_1',
      'Normalization',
@@ -569,10 +569,10 @@ INSERT INTO learning_dataset (
     description
 )
 VALUES
-    ('initial_learning_dataset',
-     'initial_dataset',
-     'initial_study',
-     'initial_dataset_transformation',
+    ('0197a6fc-7af4-7c75-b8ff-fbdc815fdafb',
+     '0197a6fa-6507-775b-99d9-f8808e10052d',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
+     '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
      'Finalized learning dataset for HF Risk Prediction Model Training');
 
 -- Insert into feature_dataset_characteristic
@@ -584,15 +584,15 @@ INSERT INTO feature_dataset_characteristic (
     value_data_type
 )
 VALUES
-    ('initial_dataset',
-     'initial_feature',
+    ('0197a6fa-6507-775b-99d9-f8808e10052d',
+     '0197a6fa-177f-7360-b2ce-272f2eb675b7',
      'variance',
      '11.2',
      'decimal');
 
 -- Insert into parameter
 INSERT INTO parameter (parameter_id, name, study_id, description, data_type)
-VALUES ('initial_parameter', 'Number of Folds', 'initial_study', 'Number of folds for Gradient-boosted trees.', 'int');
+VALUES ('0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1', 'Number of Folds', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'Number of folds for Gradient-boosted trees.', 'int');
 
 -- Insert into algorithm
 INSERT INTO algorithm (algorithm_id, name, objective_function, type, subtype)
@@ -625,7 +625,7 @@ VALUES ('simple_linear_regression', 'Simple Linear Regression', 'Placeholder Obj
 
 -- Insert into implementation
 INSERT INTO implementation (implementation_id, algorithm_id, software, name, description)
-VALUES ('initial_implementation', 'simple_linear_regression', 'Spark MLlib', 'Gradient-boosted Tree Regression', 'Implementation of Gradient-boosted tree regression with Spark MLlib v3.5');
+VALUES ('0197a70f-3f85-7142-8ab0-b7ae916bfdf1', 'simple_linear_regression', 'Spark MLlib', 'Gradient-boosted Tree Regression', 'Implementation of Gradient-boosted tree regression with Spark MLlib v3.5');
 
 
 -- Insert into learning_process
@@ -636,9 +636,9 @@ INSERT INTO learning_process (
     description
 )
 VALUES
-    ('initial_learning_process',
-     'initial_study',
-     'initial_implementation',
+    ('0197a70f-a49d-71df-8f6d-d205da111e28',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
+     '0197a70f-3f85-7142-8ab0-b7ae916bfdf1',
      'ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.');
 
 -- Insert into learning_stage
@@ -650,8 +650,8 @@ INSERT INTO learning_stage (
     dataset_percentage
 )
 VALUES
-    ('initial_learning_stage',
-     'initial_learning_process',
+    ('0197a717-bd62-704f-9886-b566545a2725',
+     '0197a70f-a49d-71df-8f6d-d205da111e28',
      'Training', 'Training stage/phase',
      50);
 
@@ -662,8 +662,8 @@ INSERT INTO learning_process_dataset (
     description
 )
 VALUES
-    ('initial_learning_process',
-     'initial_learning_dataset',
+    ('0197a70f-a49d-71df-8f6d-d205da111e28',
+     '0197a6fc-7af4-7c75-b8ff-fbdc815fdafb',
      'Building a HF risk prediction model with Gradient-boosted tree regression.');
 
 -- Insert into learning_process_parameter
@@ -674,8 +674,8 @@ INSERT INTO learning_process_parameter (
     value
 )
 VALUES
-    ('initial_learning_process',
-     'initial_parameter',
+    ('0197a70f-a49d-71df-8f6d-d205da111e28',
+     '0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1',
      'int',
      '1');
 
@@ -687,8 +687,8 @@ INSERT INTO learning_stage_parameter (
     value
 )
 VALUES
-    ('initial_learning_stage',
-     'initial_parameter',
+    ('0197a717-bd62-704f-9886-b566545a2725',
+     '0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1',
      'int',
      '2');
 
@@ -719,11 +719,11 @@ INSERT INTO model (
     last_updated_by
 )
 VALUES
-    ('initial_model',
-     'initial_learning_process',
-     'initial_study',
-     'initial_experiment',
-     'HF risk prediction model 1 (for 7-day readmission risk)', '1.0', 'Production', 'prediction', 'AI4HFModel001', 'initial_organization',
+    ('0197a718-9800-7558-8565-5f760c97c8f0',
+     '0197a70f-a49d-71df-8f6d-d205da111e28',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
+     '0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
+     'HF risk prediction model 1 (for 7-day readmission risk)', '1.0', 'Production', 'prediction', 'AI4HFModel001', '0197a6f5-bb48-7855-b248-95697e913f22',
      'TRL4', 'RAIL-<DAMS>', 'Predicting 7-day readmission risk for Heart Failure patients.', 'Early intervention recommendations.', 'Healthcare providers, Data scientists',
      'Not recommended for cases with incomplete patient history.', 'Privacy and consent considerations', 'This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.',
      'Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.',
@@ -737,8 +737,8 @@ INSERT INTO model_parameter (
     value
 )
 VALUES
-    ('initial_model',
-     'initial_parameter',
+    ('0197a718-9800-7558-8565-5f760c97c8f0',
+     '0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1',
      'int',
      '3');
 
@@ -752,7 +752,7 @@ INSERT INTO deployment_environment (
     connectivity_details
 )
 VALUES
-    ('initial_deployment_environment',
+    ('0197a718-ced2-73af-8ca9-d5ff45e2fa18',
      'Production Environment',
      'Main Production Environment',
      'Disk: 512 GB, RAM: 32 GB',
@@ -773,9 +773,9 @@ INSERT INTO model_deployment (
     last_updated_by
 )
 VALUES
-    ('initial_model_deployment',
-     'initial_model',
-     'initial_deployment_environment',
+    ('0197a717-f048-7bc2-802a-c1300736d9fc',
+     '0197a718-9800-7558-8565-5f760c97c8f0',
+     '0197a718-ced2-73af-8ca9-d5ff45e2fa18',
      'Production',
      'Instances of false positives in predicting rare events.',
      'RUNNING',
@@ -796,9 +796,9 @@ INSERT INTO passport (
     details_json
 )
 VALUES
-    ('initial_passport',
-     'initial_model_deployment',
-     'initial_study',
+    ('0197a71a-20fd-73ab-b3d1-65af71b25fd7',
+     '0197a717-f048-7bc2-802a-c1300736d9fc',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      '2023-01-01 00:00:00',
      'quality_assurance_specialist',
      '2023-01-01 00:00:00',
@@ -823,7 +823,7 @@ VALUES
          "productIdentifier": "PID001"
        },
        "studyDetails": {
-         "id": "initial_study",
+         "id": "0197a6f8-2b78-71e4-81c1-b7b6a744ece3",
          "name": "Risk score for acute HF in the emergency department",
          "description": "Predicting risk factors for acute HF…",
          "objectives": "Evaluating the risk prediction for acute HF",
@@ -923,6 +923,6 @@ INSERT INTO evaluation_measure (
     description
 )
 VALUES
-    ('initial_evaluation_measure',
-     'initial_model',
+    ('0197a71a-60cc-7845-ae3b-6db704f691a4',
+     '0197a718-9800-7558-8565-5f760c97c8f0',
      'Accuracy', '0.77', 'float', 'Accuracy of Model with ID model1');
