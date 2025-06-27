@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 @Getter
 public class KeycloakService {
 
+    private static final String OFFLINE_ROLE_NAME = "offline_access";
+
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final Logger log = LoggerFactory.getLogger(KeycloakService.class);
 
@@ -148,44 +150,30 @@ public class KeycloakService {
      * @return Optional<String> Keycloak user ID if creation is successful.
      */
     public Optional<String> createUserAndReturnId(String username, String password, Role role) {
-
         UserRepresentation user = new UserRepresentation();
         user.setUsername(username);
         user.setEnabled(true);
 
-        CredentialRepresentation cred = new CredentialRepresentation();
-        cred.setType(CredentialRepresentation.PASSWORD);
-        cred.setValue(password);
-        cred.setTemporary(false);
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setTemporary(false);
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(password);
 
-        user.setCredentials(List.of(cred));
-
+        user.setCredentials(Collections.singletonList(credential));
         try {
-            Response resp = usersResource.create(user);
-            if (!resp.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
-                resp.close();
-                throw new IllegalStateException("Keycloak user-creation failed");
+            Response response = usersResource.create(user);
+            if (!response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                response.close();
+                throw new Exception("Keycloak did not return a successful response!");
             }
-            String userId = resp.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
-            resp.close();
-
-            if (role != null) {
-                updateRole(userId, role);
-            }
-
-            RoleRepresentation offline =
-                    keycloak.realm(realm).roles().get(OAuth2Constants.OFFLINE_ACCESS)
-                            .toRepresentation();
-
-            usersResource.get(userId)
-                    .roles()
-                    .realmLevel()
-                    .add(Collections.singletonList(offline));
-
-            return Optional.of(userId);
+            String[] path = response.getLocation().getPath().split("/");
+            String keycloakUserId = path[path.length - 1];
+            response.close();
+            this.updateRole(keycloakUserId, role);
+            return Optional.of(keycloakUserId);
 
         } catch (Exception e) {
-            log.error("User creation failed – {}", e.getMessage(), e);
+            log.error(e.getMessage());
             return Optional.empty();
         }
     }
@@ -197,27 +185,30 @@ public class KeycloakService {
      * @return true if the role is successfully updated, false otherwise.
      */
     public boolean updateRole(String userId, Role newRole) {
-        if (newRole == null) {
-            return true;
-        }
         UserResource user = usersResource.get(userId);
 
-        // Get the user's current roles
-        List<RoleRepresentation> currentRoles = user.roles().realmLevel().listAll();
+        RoleRepresentation offlineRole = keycloak.realm(realm).roles().get(OFFLINE_ROLE_NAME).toRepresentation();
 
-        // Remove current roles
-        user.roles().realmLevel().remove(currentRoles);
-        Optional<RoleRepresentation> newRoleRepresentation = user.roles().realmLevel().listAvailable().stream()
-                .filter(role -> role.getName().equals(newRole.name()))
-                .findFirst();
-
-        if (newRoleRepresentation.isPresent()) {
-            user.roles().realmLevel().add(Collections.singletonList(newRoleRepresentation.get()));
-            return true;
-        } else {
-            return false;
+        List<RoleRepresentation> current = user.roles().realmLevel().listAll();
+        List<RoleRepresentation> toRemove = current.stream()
+                .filter(r -> !r.getName().equals(OFFLINE_ROLE_NAME))
+                .collect(Collectors.toList());
+        if (!toRemove.isEmpty()) {
+            user.roles().realmLevel().remove(toRemove);
         }
+
+        if (current.stream().noneMatch(r -> r.getName().equals(OFFLINE_ROLE_NAME))) {
+            user.roles().realmLevel().add(Collections.singletonList(offlineRole));
+        }
+
+        if (newRole != null) {
+            RoleRepresentation domainRole =
+                    keycloak.realm(realm).roles().get(newRole.name()).toRepresentation();
+            user.roles().realmLevel().add(Collections.singletonList(domainRole));
+        }
+        return true;
     }
+
 
     /**
      * Deletes a Keycloak user with the specified user ID.

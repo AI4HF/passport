@@ -655,7 +655,27 @@
         "default-roles-ai4hf-authorization"
       ],
       "notBefore": 0,
-      "groups": []
+      "groups": [],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ],
+        "realm-management": [
+          "query-groups",
+          "query-users",
+          "view-users",
+          "view-clients",
+          "view-realm",
+          "realm-admin"
+        ],
+        "AI4HF-Auth": [
+          "Organization Admin",
+          "Data Engineer",
+          "Data Scientist",
+          "Survey Manager"
+        ]
+      }
     },
     {
       "id": "service-account-admin",
