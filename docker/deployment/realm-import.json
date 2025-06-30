@@ -7,8 +7,8 @@
   "refreshTokenMaxReuse": 0,
   "accessTokenLifespan": 300,
   "accessTokenLifespanForImplicitFlow": 900,
-  "ssoSessionIdleTimeout": 1800,
-  "ssoSessionMaxLifespan": 36000,
+  "ssoSessionIdleTimeout": 31556926,
+  "ssoSessionMaxLifespan": 31556926,
   "ssoSessionIdleTimeoutRememberMe": 0,
   "ssoSessionMaxLifespanRememberMe": 0,
   "offlineSessionIdleTimeout": 2592000,
@@ -655,7 +655,27 @@
         "default-roles-ai4hf-authorization"
       ],
       "notBefore": 0,
-      "groups": []
+      "groups": [],
+      "clientRoles": {
+        "account": [
+          "view-profile",
+          "manage-account"
+        ],
+        "realm-management": [
+          "query-groups",
+          "query-users",
+          "view-users",
+          "view-clients",
+          "view-realm",
+          "realm-admin"
+        ],
+        "AI4HF-Auth": [
+          "Organization Admin",
+          "Data Engineer",
+          "Data Scientist",
+          "Survey Manager"
+        ]
+      }
     },
     {
       "id": "service-account-admin",
@@ -705,6 +725,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "STUDY_OWNER"
       ],
       "groups": [
@@ -723,6 +744,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "DATA_ENGINEER"
       ],
       "groups": [
@@ -741,6 +763,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "ML_ENGINEER"
       ],
       "groups": [
@@ -759,6 +782,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "DATA_SCIENTIST"
       ],
       "groups": [
@@ -777,6 +801,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "SURVEY_MANAGER"
       ],
       "groups": [
@@ -795,6 +820,7 @@
         }
       ],
       "realmRoles": [
+        "offline_access",
         "QUALITY_ASSURANCE_SPECIALIST"
       ],
       "groups": [

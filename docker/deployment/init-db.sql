@@ -378,7 +378,9 @@ VALUES
     ('data_engineer', '0197a6f5-bb48-7855-b248-95697e913f22', 'Okan', 'Mercan', 'data_engineer@gmail.com'),
     ('data_scientist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
     ('quality_assurance_specialist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
-    ('survey_manager', '0197a6f5-bb48-7855-b248-95697e913f22', 'Senan', 'Postaci', 'survey_manager@gmail.com');
+    ('survey_manager', '0197a6f5-bb48-7855-b248-95697e913f22', 'Senan', 'Postaci', 'survey_manager@gmail.com'),
+    ('ml_engineer', '0197a6f5-bb48-7855-b248-95697e913f22', 'Dogukan', 'Cavdaroglu', 'ml_engineer@gmail.com');
+
 
 -- Insert into study
 INSERT INTO study (study_id, name, description, objectives, ethics, owner)
@@ -395,7 +397,7 @@ INSERT INTO population (population_id, study_id, population_url, description, ch
 VALUES
     ('0197a6f8-fbc4-7652-ae5d-d52eaa0a48db',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
-     'https://datatools4heart.eu/cohorts/study1',
+     'https://ai4hf.eu/cohorts/study1',
      'Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.',
      'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.');
 
@@ -422,14 +424,15 @@ VALUES
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_scientist', 'DATA_SCIENTIST'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'survey_manager', 'SURVEY_MANAGER'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
-    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_engineer', 'DATA_ENGINEER');
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_engineer', 'DATA_ENGINEER'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'ml_engineer', 'ML_ENGINEER');
 
 -- Insert into study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id)
 VALUES
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      '0197a6f5-bb48-7855-b248-95697e913f22',
-     'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST',
+     'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST,ML_ENGINEER',
      'study_owner',
      '0197a6f8-fbc4-7652-ae5d-d52eaa0a48db');
 
@@ -449,7 +452,7 @@ VALUES
     ('0197a6f9-d45e-70ec-b744-b7ff2bd87b3d',
      '0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
      'Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.',
-     'https://datatools4heart.eu/feature-sets/study1-features',
+     'https://ai4hf.eu/feature-sets/study1-features',
      'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.',
      '2023-01-01 00:00:00',
      'data_engineer',
@@ -838,7 +841,7 @@ VALUES
        ],
        "populationDetails": [
          {
-           "populationUrl": "https://datatools4heart.eu/cohorts/study1",
+           "populationUrl": "https://ai4hf.eu/cohorts/study1",
            "description": "Patients hospitalized with a primary discharge diagnosis of heart failure.",
            "characteristics": "500 participants, 70% aged 20-30 years."
          }
@@ -877,7 +880,7 @@ VALUES
            "featureSet": {
              "title": "Feature set for AI4HFsubstudy 2 - Risk score prediction for acute HF in the emergency department. ",
              "description": "Feature set containing feature information used in risk score prediction for acute HF in the emergency department.",
-             "featuresetURL": "https://datatools4heart.eu/feature-sets/study1-features",
+             "featuresetURL": "https://ai4hf.eu/feature-sets/study1-features",
              "createdAt": "1970-01-20 10:35:20",
              "createdBy": "data_engineer",
              "lastUpdatedAt": "1970-01-20 10:35:20",

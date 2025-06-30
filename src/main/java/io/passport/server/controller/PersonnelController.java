@@ -115,11 +115,11 @@ public class PersonnelController {
             if(savedPersonnel.isPresent()) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedPersonnel);
             }else{
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }catch(Exception e){
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
