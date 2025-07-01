@@ -47,6 +47,12 @@ public class DatasetService {
         return datasetRepository.findAll();
     }
 
+    /** Return all Datasets for a study, but with FK names instead of IDs */
+    public List<Dataset> getAllDatasetsWithNamesByStudyId(String studyId) {
+        return datasetRepository.findDatasetWithNamesByStudyId(studyId);
+    }
+
+
     /**
      * Return all Datasets by studyId
      * @param studyId ID of the study

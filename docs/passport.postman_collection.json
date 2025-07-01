@@ -1332,6 +1332,30 @@
 					"response": []
 				},
 				{
+					"name": "get all datasets with names",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{passportBackend}}/dataset/names?studyId=initial_study",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"dataset",
+								"names"
+							],
+							"query": [
+								{
+									"key": "studyId",
+									"value": "initial_study"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "get a dataset by id",
 					"request": {
 						"method": "GET",
@@ -4193,6 +4217,88 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "connector",
+			"item": [
+				{
+					"name": "connector sign up",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/user/connector/sign-up",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"user",
+								"connector",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "connector login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "enter-token-as-plain-string-like-this",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{passportBackend}}/user/connector/login",
+							"host": [
+								"{{passportBackend}}"
+							],
+							"path": [
+								"user",
+								"connector",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Connector authorization tools"
 		},
 		{
 			"name": "get keycloak token",
