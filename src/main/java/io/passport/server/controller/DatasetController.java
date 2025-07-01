@@ -62,6 +62,24 @@ public class DatasetController {
     }
 
     /**
+     * Retrieves all datasets with FKs replaced by FK connection names..
+     * @param studyId   ID of the study
+     * @param principal Jwt principal containing user info
+     * @return List of datasets, or FORBIDDEN if user not authorized
+     */
+    @GetMapping("/names")
+    public ResponseEntity<List<Dataset>> getAllDatasetsWithNames(@RequestParam String studyId,
+                                                                 @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        List<Dataset> datasets = this.datasetService.getAllDatasetsWithNamesByStudyId(studyId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(datasets.size()));
+        return ResponseEntity.ok().headers(headers).body(datasets);
+    }
+
+    /**
      * Retrieves a Dataset by its datasetId.
      *
      * @param datasetId ID of the Dataset

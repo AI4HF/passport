@@ -19,4 +19,30 @@ public interface DatasetRepository extends JpaRepository<Dataset, String> {
             "FROM Dataset d, Population p WHERE d.populationId = p.populationId AND p.studyId = :studyId")
     List<Dataset> findDatasetByStudyId(@Param("studyId") String studyId);
 
+    // return the names of the related entities instead of their IDs
+    @Query("""
+       SELECT new Dataset(
+           d.datasetId,
+           fs.title,
+           p.populationUrl,
+           o.name,
+           d.title,
+           d.description,
+           d.version,
+           d.referenceEntity,
+           d.numOfRecords,
+           d.synthetic,
+           d.createdAt,
+           d.createdBy,
+           d.lastUpdatedAt,
+           d.lastUpdatedBy)
+       FROM Dataset d
+       JOIN FeatureSet   fs ON d.featuresetId   = fs.featuresetId
+       JOIN Population   p  ON d.populationId   = p.populationId
+       JOIN Organization o  ON d.organizationId = o.organizationId
+       WHERE p.studyId = :studyId
+       """)
+    List<Dataset> findDatasetWithNamesByStudyId(@Param("studyId") String studyId);
+
+
 }
