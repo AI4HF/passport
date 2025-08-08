@@ -33,7 +33,6 @@ public class StudyController {
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
 
-    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
 
     @Autowired
     public StudyController(StudyService studyService,
@@ -84,12 +83,7 @@ public class StudyController {
     public ResponseEntity<?> getStudy(@PathVariable String studyId,
                                       @AuthenticationPrincipal Jwt principal) {
 
-        if (!this.roleCheckerService.hasAnyRole(principal, viewOnlyRoles)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        String userId = principal.getSubject();
-
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER", "DATA_SCIENTIST", "DATA_ENGINEER", "SURVEY_MANAGER", "QUALITY_ASSURANCE_SPECIALIST", "ML_ENGINEER"))) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

@@ -31,7 +31,7 @@ public class PopulationController {
     private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
-    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
+
     @Autowired
     public PopulationController(PopulationService populationService,
                                 RoleCheckerService roleCheckerService,
@@ -53,7 +53,7 @@ public class PopulationController {
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") String populationId,
                                                @RequestParam String studyId,
                                                @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -71,7 +71,7 @@ public class PopulationController {
     @GetMapping
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam String studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

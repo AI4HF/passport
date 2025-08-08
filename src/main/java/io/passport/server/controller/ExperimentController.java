@@ -30,7 +30,6 @@ public class ExperimentController {
     private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER, Role.DATA_SCIENTIST);
-    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
 
     @Autowired
     public ExperimentController(ExperimentService experimentService,
@@ -51,7 +50,7 @@ public class ExperimentController {
     @GetMapping
     public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") String studyId,
                                                                     @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<Experiment> experiment = this.experimentService.findExperimentByStudyId(studyId);
