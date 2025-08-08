@@ -50,7 +50,7 @@ public class ExperimentController {
     @GetMapping
     public ResponseEntity<List<Experiment>> getExperimentsByStudyId(@RequestParam(value = "studyId") String studyId,
                                                                     @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<Experiment> experiment = this.experimentService.findExperimentByStudyId(studyId);

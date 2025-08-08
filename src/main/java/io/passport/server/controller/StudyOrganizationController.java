@@ -53,7 +53,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam String studyId,
                                                                        @RequestParam String organizationId,
                                                                        @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -82,7 +82,7 @@ public class StudyOrganizationController {
     @GetMapping("/organizations")
     public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam String studyId,
                                                        @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -107,7 +107,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam String organizationId,
                                                         @RequestParam String studyId,
                                                         @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

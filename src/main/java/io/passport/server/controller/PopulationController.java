@@ -53,7 +53,7 @@ public class PopulationController {
     public ResponseEntity<?> getPopulationById(@PathVariable("populationId") String populationId,
                                                @RequestParam String studyId,
                                                @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -71,7 +71,7 @@ public class PopulationController {
     @GetMapping
     public ResponseEntity<?> getPopulationByStudyId(@RequestParam String studyId,
                                                     @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

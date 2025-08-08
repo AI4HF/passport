@@ -19,6 +19,9 @@ public class RoleCheckerService {
     @Autowired
     private KeycloakService keycloakService;
 
+    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER,
+            Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
+
     /**
      * Check if the user has any of the roles from the rolesToCheck list based on the access token.
      * @param principal Jwt object containing the access token
@@ -55,5 +58,15 @@ public class RoleCheckerService {
 
         // Check if the user is a member of any of the allowed role groups within the study
         return keycloakService.isUserInStudyGroupWithRoles(studyId, personnelId, allowedRoleNames);
+    }
+
+    /**
+     * Checks if a user is authorized to view the study
+     * @param studyId ID of the study
+     * @param principal KeycloakPrincipal object containing the access token
+     * @return true if the user is a authorization to view study
+     */
+    public boolean isUserAuthorizedToViewStudy(String studyId, Jwt principal) {
+        return isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles);
     }
 }

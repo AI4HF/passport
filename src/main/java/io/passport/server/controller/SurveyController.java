@@ -53,7 +53,7 @@ public class SurveyController {
     public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") String surveyId,
                                            @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -76,7 +76,7 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") String studyId,
                                                    @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

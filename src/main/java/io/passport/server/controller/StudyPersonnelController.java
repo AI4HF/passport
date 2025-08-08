@@ -39,7 +39,7 @@ public class StudyPersonnelController {
     public ResponseEntity<?> getPersonnelRolesByStudyAndOrganization(@RequestParam String studyId,
                                                                      @RequestParam String organizationId,
                                                                      @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -66,7 +66,7 @@ public class StudyPersonnelController {
                                                    @RequestParam String organizationId,
                                                    @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
+        if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
