@@ -31,6 +31,7 @@ public class StudyOrganizationController {
     private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER);
+    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
 
     @Autowired
     public StudyOrganizationController(StudyOrganizationService studyOrganizationService,
@@ -53,7 +54,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> getStudyOrganizationByStudyOrganizationId(@RequestParam String studyId,
                                                                        @RequestParam String organizationId,
                                                                        @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -82,7 +83,7 @@ public class StudyOrganizationController {
     @GetMapping("/organizations")
     public ResponseEntity<?> getOrganizationsByStudyId(@RequestParam String studyId,
                                                        @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -107,7 +108,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> getStudiesByOrganizationId(@RequestParam String organizationId,
                                                         @RequestParam String studyId,
                                                         @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -131,7 +132,7 @@ public class StudyOrganizationController {
     public ResponseEntity<?> createStudyOrganization(@RequestBody StudyOrganizationDTO studyOrganizationDTO,
                                                      @AuthenticationPrincipal Jwt principal) {
         String studyId = studyOrganizationDTO.getStudyId();
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

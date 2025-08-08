@@ -28,7 +28,7 @@ public class StudyPersonnelController {
     private final StudyPersonnelService studyPersonnelService;
     private final RoleCheckerService roleCheckerService;
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST);
-
+    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
     @Autowired
     public StudyPersonnelController(StudyPersonnelService studyPersonnelService, RoleCheckerService roleCheckerService) {
         this.studyPersonnelService = studyPersonnelService;
@@ -39,7 +39,7 @@ public class StudyPersonnelController {
     public ResponseEntity<?> getPersonnelRolesByStudyAndOrganization(@RequestParam String studyId,
                                                                      @RequestParam String organizationId,
                                                                      @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -66,7 +66,7 @@ public class StudyPersonnelController {
                                                    @RequestParam String organizationId,
                                                    @AuthenticationPrincipal Jwt principal) {
         // Check user authorization for the given study
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, List.of(Role.STUDY_OWNER))) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -87,7 +87,7 @@ public class StudyPersonnelController {
     @GetMapping("/studies")
     public ResponseEntity<?> getPersonnelByStudyId(@AuthenticationPrincipal Jwt principal) {
         // Check user authorization for any role in the allowedRoles list
-        if (!this.roleCheckerService.hasAnyRole(principal, allowedRoles)) {
+        if (!this.roleCheckerService.hasAnyRole(principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

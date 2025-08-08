@@ -31,6 +31,7 @@ public class SurveyController {
     private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.SURVEY_MANAGER);
+    private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
 
     @Autowired
     public SurveyController(SurveyService surveyService,
@@ -53,7 +54,7 @@ public class SurveyController {
     public ResponseEntity<?> getSurveyById(@PathVariable("surveyId") String surveyId,
                                            @RequestParam String studyId,
                                            @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -76,7 +77,7 @@ public class SurveyController {
     @GetMapping
     public ResponseEntity<List<Survey>> getSurveys(@RequestParam(value = "studyId") String studyId,
                                                    @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, viewOnlyRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
