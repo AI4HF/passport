@@ -35,4 +35,6 @@ public class PassportDetails {
     private boolean surveyDetails;
 
     private boolean studyDetails;
+
+    private boolean evaluationMeasures;
 }

@@ -67,6 +67,9 @@ public class PassportService {
     @Autowired
     private LearningStageService learningStageService;
 
+    @Autowired
+    private EvaluationMeasureService evaluationMeasureService;
+
 
     @Autowired
     public PassportService(PassportRepository passportRepository) {
@@ -137,6 +140,9 @@ public class PassportService {
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isLearningProcessDetails()){
                 detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
+                detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
             }
             passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
             passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
@@ -279,6 +285,15 @@ public class PassportService {
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Learning Processes and Stages: " + e.getMessage());
+        }
+    }
+
+    private List<EvaluationMeasure> fetchEvaluationMeasures(Passport passport) {
+        try {
+            String modelId = this.fetchDeploymentDetails(passport).getModelId();
+            return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
         }
     }
 

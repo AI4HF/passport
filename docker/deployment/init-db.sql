@@ -913,6 +913,14 @@ VALUES
              }
            ]
          }
+       ],
+       "evaluationMeasures": [
+        {
+          "name": "Accuracy",
+          "dataType": "float",
+          "value": "0.77",
+          "description": "Accuracy of Model with ID model1"
+        }
        ]
      }');
 
