@@ -518,6 +518,57 @@
   },
   "groups": [
     {
+      "name": "study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
+      "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
+      "subGroups": [
+        {
+          "name": "DATA_ENGINEER",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "name": "DATA_SCIENTIST",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "name": "ML_ENGINEER",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/ML_ENGINEER",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "name": "QUALITY_ASSURANCE_SPECIALIST",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/QUALITY_ASSURANCE_SPECIALIST",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "name": "STUDY_OWNER",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/STUDY_OWNER",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "name": "SURVEY_MANAGER",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/SURVEY_MANAGER",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        }
+      ],
+      "attributes": {},
+      "realmRoles": [],
+      "clientRoles": {}
+    },
+    {
       "id": "dab241d3-fb34-417b-85b5-3dce135739b4",
       "name": "study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3",
       "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3",
@@ -729,7 +780,8 @@
         "STUDY_OWNER"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/STUDY_OWNER"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/STUDY_OWNER",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/STUDY_OWNER"
       ]
     },
     {
@@ -748,7 +800,8 @@
         "DATA_ENGINEER"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_ENGINEER"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_ENGINEER",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER"
       ]
     },
     {
@@ -767,7 +820,8 @@
         "ML_ENGINEER"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/ML_ENGINEER"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/ML_ENGINEER",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/ML_ENGINEER"
       ]
     },
     {
@@ -786,7 +840,8 @@
         "DATA_SCIENTIST"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
       ]
     },
     {
@@ -805,7 +860,8 @@
         "SURVEY_MANAGER"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/SURVEY_MANAGER"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/SURVEY_MANAGER",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/SURVEY_MANAGER"
       ]
     },
     {
@@ -824,7 +880,8 @@
         "QUALITY_ASSURANCE_SPECIALIST"
       ],
       "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/QUALITY_ASSURANCE_SPECIALIST"
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/QUALITY_ASSURANCE_SPECIALIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/QUALITY_ASSURANCE_SPECIALIST"
       ]
     }
   ],

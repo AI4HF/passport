@@ -390,6 +390,12 @@ VALUES
      'Predicting risk factors for acute HF…',
      'Evaluating the risk prediction for acute HF',
      'Approved by Ethical Board on 2023-01-15, Application Number: 123',
+     'study_owner'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     'MAGGIC 1-Year Mortality Risk in Chronic Heart Failure',
+     'Create a MAGGIC risk model using the provided cohort.',
+     'Develop a calibrated MAGGIC risk score.',
+     'Approved by Ethical Board on 2024-10-15, Application Number: 234',
      'study_owner');
 
 -- Insert into population
@@ -399,14 +405,22 @@ VALUES
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'https://ai4hf.eu/cohorts/study1',
      'Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.',
-     'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.');
+     'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.'),
+    ('3197a6f8-2b78-71e4-81c1-b7b6a744ece5',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     'https://ai4hf.eu/cohorts/maggic',
+     'Patients with heart failure meeting MAGGIC inclusion criteria.',
+     'The study population comprised 500 participants, evenly distributed between males and females, with mean age being 28.');
 
 -- Insert into experiment
 INSERT INTO experiment (experiment_id, study_id, research_question)
 VALUES
     ('0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
-     'A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.');
+     'A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge.'),
+    ('4197a6f8-2b78-71e4-81c1-b7b6a744ece5',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     'Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?');
 
 -- Insert into survey
 INSERT INTO survey (survey_id, study_id, question, answer, category)
@@ -425,7 +439,12 @@ VALUES
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'survey_manager', 'SURVEY_MANAGER'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_engineer', 'DATA_ENGINEER'),
-    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'ml_engineer', 'ML_ENGINEER');
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'ml_engineer', 'ML_ENGINEER'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','study_owner','STUDY_OWNER'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','data_engineer','DATA_ENGINEER'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','data_scientist','DATA_SCIENTIST'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','ml_engineer','ML_ENGINEER'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','quality_assurance_specialist','QUALITY_ASSURANCE_SPECIALIST');
 
 -- Insert into study_organization
 INSERT INTO study_organization (study_id, organization_id, role, responsible_personnel_id, population_id)
@@ -434,7 +453,12 @@ VALUES
      '0197a6f5-bb48-7855-b248-95697e913f22',
      'STUDY_OWNER,DATA_SCIENTIST,DATA_ENGINEER,DATA_SCIENTIST,SURVEY_MANAGER,QUALITY_ASSURANCE_SPECIALIST,ML_ENGINEER',
      'study_owner',
-     '0197a6f8-fbc4-7652-ae5d-d52eaa0a48db');
+     '0197a6f8-fbc4-7652-ae5d-d52eaa0a48db'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     '0197a6f5-bb48-7855-b248-95697e913f22',
+     'STUDY_OWNER,DATA_ENGINEER,DATA_SCIENTIST,ML_ENGINEER,QUALITY_ASSURANCE_SPECIALIST',
+     'study_owner',
+     '3197a6f8-2b78-71e4-81c1-b7b6a744ece5');
 
 -- Insert into featureset
 INSERT INTO featureset (
@@ -457,7 +481,13 @@ VALUES
      '2023-01-01 00:00:00',
      'data_engineer',
      '2023-01-01 00:00:00',
-     'data_engineer');
+     'data_engineer'),
+    ('6197a6f8-2b78-71e4-81c1-b7b6a744ece8',
+     '4197a6f8-2b78-71e4-81c1-b7b6a744ece5',
+     'MAGGIC Score Predictors',
+     'https://ai4hf.eu/feature-sets/maggic-v1',
+     'Canonical predictors used in MAGGIC score calculation and model training.',
+     '2025-10-15 00:00:00','data_engineer','2025-10-15 00:00:00','data_engineer');
 
 -- Insert into feature
 INSERT INTO feature (
@@ -494,6 +524,76 @@ VALUES
      '2023-01-01 00:00:00',
      'data_engineer');
 
+
+INSERT INTO feature (
+    feature_id, featureset_id, title, description, data_type,
+    isOutcome, mandatory, isUnique, units, equipment, data_collection,
+    created_at, created_by, last_updated_at, last_updated_by
+)
+VALUES
+    ('feat_gender', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'gender',
+    'Gender of the patient', 'string', false, true, false, NULL, '', 'EHR',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_age', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'age',
+    'Age of the patient at reference point', 'integer', false, true, false, 'years', '', 'EHR',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_nyha', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'nyha',
+    'The latest value of the New York Heart Assessment as LOINC Code', 'string',
+    false, true, false, NULL, '', 'EHR/Clinical assessment',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_systolic_bp', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'systolic_blood_pressure',
+    'Average systolic blood pressure (mmHg) over the 3 years preceding reference time point',
+    'decimal', false, true, false, 'mmHg', '', 'Vitals',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_bmi', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'bmi',
+    'Average Body Mass Index (kg/m²) over the 3 years preceding reference time point',
+    'decimal', false, true, false, 'kg/m2', '', 'Vitals',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_creatinine', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'creatinine',
+    'Creatinine [Mass/volume] in Serum or Plasma (mg/L) – 3-year average',
+    'decimal', false, true, false, 'mg/L', '', 'Lab results',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_hf_18m', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'heart_failure_ge_18_months',
+    'Heart failure diagnosed ≥ 18 months before reference point', 'boolean',
+    false, false, false, NULL, '', 'EHR/conditions',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_copd', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'chronic_obstructive_pulmonary_disease',
+    'Presence of chronic obstructive pulmonary disease (COPD)', 'boolean',
+    false, false, false, NULL, '', 'EHR/conditions',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_diabetes', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'diabetes',
+    'Presence of diabetes mellitus', 'boolean',
+    false, false, false, NULL, '', 'EHR/conditions',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_beta_blocker', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'beta_blocker_use',
+    'Administration of beta-blocker medication', 'boolean',
+    false, false, false, NULL, '', 'Medication administration',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_ace_arb', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'ace_inhibitor_or_arb_use',
+    'Administration of ACE inhibitor or ARB medication', 'boolean',
+    false, false, false, NULL, '', 'Medication administration',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_lvef', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'lvef',
+    'Most recent left ventricular ejection fraction before reference point',
+    'decimal', false, true, false, 'percent', '', 'Echocardiography',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer'),
+
+    ('feat_smoker', '6197a6f8-2b78-71e4-81c1-b7b6a744ece8', 'smoker',
+    'Most recent recorded smoking status before reference point (1 = current smoker, 0 = former/never)',
+    'boolean', false, false, false, NULL, '', 'EHR/Questionnaire',
+    '2025-07-24 00:00:00','data_engineer','2025-07-24 00:00:00','data_engineer');
+
 -- Insert into dataset
 INSERT INTO dataset (
     dataset_id,
@@ -525,7 +625,18 @@ VALUES
      '2023-01-01 00:00:00',
      'data_engineer',
      '2023-01-01 00:00:00',
-     'data_engineer');
+     'data_engineer'),
+    ('9197a6f8-2b78-71e4-81c1-b7b6a744ece9',
+     '6197a6f8-2b78-71e4-81c1-b7b6a744ece8',
+     '3197a6f8-2b78-71e4-81c1-b7b6a744ece5',
+     '0197a6f5-bb48-7855-b248-95697e913f22',
+     'MAGGIC Dataset v1',
+     'Dataset extracted from MAGGIC data.',
+     '1.0',
+     'Patient',
+     500,
+     false,
+     '2025-10-15 00:00:00','data_engineer','2025-10-15 00:00:00','data_engineer');
 
 -- Insert into dataset_transformation
 INSERT INTO dataset_transformation (
@@ -576,7 +687,12 @@ VALUES
      '0197a6fa-6507-775b-99d9-f8808e10052d',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
-     'Finalized learning dataset for HF Risk Prediction Model Training');
+     'Finalized learning dataset for HF Risk Prediction Model Training'),
+    ('b197a6fc-7af4-7c75-b8ff-fbdc815fdacf',
+     '9197a6f8-2b78-71e4-81c1-b7b6a744ece9',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
+     'Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction.');
 
 -- Insert into feature_dataset_characteristic
 INSERT INTO feature_dataset_characteristic (
@@ -642,7 +758,11 @@ VALUES
     ('0197a70f-a49d-71df-8f6d-d205da111e28',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      '0197a70f-3f85-7142-8ab0-b7ae916bfdf1',
-     'ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.');
+     'ML process which uses SparkMLlib based Gradient-boosted Tree Regression implementation to process the parameterised data.'),
+    ('b197a70f-a49d-71df-8f6d-d205da111e31',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     '0197a70f-3f85-7142-8ab0-b7ae916bfdf1',
+     'MAGGIC-MLP learning process trained on the MAGGIC Dataset for 1-year mortality risk prediction using multi-layer perceptron regression.');
 
 -- Insert into learning_stage
 INSERT INTO learning_stage (
@@ -656,7 +776,22 @@ VALUES
     ('0197a717-bd62-704f-9886-b566545a2725',
      '0197a70f-a49d-71df-8f6d-d205da111e28',
      'Training', 'Training stage/phase',
-     50);
+     50),
+    ('b197a717-bd62-704f-9886-b566545a2733',
+     'b197a70f-a49d-71df-8f6d-d205da111e31',
+     'Training',
+     'Model training stage using 70% of the MAGGIC Dataset for multi-layer perceptron calibration.',
+     70),
+    ('b297a717-bd62-704f-9886-b566545a2734',
+     'b197a70f-a49d-71df-8f6d-d205da111e31',
+     'Validation',
+     'Model validation stage using 15% of the MAGGIC Dataset to tune hyperparameters and prevent overfitting.',
+     15),
+    ('b397a717-bd62-704f-9886-b566545a2735',
+     'b197a70f-a49d-71df-8f6d-d205da111e31',
+     'Testing',
+     'Final evaluation on the remaining 15% of the MAGGIC Dataset for performance assessment.',
+     15);
 
 -- Insert into learning_process_dataset
 INSERT INTO learning_process_dataset (
@@ -667,7 +802,10 @@ INSERT INTO learning_process_dataset (
 VALUES
     ('0197a70f-a49d-71df-8f6d-d205da111e28',
      '0197a6fc-7af4-7c75-b8ff-fbdc815fdafb',
-     'Building a HF risk prediction model with Gradient-boosted tree regression.');
+     'Building a HF risk prediction model with Gradient-boosted tree regression.'),
+    ('b197a70f-a49d-71df-8f6d-d205da111e31',
+     'b197a6fc-7af4-7c75-b8ff-fbdc815fdacf',
+     'MAGGIC-MLP model trained for predicting 1-year all-cause mortality using structured Chronic Heart Failure data.');
 
 -- Insert into learning_process_parameter
 INSERT INTO learning_process_parameter (
@@ -730,7 +868,27 @@ VALUES
      'TRL4', 'RAIL-<DAMS>', 'Predicting 7-day readmission risk for Heart Failure patients.', 'Early intervention recommendations.', 'Healthcare providers, Data scientists',
      'Not recommended for cases with incomplete patient history.', 'Privacy and consent considerations', 'This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.',
      'Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.',
-     '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist');
+     '2023-01-01 00:00:00', 'data_scientist', '2023-01-02 00:00:00', 'data_scientist'),
+    ('b197a718-9800-7558-8565-5f760c97c8f9',
+     'b197a70f-a49d-71df-8f6d-d205da111e31',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     '4197a6f8-2b78-71e4-81c1-b7b6a744ece5',
+     'MAGGIC-MLP Model (v1.0)',
+     '1.0',
+     'Production',
+     'Classification',
+     'AI4HF_MAGGIC_MLP_001',
+     '0197a6f5-bb48-7855-b248-95697e913f22',
+     'TRL6',
+     'AI4HF-Research License v1.0',
+     'Predicting 1-year mortality risk in chronic heart failure patients based on MAGGIC feature set.',
+     'Clinical risk stratification and care prioritization.',
+     'Clinicians, cardiologists, and data science researchers.',
+     'Not suitable for pediatric Chronic Heart Failure or congenital heart disease populations.',
+     'Ethically approved for retrospective analysis; patient identifiers are anonymized.',
+     'Performance may degrade in cohorts with limited lab or echocardiographic data.',
+     'Bias mitigation methods were applied across gender and age subgroups.',
+     '2025-07-24 00:00:00','data_scientist','2025-10-15 00:00:00','data_scientist');
 
 -- Insert into model_parameter
 INSERT INTO model_parameter (
@@ -743,7 +901,11 @@ VALUES
     ('0197a718-9800-7558-8565-5f760c97c8f0',
      '0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1',
      'int',
-     '3');
+     '3'),
+    ('b197a718-9800-7558-8565-5f760c97c8f9',
+     '0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1',
+     'int',
+     '5');
 
 -- Insert into deployment_environment
 INSERT INTO deployment_environment (
@@ -760,7 +922,13 @@ VALUES
      'Main Production Environment',
      'Disk: 512 GB, RAM: 32 GB',
      'OS: Windows, Cloud Services: Google Cloud Platform',
-     'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication');
+     'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication'),
+    ('b197a718-ced2-73af-8ca9-d5ff45e2fa25',
+     'Clinical Validation Environment',
+     'Dedicated environment for MAGGIC-MLP model validation under clinical conditions.',
+     'RAM: 64 GB, CPU: 16 cores, GPU: 1x NVIDIA A100 40GB',
+     'OS: Ubuntu 22.04, Frameworks: TensorFlow 2.15, PyTorch 2.2, Spark 3.5',
+     'Secure hospital intranet connection with role-based VPN access and encrypted endpoints.');
 
 -- Insert into model_deployment
 INSERT INTO model_deployment (
@@ -785,6 +953,16 @@ VALUES
      '2023-01-01 00:00:00',
      'data_scientist',
      '2023-01-01 00:00:00',
+     'data_scientist'),
+    ('b197a717-f048-7bc2-802a-c1300736d9ff',
+     'b197a718-9800-7558-8565-5f760c97c8f9',
+     'b197a718-ced2-73af-8ca9-d5ff45e2fa25',
+     'Validation,ProductionCandidate',
+     'Model occasionally overestimates low-risk cases with missing LVEF values.',
+     'VALIDATING',
+     '2025-10-15 00:00:00',
+     'data_scientist',
+     '2025-10-15 00:00:00',
      'data_scientist');
 
 -- Insert into passport
@@ -922,6 +1100,117 @@ VALUES
           "description": "Accuracy of Model with ID model1"
         }
        ]
+     }'),
+    ('b197a71a-20fd-73ab-b3d1-65af71b25ff1',
+     'b197a717-f048-7bc2-802a-c1300736d9ff',
+     '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     '2025-10-15 00:00:00',
+     'quality_assurance_specialist',
+     '2025-10-16 00:00:00',
+     'quality_assurance_specialist',
+     '{
+       "deploymentDetails": {
+         "tags": "Validation, ProductionCandidate",
+         "identifiedFailures": "Model occasionally overestimates low-risk cases with missing LVEF values.",
+         "status": "VALIDATING"
+       },
+       "environmentDetails": {
+         "title": "Clinical Validation Environment",
+         "description": "Dedicated environment for MAGGIC-MLP model validation under clinical conditions.",
+         "hardwareProperties": "RAM: 64 GB, CPU: 16 cores, GPU: 1x NVIDIA A100 40GB",
+         "softwareProperties": "OS: Ubuntu 22.04, Frameworks: TensorFlow 2.15, PyTorch 2.2, Spark 3.5",
+         "connectivityDetails": "Secure hospital intranet connection with role-based VPN access and encrypted endpoints."
+       },
+       "modelDetails": {
+         "name": "MAGGIC-MLP Model (v1.0)",
+         "version": "1.0",
+         "modelType": "Classification",
+         "productIdentifier": "AI4HF_MAGGIC_MLP_001"
+       },
+       "studyDetails": {
+         "id": "2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
+         "name": "MAGGIC 1-Year Mortality Risk in Chronic Heart Failure",
+         "description": "Create a MAGGIC risk model using the provided cohort.",
+         "objectives": "Develop a calibrated MAGGIC risk score.",
+         "ethics": "Approved by Ethical Board on 2024-10-15, Application Number: 234"
+       },
+       "datasetsWithLearningDatasets": [
+         {
+           "dataset": {
+             "title": "MAGGIC Dataset v1",
+             "description": "Dataset extracted from MAGGIC data.",
+             "version": "1.0",
+             "referenceEntity": "Patient",
+             "numOfRecords": 500,
+             "synthetic": false
+           },
+           "learningDatasets": [
+             {
+               "description": "Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction."
+             }
+           ]
+         }
+       ],
+       "featureSetsWithFeatures": [
+         {
+           "featureSet": {
+             "title": "MAGGIC Score Predictors",
+             "description": "Canonical predictors used in MAGGIC score calculation and model training.",
+             "featuresetURL": "https://ai4hf.eu/feature-sets/maggic-v1",
+             "createdAt": "2025-10-15 00:00:00",
+             "createdBy": "data_engineer",
+             "lastUpdatedAt": "2025-10-15 00:00:00",
+             "lastUpdatedBy": "data_engineer"
+           },
+           "features": [
+             { "title": "gender", "description": "Gender of the patient", "dataType": "string", "isOutcome": false, "mandatory": true, "isUnique": false, "dataCollection": "EHR" },
+             { "title": "age", "description": "Age of the patient at reference point", "dataType": "integer", "isOutcome": false, "mandatory": true, "isUnique": false, "units": "years", "dataCollection": "EHR" },
+             { "title": "nyha", "description": "The latest value of the New York Heart Assessment as LOINC Code", "dataType": "string", "isOutcome": false, "mandatory": true, "dataCollection": "EHR/Clinical assessment" },
+             { "title": "systolic_blood_pressure", "description": "Average systolic blood pressure (mmHg) over 3 years preceding reference time point", "dataType": "decimal", "isOutcome": false, "mandatory": true, "units": "mmHg", "dataCollection": "Vitals" },
+             { "title": "bmi", "description": "Average Body Mass Index (kg/m²) over 3 years preceding reference time point", "dataType": "decimal", "isOutcome": false, "mandatory": true, "units": "kg/m2", "dataCollection": "Vitals" },
+             { "title": "creatinine", "description": "Creatinine [Mass/volume] in Serum or Plasma (mg/L) – 3-year average", "dataType": "decimal", "isOutcome": false, "mandatory": true, "units": "mg/L", "dataCollection": "Lab results" },
+             { "title": "heart_failure_ge_18_months", "description": "Heart failure diagnosed ≥18 months before reference point", "dataType": "boolean", "isOutcome": false, "dataCollection": "EHR/conditions" },
+             { "title": "chronic_obstructive_pulmonary_disease", "description": "Presence of chronic obstructive pulmonary disease (COPD)", "dataType": "boolean", "isOutcome": false, "dataCollection": "EHR/conditions" },
+             { "title": "diabetes", "description": "Presence of diabetes mellitus", "dataType": "boolean", "isOutcome": false, "dataCollection": "EHR/conditions" },
+             { "title": "beta_blocker_use", "description": "Administration of beta-blocker medication", "dataType": "boolean", "isOutcome": false, "dataCollection": "Medication administration" },
+             { "title": "ace_inhibitor_or_arb_use", "description": "Administration of ACE inhibitor or ARB medication", "dataType": "boolean", "isOutcome": false, "dataCollection": "Medication administration" },
+             { "title": "lvef", "description": "Most recent left ventricular ejection fraction before reference point", "dataType": "decimal", "isOutcome": false, "units": "percent", "dataCollection": "Echocardiography" },
+             { "title": "smoker", "description": "Most recent smoking status (1=current smoker, 0=non-smoker)", "dataType": "boolean", "isOutcome": false, "dataCollection": "EHR/Questionnaire" }
+           ]
+         }
+       ],
+       "learningProcessesWithStages": [
+         {
+           "learningProcess": {
+             "description": "MAGGIC-MLP learning process trained on the MAGGIC Dataset for 1-year mortality risk prediction using multi-layer perceptron regression."
+           },
+           "learningStages": [
+             { "learningStageName": "Training", "description": "Model training stage using 70% of the MAGGIC Dataset for calibration.", "datasetPercentage": 70 },
+             { "learningStageName": "Validation", "description": "Model validation stage using 15% of the MAGGIC Dataset.", "datasetPercentage": 15 },
+             { "learningStageName": "Testing", "description": "Testing stage on 15% of the MAGGIC Dataset for performance evaluation.", "datasetPercentage": 15 }
+           ]
+         }
+       ],
+       "evaluationMeasures": [
+         {
+           "name": "AUC",
+           "dataType": "float",
+           "value": "0.89",
+           "description": "Area under the ROC curve for 1-year mortality prediction using MAGGIC-MLP."
+         },
+         {
+           "name": "Accuracy",
+           "dataType": "float",
+           "value": "0.83",
+           "description": "Overall classification accuracy of the MAGGIC-MLP model."
+         },
+         {
+           "name": "F1-score",
+           "dataType": "float",
+           "value": "0.81",
+           "description": "F1-score reflecting precision and recall balance for the MAGGIC-MLP model."
+         }
+       ]
      }');
 
 -- Insert into evaluation_measure
@@ -936,4 +1225,22 @@ INSERT INTO evaluation_measure (
 VALUES
     ('0197a71a-60cc-7845-ae3b-6db704f691a4',
      '0197a718-9800-7558-8565-5f760c97c8f0',
-     'Accuracy', '0.77', 'float', 'Accuracy of Model with ID model1');
+     'Accuracy', '0.77', 'float', 'Accuracy of Model with ID model1'),
+    ('b197a71a-60cc-7845-ae3b-6db704f691a9',
+     'b197a718-9800-7558-8565-5f760c97c8f9',
+     'AUC',
+     '0.89',
+     'float',
+     'Area under the ROC curve for 1-year mortality prediction using MAGGIC-MLP.'),
+    ('b297a71a-60cc-7845-ae3b-6db704f691b0',
+     'b197a718-9800-7558-8565-5f760c97c8f9',
+     'Accuracy',
+     '0.83',
+     'float',
+     'Overall classification accuracy of the MAGGIC-MLP model.'),
+    ('b397a71a-60cc-7845-ae3b-6db704f691b1',
+     'b197a718-9800-7558-8565-5f760c97c8f9',
+     'F1-Score',
+     '0.81',
+     'float',
+     'F1-score reflecting precision and recall balance for the MAGGIC-MLP model.');
