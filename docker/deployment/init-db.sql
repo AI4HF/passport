@@ -1144,6 +1144,18 @@ VALUES
          "objectives": "Develop a calibrated MAGGIC risk score.",
          "ethics": "Approved by Ethical Board on 2024-10-15, Application Number: 234"
        },
+       "populationDetails": [
+         {
+           "populationUrl": "https://ai4hf.eu/cohorts/maggic",
+           "description": "Patients with heart failure meeting MAGGIC inclusion criteria.",
+           "characteristics": "The study population comprised 500 participants, evenly distributed between males and females, with mean age being 28."
+         }
+       ],
+       "experiments": [
+         {
+           "researchQuestion": "Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?"
+         }
+       ],
        "datasetsWithLearningDatasets": [
          {
            "dataset": {
