@@ -631,7 +631,7 @@ VALUES
      '3197a6f8-2b78-71e4-81c1-b7b6a744ece5',
      '0197a6f5-bb48-7855-b248-95697e913f22',
      'MAGGIC Dataset v1',
-     'Dataset extracted from MAGGIC data.',
+     'Dataset extracted from MAGGIC data of ABC Hospital (Turkey).',
      '1.0',
      'Patient',
      500,
@@ -692,7 +692,7 @@ VALUES
      '9197a6f8-2b78-71e4-81c1-b7b6a744ece9',
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
-     'Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction.');
+     'Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction after planned transformations.');
 
 -- Insert into feature_dataset_characteristic
 INSERT INTO feature_dataset_characteristic (
@@ -1125,7 +1125,17 @@ VALUES
          "name": "MAGGIC-MLP Model (v1.0)",
          "version": "1.0",
          "modelType": "Classification",
-         "productIdentifier": "AI4HF_MAGGIC_MLP_001"
+         "productIdentifier": "AI4HF_MAGGIC_MLP_001",
+         "owner": "Amsterdam UMC",
+         "trlLevel": "TRL6",
+         "license": "AI4HF-Research License v1.0",
+         "primaryUse": "Predicting 1-year mortality risk in chronic heart failure patients based on MAGGIC feature set.",
+         "secondaryUse": "Clinical risk stratification and care prioritization.",
+         "intendedUsers": "Clinicians, cardiologists, and data science researchers.",
+         "counterIndications": "Not suitable for pediatric Chronic Heart Failure or congenital heart disease populations.",
+         "ethicalConsiderations": "Ethically approved for retrospective analysis; patient identifiers are anonymized.",
+         "limitations": "Performance may degrade in cohorts with limited lab or echocardiographic data.",
+         "fairnessConstraints": "Bias mitigation methods were applied across gender and age subgroups."
        },
        "studyDetails": {
          "id": "2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
@@ -1138,7 +1148,7 @@ VALUES
          {
            "dataset": {
              "title": "MAGGIC Dataset v1",
-             "description": "Dataset extracted from MAGGIC data.",
+             "description": "Dataset extracted from MAGGIC data of ABC Hospital (Turkey)",
              "version": "1.0",
              "referenceEntity": "Patient",
              "numOfRecords": 500,
@@ -1146,7 +1156,7 @@ VALUES
            },
            "learningDatasets": [
              {
-               "description": "Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction."
+               "description": "Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction after planned transformations."
              }
            ]
          }
