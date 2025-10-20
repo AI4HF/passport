@@ -70,6 +70,9 @@ public class PassportService {
     @Autowired
     private EvaluationMeasureService evaluationMeasureService;
 
+    @Autowired
+    private OrganizationService organizationService;
+
 
     @Autowired
     public PassportService(PassportRepository passportRepository) {
@@ -188,12 +191,15 @@ public class PassportService {
         }
     }
 
-    private Model fetchModelDetails(Passport passport) {
+    private ModelWithOwnerNameDTO fetchModelDetails(Passport passport) {
         try {
             ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
                     .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            return modelService.findModelById(deployment.getModelId())
+            Model model = modelService.findModelById(deployment.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
+            ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
+            modelWithOwnerNameDTO.setOwner(organizationService.findOrganizationById(model.getOwner()).orElseThrow().getName());
+            return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
         }
