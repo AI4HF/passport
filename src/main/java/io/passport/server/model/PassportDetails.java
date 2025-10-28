@@ -37,4 +37,6 @@ public class PassportDetails {
     private boolean studyDetails;
 
     private boolean evaluationMeasures;
+
+    private boolean excludeEmptyFields;
 }

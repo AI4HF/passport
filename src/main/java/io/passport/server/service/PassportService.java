@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -147,6 +146,7 @@ public class PassportService {
             if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
                 detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
             }
+            cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
             passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
             passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
             passportWithDetailSelection.getPassport().setApprovedAt(Instant.now());
@@ -300,6 +300,108 @@ public class PassportService {
             return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
+        }
+    }
+
+
+    private void cleanEmptyStringFieldsDeep(Object node, boolean excludeEmptyStringFields) {
+        if (node == null) return;
+
+        // Case 1: Map
+        if (node instanceof Map<?, ?>) {
+            Map<String, Object> map = (Map<String, Object>) node;
+            Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                Object value = entry.getValue();
+
+                if (value == null) {
+                    // If value is null and the map schema expects String, we cannot infer type, so only replace if exclude=false
+                    if (!excludeEmptyStringFields) entry.setValue("N/A");
+                    continue;
+                }
+
+                if (value instanceof Map || value instanceof Collection<?>) {
+                    cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                } else if (value instanceof String) {
+                    String s = (String) value;
+                    if (s.isBlank()) {
+                        if (excludeEmptyStringFields) it.remove();
+                        else entry.setValue("N/A");
+                    }
+                } else {
+                    // Handle nested POJO (e.g., Feature)
+                    cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                }
+            }
+        }
+
+        // Case 2: Collection (List, Set, etc.)
+        else if (node instanceof Collection<?>) {
+            Collection coll = (Collection) node;
+            List<Object> cleaned = new ArrayList<>(coll.size());
+            for (Object item : coll) {
+                if (item == null) {
+                    if (!excludeEmptyStringFields) cleaned.add("N/A");
+                    continue;
+                }
+
+                if (item instanceof String) {
+                    String s = (String) item;
+                    if (s.isBlank()) {
+                        if (!excludeEmptyStringFields) cleaned.add("N/A");
+                    } else cleaned.add(s);
+                }
+                else if (item instanceof Map || item instanceof Collection<?>) {
+                    cleanEmptyStringFieldsDeep(item, excludeEmptyStringFields);
+                    cleaned.add(item);
+                }
+                else {
+                    cleanEmptyStringFieldsDeep(item, excludeEmptyStringFields); // handle POJO inside list
+                    cleaned.add(item);
+                }
+            }
+            coll.clear();
+            coll.addAll(cleaned);
+        }
+
+        // Case 3: POJO (e.g. Feature, Dataset, etc.)
+        else {
+            Class<?> clazz = node.getClass();
+
+            // Skip Java built-in immutable types
+            if (clazz.isPrimitive() ||
+                    clazz.getName().startsWith("java.") ||
+                    clazz.isEnum()) {
+                return;
+            }
+
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(node);
+
+                    // Null field handling: if type is String and value is null → "N/A"
+                    if (value == null) {
+                        if (field.getType() == String.class && !excludeEmptyStringFields) {
+                            field.set(node, "N/A");
+                        }
+                        continue;
+                    }
+
+                    if (value instanceof String) {
+                        String s = (String) value;
+                        if (s.isBlank()) {
+                            if (excludeEmptyStringFields) field.set(node, null);
+                            else field.set(node, "N/A");
+                        }
+                    } else {
+                        cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                    }
+
+                } catch (IllegalAccessException ignored) {
+                }
+            }
         }
     }
 
