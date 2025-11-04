@@ -72,6 +72,9 @@ public class PassportService {
     @Autowired
     private OrganizationService organizationService;
 
+    @Autowired
+    private ModelFigureService modelFigureService;
+
 
     @Autowired
     public PassportService(PassportRepository passportRepository) {
@@ -145,6 +148,9 @@ public class PassportService {
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
                 detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isModelFigures()){
+                detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
             }
             cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
             passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
@@ -299,7 +305,16 @@ public class PassportService {
             String modelId = this.fetchDeploymentDetails(passport).getModelId();
             return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
+            throw new RuntimeException("Error fetching Evaluation Measures: " + e.getMessage());
+        }
+    }
+
+    private List<ModelFigure> fetchModelFigures(Passport passport) {
+        try {
+            String modelId = this.fetchDeploymentDetails(passport).getModelId();
+            return modelFigureService.findByModelId(modelId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Model Figures: " + e.getMessage());
         }
     }
 
@@ -399,7 +414,8 @@ public class PassportService {
                         cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
                     }
 
-                } catch (IllegalAccessException ignored) {
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error while cleaning empty string fields: " + e.getMessage());
                 }
             }
         }

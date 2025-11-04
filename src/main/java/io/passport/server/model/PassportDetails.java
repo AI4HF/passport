@@ -38,5 +38,7 @@ public class PassportDetails {
 
     private boolean evaluationMeasures;
 
+    private boolean modelFigures;
+
     private boolean excludeEmptyFields;
 }
