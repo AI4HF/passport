@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +65,15 @@ public class PassportService {
 
     @Autowired
     private LearningStageService learningStageService;
+
+    @Autowired
+    private EvaluationMeasureService evaluationMeasureService;
+
+    @Autowired
+    private OrganizationService organizationService;
+
+    @Autowired
+    private ModelFigureService modelFigureService;
 
 
     @Autowired
@@ -138,6 +146,13 @@ public class PassportService {
             if(passportWithDetailSelection.getPassportDetailsSelection().isLearningProcessDetails()){
                 detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
             }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
+                detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isModelFigures()){
+                detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
+            }
+            cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
             passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
             passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
             passportWithDetailSelection.getPassport().setApprovedAt(Instant.now());
@@ -182,12 +197,15 @@ public class PassportService {
         }
     }
 
-    private Model fetchModelDetails(Passport passport) {
+    private ModelWithOwnerNameDTO fetchModelDetails(Passport passport) {
         try {
             ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
                     .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            return modelService.findModelById(deployment.getModelId())
+            Model model = modelService.findModelById(deployment.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
+            ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
+            modelWithOwnerNameDTO.setOwner(organizationService.findOrganizationById(model.getOwner()).orElseThrow().getName());
+            return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
         }
@@ -279,6 +297,127 @@ public class PassportService {
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Learning Processes and Stages: " + e.getMessage());
+        }
+    }
+
+    private List<EvaluationMeasure> fetchEvaluationMeasures(Passport passport) {
+        try {
+            String modelId = this.fetchDeploymentDetails(passport).getModelId();
+            return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Evaluation Measures: " + e.getMessage());
+        }
+    }
+
+    private List<ModelFigure> fetchModelFigures(Passport passport) {
+        try {
+            String modelId = this.fetchDeploymentDetails(passport).getModelId();
+            return modelFigureService.findByModelId(modelId);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Model Figures: " + e.getMessage());
+        }
+    }
+
+
+    private void cleanEmptyStringFieldsDeep(Object node, boolean excludeEmptyStringFields) {
+        if (node == null) return;
+
+        // Case 1: Map
+        if (node instanceof Map<?, ?>) {
+            Map<String, Object> map = (Map<String, Object>) node;
+            Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                Object value = entry.getValue();
+
+                if (value == null) {
+                    // If value is null and the map schema expects String, we cannot infer type, so only replace if exclude=false
+                    if (!excludeEmptyStringFields) entry.setValue("N/A");
+                    continue;
+                }
+
+                if (value instanceof Map || value instanceof Collection<?>) {
+                    cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                } else if (value instanceof String) {
+                    String s = (String) value;
+                    if (s.isBlank()) {
+                        if (excludeEmptyStringFields) it.remove();
+                        else entry.setValue("N/A");
+                    }
+                } else {
+                    // Handle nested POJO (e.g., Feature)
+                    cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                }
+            }
+        }
+
+        // Case 2: Collection (List, Set, etc.)
+        else if (node instanceof Collection<?>) {
+            Collection coll = (Collection) node;
+            List<Object> cleaned = new ArrayList<>(coll.size());
+            for (Object item : coll) {
+                if (item == null) {
+                    if (!excludeEmptyStringFields) cleaned.add("N/A");
+                    continue;
+                }
+
+                if (item instanceof String) {
+                    String s = (String) item;
+                    if (s.isBlank()) {
+                        if (!excludeEmptyStringFields) cleaned.add("N/A");
+                    } else cleaned.add(s);
+                }
+                else if (item instanceof Map || item instanceof Collection<?>) {
+                    cleanEmptyStringFieldsDeep(item, excludeEmptyStringFields);
+                    cleaned.add(item);
+                }
+                else {
+                    cleanEmptyStringFieldsDeep(item, excludeEmptyStringFields); // handle POJO inside list
+                    cleaned.add(item);
+                }
+            }
+            coll.clear();
+            coll.addAll(cleaned);
+        }
+
+        // Case 3: POJO (e.g. Feature, Dataset, etc.)
+        else {
+            Class<?> clazz = node.getClass();
+
+            // Skip Java built-in immutable types
+            if (clazz.isPrimitive() ||
+                    clazz.getName().startsWith("java.") ||
+                    clazz.isEnum()) {
+                return;
+            }
+
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                try {
+                    Object value = field.get(node);
+
+                    // Null field handling: if type is String and value is null → "N/A"
+                    if (value == null) {
+                        if (field.getType() == String.class && !excludeEmptyStringFields) {
+                            field.set(node, "N/A");
+                        }
+                        continue;
+                    }
+
+                    if (value instanceof String) {
+                        String s = (String) value;
+                        if (s.isBlank()) {
+                            if (excludeEmptyStringFields) field.set(node, null);
+                            else field.set(node, "N/A");
+                        }
+                    } else {
+                        cleanEmptyStringFieldsDeep(value, excludeEmptyStringFields);
+                    }
+
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error while cleaning empty string fields: " + e.getMessage());
+                }
+            }
         }
     }
 

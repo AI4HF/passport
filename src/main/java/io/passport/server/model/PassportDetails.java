@@ -35,4 +35,10 @@ public class PassportDetails {
     private boolean surveyDetails;
 
     private boolean studyDetails;
+
+    private boolean evaluationMeasures;
+
+    private boolean modelFigures;
+
+    private boolean excludeEmptyFields;
 }
