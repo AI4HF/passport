@@ -32,6 +32,8 @@ public class PassportDetails {
 
     private boolean experimentDetails;
 
+    private boolean staticArticleDetails;
+
     private boolean surveyDetails;
 
     private boolean studyDetails;
