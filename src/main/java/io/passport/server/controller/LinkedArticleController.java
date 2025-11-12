@@ -2,11 +2,11 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Operation;
 import io.passport.server.model.Role;
-import io.passport.server.model.StaticArticle;
+import io.passport.server.model.LinkedArticle;
 import io.passport.server.model.TokenClaim;
 import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.RoleCheckerService;
-import io.passport.server.service.StaticArticleService;
+import io.passport.server.service.LinkedArticleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * HTTP endpoints for Static Article operations.
+ * HTTP endpoints for Linked Article operations.
  */
 @RestController
-@RequestMapping("/staticArticle")
-public class StaticArticleController {
+@RequestMapping("/linkedArticle")
+public class LinkedArticleController {
 
-    private static final Logger log = LoggerFactory.getLogger(StaticArticleController.class);
+    private static final Logger log = LoggerFactory.getLogger(LinkedArticleController.class);
 
-    private final StaticArticleService staticArticleService;
+    private final LinkedArticleService linkedArticleService;
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
 
@@ -34,52 +34,52 @@ public class StaticArticleController {
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.STUDY_OWNER, Role.DATA_SCIENTIST);
 
     // Used in audit logs
-    private final String relationName = "Static Article";
+    private final String relationName = "Linked Article";
 
-    public StaticArticleController(StaticArticleService staticArticleService,
+    public LinkedArticleController(LinkedArticleService linkedArticleService,
                                    RoleCheckerService roleCheckerService,
                                    AuditLogBookService auditLogBookService) {
-        this.staticArticleService = staticArticleService;
+        this.linkedArticleService = linkedArticleService;
         this.roleCheckerService = roleCheckerService;
         this.auditLogBookService = auditLogBookService;
     }
 
     /**
-     * Read all StaticArticles by studyId.
+     * Read all LinkedArticles by studyId.
      * @param studyId study ID
      * @param principal JWT principal
-     * @return list of StaticArticles or 403 if unauthorized
+     * @return list of LinkedArticles or 403 if unauthorized
      */
     @GetMapping
-    public ResponseEntity<List<StaticArticle>> getStaticArticlesByStudyId(@RequestParam("studyId") String studyId,
+    public ResponseEntity<List<LinkedArticle>> getLinkedArticlesByStudyId(@RequestParam("studyId") String studyId,
                                                                           @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<StaticArticle> results = this.staticArticleService.findByStudyId(studyId);
+        List<LinkedArticle> results = this.linkedArticleService.findByStudyId(studyId);
         return ResponseEntity.ok(results);
     }
 
     /**
-     * Create StaticArticles for a study in bulk.
+     * Create LinkedArticles for a study in bulk.
      * Body: JSON array of { articleUrl } objects.
      */
     @PostMapping
-    public ResponseEntity<?> createStaticArticles(@RequestParam String studyId,
-                                                  @RequestBody List<StaticArticle> articles,
+    public ResponseEntity<?> createLinkedArticles(@RequestParam String studyId,
+                                                  @RequestBody List<LinkedArticle> articles,
                                                   @AuthenticationPrincipal Jwt principal) {
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            List<StaticArticle> saved = this.staticArticleService.createStaticArticleEntries(studyId, articles);
+            List<LinkedArticle> saved = this.linkedArticleService.createLinkedArticleEntries(studyId, articles);
 
             // Create audit logs for each created record
-            for (StaticArticle sa : saved) {
-                if (sa.getStaticArticleId() != null) {
-                    String recordId = sa.getStaticArticleId();
+            for (LinkedArticle sa : saved) {
+                if (sa.getLinkedArticleId() != null) {
+                    String recordId = sa.getLinkedArticleId();
                     auditLogBookService.createAuditLog(
                             principal.getSubject(),
                             principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -94,7 +94,7 @@ public class StaticArticleController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
-            log.error("Error creating StaticArticles: {}", e.getMessage(), e);
+            log.error("Error creating LinkedArticles: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

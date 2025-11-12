@@ -10,24 +10,24 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- * StaticArticle model used for the Static Article Management tasks.
+ * LinkedArticle model used for the Linked Article Management tasks.
  */
 @Entity
-@Table(name = "static_article")
+@Table(name = "linked_article")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "staticArticleId")
-public class StaticArticle {
+        property = "linkedArticleId")
+public class LinkedArticle {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name = "static_article_id")
-    private String staticArticleId;
+    @Column(name = "linked_article_id")
+    private String linkedArticleId;
 
     @Column(name = "study_id")
     private String studyId;

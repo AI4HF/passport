@@ -48,10 +48,10 @@ CREATE TABLE experiment
     research_question TEXT
 );
 
--- Create static_article table
-CREATE TABLE static_article
+-- Create linked_article table
+CREATE TABLE linked_article
 (
-    static_article_id VARCHAR(255) PRIMARY KEY,
+    linked_article_id VARCHAR(255) PRIMARY KEY,
     study_id          VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
     article_url       TEXT
 );
@@ -439,8 +439,8 @@ VALUES
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      'Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?');
 
--- Insert into Static Articles
-INSERT INTO static_article (static_article_id, study_id, article_url)
+-- Insert into Linked Articles
+INSERT INTO linked_article (linked_article_id, study_id, article_url)
 VALUES
     ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://doi.org/10.1000/example-1'),
     ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://pubmed.ncbi.nlm.nih.gov/00000001/');

@@ -32,7 +32,7 @@ public class PassportDetails {
 
     private boolean experimentDetails;
 
-    private boolean staticArticleDetails;
+    private boolean linkedArticleDetails;
 
     private boolean surveyDetails;
 
