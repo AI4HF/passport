@@ -161,7 +161,7 @@ public class PassportController {
 
             byte[] signed = passportSignatureService.generateSignature(pdf);
 
-            String outName = "Passport-signed.pdf";
+            String outName = req.getFileName();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
