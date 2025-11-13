@@ -323,15 +323,15 @@ CREATE TABLE deployment_environment
 CREATE TABLE model_deployment
 (
     deployment_id       VARCHAR(255) PRIMARY KEY,
-    model_id            VARCHAR(255) REFERENCES model (model_id),
-    environment_id      VARCHAR(255) REFERENCES deployment_environment (environment_id),
+    model_id            VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
+    environment_id      VARCHAR(255) REFERENCES deployment_environment (environment_id) ON DELETE CASCADE,
     tags                VARCHAR(255),
     identified_failures TEXT,
     status              VARCHAR(255),
     created_at          TIMESTAMP,
-    created_by          VARCHAR(255) REFERENCES personnel (person_id),
+    created_by          VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     last_updated_at     TIMESTAMP,
-    last_updated_by     VARCHAR(255) REFERENCES personnel (person_id)
+    last_updated_by     VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
 );
 
 -- Create passport table
