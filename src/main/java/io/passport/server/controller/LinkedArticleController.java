@@ -74,7 +74,7 @@ public class LinkedArticleController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            List<LinkedArticle> saved = this.linkedArticleService.createLinkedArticleEntries(studyId, articles);
+            List<LinkedArticle> saved = this.linkedArticleService.replaceLinkedArticles(studyId, articles);
 
             // Create audit logs for each created record
             for (LinkedArticle sa : saved) {

@@ -6,7 +6,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -19,13 +22,26 @@ public class LinkedArticleService {
     private LinkedArticleRepository linkedArticleRepository;
 
     /**
-     * Create new LinkedArticle entries for a study.
-     * @param studyId study ID to associate
-     * @param articles list of articles
-     * @return saved entities
+     * Overwrite all Linked Article entries for a Study
+     * @param studyId ID of the study
+     * @param articles Collection of Articles to be overwritten as
+     * @return Final state of overwritten Articles
      */
     @Transactional
-    public List<LinkedArticle> createLinkedArticleEntries(String studyId, List<LinkedArticle> articles) {
+    public List<LinkedArticle> replaceLinkedArticles(String studyId, List<LinkedArticle> articles) {
+        Set<String> incomingIds = articles == null ? Collections.emptySet()
+                : articles.stream()
+                .map(LinkedArticle::getLinkedArticleId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        if (incomingIds.isEmpty()) {
+            linkedArticleRepository.deleteAllByStudyId(studyId);
+            return Collections.emptyList();
+        }
+
+        linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
+
         List<LinkedArticle> toSave = articles.stream().map(a -> {
             LinkedArticle na = new LinkedArticle();
             na.setLinkedArticleId(a.getLinkedArticleId());
