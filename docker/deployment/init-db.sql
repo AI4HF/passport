@@ -442,8 +442,8 @@ VALUES
 -- Insert into Linked Articles
 INSERT INTO linked_article (linked_article_id, study_id, article_url)
 VALUES
-    ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://doi.org/10.1000/example-1'),
-    ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://pubmed.ncbi.nlm.nih.gov/00000001/');
+    ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://loinc.org/'),
+    ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/');
 
 
 -- Insert into survey
@@ -1060,6 +1060,11 @@ VALUES
            "researchQuestion": "A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge."
          }
        ],
+       "linkedArticles": [
+         {
+           "articleUrl": "https://loinc.org/"
+         }
+       ],
        "datasetsWithLearningDatasets": [
          {
            "dataset": {
@@ -1196,6 +1201,11 @@ VALUES
          {
            "researchQuestion": "Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?"
          }
+       ],
+       "linkedArticles": [
+          {
+            "articleUrl": "https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/"
+          }
        ],
        "datasetsWithLearningDatasets": [
          {
