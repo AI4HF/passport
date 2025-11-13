@@ -49,6 +49,9 @@ public class PassportService {
     private ExperimentService experimentService;
 
     @Autowired
+    private LinkedArticleService linkedArticleService;
+
+    @Autowired
     private FeatureSetService featureSetService;
 
     @Autowired
@@ -136,6 +139,9 @@ public class PassportService {
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isExperimentDetails()){
                 detailsJson.put("experiments", fetchExperiments(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isLinkedArticleDetails()){
+                detailsJson.put("linkedArticles", fetchLinkedArticles(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isFeatureSets()){
                 detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passportWithDetailSelection.getPassport()));
@@ -249,6 +255,13 @@ public class PassportService {
             return experimentService.findExperimentByStudyId(passport.getStudyId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
+        }
+    }
+    private List<LinkedArticle> fetchLinkedArticles(Passport passport) {
+        try {
+            return linkedArticleService.findByStudyId(passport.getStudyId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Linked Articles: " + e.getMessage());
         }
     }
 

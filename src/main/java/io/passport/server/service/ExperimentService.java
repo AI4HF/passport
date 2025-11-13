@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -26,15 +30,6 @@ public class ExperimentService {
     }
 
     /**
-     * Find all experiments for an assigned personnel
-     * @param personnelId ID of the personnel
-     * @return
-     */
-    public List<Experiment> findAllExperiments(String personnelId) {
-        return this.experimentRepository.findExperimentsByPersonnelId(personnelId);
-    }
-
-    /**
      * Find an experiment by studyId
      * @param studyId ID of the study
      * @return
@@ -43,24 +38,36 @@ public class ExperimentService {
         return this.experimentRepository.findByStudyId(studyId);
     }
 
-
     /**
-     * Create new experiments
+     * Overwrite all Experiment entries for a Study
      * @param studyId ID of the study
-     * @param experimentList list of experiment to be used in Experiment entries
-     * @return
+     * @param incoming Collection of Experiments to be overwritten as
+     * @return Final state of overwritten Experiments
      */
     @Transactional
-    public List<Experiment> createExperimentEntries(String studyId, List<Experiment> experimentList) {
+    public List<Experiment> replaceExperiments(String studyId, List<Experiment> incoming) {
+        Set<String> incomingIds = incoming.stream()
+                .map(Experiment::getExperimentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
 
-        List<Experiment> ExperimentEntries = experimentList.stream().map((experiment -> {
-            Experiment newExperiment = new Experiment();
-            newExperiment.setExperimentId(experiment.getExperimentId());
-            newExperiment.setStudyId(studyId);
-            newExperiment.setResearchQuestion(experiment.getResearchQuestion());
-            return newExperiment;
-        })).collect(Collectors.toList());
+        if (incomingIds.isEmpty()) {
+            experimentRepository.deleteAllByStudyId(studyId);
+            return Collections.emptyList();
+        }
 
-        return experimentRepository.saveAll(ExperimentEntries);
+        experimentRepository.deleteByStudyIdAndExperimentIdNotIn(studyId, incomingIds);
+
+        List<Experiment> toSave = incoming.stream()
+                .map(exp -> {
+                    Experiment e = new Experiment();
+                    e.setExperimentId(exp.getExperimentId());
+                    e.setStudyId(studyId);
+                    e.setResearchQuestion(exp.getResearchQuestion());
+                    return e;
+                })
+                .collect(Collectors.toList());
+
+        return experimentRepository.saveAll(toSave);
     }
 }

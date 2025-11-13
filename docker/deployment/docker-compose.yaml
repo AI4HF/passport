@@ -63,6 +63,8 @@ services:
       KEYCLOAK_URL: http://keycloak:8080/
       KEYSTORE_PATH: /usr/local/passport/keystore/keystore.p12
       KEYSTORE_PASSWORD: password
+      PDF_EXECUTABLE_PATH: /usr/local/bin/chrome
+      JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
     volumes:
       - ./passport/docker/deployment/keystore/keystore.p12:/usr/local/passport/keystore/keystore.p12
     depends_on:

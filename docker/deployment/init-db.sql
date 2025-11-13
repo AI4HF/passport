@@ -48,6 +48,15 @@ CREATE TABLE experiment
     research_question TEXT
 );
 
+-- Create linked_article table
+CREATE TABLE linked_article
+(
+    linked_article_id VARCHAR(255) PRIMARY KEY,
+    study_id          VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
+    article_url       TEXT
+);
+
+
 -- Create survey table
 CREATE TABLE survey
 (
@@ -314,15 +323,15 @@ CREATE TABLE deployment_environment
 CREATE TABLE model_deployment
 (
     deployment_id       VARCHAR(255) PRIMARY KEY,
-    model_id            VARCHAR(255) REFERENCES model (model_id),
-    environment_id      VARCHAR(255) REFERENCES deployment_environment (environment_id),
+    model_id            VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
+    environment_id      VARCHAR(255) REFERENCES deployment_environment (environment_id) ON DELETE CASCADE,
     tags                VARCHAR(255),
     identified_failures TEXT,
     status              VARCHAR(255),
     created_at          TIMESTAMP,
-    created_by          VARCHAR(255) REFERENCES personnel (person_id),
+    created_by          VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     last_updated_at     TIMESTAMP,
-    last_updated_by     VARCHAR(255) REFERENCES personnel (person_id)
+    last_updated_by     VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
 );
 
 -- Create passport table
@@ -429,6 +438,13 @@ VALUES
     ('4197a6f8-2b78-71e4-81c1-b7b6a744ece5',
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      'Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?');
+
+-- Insert into Linked Articles
+INSERT INTO linked_article (linked_article_id, study_id, article_url)
+VALUES
+    ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://loinc.org/'),
+    ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/');
+
 
 -- Insert into survey
 INSERT INTO survey (survey_id, study_id, question, answer, category)
@@ -1044,6 +1060,11 @@ VALUES
            "researchQuestion": "A risk score prediction on subsequent (HF/CV)-rehospitalization within 7 days after hospital discharge."
          }
        ],
+       "linkedArticles": [
+         {
+           "articleUrl": "https://loinc.org/"
+         }
+       ],
        "datasetsWithLearningDatasets": [
          {
            "dataset": {
@@ -1180,6 +1201,11 @@ VALUES
          {
            "researchQuestion": "Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?"
          }
+       ],
+       "linkedArticles": [
+          {
+            "articleUrl": "https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/"
+          }
        ],
        "datasetsWithLearningDatasets": [
          {

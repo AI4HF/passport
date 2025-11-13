@@ -2,9 +2,11 @@ package io.passport.server.controller;
 
 import io.passport.server.model.Passport;
 import io.passport.server.model.PassportWithDetailSelection;
+import io.passport.server.model.PdfRequest;
 import io.passport.server.model.Role;
 import io.passport.server.service.PassportService;
 import io.passport.server.service.PassportSignatureService;
+import io.passport.server.service.PdfRenderService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,6 @@ import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,16 +26,18 @@ import java.util.List;
 public class PassportController {
 
     private static final Logger log = LoggerFactory.getLogger(PassportController.class);
+    private final PdfRenderService renderer;
     private final PassportService passportService;
     private final RoleCheckerService roleCheckerService;
     private final PassportSignatureService passportSignatureService;
     private final List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
-    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService, PassportSignatureService passportSignatureService) {
+    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService, PassportSignatureService passportSignatureService, PdfRenderService renderer) {
         this.passportService = passportService;
         this.roleCheckerService = roleCheckerService;
         this.passportSignatureService = passportSignatureService;
+        this.renderer = renderer;
     }
 
     /**
@@ -127,42 +130,50 @@ public class PassportController {
     }
 
     /**
-     * New endpoint to sign a PDF file.
+     * Combined request to generate a passport PDF from a HTML, then sign it.
      *
-     * Receives a PDF as a multipart file, checks authorization,
-     * then signs it using the PassportSignatureService.
-     *
-     * @param file       The incoming PDF file to be signed
-     * @param studyId    Study ID for authorization
-     * @param principal  Keycloak JWT principal
-     * @return           A ResponseEntity containing the signed PDF in bytes
+     * @param req PDF generation request DTO
+     * @param principal Keycloak JWT principal
+     * @return A ResponseEntity containing the signed PDF in bytes
      */
-    @PostMapping(value = "/sign-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> signPdf(@RequestParam("pdf") MultipartFile file,
-                                     @RequestParam String studyId,
-                                     @AuthenticationPrincipal Jwt principal) {
+    @PostMapping(value = "/generate-and-sign", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<?> generateAndSign(@RequestBody PdfRequest req,
+                                             @AuthenticationPrincipal Jwt principal) {
         try {
-            if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            if (!this.roleCheckerService.isUserAuthorizedForStudy(req.getStudyId(), principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            byte[] fileBytes = file.getBytes();
+            if (req.getHtmlContent() == null || req.getHtmlContent().isBlank()) {
+                return ResponseEntity.badRequest().body("Missing htmlContent");
+            }
+            if (req.getStudyId() == null || req.getStudyId().isBlank()) {
+                return ResponseEntity.badRequest().body("Missing studyId");
+            }
 
-            byte[] signedPdf = passportSignatureService.generateSignature(fileBytes);
+            byte[] pdf = renderer.render(
+                    req.getHtmlContent(),
+                    req.getBaseUrl(),
+                    (req.getWidth() != null && !req.getWidth().isBlank()) ? req.getWidth() : "420mm",
+                    (req.getHeight() != null && !req.getHeight().isBlank()) ? req.getHeight() : "297mm",
+                    (req.getLandscape() != null) ? req.getLandscape() : Boolean.TRUE
+            );
+
+            byte[] signed = passportSignatureService.generateSignature(pdf);
+
+            String outName = req.getFileName();
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.attachment().filename(outName).build());
+            headers.add("Access-Control-Expose-Headers", "Content-Disposition");
+            headers.setContentLength(signed.length);
 
-            headers.setContentDisposition(ContentDisposition.builder("attachment")
-                    .filename("signed_document.pdf")
-                    .build());
-
-            return new ResponseEntity<>(signedPdf, headers, HttpStatus.OK);
+            return new ResponseEntity<>(signed, headers, HttpStatus.OK);
 
         } catch (Exception e) {
-            log.error("Error while signing PDF: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Could not sign the PDF: " + e.getMessage());
+                    .body("Failed to generate and sign PDF: " + e.getMessage());
         }
     }
 }

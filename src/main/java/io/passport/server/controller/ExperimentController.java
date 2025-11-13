@@ -73,7 +73,7 @@ public class ExperimentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
-            List<Experiment> newExperiments = this.experimentService.createExperimentEntries(studyId, experiments);
+            List<Experiment> newExperiments = this.experimentService.replaceExperiments(studyId, experiments);
 
             String userId = principal.getSubject();
             for (Experiment exp : newExperiments) {
