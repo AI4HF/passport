@@ -47,6 +47,6 @@ if [ ! -z "$DELAY_EXECUTION" ]; then
 fi
 
 # Finally, tell which jar to run
-JAVA_CMD+="passport-2.5.0.jar"
+JAVA_CMD+="passport-2.5.1.jar"
 
 eval $JAVA_CMD "$@"
