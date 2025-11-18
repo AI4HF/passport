@@ -15,6 +15,8 @@ import eu.europa.esig.dss.token.Pkcs12SignatureToken;
 import eu.europa.esig.dss.token.SignatureTokenConnection;
 import eu.europa.esig.dss.signature.DocumentSignatureService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +32,17 @@ import java.util.List;
 @Service
 public class PassportSignatureService {
 
+    private static final Logger log = LoggerFactory.getLogger(PassportSignatureService.class);
+
     @Value("${dss.keystore.path}")
     private String KEYSTORE_PATH;
 
     @Value("${dss.keystore.password}")
     private String KEYSTORE_PASSWORD;
+
+    /** Reusable DSS utilities. */
+    private final CommonCertificateVerifier verifier = new CommonCertificateVerifier();
+    private final DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService = new PAdESService(verifier);
 
     /**
      * Digital signature generation and signing logic with europa esig package.
@@ -43,7 +51,11 @@ public class PassportSignatureService {
      * @return Signed PDF file in Byte Array form.
      */
     public byte[] generateSignature(byte[] documentContent) {
-        File keystoreFile = new File(KEYSTORE_PATH);
+        final File keystoreFile = new File(KEYSTORE_PATH);
+        if (!keystoreFile.isFile()) {
+            throw new IllegalArgumentException("Keystore file not found at path: " + KEYSTORE_PATH);
+        }
+
         try (
                 FileInputStream keystoreStream = new FileInputStream(keystoreFile);
                 SignatureTokenConnection signingToken = new Pkcs12SignatureToken(
@@ -51,15 +63,10 @@ public class PassportSignatureService {
                         new KeyStore.PasswordProtection(KEYSTORE_PASSWORD.toCharArray())
                 )
         ) {
-            if (!keystoreFile.exists()) {
-                throw new IllegalArgumentException("Keystore file not found in the classpath at path: " + KEYSTORE_PATH);
-            }
-
             List<DSSPrivateKeyEntry> keys = signingToken.getKeys();
-            if (keys.isEmpty()) {
+            if (keys == null || keys.isEmpty()) {
                 throw new IllegalArgumentException("No private key found in the keystore");
             }
-
             DSSPrivateKeyEntry privateKey = keys.get(0);
 
             DSSDocument document = new InMemoryDocument(documentContent);
@@ -68,22 +75,25 @@ public class PassportSignatureService {
             signatureParameters.setSigningCertificate(privateKey.getCertificate());
             signatureParameters.setCertificateChain(privateKey.getCertificateChain());
             signatureParameters.setDigestAlgorithm(DigestAlgorithm.SHA256);
-
             signatureParameters.setSignatureLevel(SignatureLevel.PAdES_BASELINE_B);
 
-            DocumentSignatureService<PAdESSignatureParameters, PAdESTimestampParameters> signatureService =
-                    new PAdESService(new CommonCertificateVerifier());
             ToBeSigned dataToSign = signatureService.getDataToSign(document, signatureParameters);
-
             SignatureValue signatureValue = signingToken.sign(dataToSign, signatureParameters.getDigestAlgorithm(), privateKey);
 
             DSSDocument signedDocument = signatureService.signDocument(document, signatureParameters, signatureValue);
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            signedDocument.writeTo(outputStream);
-            return outputStream.toByteArray();
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                signedDocument.writeTo(outputStream);
+                byte[] result = outputStream.toByteArray();
+
+                if (log.isDebugEnabled()) {
+                    log.debug("PAdES sign OK");
+                }
+                return result;
+            }
 
         } catch (Exception e) {
+            log.error("PAdES sign FAILED", e);
             throw new RuntimeException("PDF could not be signed: " + e.getMessage(), e);
         }
     }
