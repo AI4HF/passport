@@ -97,13 +97,7 @@ public class PdfRenderService {
             } catch (Throwable t) {
                 // Close the Browser if it is not closed by the error, to prevent dangling browser
                 String msg = String.valueOf(t.getMessage());
-                boolean browserLikelyDead = msg.contains("Target closed")
-                        || msg.contains("Target.detachedFromTarget")
-                        || msg.contains("No connection")
-                        || msg.contains("Session closed")
-                        || msg.contains("Socket")
-                        || msg.contains("not connected");
-                if (!retried && browserLikelyDead) {
+                if (!retried) {
                     log.warn("Chrome likely dead; relaunching and retrying once: {}", msg);
                     safeCloseBrowser();
                     retried = true;
