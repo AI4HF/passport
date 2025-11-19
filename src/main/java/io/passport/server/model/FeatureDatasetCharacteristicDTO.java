@@ -22,7 +22,7 @@ public class FeatureDatasetCharacteristicDTO {
     public FeatureDatasetCharacteristicDTO(FeatureDatasetCharacteristic entity) {
         this.datasetId = entity.getId().getDatasetId();
         this.featureId = entity.getId().getFeatureId();
-        this.characteristicName = entity.getCharacteristicName();
+        this.characteristicName = entity.getId().getCharacteristicName();
         this.value = entity.getValue();
         this.valueDataType = entity.getValueDataType();
     }

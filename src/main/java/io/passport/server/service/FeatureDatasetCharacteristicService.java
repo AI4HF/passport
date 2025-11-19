@@ -53,11 +53,12 @@ public class FeatureDatasetCharacteristicService {
 
     /**
      * Find a FeatureDatasetCharacteristic by composite id
-     * @param featureDatasetCharacteristicId composite ID of the FeatureDatasetCharacteristic
+     * @param featureId ID of the Feature
+     * @param datasetId ID of the Dataset
      * @return
      */
-    public Optional<FeatureDatasetCharacteristic> findFeatureDatasetCharacteristicById(FeatureDatasetCharacteristicId featureDatasetCharacteristicId) {
-        return featureDatasetCharacteristicRepository.findById(featureDatasetCharacteristicId);
+    public List<FeatureDatasetCharacteristic> findByFeatureIdAndDatasetId(String featureId, String datasetId) {
+        return featureDatasetCharacteristicRepository.findByIdFeatureIdAndIdDatasetId(featureId, datasetId);
     }
 
     /**
@@ -79,7 +80,6 @@ public class FeatureDatasetCharacteristicService {
         Optional<FeatureDatasetCharacteristic> oldFeatureDatasetCharacteristic = featureDatasetCharacteristicRepository.findById(featureDatasetCharacteristicId);
         if (oldFeatureDatasetCharacteristic.isPresent()) {
             FeatureDatasetCharacteristic featureDatasetCharacteristic = oldFeatureDatasetCharacteristic.get();
-            featureDatasetCharacteristic.setCharacteristicName(updatedFeatureDatasetCharacteristic.getCharacteristicName());
             featureDatasetCharacteristic.setValue(updatedFeatureDatasetCharacteristic.getValue());
             featureDatasetCharacteristic.setValueDataType(updatedFeatureDatasetCharacteristic.getValueDataType());
             FeatureDatasetCharacteristic savedFeatureDatasetCharacteristic = featureDatasetCharacteristicRepository.save(featureDatasetCharacteristic);

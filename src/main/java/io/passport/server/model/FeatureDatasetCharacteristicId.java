@@ -11,9 +11,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class FeatureDatasetCharacteristicId implements Serializable {
+    @Column(name = "feature_id")
+    private String featureId;
+
     @Column(name = "dataset_id")
     private String datasetId;
 
-    @Column(name = "feature_id")
-    private String featureId;
+    @Column(name = "characteristic_name")
+    private String characteristicName;
 }

@@ -66,13 +66,8 @@ public class FeatureDatasetCharacteristicController {
         List<FeatureDatasetCharacteristic> characteristics;
 
         if (datasetId != null && featureId != null) {
-            FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
-            id.setDatasetId(datasetId);
-            id.setFeatureId(featureId);
             characteristics = this.featureDatasetCharacteristicService
-                    .findFeatureDatasetCharacteristicById(id)
-                    .map(List::of)
-                    .orElseGet(List::of);
+                    .findByFeatureIdAndDatasetId(featureId, datasetId);
         } else if (datasetId != null) {
             characteristics = this.featureDatasetCharacteristicService.findByDatasetId(datasetId);
         } else if (featureId != null) {
@@ -112,9 +107,7 @@ public class FeatureDatasetCharacteristicController {
 
             // Composite ID for logging
             if (saved.getId() != null) {
-                String dsId = saved.getId().getDatasetId();
-                String ftId = saved.getId().getFeatureId();
-                String compositeId = "(" + dsId + ", " + ftId + ")";
+                String compositeId = "(" + saved.getId().getDatasetId() + ", " + saved.getId().getFeatureId() + ", " + saved.getId().getCharacteristicName() + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -138,7 +131,7 @@ public class FeatureDatasetCharacteristicController {
      *
      * @param datasetId                           ID of the Dataset
      * @param featureId                           ID of the Feature
-     * @param updatedFeatureDatasetCharacteristic Updated details
+     * @param featureDatasetCharacteristicDTO     Updated details
      * @param studyId                             ID of the study
      * @param principal                           Jwt principal containing user info
      * @return Updated FeatureDatasetCharacteristic or NOT_FOUND
@@ -147,25 +140,26 @@ public class FeatureDatasetCharacteristicController {
     public ResponseEntity<?> updateFeatureDatasetCharacteristic(
             @RequestParam String datasetId,
             @RequestParam String featureId,
-            @RequestBody FeatureDatasetCharacteristic updatedFeatureDatasetCharacteristic,
+            @RequestBody FeatureDatasetCharacteristicDTO featureDatasetCharacteristicDTO,
             @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
         id.setFeatureId(featureId);
         id.setDatasetId(datasetId);
-
+        id.setCharacteristicName(featureDatasetCharacteristicDTO.getCharacteristicName());
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
+            FeatureDatasetCharacteristic entity = new FeatureDatasetCharacteristic(featureDatasetCharacteristicDTO);
             Optional<FeatureDatasetCharacteristic> savedOpt =
-                    this.featureDatasetCharacteristicService.updateFeatureDatasetCharacteristic(id, updatedFeatureDatasetCharacteristic);
+                    this.featureDatasetCharacteristicService.updateFeatureDatasetCharacteristic(id, entity);
 
             if (savedOpt.isPresent()) {
                 FeatureDatasetCharacteristic saved = savedOpt.get();
-                String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ")";
+                String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ", " + id.getCharacteristicName() + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
@@ -191,6 +185,7 @@ public class FeatureDatasetCharacteristicController {
      *
      * @param datasetId ID of the Dataset
      * @param featureId ID of the Feature
+     * @param characteristicName Name of the characteristic
      * @param studyId   ID of the study
      * @param principal Jwt principal containing user info
      * @return No content or NOT_FOUND
@@ -199,13 +194,14 @@ public class FeatureDatasetCharacteristicController {
     public ResponseEntity<?> deleteFeatureDatasetCharacteristic(
             @RequestParam String datasetId,
             @RequestParam String featureId,
+            @RequestParam String characteristicName,
             @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
         FeatureDatasetCharacteristicId id = new FeatureDatasetCharacteristicId();
         id.setFeatureId(featureId);
         id.setDatasetId(datasetId);
-
+        id.setCharacteristicName(characteristicName);
         try {
             if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -213,7 +209,7 @@ public class FeatureDatasetCharacteristicController {
 
             Optional<FeatureDatasetCharacteristic> deletedFeatureDatasetCharacteristic = this.featureDatasetCharacteristicService.deleteFeatureDatasetCharacteristic(id);
             if (deletedFeatureDatasetCharacteristic.isPresent()) {
-                String compositeId = "(" + datasetId + ", " + featureId + ")";
+                String compositeId = "(" + datasetId + ", " + featureId + ", " + characteristicName + ")";
                 auditLogBookService.createAuditLog(
                         principal.getSubject(),
                         principal.getClaim(TokenClaim.USERNAME.getValue()),
