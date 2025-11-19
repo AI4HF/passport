@@ -14,4 +14,5 @@ import java.util.List;
 public interface FeatureDatasetCharacteristicRepository extends JpaRepository<FeatureDatasetCharacteristic, FeatureDatasetCharacteristicId> {
     List<FeatureDatasetCharacteristic> findByIdDatasetId(String datasetId);
     List<FeatureDatasetCharacteristic> findByIdFeatureId(String featureId);
+    List<FeatureDatasetCharacteristic> findByIdFeatureIdAndIdDatasetId(String featureId, String datasetId);
 }

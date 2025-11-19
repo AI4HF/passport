@@ -18,9 +18,6 @@ public class FeatureDatasetCharacteristic implements Serializable {
     @EmbeddedId
     private FeatureDatasetCharacteristicId id;
 
-    @Column(name = "characteristic_name")
-    private String characteristicName;
-
     @Column(name = "value")
     private String value;
 
@@ -35,7 +32,7 @@ public class FeatureDatasetCharacteristic implements Serializable {
         this.id = new FeatureDatasetCharacteristicId();
         this.id.setDatasetId(dto.getDatasetId());
         this.id.setFeatureId(dto.getFeatureId());
-        this.characteristicName = dto.getCharacteristicName();
+        this.id.setCharacteristicName(dto.getCharacteristicName());
         this.value = dto.getValue();
         this.valueDataType = dto.getValueDataType();
     }
