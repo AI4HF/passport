@@ -56,7 +56,8 @@ public class ExperimentService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        experimentRepository.deleteByStudyIdAndExperimentIdNotIn(studyId, incomingIds);
+        if (incomingIds.isEmpty()) experimentRepository.deleteAllByStudyId(studyId);
+        else experimentRepository.deleteByStudyIdAndExperimentIdNotIn(studyId, incomingIds);
 
         List<Experiment> toSave = incoming.stream()
                 .map(exp -> {

@@ -39,7 +39,8 @@ public class LinkedArticleService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
+        if (incomingIds.isEmpty()) linkedArticleRepository.deleteAllByStudyId(studyId);
+        else linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
 
         List<LinkedArticle> toSave = articles.stream().map(a -> {
             LinkedArticle na = new LinkedArticle();
