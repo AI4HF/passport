@@ -46,15 +46,15 @@ public class ExperimentService {
      */
     @Transactional
     public List<Experiment> replaceExperiments(String studyId, List<Experiment> incoming) {
+        if (incoming.isEmpty()) {
+            experimentRepository.deleteAllByStudyId(studyId);
+            return Collections.emptyList();
+        }
+
         Set<String> incomingIds = incoming.stream()
                 .map(Experiment::getExperimentId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-
-        if (incomingIds.isEmpty()) {
-            experimentRepository.deleteAllByStudyId(studyId);
-            return Collections.emptyList();
-        }
 
         experimentRepository.deleteByStudyIdAndExperimentIdNotIn(studyId, incomingIds);
 
