@@ -29,18 +29,18 @@ public class LinkedArticleService {
      */
     @Transactional
     public List<LinkedArticle> replaceLinkedArticles(String studyId, List<LinkedArticle> articles) {
-        Set<String> incomingIds = articles == null ? Collections.emptySet()
-                : articles.stream()
-                .map(LinkedArticle::getLinkedArticleId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        if (incomingIds.isEmpty()) {
+        if (articles.isEmpty()) {
             linkedArticleRepository.deleteAllByStudyId(studyId);
             return Collections.emptyList();
         }
 
-        linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
+        Set<String> incomingIds = articles.stream()
+                .map(LinkedArticle::getLinkedArticleId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        if (incomingIds.isEmpty()) linkedArticleRepository.deleteAllByStudyId(studyId);
+        else linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
 
         List<LinkedArticle> toSave = articles.stream().map(a -> {
             LinkedArticle na = new LinkedArticle();
