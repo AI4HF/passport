@@ -2,15 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.LinkedArticle;
 import io.passport.server.repository.LinkedArticleRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Service class for Linked Article management.
@@ -18,45 +14,79 @@ import java.util.stream.Collectors;
 @Service
 public class LinkedArticleService {
 
-    @Autowired
-    private LinkedArticleRepository linkedArticleRepository;
-
     /**
-     * Overwrite all Linked Article entries for a Study
-     * @param studyId ID of the study
-     * @param articles Collection of Articles to be overwritten as
-     * @return Final state of overwritten Articles
+     * LinkedArticle repo access for database management.
      */
-    @Transactional
-    public List<LinkedArticle> replaceLinkedArticles(String studyId, List<LinkedArticle> articles) {
-        if (articles.isEmpty()) {
-            linkedArticleRepository.deleteAllByStudyId(studyId);
-            return Collections.emptyList();
-        }
+    private final LinkedArticleRepository linkedArticleRepository;
 
-        Set<String> incomingIds = articles.stream()
-                .map(LinkedArticle::getLinkedArticleId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+    @Autowired
+    public LinkedArticleService(LinkedArticleRepository linkedArticleRepository) {
+        this.linkedArticleRepository = linkedArticleRepository;
+    }
 
-        if (incomingIds.isEmpty()) linkedArticleRepository.deleteAllByStudyId(studyId);
-        else linkedArticleRepository.deleteByStudyIdAndLinkedArticleIdNotIn(studyId, incomingIds);
-
-        List<LinkedArticle> toSave = articles.stream().map(a -> {
-            LinkedArticle na = new LinkedArticle();
-            na.setLinkedArticleId(a.getLinkedArticleId());
-            na.setStudyId(studyId);
-            na.setArticleUrl(a.getArticleUrl());
-            return na;
-        }).collect(Collectors.toList());
-
-        return linkedArticleRepository.saveAll(toSave);
+    public List<LinkedArticle> findAllLinkedArticles() {
+        return linkedArticleRepository.findAll();
     }
 
     /**
-     * Read all LinkedArticles by study.
+     * Find a linked article by linkedArticleId
+     * @param linkedArticleId ID of the linked article
+     * @return
      */
-    public List<LinkedArticle> findByStudyId(String studyId) {
+    public Optional<LinkedArticle> findLinkedArticleById(String linkedArticleId) {
+        return linkedArticleRepository.findById(linkedArticleId);
+    }
+
+    /**
+     * Find linked articles by studyId
+     * @param studyId ID of the study
+     * @return
+     */
+    public List<LinkedArticle> findLinkedArticleByStudyId(String studyId) {
         return linkedArticleRepository.findByStudyId(studyId);
+    }
+
+    /**
+     * Save a linked article
+     * @param linkedArticle linked article to be saved
+     * @return
+     */
+    public LinkedArticle saveLinkedArticle(LinkedArticle linkedArticle) {
+        return linkedArticleRepository.save(linkedArticle);
+    }
+
+    /**
+     * Update a linked article
+     * @param linkedArticleId ID of the linked article
+     * @param updatedLinkedArticle linked article to be updated
+     * @return
+     */
+    public Optional<LinkedArticle> updateLinkedArticle(String linkedArticleId, LinkedArticle updatedLinkedArticle) {
+        Optional<LinkedArticle> oldArticle = linkedArticleRepository.findById(linkedArticleId);
+        if (oldArticle.isPresent()) {
+            LinkedArticle article = oldArticle.get();
+            article.setArticleUrl(updatedLinkedArticle.getArticleUrl());
+            article.setDescription(updatedLinkedArticle.getDescription());
+            article.setStudyId(updatedLinkedArticle.getStudyId());
+            LinkedArticle savedArticle = linkedArticleRepository.save(article);
+            return Optional.of(savedArticle);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Delete a linked article
+     * @param linkedArticleId ID of linked article to be deleted
+     * @return
+     */
+    public Optional<LinkedArticle> deleteLinkedArticle(String linkedArticleId) {
+        Optional<LinkedArticle> existingArticle = linkedArticleRepository.findById(linkedArticleId);
+        if (existingArticle.isPresent()) {
+            linkedArticleRepository.delete(existingArticle.get());
+            return existingArticle;
+        } else {
+            return Optional.empty();
+        }
     }
 }

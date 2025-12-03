@@ -34,4 +34,7 @@ public class LinkedArticle {
 
     @Column(name = "article_url")
     private String articleUrl;
+
+    @Column(name = "description")
+    private String description;
 }
