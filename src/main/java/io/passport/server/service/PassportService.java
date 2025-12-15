@@ -259,7 +259,7 @@ public class PassportService {
     }
     private List<LinkedArticle> fetchLinkedArticles(Passport passport) {
         try {
-            return linkedArticleService.findByStudyId(passport.getStudyId());
+            return linkedArticleService.findLinkedArticleByStudyId(passport.getStudyId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Linked Articles: " + e.getMessage());
         }

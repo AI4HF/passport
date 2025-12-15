@@ -53,7 +53,8 @@ CREATE TABLE linked_article
 (
     linked_article_id VARCHAR(255) PRIMARY KEY,
     study_id          VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
-    article_url       TEXT
+    article_url       TEXT,
+    description       TEXT
 );
 
 
@@ -440,10 +441,10 @@ VALUES
      'Can a MAGGIC-based model predict 1-year all cause mortality in Chronic Heart Failure?');
 
 -- Insert into Linked Articles
-INSERT INTO linked_article (linked_article_id, study_id, article_url)
+INSERT INTO linked_article (linked_article_id, study_id, article_url, description)
 VALUES
-    ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://loinc.org/'),
-    ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/');
+    ('0197b0aa-1aaa-7b7b-bbbb-efefefefef01', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'https://loinc.org/', 'The global standard terminology repository for identifying and describing laboratory examinations'),
+    ('2197b0aa-1aaa-7b7b-bbbb-efefefefef02', '2197a6f8-2b78-71e4-81c1-b7b6a744ece4', 'https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/', 'MAGGIC risk score calculation paper and calculator by MDApp.');
 
 
 -- Insert into survey
@@ -1062,7 +1063,8 @@ VALUES
        ],
        "linkedArticles": [
          {
-           "articleUrl": "https://loinc.org/"
+           "articleUrl": "https://loinc.org/",
+           "description": "The global standard terminology repository for identifying and describing laboratory examinations"
          }
        ],
        "datasetsWithLearningDatasets": [
@@ -1204,7 +1206,8 @@ VALUES
        ],
        "linkedArticles": [
           {
-            "articleUrl": "https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/"
+            "articleUrl": "https://www.mdapp.co/heart-failure-life-expectancy-calculator-maggic-risk-score-484/",
+            "description": "MAGGIC risk score calculation paper and calculator by MDApp."
           }
        ],
        "datasetsWithLearningDatasets": [
