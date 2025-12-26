@@ -417,4 +417,27 @@ public class KeycloakService {
                 .map(RoleRepresentation::getName)
                 .collect(Collectors.toSet());
     }
+
+    /**
+     * Deletes the Keycloak group associated with a specific study.
+     *
+     * @param studyId Id of the study
+     */
+    public void deleteStudyGroup(String studyId) {
+        String groupName = "study-" + studyId;
+
+        try {
+            String groupId = findGroupIdByName(groupName);
+
+            if (groupId != null) {
+                keycloak.realm(realm).groups().group(groupId).remove();
+                log.info("Successfully deleted Keycloak group: {}", groupName);
+            } else {
+                log.warn("Study group '{}' not found. Skipping deletion.", groupName);
+            }
+        } catch (Exception e) {
+            log.error("Error deleting study group: {}", groupName, e);
+            throw new RuntimeException("Failed to delete study group: " + groupName, e);
+        }
+    }
 }
