@@ -46,6 +46,34 @@ public class StudyController {
     }
 
     /**
+     * Validates if a Study deletion is safe and authorized
+     *
+     * @param studyId Id of the Study being deleted
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{studyId}/validate-deletion")
+    public ResponseEntity<String> validateStudyDeletion(@PathVariable String studyId,
+                                                        @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.hasAnyRole(principal, List.of(Role.STUDY_OWNER))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Study");
+        }
+
+        String userId = principal.getSubject();
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Study");
+        }
+
+        ValidationResult result = studyService.validateStudyDeletion(studyId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves all studies or a single study if studyId param is provided.
      *
      * @param studyId   Optional ID of the study

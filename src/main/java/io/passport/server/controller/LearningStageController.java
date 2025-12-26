@@ -42,6 +42,34 @@ public class LearningStageController {
     }
 
     /**
+     * Validates if a Learning Stage deletion is safe and authorized
+     *
+     * @param learningStageId Id of the Learning Stage being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{learningStageId}/validate-deletion")
+    public ResponseEntity<String> validateLearningStageDeletion(@PathVariable String learningStageId,
+                                                                @RequestParam String studyId,
+                                                                @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("LearningStage");
+        }
+
+        ValidationResult result = learningStageService.validateLearningStageDeletion(studyId, learningStageId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves learning stages, optionally filtered by the learningProcessId.
      *
      * @param studyId           ID of the study for authorization

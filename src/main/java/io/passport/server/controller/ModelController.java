@@ -42,12 +42,39 @@ public class ModelController {
     }
 
     /**
-     * Retrieves all models by the given studyId.
+     * Validates if a Model deletion is safe and authorized
      *
-     * @param studyId   ID of the study
+     * @param modelId Id of the Model being deleted
      * @param principal Jwt principal containing user info
-     * @return List of Model objects
+     * @return Comma separated string/list of Cascaded entries
      */
+    @GetMapping("/{modelId}/validate-deletion")
+    public ResponseEntity<String> validateModelDeletion(@PathVariable String modelId,
+                                                        @AuthenticationPrincipal Jwt principal) {
+
+        Optional<Model> modelOpt = modelService.findModelById(modelId);
+        if (modelOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String studyId = modelOpt.get().getStudyId();
+
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Model");
+        }
+
+        ValidationResult result = modelService.validateModelDeletion(studyId, modelId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<Model>> getAllModels(@RequestParam String studyId,
                                                     @AuthenticationPrincipal Jwt principal) {

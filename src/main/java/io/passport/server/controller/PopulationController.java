@@ -42,6 +42,34 @@ public class PopulationController {
     }
 
     /**
+     * Validates if a Population deletion is safe and authorized
+     *
+     * @param populationId Id of the Population being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{populationId}/validate-deletion")
+    public ResponseEntity<String> validatePopulationDeletion(@PathVariable String populationId,
+                                                             @RequestParam String studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Population");
+        }
+
+        ValidationResult result = populationService.validatePopulationDeletion(studyId, populationId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Read population by populationId.
      *
      * @param populationId ID of the population.

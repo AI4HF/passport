@@ -43,6 +43,37 @@ public class ParameterController {
     }
 
     /**
+     * Validates if a Parameter deletion is safe and authorized
+     *
+     * @param parameterId Id of the Parameter being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{parameterId}/validate-deletion")
+    public ResponseEntity<String> validateParameterDeletion(@PathVariable String parameterId,
+                                                            @RequestParam String studyId,
+                                                            @AuthenticationPrincipal Jwt principal) {
+
+        // 1. Initial Authorization Check
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Parameter");
+        }
+
+        // 2. Perform Validation
+        ValidationResult result = parameterService.validateParameterDeletion(studyId, parameterId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Read all parameters by StudyId.
      *
      * @param studyId   ID of the study

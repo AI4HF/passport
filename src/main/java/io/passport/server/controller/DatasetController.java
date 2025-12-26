@@ -43,6 +43,34 @@ public class DatasetController {
     }
 
     /**
+     * Validates if a Dataset deletion is safe and authorized
+     *
+     * @param datasetId Id of the Dataset being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{datasetId}/validate-deletion")
+    public ResponseEntity<String> validateDatasetDeletion(@PathVariable String datasetId,
+                                                          @RequestParam String studyId,
+                                                          @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Dataset");
+        }
+
+        ValidationResult result = datasetService.validateDatasetDeletion(studyId, datasetId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves all datasets by the given study ID.
      *
      * @param studyId   ID of the study

@@ -2,8 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.LearningProcessParameter;
 import io.passport.server.model.LearningProcessParameterId;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.LearningProcessParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,54 @@ public class LearningProcessParameterService {
      * LearningProcessParameter repo access for database management.
      */
     private final LearningProcessParameterRepository learningProcessParameterRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public LearningProcessParameterService(LearningProcessParameterRepository learningProcessParameterRepository) {
+    public LearningProcessParameterService(LearningProcessParameterRepository learningProcessParameterRepository,
+                                           RoleCheckerService roleCheckerService) {
         this.learningProcessParameterRepository = learningProcessParameterRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LearningProcessParameter> affectedRecords;
+
+        switch (sourceResourceType) {
+            case "LearningProcess":
+                affectedRecords = learningProcessParameterRepository.findByIdLearningProcessId(sourceResourceId);
+                break;
+            case "Parameter":
+                affectedRecords = learningProcessParameterRepository.findByIdParameterId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedRecords.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "LearningProcessParameter");
+        }
+
+        return new ValidationResult(1, "LearningProcessParameter");
     }
 
     /**

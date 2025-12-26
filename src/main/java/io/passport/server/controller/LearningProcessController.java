@@ -43,6 +43,34 @@ public class LearningProcessController {
     }
 
     /**
+     * Validates if a Learning Process deletion is safe and authorized
+     *
+     * @param learningProcessId Id of the Learning Process being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{learningProcessId}/validate-deletion")
+    public ResponseEntity<String> validateLearningProcessDeletion(@PathVariable String learningProcessId,
+                                                                  @RequestParam String studyId,
+                                                                  @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("LearningProcess");
+        }
+
+        ValidationResult result = learningProcessService.validateLearningProcessDeletion(studyId, learningProcessId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Reads all learning processes by a given studyId.
      *
      * @param studyId   ID of the study

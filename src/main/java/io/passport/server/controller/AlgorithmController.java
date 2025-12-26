@@ -43,6 +43,34 @@ public class AlgorithmController {
         this.auditLogBookService = auditLogBookService;
     }
 
+    /**
+     * Validates if a Algorithm deletion is safe and authorized
+     *
+     * @param algorithmId Id of the Algorithm being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{algorithmId}/validate-deletion")
+    public ResponseEntity<String> validateAlgorithmDeletion(@PathVariable String algorithmId,
+                                                            @RequestParam String studyId,
+                                                            @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Algorithm");
+        }
+
+        ValidationResult result = algorithmService.validateAlgorithmDeletion(studyId, algorithmId, principal);
+
+        if (result.status() == 1) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<Algorithm>> getAllAlgorithms(
             @RequestParam String studyId,
