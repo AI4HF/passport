@@ -1,11 +1,16 @@
 package io.passport.server.service;
 
 import io.passport.server.model.FeatureSet;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.FeatureSetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +24,88 @@ public class FeatureSetService {
      * FeatureSet repo access for database management.
      */
     private final FeatureSetRepository featureSetRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private FeatureService featureService;
+    @Autowired @Lazy private DatasetService datasetService;
 
     @Autowired
-    public FeatureSetService(FeatureSetRepository featureSetRepository) {
+    public FeatureSetService(FeatureSetRepository featureSetRepository,
+                             RoleCheckerService roleCheckerService) {
         this.featureSetRepository = featureSetRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Starts a validation chain of Feature Set and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param featuresetId Id of the Feature Set
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateFeatureSetDeletion(String studyId, String featuresetId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(featureService.validateCascade(studyId, "FeatureSet", featuresetId, principal));
+        results.add(datasetService.validateCascade(studyId, "FeatureSet", featuresetId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<FeatureSet> affectedFeatureSets;
+
+        switch (sourceResourceType) {
+            case "Experiment":
+                affectedFeatureSets = featureSetRepository.findByExperimentId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedFeatureSets.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorized = true;
+
+        for (FeatureSet fs : affectedFeatureSets) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    studyId,
+                    principal,
+                    List.of(Role.DATA_ENGINEER)
+            );
+
+            if (!hasPermission) {
+                authorized = false;
+                break;
+            }
+
+            childResults.add(validateFeatureSetDeletion(studyId, fs.getFeaturesetId(), principal));
+        }
+
+        if (!authorized) {
+            return new ValidationResult(0, "FeatureSet");
+        }
+
+        childResults.add(new ValidationResult(1, "FeatureSet"));
+
+        return ValidationResult.aggregate(childResults);
     }
 
     /**
@@ -97,6 +180,20 @@ public class FeatureSetService {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Efficiently find the Study ID associated with a FeatureSet.
+     */
+    public String findStudyIdByFeatureSetId(String featuresetId) {
+        return featureSetRepository.findStudyIdByFeatureSetId(featuresetId);
+    }
+
+    /**
+     * Find FeatureSets created or last updated by a specific personnel.
+     */
+    public List<FeatureSet> findByCreatedByOrLastUpdatedBy(String personnelId) {
+        return featureSetRepository.findByCreatedByOrLastUpdatedBy(personnelId);
     }
 
 }

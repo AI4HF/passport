@@ -1,8 +1,11 @@
 package io.passport.server.service;
 
 import io.passport.server.model.DatasetTransformationStep;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.DatasetTransformationStepRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,10 +22,51 @@ public class DatasetTransformationStepService {
      * DatasetTransformationStep repo access for database management.
      */
     private final DatasetTransformationStepRepository datasetTransformationStepRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public DatasetTransformationStepService(DatasetTransformationStepRepository datasetTransformationStepRepository) {
+    public DatasetTransformationStepService(DatasetTransformationStepRepository datasetTransformationStepRepository,
+                                            RoleCheckerService roleCheckerService) {
         this.datasetTransformationStepRepository = datasetTransformationStepRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<DatasetTransformationStep> affectedSteps;
+
+        switch (sourceResourceType) {
+            case "DatasetTransformation":
+                affectedSteps = datasetTransformationStepRepository.findByDataTransformationId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedSteps.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "DatasetTransformationStep");
+        }
+
+        return new ValidationResult(1, "DatasetTransformationStep");
     }
 
     /**
@@ -100,5 +144,23 @@ public class DatasetTransformationStepService {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Find Steps created or last updated by a specific personnel
+     *
+     * @param personnelId Id of the Personnel
+     */
+    public List<DatasetTransformationStep> findByCreatedByOrLastUpdatedBy(String personnelId) {
+        return datasetTransformationStepRepository.findByCreatedByOrLastUpdatedBy(personnelId);
+    }
+
+    /**
+     * Resolve the Study ID for a given Step ID directly via a repository call
+     *
+     * @param stepId Id of the Transformation Step
+     */
+    public Optional<String> findStudyIdByStepId(String stepId) {
+        return datasetTransformationStepRepository.findStudyIdByStepId(stepId);
     }
 }

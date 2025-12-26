@@ -1,10 +1,15 @@
 package io.passport.server.service;
 
 import io.passport.server.model.LearningStage;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.LearningStageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +23,86 @@ public class LearningStageService {
      * LearningStage repo access for database management.
      */
     private final LearningStageRepository learningStageRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private LearningStageParameterService learningStageParameterService;
 
     @Autowired
-    public LearningStageService(LearningStageRepository learningStageRepository) {
+    public LearningStageService(LearningStageRepository learningStageRepository,
+                                RoleCheckerService roleCheckerService) {
         this.learningStageRepository = learningStageRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Starts a validation chain of Learning Stage and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param learningStageId Id of the Learning Stage
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateLearningStageDeletion(String studyId, String learningStageId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(learningStageParameterService.validateCascade(studyId, "LearningStage", learningStageId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LearningStage> affectedStages;
+
+        switch (sourceResourceType) {
+            case "LearningProcess":
+                affectedStages = learningStageRepository.findByLearningProcessId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedStages.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorized = true;
+
+        for (LearningStage stage : affectedStages) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    studyId,
+                    principal,
+                    List.of(Role.DATA_SCIENTIST)
+            );
+
+            if (!hasPermission) {
+                authorized = false;
+                break;
+            }
+
+            childResults.add(validateLearningStageDeletion(studyId, stage.getLearningStageId(), principal));
+        }
+
+        if (!authorized) {
+            return new ValidationResult(0, "LearningStage");
+        }
+
+        childResults.add(new ValidationResult(1, "LearningStage"));
+
+        return ValidationResult.aggregate(childResults);
     }
 
     /**

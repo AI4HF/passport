@@ -1,10 +1,14 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Algorithm;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.AlgorithmRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +23,29 @@ public class AlgorithmService {
      */
     private final AlgorithmRepository algorithmRepository;
 
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private ImplementationService implementationService;
+
     @Autowired
     public AlgorithmService(AlgorithmRepository algorithmRepository) {
         this.algorithmRepository = algorithmRepository;
+    }
+
+    /**
+     * Starts a validation chain of Algorithms and all of their children for cascades
+     * @param studyId Id of the Study
+     * @param algorithmId Id of the Algorithm
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateAlgorithmDeletion(String studyId, String algorithmId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(implementationService.validateCascade(studyId, "Algorithm", algorithmId, principal));
+
+        return ValidationResult.aggregate(results);
     }
 
     /**

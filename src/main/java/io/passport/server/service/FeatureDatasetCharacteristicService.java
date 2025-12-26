@@ -2,8 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.FeatureDatasetCharacteristic;
 import io.passport.server.model.FeatureDatasetCharacteristicId;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.FeatureDatasetCharacteristicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,54 @@ public class FeatureDatasetCharacteristicService {
      * FeatureDatasetCharacteristic repo access for database management.
      */
     private final FeatureDatasetCharacteristicRepository featureDatasetCharacteristicRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public FeatureDatasetCharacteristicService(FeatureDatasetCharacteristicRepository featureDatasetCharacteristicRepository) {
+    public FeatureDatasetCharacteristicService(FeatureDatasetCharacteristicRepository featureDatasetCharacteristicRepository,
+                                               RoleCheckerService roleCheckerService) {
         this.featureDatasetCharacteristicRepository = featureDatasetCharacteristicRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<FeatureDatasetCharacteristic> affectedCharacteristics;
+
+        switch (sourceResourceType) {
+            case "Dataset":
+                affectedCharacteristics = featureDatasetCharacteristicRepository.findByIdDatasetId(sourceResourceId);
+                break;
+            case "Feature":
+                affectedCharacteristics = featureDatasetCharacteristicRepository.findByIdFeatureId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedCharacteristics.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_ENGINEER)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "FeatureDatasetCharacteristic");
+        }
+
+        return new ValidationResult(1, "FeatureDatasetCharacteristic");
     }
 
     /**

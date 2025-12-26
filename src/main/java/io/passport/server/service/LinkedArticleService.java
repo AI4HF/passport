@@ -1,8 +1,11 @@
 package io.passport.server.service;
 
 import io.passport.server.model.LinkedArticle;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.LinkedArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +21,52 @@ public class LinkedArticleService {
      * LinkedArticle repo access for database management.
      */
     private final LinkedArticleRepository linkedArticleRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public LinkedArticleService(LinkedArticleRepository linkedArticleRepository) {
+    public LinkedArticleService(LinkedArticleRepository linkedArticleRepository,
+                                RoleCheckerService roleCheckerService) {
         this.linkedArticleRepository = linkedArticleRepository;
+        this.roleCheckerService = roleCheckerService;
     }
 
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LinkedArticle> affectedArticles;
+
+        switch (sourceResourceType) {
+            case "Study":
+                affectedArticles = linkedArticleRepository.findByStudyId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedArticles.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.STUDY_OWNER)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "LinkedArticle");
+        }
+
+        return new ValidationResult(1, "LinkedArticle");
+    }
     public List<LinkedArticle> findAllLinkedArticles() {
         return linkedArticleRepository.findAll();
     }

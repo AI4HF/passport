@@ -3,6 +3,7 @@ package io.passport.server.service;
 import io.passport.server.model.*;
 import io.passport.server.repository.PassportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -78,10 +79,55 @@ public class PassportService {
     @Autowired
     private ModelFigureService modelFigureService;
 
+    private final RoleCheckerService roleCheckerService;
+
 
     @Autowired
-    public PassportService(PassportRepository passportRepository) {
+    public PassportService(PassportRepository passportRepository, RoleCheckerService roleCheckerService) {
         this.passportRepository = passportRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Passport> affectedPassports;
+
+        switch (sourceResourceType) {
+            case "ModelDeployment":
+                affectedPassports = passportRepository.findByDeploymentId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedPassports.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.QUALITY_ASSURANCE_SPECIALIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "Passport");
+        }
+
+        return new ValidationResult(1, "Passport");
+    }
+
+    public Passport savePassport(Passport passport) {
+        return passportRepository.save(passport);
     }
 
     /**
@@ -432,6 +478,20 @@ public class PassportService {
                 }
             }
         }
+    }
+
+    /**
+     * Find Passports created or approved by a specific personnel.
+     */
+    public List<Passport> findByCreatedByOrApprovedBy(String personnelId) {
+        return passportRepository.findByCreatedByOrApprovedBy(personnelId);
+    }
+
+    /**
+     * Resolve the Study ID for a given Passport ID directly via DB query.
+     */
+    public Optional<String> findStudyIdByPassportId(String passportId) {
+        return passportRepository.findStudyIdByPassportId(passportId);
     }
 
 }

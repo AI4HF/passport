@@ -1,11 +1,16 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Feature;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +24,73 @@ public class FeatureService {
      * Feature repo access for database management.
      */
     private final FeatureRepository featureRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
 
     @Autowired
-    public FeatureService(FeatureRepository featureRepository) {
+    public FeatureService(FeatureRepository featureRepository,
+                          RoleCheckerService roleCheckerService) {
         this.featureRepository = featureRepository;
+        this.roleCheckerService = roleCheckerService;
     }
 
+    /**
+     * Starts a validation chain of Feature and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param featureId Id of Feature
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateFeatureDeletion(String studyId, String featureId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(featureDatasetCharacteristicService.validateCascade(studyId, "Feature", featureId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Feature> affectedFeatures;
+
+        switch (sourceResourceType) {
+            case "FeatureSet":
+                affectedFeatures = featureRepository.findByFeaturesetId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(1, "");
+        }
+
+        if (affectedFeatures.isEmpty()) {
+            return new ValidationResult(1, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_ENGINEER)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(0, "Feature");
+        }
+
+        return new ValidationResult(1, "Feature");
+    }
     /**
      * Return all Features
      * @return
@@ -104,6 +170,20 @@ public class FeatureService {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Find Features created or last updated by a specific personnel.
+     */
+    public List<Feature> findByCreatedByOrLastUpdatedBy(String personnelId) {
+        return featureRepository.findByCreatedByOrLastUpdatedBy(personnelId);
+    }
+
+    /**
+     * Resolve the Study ID for a given Feature ID directly via DB query.
+     */
+    public Optional<String> findStudyIdByFeatureId(String featureId) {
+        return featureRepository.findStudyIdByFeatureId(featureId);
     }
 
 }
