@@ -34,6 +34,8 @@ public interface StudyPersonnelRepository extends JpaRepository<StudyPersonnel, 
     @Query("SELECT sp FROM StudyPersonnel sp WHERE sp.id.studyId = :studyId AND sp.id.personnelId IN :personnelIdList")
     List<StudyPersonnel> findByStudyIdAndPersonnelIdList(@Param("studyId") String studyId, @Param("personnelIdList") List<String> personnelIdList);
 
+    List<StudyPersonnel> findByIdStudyId(String studyId);
+
     List<StudyPersonnel> findStudyPersonnelById_PersonnelId(String personId);
 
     @Query("SELECT sp " +

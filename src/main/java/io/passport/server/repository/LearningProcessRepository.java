@@ -13,4 +13,6 @@ import java.util.List;
 public interface LearningProcessRepository extends JpaRepository<LearningProcess, String> {
 
     List<LearningProcess> findAllByStudyId(String studyId);
+
+    List<LearningProcess> findByImplementationId(String implementationId);
 }
