@@ -80,11 +80,11 @@ public class LearningProcessService {
                 affectedProcesses = learningProcessRepository.findByImplementationId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedProcesses.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -106,10 +106,10 @@ public class LearningProcessService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "LearningProcess");
+            return new ValidationResult(false, "LearningProcess");
         }
 
-        childResults.add(new ValidationResult(1, "LearningProcess"));
+        childResults.add(new ValidationResult(true, "LearningProcess"));
 
         return ValidationResult.aggregate(childResults);
     }

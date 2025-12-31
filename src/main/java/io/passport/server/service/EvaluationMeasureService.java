@@ -45,11 +45,11 @@ public class EvaluationMeasureService {
                 affectedMeasures = evaluationMeasureRepository.findAllByModelId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedMeasures.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -59,10 +59,10 @@ public class EvaluationMeasureService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "EvaluationMeasure");
+            return new ValidationResult(false, "EvaluationMeasure");
         }
 
-        return new ValidationResult(1, "EvaluationMeasure");
+        return new ValidationResult(true, "EvaluationMeasure");
     }
 
     /**

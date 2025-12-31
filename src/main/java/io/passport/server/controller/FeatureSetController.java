@@ -63,7 +63,7 @@ public class FeatureSetController {
 
         ValidationResult result = featureSetService.validateFeatureSetDeletion(studyId, featureSetId, principal);
 
-        if (result.status() == 1) {
+        if (result.status()) {
             return ResponseEntity.ok(result.tables());
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());

@@ -52,11 +52,11 @@ public class LearningStageParameterService {
                 affectedRecords = learningStageParameterRepository.findByIdParameterId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedRecords.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -66,10 +66,10 @@ public class LearningStageParameterService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "LearningStageParameter");
+            return new ValidationResult(false, "LearningStageParameter");
         }
 
-        return new ValidationResult(1, "LearningStageParameter");
+        return new ValidationResult(true, "LearningStageParameter");
     }
 
     /**

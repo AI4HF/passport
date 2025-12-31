@@ -52,11 +52,11 @@ public class LearningProcessDatasetService {
                 affectedRecords = learningProcessDatasetRepository.findByIdLearningProcessId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedRecords.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -66,10 +66,10 @@ public class LearningProcessDatasetService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "LearningProcessDataset");
+            return new ValidationResult(false, "LearningProcessDataset");
         }
 
-        return new ValidationResult(1, "LearningProcessDataset");
+        return new ValidationResult(true, "LearningProcessDataset");
     }
 
     /**

@@ -71,11 +71,11 @@ public class LearningStageService {
                 affectedStages = learningStageRepository.findByLearningProcessId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedStages.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -97,10 +97,10 @@ public class LearningStageService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "LearningStage");
+            return new ValidationResult(false, "LearningStage");
         }
 
-        childResults.add(new ValidationResult(1, "LearningStage"));
+        childResults.add(new ValidationResult(true, "LearningStage"));
 
         return ValidationResult.aggregate(childResults);
     }

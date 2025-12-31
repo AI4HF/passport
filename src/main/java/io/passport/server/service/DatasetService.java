@@ -82,11 +82,11 @@ public class DatasetService {
                 affectedDatasets = datasetRepository.findByOrganizationId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedDatasets.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -107,10 +107,10 @@ public class DatasetService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "Dataset");
+            return new ValidationResult(false, "Dataset");
         }
 
-        childResults.add(new ValidationResult(1, "Dataset"));
+        childResults.add(new ValidationResult(true, "Dataset"));
 
         return ValidationResult.aggregate(childResults);
     }

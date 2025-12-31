@@ -48,11 +48,11 @@ public class LinkedArticleService {
                 affectedArticles = linkedArticleRepository.findByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedArticles.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -62,10 +62,10 @@ public class LinkedArticleService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "LinkedArticle");
+            return new ValidationResult(false, "LinkedArticle");
         }
 
-        return new ValidationResult(1, "LinkedArticle");
+        return new ValidationResult(true, "LinkedArticle");
     }
     public List<LinkedArticle> findAllLinkedArticles() {
         return linkedArticleRepository.findAll();

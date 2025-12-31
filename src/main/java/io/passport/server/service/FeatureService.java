@@ -72,11 +72,11 @@ public class FeatureService {
                 affectedFeatures = featureRepository.findByFeaturesetId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedFeatures.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -86,10 +86,10 @@ public class FeatureService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "Feature");
+            return new ValidationResult(false, "Feature");
         }
 
-        return new ValidationResult(1, "Feature");
+        return new ValidationResult(true, "Feature");
     }
     /**
      * Return all Features

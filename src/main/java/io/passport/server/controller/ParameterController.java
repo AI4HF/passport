@@ -55,7 +55,6 @@ public class ParameterController {
                                                             @RequestParam String studyId,
                                                             @AuthenticationPrincipal Jwt principal) {
 
-        // 1. Initial Authorization Check
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
                 principal,
@@ -63,10 +62,9 @@ public class ParameterController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Parameter");
         }
 
-        // 2. Perform Validation
         ValidationResult result = parameterService.validateParameterDeletion(studyId, parameterId, principal);
 
-        if (result.status() == 1) {
+        if (result.status()) {
             return ResponseEntity.ok(result.tables());
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());

@@ -57,7 +57,7 @@ public class ModelDeploymentService {
         List<ValidationResult> results = new ArrayList<>();
 
         results.add(passportService.validateCascade(studyId, "ModelDeployment", deploymentId, principal));
-        results.add(new ValidationResult(1, "DeploymentEnvironment"));
+        results.add(new ValidationResult(true, "DeploymentEnvironment"));
 
         return ValidationResult.aggregate(results);
     }
@@ -80,11 +80,11 @@ public class ModelDeploymentService {
                 affectedDeployments = modelDeploymentRepository.findByModelId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedDeployments.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -106,10 +106,10 @@ public class ModelDeploymentService {
         }
 
         if (!authorizedForDeployments) {
-            return new ValidationResult(0, "ModelDeployment");
+            return new ValidationResult(false, "ModelDeployment");
         }
 
-        childResults.add(new ValidationResult(1, "ModelDeployment"));
+        childResults.add(new ValidationResult(true, "ModelDeployment"));
 
         return ValidationResult.aggregate(childResults);
     }

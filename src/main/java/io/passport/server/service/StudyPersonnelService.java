@@ -65,11 +65,11 @@ public class StudyPersonnelService {
                 affectedEntries = studyPersonnelRepository.findStudyPersonnelById_PersonnelId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedEntries.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -79,10 +79,10 @@ public class StudyPersonnelService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "StudyPersonnel");
+            return new ValidationResult(false, "StudyPersonnel");
         }
 
-        return new ValidationResult(1, "StudyPersonnel");
+        return new ValidationResult(true, "StudyPersonnel");
     }
     /**
      * Fetch personnel-role mappings for a given study and organization.

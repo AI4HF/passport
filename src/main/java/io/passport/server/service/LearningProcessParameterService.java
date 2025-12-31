@@ -52,11 +52,11 @@ public class LearningProcessParameterService {
                 affectedRecords = learningProcessParameterRepository.findByIdParameterId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedRecords.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -66,10 +66,10 @@ public class LearningProcessParameterService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "LearningProcessParameter");
+            return new ValidationResult(false, "LearningProcessParameter");
         }
 
-        return new ValidationResult(1, "LearningProcessParameter");
+        return new ValidationResult(true, "LearningProcessParameter");
     }
 
     /**

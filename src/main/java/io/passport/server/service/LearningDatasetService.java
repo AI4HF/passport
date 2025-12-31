@@ -84,11 +84,11 @@ public class LearningDatasetService {
                 affectedLearningDatasets = learningDatasetRepository.findAllByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedLearningDatasets.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -110,10 +110,10 @@ public class LearningDatasetService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "LearningDataset");
+            return new ValidationResult(false, "LearningDataset");
         }
 
-        childResults.add(new ValidationResult(1, "LearningDataset"));
+        childResults.add(new ValidationResult(true, "LearningDataset"));
 
         return ValidationResult.aggregate(childResults);
     }

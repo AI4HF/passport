@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * @param status Number representing the authorization status of Cascades (1=Authorized, 0=Not Authorized)
  * @param tables A comma-separated String containing the names of the tables involved (Empty String = No Cascade Occurred)
  */
-public record ValidationResult(int status, String tables) {
+public record ValidationResult(boolean status, String tables) {
 
     /**
      * Aggregates a list of validation results into a single result while eliminating duplicate Cascades
@@ -20,13 +20,13 @@ public record ValidationResult(int status, String tables) {
      */
     public static ValidationResult aggregate(List<ValidationResult> results) {
         if (results == null || results.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean isOverallAuthorized = true;
 
         for (ValidationResult res : results) {
-            if (res.status() == 0) {
+            if (!res.status()) {
                 isOverallAuthorized = false;
                 break;
             }
@@ -35,7 +35,7 @@ public record ValidationResult(int status, String tables) {
         List<String> collectedTables = new ArrayList<>();
 
         for (ValidationResult res : results) {
-            boolean shouldCollect = isOverallAuthorized || (res.status() == 0);
+            boolean shouldCollect = isOverallAuthorized || (!res.status());
 
             if (shouldCollect && res.tables() != null && !res.tables().isEmpty()) {
                 collectedTables.add(res.tables());
@@ -46,6 +46,6 @@ public record ValidationResult(int status, String tables) {
                 .distinct()
                 .collect(Collectors.joining(","));
 
-        return new ValidationResult(isOverallAuthorized ? 1 : 0, finalString);
+        return new ValidationResult(isOverallAuthorized, finalString);
     }
 }

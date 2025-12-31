@@ -73,11 +73,11 @@ public class PopulationService {
                 affectedPopulations = populationRepository.findByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedPopulations.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -99,10 +99,10 @@ public class PopulationService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "Population");
+            return new ValidationResult(false, "Population");
         }
 
-        childResults.add(new ValidationResult(1, "Population"));
+        childResults.add(new ValidationResult(true, "Population"));
 
         return ValidationResult.aggregate(childResults);
     }

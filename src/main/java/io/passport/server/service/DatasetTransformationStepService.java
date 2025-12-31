@@ -49,11 +49,11 @@ public class DatasetTransformationStepService {
                 affectedSteps = datasetTransformationStepRepository.findByDataTransformationId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedSteps.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -63,10 +63,10 @@ public class DatasetTransformationStepService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "DatasetTransformationStep");
+            return new ValidationResult(false, "DatasetTransformationStep");
         }
 
-        return new ValidationResult(1, "DatasetTransformationStep");
+        return new ValidationResult(true, "DatasetTransformationStep");
     }
 
     /**

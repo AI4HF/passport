@@ -71,11 +71,11 @@ public class ImplementationService {
                 affectedImplementations = implementationRepository.findByAlgorithmId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedImplementations.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -97,10 +97,10 @@ public class ImplementationService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "Implementation");
+            return new ValidationResult(false, "Implementation");
         }
 
-        childResults.add(new ValidationResult(1, "Implementation"));
+        childResults.add(new ValidationResult(true, "Implementation"));
 
         return ValidationResult.aggregate(childResults);
     }

@@ -74,11 +74,11 @@ public class FeatureSetService {
                 affectedFeatureSets = featureSetRepository.findByExperimentId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedFeatureSets.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -100,10 +100,10 @@ public class FeatureSetService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "FeatureSet");
+            return new ValidationResult(false, "FeatureSet");
         }
 
-        childResults.add(new ValidationResult(1, "FeatureSet"));
+        childResults.add(new ValidationResult(true, "FeatureSet"));
 
         return ValidationResult.aggregate(childResults);
     }

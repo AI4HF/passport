@@ -83,11 +83,11 @@ public class ModelService {
                 affectedModels = modelRepository.findByOwner(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedModels.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -109,10 +109,10 @@ public class ModelService {
         }
 
         if (!authorizedForModels) {
-            return new ValidationResult(0, "Model");
+            return new ValidationResult(false, "Model");
         }
 
-        childResults.add(new ValidationResult(1, "Model"));
+        childResults.add(new ValidationResult(true, "Model"));
 
         return ValidationResult.aggregate(childResults);
     }

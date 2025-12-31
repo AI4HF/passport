@@ -48,11 +48,11 @@ public class SurveyService {
                 affectedSurveys = surveyRepository.findAllByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedSurveys.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -62,10 +62,10 @@ public class SurveyService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "Survey");
+            return new ValidationResult(false, "Survey");
         }
 
-        return new ValidationResult(1, "Survey");
+        return new ValidationResult(true, "Survey");
     }
 
     /**

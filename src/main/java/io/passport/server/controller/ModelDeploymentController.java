@@ -63,7 +63,7 @@ public class ModelDeploymentController {
 
         ValidationResult result = modelDeploymentService.validateModelDeploymentDeletion(studyId, deploymentId, principal);
 
-        if (result.status() == 1) {
+        if (result.status()) {
             return ResponseEntity.ok(result.tables());
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());

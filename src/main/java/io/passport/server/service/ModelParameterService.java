@@ -52,11 +52,11 @@ public class ModelParameterService {
                 affectedParameters = modelParameterRepository.findByIdParameterId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedParameters.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -66,10 +66,10 @@ public class ModelParameterService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "ModelParameter");
+            return new ValidationResult(false, "ModelParameter");
         }
 
-        return new ValidationResult(1, "ModelParameter");
+        return new ValidationResult(true, "ModelParameter");
     }
 
     /**

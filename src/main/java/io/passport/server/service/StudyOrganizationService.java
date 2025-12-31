@@ -53,11 +53,11 @@ public class StudyOrganizationService {
                 affectedLinks = studyOrganizationRepository.findByPopulationId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedLinks.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -67,10 +67,10 @@ public class StudyOrganizationService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "StudyOrganization");
+            return new ValidationResult(false, "StudyOrganization");
         }
 
-        return new ValidationResult(1, "StudyOrganization");
+        return new ValidationResult(true, "StudyOrganization");
     }
 
     /**

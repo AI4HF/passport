@@ -76,7 +76,7 @@ public class ExperimentService {
                 .collect(Collectors.toList());
 
         if (toDelete.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> validationResults = new ArrayList<>();
@@ -105,11 +105,11 @@ public class ExperimentService {
                 affectedExperiments = experimentRepository.findByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedExperiments.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -131,10 +131,10 @@ public class ExperimentService {
         }
 
         if (!authorizedForExperiments) {
-            return new ValidationResult(0, "Experiment");
+            return new ValidationResult(false, "Experiment");
         }
 
-        childResults.add(new ValidationResult(1, "Experiment"));
+        childResults.add(new ValidationResult(true, "Experiment"));
 
         return ValidationResult.aggregate(childResults);
     }

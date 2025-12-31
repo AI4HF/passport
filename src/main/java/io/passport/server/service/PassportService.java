@@ -106,11 +106,11 @@ public class PassportService {
                 affectedPassports = passportRepository.findByDeploymentId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedPassports.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -120,10 +120,10 @@ public class PassportService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "Passport");
+            return new ValidationResult(false, "Passport");
         }
 
-        return new ValidationResult(1, "Passport");
+        return new ValidationResult(true, "Passport");
     }
 
     public Passport savePassport(Passport passport) {

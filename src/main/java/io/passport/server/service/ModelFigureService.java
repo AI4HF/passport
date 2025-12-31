@@ -38,11 +38,11 @@ public class ModelFigureService {
                 affectedFigures = modelFigureRepository.findByModelId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedFigures.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -52,10 +52,10 @@ public class ModelFigureService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "ModelFigure");
+            return new ValidationResult(false, "ModelFigure");
         }
 
-        return new ValidationResult(1, "ModelFigure");
+        return new ValidationResult(true, "ModelFigure");
     }
 
     /**

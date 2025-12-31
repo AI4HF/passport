@@ -52,11 +52,11 @@ public class FeatureDatasetCharacteristicService {
                 affectedCharacteristics = featureDatasetCharacteristicRepository.findByIdFeatureId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedCharacteristics.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
@@ -66,10 +66,10 @@ public class FeatureDatasetCharacteristicService {
         );
 
         if (!hasPermission) {
-            return new ValidationResult(0, "FeatureDatasetCharacteristic");
+            return new ValidationResult(false, "FeatureDatasetCharacteristic");
         }
 
-        return new ValidationResult(1, "FeatureDatasetCharacteristic");
+        return new ValidationResult(true, "FeatureDatasetCharacteristic");
     }
 
     /**

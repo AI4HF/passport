@@ -75,11 +75,11 @@ public class ParameterService {
                 affectedParameters = parameterRepository.findAllByStudyId(sourceResourceId);
                 break;
             default:
-                return new ValidationResult(1, "");
+                return new ValidationResult(true, "");
         }
 
         if (affectedParameters.isEmpty()) {
-            return new ValidationResult(1, "");
+            return new ValidationResult(true, "");
         }
 
         List<ValidationResult> childResults = new ArrayList<>();
@@ -101,10 +101,10 @@ public class ParameterService {
         }
 
         if (!authorized) {
-            return new ValidationResult(0, "Parameter");
+            return new ValidationResult(false, "Parameter");
         }
 
-        childResults.add(new ValidationResult(1, "Parameter"));
+        childResults.add(new ValidationResult(true, "Parameter"));
 
         return ValidationResult.aggregate(childResults);
     }
