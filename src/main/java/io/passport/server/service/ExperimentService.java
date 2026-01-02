@@ -1,16 +1,17 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Experiment;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.ExperimentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,10 +24,119 @@ public class ExperimentService {
      * Experiment repo access for database management.
      */
     public final ExperimentRepository experimentRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private ModelService modelService;
+    @Autowired @Lazy private FeatureSetService featureSetService;
 
     @Autowired
-    public ExperimentService(ExperimentRepository experimentRepository) {
+    public ExperimentService(ExperimentRepository experimentRepository, RoleCheckerService roleCheckerService) {
         this.experimentRepository = experimentRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Starts a validation chain of Experiments and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param experimentId Id of the Experiment
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateExperimentDeletion(String studyId, String experimentId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(modelService.validateCascade(studyId, "Experiment", experimentId, principal));
+        results.add(featureSetService.validateCascade(studyId, "Experiment", experimentId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Validate all Experiments for cascades that are removed during an Experiment replacement
+     *
+     *  @param studyId Id of the Study
+     * @param incoming List of overwriting Experiment list
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateExperimentReplacement(String studyId, List<Experiment> incoming, Jwt principal) {
+        List<Experiment> existingExperiments = experimentRepository.findByStudyId(studyId);
+
+        Set<String> incomingIds = incoming.stream()
+                .map(Experiment::getExperimentId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        List<Experiment> toDelete = existingExperiments.stream()
+                .filter(exp -> !incomingIds.contains(exp.getExperimentId()))
+                .collect(Collectors.toList());
+
+        if (toDelete.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        List<ValidationResult> validationResults = new ArrayList<>();
+        for (Experiment expToDelete : toDelete) {
+            validationResults.add(validateExperimentDeletion(studyId, expToDelete.getExperimentId(), principal));
+        }
+
+        return ValidationResult.aggregate(validationResults);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Experiment> affectedExperiments;
+
+        switch (sourceResourceType) {
+            case "Study":
+                affectedExperiments = experimentRepository.findByStudyId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedExperiments.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorizedForExperiments = true;
+
+        for (Experiment exp : affectedExperiments) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    studyId,
+                    principal,
+                    List.of(Role.STUDY_OWNER)
+            );
+
+            if (!hasPermission) {
+                authorizedForExperiments = false;
+                break;
+            }
+
+            childResults.add(validateExperimentDeletion(studyId, exp.getExperimentId(), principal));
+        }
+
+        if (!authorizedForExperiments) {
+            return new ValidationResult(false, "Experiment");
+        }
+
+        childResults.add(new ValidationResult(true, "Experiment"));
+
+        return ValidationResult.aggregate(childResults);
     }
 
     /**

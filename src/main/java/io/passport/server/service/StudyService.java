@@ -1,10 +1,14 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Study;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.StudyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +23,44 @@ public class StudyService {
      */
     private final StudyRepository studyRepository;
 
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private ExperimentService experimentService;
+    @Autowired @Lazy private PopulationService populationService;
+    @Autowired @Lazy private LearningProcessService learningProcessService;
+    @Autowired @Lazy private ParameterService parameterService;
+    @Autowired @Lazy private SurveyService surveyService;
+    @Autowired @Lazy private StudyPersonnelService studyPersonnelService;
+    @Autowired @Lazy private StudyOrganizationService studyOrganizationService;
+    @Autowired @Lazy private LinkedArticleService linkedArticleService;
+
     @Autowired
     public StudyService(StudyRepository studyRepository) {
         this.studyRepository = studyRepository;
     }
 
+    /**
+     * Starts a validation chain of Study and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateStudyDeletion(String studyId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(experimentService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(populationService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(learningProcessService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(parameterService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(surveyService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(studyPersonnelService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(studyOrganizationService.validateCascade(studyId, "Study", studyId, principal));
+        results.add(linkedArticleService.validateCascade(studyId, "Study", studyId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
 
     /**
      * Return all studies

@@ -2,8 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.LearningStageParameter;
 import io.passport.server.model.LearningStageParameterId;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.LearningStageParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,54 @@ public class LearningStageParameterService {
      * LearningStageParameter repo access for database management.
      */
     private final LearningStageParameterRepository learningStageParameterRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public LearningStageParameterService(LearningStageParameterRepository learningStageParameterRepository) {
+    public LearningStageParameterService(LearningStageParameterRepository learningStageParameterRepository,
+                                         RoleCheckerService roleCheckerService) {
         this.learningStageParameterRepository = learningStageParameterRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LearningStageParameter> affectedRecords;
+
+        switch (sourceResourceType) {
+            case "LearningStage":
+                affectedRecords = learningStageParameterRepository.findByIdLearningStageId(sourceResourceId);
+                break;
+            case "Parameter":
+                affectedRecords = learningStageParameterRepository.findByIdParameterId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedRecords.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "LearningStageParameter");
+        }
+
+        return new ValidationResult(true, "LearningStageParameter");
     }
 
     /**

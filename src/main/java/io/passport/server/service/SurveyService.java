@@ -1,8 +1,11 @@
 package io.passport.server.service;
 
+import io.passport.server.model.Role;
 import io.passport.server.model.Survey;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.SurveyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +21,51 @@ public class SurveyService {
      * Survey repo access for database management.
      */
     private final SurveyRepository surveyRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public SurveyService(SurveyRepository surveyRepository) {
+    public SurveyService(SurveyRepository surveyRepository,
+                         RoleCheckerService roleCheckerService) {
         this.surveyRepository = surveyRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Survey> affectedSurveys;
+
+        switch (sourceResourceType) {
+            case "Study":
+                affectedSurveys = surveyRepository.findAllByStudyId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedSurveys.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.SURVEY_MANAGER)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "Survey");
+        }
+
+        return new ValidationResult(true, "Survey");
     }
 
     /**

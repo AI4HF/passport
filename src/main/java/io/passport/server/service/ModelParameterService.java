@@ -2,8 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.ModelParameter;
 import io.passport.server.model.ModelParameterId;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.ModelParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,54 @@ public class ModelParameterService {
      * ModelParameter repo access for database management.
      */
     private final ModelParameterRepository modelParameterRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public ModelParameterService(ModelParameterRepository modelParameterRepository) {
+    public ModelParameterService(ModelParameterRepository modelParameterRepository,
+                                 RoleCheckerService roleCheckerService) {
         this.modelParameterRepository = modelParameterRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<ModelParameter> affectedParameters;
+
+        switch (sourceResourceType) {
+            case "Model":
+                affectedParameters = modelParameterRepository.findByIdModelId(sourceResourceId);
+                break;
+            case "Parameter":
+                affectedParameters = modelParameterRepository.findByIdParameterId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedParameters.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "ModelParameter");
+        }
+
+        return new ValidationResult(true, "ModelParameter");
     }
 
     /**

@@ -1,17 +1,14 @@
 package io.passport.server.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import io.passport.server.model.Organization;
-import io.passport.server.model.Study;
-import io.passport.server.model.StudyOrganization;
-import io.passport.server.model.StudyOrganizationId;
+import io.passport.server.model.*;
 import io.passport.server.repository.StudyOrganizationRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for StudyOrganization management.
@@ -23,16 +20,57 @@ public class StudyOrganizationService {
      * StudyOrganization repo access for database management.
      */
     private final StudyOrganizationRepository studyOrganizationRepository;
-
-    /**
-     * StudyPersonnel service for StudyPersonnel related operations.
-     */
-    private final StudyPersonnelService studyPersonnelService;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public StudyOrganizationService(StudyOrganizationRepository studyOrganizationRepository, StudyPersonnelService studyPersonnelService) {
+    public StudyOrganizationService(StudyOrganizationRepository studyOrganizationRepository,
+                                    RoleCheckerService roleCheckerService) {
         this.studyOrganizationRepository = studyOrganizationRepository;
-        this.studyPersonnelService = studyPersonnelService;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<StudyOrganization> affectedLinks;
+
+        switch (sourceResourceType) {
+            case "Study":
+                affectedLinks = studyOrganizationRepository.findByIdStudyId(sourceResourceId);
+                break;
+            case "Organization":
+                affectedLinks = studyOrganizationRepository.findByIdOrganizationId(sourceResourceId);
+                break;
+            case "Population":
+                affectedLinks = studyOrganizationRepository.findByPopulationId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedLinks.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.STUDY_OWNER)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "StudyOrganization");
+        }
+
+        return new ValidationResult(true, "StudyOrganization");
     }
 
     /**

@@ -43,6 +43,34 @@ public class FeatureSetController {
     }
 
     /**
+     * Validates if a Feature Set deletion is safe and authorized
+     *
+     * @param featureSetId Id of the Feature Set being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{featureSetId}/validate-deletion")
+    public ResponseEntity<String> validateFeatureSetDeletion(@PathVariable String featureSetId,
+                                                             @RequestParam String studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("FeatureSet");
+        }
+
+        ValidationResult result = featureSetService.validateFeatureSetDeletion(studyId, featureSetId, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Reads all FeatureSets by the given studyId.
      *
      * @param studyId   ID of the study

@@ -173,13 +173,17 @@ public class PersonnelController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            boolean isDeleted = this.personnelService.deletePersonnel(personId);
+            boolean isDeleted = this.personnelService.deletePersonnelWithReassignment(personId);
+
             if(isDeleted) {
                 return ResponseEntity.noContent().build();
             }else{
                 return ResponseEntity.notFound().build();
             }
-        }catch (Exception e){
+        } catch (IllegalStateException e) {
+            log.warn("Delete personnel failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e){
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

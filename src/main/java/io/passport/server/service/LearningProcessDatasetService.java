@@ -2,8 +2,11 @@ package io.passport.server.service;
 
 import io.passport.server.model.LearningProcessDataset;
 import io.passport.server.model.LearningProcessDatasetId;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.LearningProcessDatasetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,54 @@ public class LearningProcessDatasetService {
      * LearningProcessDataset repo access for database management.
      */
     private final LearningProcessDatasetRepository learningProcessDatasetRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public LearningProcessDatasetService(LearningProcessDatasetRepository learningProcessDatasetRepository) {
+    public LearningProcessDatasetService(LearningProcessDatasetRepository learningProcessDatasetRepository,
+                                         RoleCheckerService roleCheckerService) {
         this.learningProcessDatasetRepository = learningProcessDatasetRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LearningProcessDataset> affectedRecords;
+
+        switch (sourceResourceType) {
+            case "LearningDataset":
+                affectedRecords = learningProcessDatasetRepository.findByIdLearningDatasetId(sourceResourceId);
+                break;
+            case "LearningProcess":
+                affectedRecords = learningProcessDatasetRepository.findByIdLearningProcessId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedRecords.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "LearningProcessDataset");
+        }
+
+        return new ValidationResult(true, "LearningProcessDataset");
     }
 
     /**

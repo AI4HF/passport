@@ -43,6 +43,34 @@ public class ModelDeploymentController {
     }
 
     /**
+     * Validates if a Model Deployment deletion is safe and authorized
+     *
+     * @param deploymentId Id of the Model Deployment being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{deploymentId}/validate-deletion")
+    public ResponseEntity<String> validateModelDeploymentDeletion(@RequestParam String studyId,
+                                                                  @PathVariable String deploymentId,
+                                                                  @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("ModelDeployment");
+        }
+
+        ValidationResult result = modelDeploymentService.validateModelDeploymentDeletion(studyId, deploymentId, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves ModelDeployments, optionally filtered by environmentId or studyId.
      *
      * @param environmentId Optional environment ID to filter by

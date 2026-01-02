@@ -3,12 +3,17 @@ package io.passport.server.service;
 import io.passport.server.model.DatasetTransformation;
 import io.passport.server.model.LearningDataset;
 import io.passport.server.model.LearningDatasetandTransformationDTO;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.DatasetTransformationRepository;
 import io.passport.server.repository.LearningDatasetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,18 +24,98 @@ import java.util.Optional;
 public class LearningDatasetService {
 
     /**
-     * LearningDataset and DatasetTransformation repo access for database management.
+     * LearningDataset, Study and DatasetTransformation repo access for database management.
      */
     private final LearningDatasetRepository learningDatasetRepository;
     private final DatasetTransformationRepository datasetTransformationRepository;
-
     private final StudyService studyService;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private LearningProcessDatasetService learningProcessDatasetService;
 
     @Autowired
-    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository, DatasetTransformationRepository datasetTransformationRepository, StudyService studyService) {
+    public LearningDatasetService(LearningDatasetRepository learningDatasetRepository,
+                                  DatasetTransformationRepository datasetTransformationRepository,
+                                  StudyService studyService,
+                                  RoleCheckerService roleCheckerService) {
         this.learningDatasetRepository = learningDatasetRepository;
         this.datasetTransformationRepository = datasetTransformationRepository;
         this.studyService = studyService;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Starts a validation chain of Learning Dataset and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param learningDatasetId Id of the Learning Dataset
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateLearningDatasetDeletion(String studyId, String learningDatasetId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(learningProcessDatasetService.validateCascade(studyId, "LearningDataset", learningDatasetId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<LearningDataset> affectedLearningDatasets;
+
+        switch (sourceResourceType) {
+            case "Dataset":
+                affectedLearningDatasets = learningDatasetRepository.findByDatasetId(sourceResourceId);
+                break;
+            case "Study":
+                affectedLearningDatasets = learningDatasetRepository.findAllByStudyId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedLearningDatasets.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorized = true;
+
+        for (LearningDataset ld : affectedLearningDatasets) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    studyId,
+                    principal,
+                    List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST)
+            );
+
+            if (!hasPermission) {
+                authorized = false;
+                break;
+            }
+
+            childResults.add(validateLearningDatasetDeletion(studyId, ld.getLearningDatasetId(), principal));
+        }
+
+        if (!authorized) {
+            return new ValidationResult(false, "LearningDataset");
+        }
+
+        childResults.add(new ValidationResult(true, "LearningDataset"));
+
+        return ValidationResult.aggregate(childResults);
     }
 
     /**

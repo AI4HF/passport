@@ -7,12 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Dataset repository for database management.
  */
 @Repository
 public interface DatasetRepository extends JpaRepository<Dataset, String> {
+
+    List<Dataset> findByFeaturesetId(String featuresetId);
+    List<Dataset> findByPopulationId(String populationId);
+    List<Dataset> findByOrganizationId(String organizationId);
 
     // Join with population table and get related Dataset for the study
     @Query("SELECT new Dataset(d.datasetId, d.featuresetId, d.populationId, d.organizationId, d.title, d.description, d.version, d.referenceEntity, d.numOfRecords, d.synthetic, d.createdAt, d.createdBy, d.lastUpdatedAt, d.lastUpdatedBy)  " +
@@ -43,6 +48,14 @@ public interface DatasetRepository extends JpaRepository<Dataset, String> {
        WHERE p.studyId = :studyId
        """)
     List<Dataset> findDatasetWithNamesByStudyId(@Param("studyId") String studyId);
+
+    // Find Datasets modified by a specific personnel
+    @Query("SELECT d FROM Dataset d WHERE d.createdBy = :personnelId OR d.lastUpdatedBy = :personnelId")
+    List<Dataset> findByCreatedByOrLastUpdatedBy(@Param("personnelId") String personnelId);
+
+    // Find Study ID directly from Dataset ID
+    @Query("SELECT p.studyId FROM Dataset d JOIN Population p ON d.populationId = p.populationId WHERE d.datasetId = :datasetId")
+    Optional<String> findStudyIdByDatasetId(@Param("datasetId") String datasetId);
 
 
 }

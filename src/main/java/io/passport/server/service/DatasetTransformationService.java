@@ -1,10 +1,14 @@
 package io.passport.server.service;
 
 import io.passport.server.model.DatasetTransformation;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.DatasetTransformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,13 +19,36 @@ import java.util.Optional;
 public class DatasetTransformationService {
 
     /**
-     * DatasetTransformation repo access for database management.
+     * Dataset Transformation repo access for database management.
      */
     private final DatasetTransformationRepository datasetTransformationRepository;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private DatasetTransformationStepService datasetTransformationStepService;
+    @Autowired @Lazy private LearningDatasetService learningDatasetService;
 
     @Autowired
     public DatasetTransformationService(DatasetTransformationRepository datasetTransformationRepository) {
         this.datasetTransformationRepository = datasetTransformationRepository;
+    }
+
+    /**
+     * Starts a validation chain of Dataset Transformations and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param dataTransformationId Id of the Dataset Transformation
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateDatasetTransformationDeletion(String studyId, String dataTransformationId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(datasetTransformationStepService.validateCascade(studyId, "DatasetTransformation", dataTransformationId, principal));
+        results.add(learningDatasetService.validateCascade(studyId, "DatasetTransformation", dataTransformationId, principal));
+
+        return ValidationResult.aggregate(results);
     }
 
     /**

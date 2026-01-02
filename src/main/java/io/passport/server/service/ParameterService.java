@@ -1,10 +1,15 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Parameter;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.ParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +23,90 @@ public class ParameterService {
      * Parameter repo access for database management.
      */
     private final ParameterRepository parameterRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private LearningProcessParameterService learningProcessParameterService;
+    @Autowired @Lazy private LearningStageParameterService learningStageParameterService;
+    @Autowired @Lazy private ModelParameterService modelParameterService;
 
     @Autowired
-    public ParameterService(ParameterRepository parameterRepository) {
+    public ParameterService(ParameterRepository parameterRepository,
+                            RoleCheckerService roleCheckerService) {
         this.parameterRepository = parameterRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    /**
+     * Starts a validation chain of Parameter and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param parameterId Id of the Parameter
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateParameterDeletion(String studyId, String parameterId, Jwt principal) {
+        List<ValidationResult> results = new ArrayList<>();
+
+        results.add(learningProcessParameterService.validateCascade(studyId, "Parameter", parameterId, principal));
+        results.add(learningStageParameterService.validateCascade(studyId, "Parameter", parameterId, principal));
+        results.add(modelParameterService.validateCascade(studyId, "Parameter", parameterId, principal));
+
+        return ValidationResult.aggregate(results);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Parameter> affectedParameters;
+
+        switch (sourceResourceType) {
+            case "Study":
+                affectedParameters = parameterRepository.findAllByStudyId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedParameters.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorized = true;
+
+        for (Parameter p : affectedParameters) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    studyId,
+                    principal,
+                    List.of(Role.DATA_SCIENTIST)
+            );
+
+            if (!hasPermission) {
+                authorized = false;
+                break;
+            }
+
+            childResults.add(validateParameterDeletion(studyId, p.getParameterId(), principal));
+        }
+
+        if (!authorized) {
+            return new ValidationResult(false, "Parameter");
+        }
+
+        childResults.add(new ValidationResult(true, "Parameter"));
+
+        return ValidationResult.aggregate(childResults);
     }
 
     /**

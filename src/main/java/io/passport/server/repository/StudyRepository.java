@@ -19,4 +19,6 @@ public interface StudyRepository extends JpaRepository<Study, String> {
     Study findByDatasetId(@Param("datasetId") String datasetId);
 
     List<Study> findByOwner(String owner);
+
+    boolean existsByOwner(String owner);
 }

@@ -1,11 +1,16 @@
 package io.passport.server.service;
 
 import io.passport.server.model.Model;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,32 +24,99 @@ public class ModelService {
      * Model repo access for database management.
      */
     private final ModelRepository modelRepository;
+    private final RoleCheckerService roleCheckerService;
+
+    /**
+     * Lazy service references for limited use in cascade validation
+     */
+    @Autowired @Lazy private ModelDeploymentService modelDeploymentService;
+    @Autowired @Lazy private ModelParameterService modelParameterService;
+    @Autowired @Lazy private ModelFigureService modelFigureService;
+    @Autowired @Lazy private EvaluationMeasureService evaluationMeasureService;
 
     @Autowired
-    public ModelService(ModelRepository modelRepository) {
+    public ModelService(ModelRepository modelRepository, RoleCheckerService roleCheckerService) {
         this.modelRepository = modelRepository;
+        this.roleCheckerService = roleCheckerService;
     }
 
     /**
-     * Get all models
-     */
-    public List<Model> getAllModels(){
-        return modelRepository.findAll();
-    }
-
-    /**
-     * Get all models by studyId
-     * @param studyId ID of the study
-     */
-    public List<Model> getAllModelsByStudyId(String studyId){
-        return modelRepository.findByStudyId(studyId);
-    }
-
-    /**
-     * Find a model by modelId
-     * @param modelId ID of the model
+     * Starts a validation chain of Model and all of their children for cascades
+     *
+     * @param studyId Id of the Study
+     * @param modelId Id of the Model
+     * @param principal Access Token content
      * @return
      */
+    public ValidationResult validateModelDeletion(String studyId, String modelId, Jwt principal) {
+        List<ValidationResult> neighborResults = new ArrayList<>();
+
+        neighborResults.add(modelDeploymentService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(modelParameterService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(modelFigureService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(evaluationMeasureService.validateCascade(studyId, "Model", modelId, principal));
+
+        return ValidationResult.aggregate(neighborResults);
+    }
+
+    /**
+     * Determines which entities are to be cascaded based on the request from the previous element in the chain
+     * Continues the chain by directing to the next entries through the other validation method
+     *
+     * @param studyId Id of the Study
+     * @param sourceResourceType Resource type of the parent element in the Cascade chain
+     * @param sourceResourceId Resource id of the parent element in the Cascade chain
+     * @param principal Access Token content
+     * @return
+     */
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<Model> affectedModels;
+
+        switch (sourceResourceType) {
+            case "LearningProcess":
+                affectedModels = modelRepository.findByLearningProcessId(sourceResourceId);
+                break;
+            case "Experiment":
+                affectedModels = modelRepository.findByExperimentId(sourceResourceId);
+                break;
+            case "Organization":
+                affectedModels = modelRepository.findByOwner(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedModels.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        List<ValidationResult> childResults = new ArrayList<>();
+        boolean authorizedForModels = true;
+
+        for (Model model : affectedModels) {
+            boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                    model.getStudyId(),
+                    principal,
+                    List.of(Role.DATA_SCIENTIST)
+            );
+
+            if (!hasPermission) {
+                authorizedForModels = false;
+                break;
+            }
+
+            childResults.add(validateModelDeletion(model.getStudyId(), model.getModelId(), principal));
+        }
+
+        if (!authorizedForModels) {
+            return new ValidationResult(false, "Model");
+        }
+
+        childResults.add(new ValidationResult(true, "Model"));
+
+        return ValidationResult.aggregate(childResults);
+    }
+
     public Optional<Model> findModelById(String modelId) {
         return modelRepository.findById(modelId);
     }
@@ -110,5 +182,21 @@ public class ModelService {
             return Optional.empty();
         }
     }
+    public List<Model> getAllModelsByStudyId(String studyId){
+        return modelRepository.findByStudyId(studyId);
+    }
 
+    /**
+     * Find Models created or last updated by a specific personnel.
+     */
+    public List<Model> findByCreatedByOrLastUpdatedBy(String personnelId) {
+        return modelRepository.findByCreatedByOrLastUpdatedBy(personnelId);
+    }
+
+    /**
+     * Resolve the Study ID for a given Model ID directly via DB query.
+     */
+    public Optional<String> findStudyIdByModelId(String modelId) {
+        return modelRepository.findStudyIdByModelId(modelId);
+    }
 }

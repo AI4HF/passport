@@ -43,6 +43,34 @@ public class DatasetTransformationController {
     }
 
     /**
+     * Validates if a Dataset Transformation deletion is safe and authorized
+     *
+     * @param dataTransformationId Id of the Dataset Transformation being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{dataTransformationId}/validate-deletion")
+    public ResponseEntity<String> validateDatasetTransformationDeletion(@PathVariable String dataTransformationId,
+                                                                        @RequestParam String studyId,
+                                                                        @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("DatasetTransformation");
+        }
+
+        ValidationResult result = datasetTransformationService.validateDatasetTransformationDeletion(studyId, dataTransformationId, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves all DatasetTransformations (for authorized DATA_ENGINEER).
      *
      * @param studyId   ID of the study for authorization

@@ -42,6 +42,34 @@ public class LearningDatasetController {
     }
 
     /**
+     * Validates if a Learning Dataset deletion is safe and authorized
+     *
+     * @param learningDatasetId Id of the Learning Dataset being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{learningDatasetId}/validate-deletion")
+    public ResponseEntity<String> validateLearningDatasetDeletion(@PathVariable String learningDatasetId,
+                                                                  @RequestParam String studyId,
+                                                                  @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("LearningDataset");
+        }
+
+        ValidationResult result = learningDatasetService.validateLearningDatasetDeletion(studyId, learningDatasetId, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Reads a LearningDataset by its ID.
      *
      * @param studyId           ID of the study for authorization

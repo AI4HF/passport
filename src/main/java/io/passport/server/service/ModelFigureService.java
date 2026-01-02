@@ -1,8 +1,11 @@
 package io.passport.server.service;
 
 import io.passport.server.model.ModelFigure;
+import io.passport.server.model.Role;
+import io.passport.server.model.ValidationResult;
 import io.passport.server.repository.ModelFigureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +21,41 @@ public class ModelFigureService {
      * ModelFigure repo access for database management.
      */
     private final ModelFigureRepository modelFigureRepository;
+    private final RoleCheckerService roleCheckerService;
 
     @Autowired
-    public ModelFigureService(ModelFigureRepository modelFigureRepository) {
+    public ModelFigureService(ModelFigureRepository modelFigureRepository,
+                              RoleCheckerService roleCheckerService) {
         this.modelFigureRepository = modelFigureRepository;
+        this.roleCheckerService = roleCheckerService;
+    }
+
+    public ValidationResult validateCascade(String studyId, String sourceResourceType, String sourceResourceId, Jwt principal) {
+        List<ModelFigure> affectedFigures;
+
+        switch (sourceResourceType) {
+            case "Model":
+                affectedFigures = modelFigureRepository.findByModelId(sourceResourceId);
+                break;
+            default:
+                return new ValidationResult(true, "");
+        }
+
+        if (affectedFigures.isEmpty()) {
+            return new ValidationResult(true, "");
+        }
+
+        boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                List.of(Role.DATA_SCIENTIST)
+        );
+
+        if (!hasPermission) {
+            return new ValidationResult(false, "ModelFigure");
+        }
+
+        return new ValidationResult(true, "ModelFigure");
     }
 
     /**

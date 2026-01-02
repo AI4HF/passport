@@ -41,6 +41,34 @@ public class ExperimentController {
     }
 
     /**
+     * Validates if an Experiment deletion is safe and authorized
+     *
+     * @param experiments List of Experiments being replaced
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @PostMapping("/validate-deletion")
+    public ResponseEntity<String> validateExperimentDeletion(@RequestBody List<Experiment> experiments,
+                                                             @RequestParam String studyId,
+                                                             @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Experiment");
+        }
+
+        ValidationResult result = experimentService.validateExperimentReplacement(studyId,experiments, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Retrieves all experiments for the given study ID.
      *
      * @param studyId   ID of the study

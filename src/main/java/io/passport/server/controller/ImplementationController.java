@@ -43,6 +43,34 @@ public class ImplementationController {
     }
 
     /**
+     * Validates if an Implementation deletion is safe and authorized
+     *
+     * @param implementationId Id of the Implementation being deleted
+     * @param studyId Id of the Study
+     * @param principal Jwt principal containing user info
+     * @return Comma separated string/list of Cascaded entries
+     */
+    @GetMapping("/{implementationId}/validate-deletion")
+    public ResponseEntity<String> validateImplementationDeletion(@PathVariable String implementationId,
+                                                                 @RequestParam String studyId,
+                                                                 @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(
+                studyId,
+                principal,
+                allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Implementation");
+        }
+
+        ValidationResult result = implementationService.validateImplementationDeletion(studyId, implementationId, principal);
+
+        if (result.status()) {
+            return ResponseEntity.ok(result.tables());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result.tables());
+        }
+    }
+
+    /**
      * Read all Implementations.
      *
      * @param studyId   ID of the study for authorization
