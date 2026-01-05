@@ -15,7 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -26,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.*;
@@ -302,7 +303,7 @@ public class KeycloakService {
         return groups.groups().stream()
                 .filter(group -> group.getName().equalsIgnoreCase(groupName))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Group not found: " + groupName));
+                .orElse(null);
     }
 
     /**
@@ -377,6 +378,11 @@ public class KeycloakService {
     public boolean isUserInStudyGroupWithRoles(String studyId, String personnelId, List<String> roles) {
         // Retrieve the main study group
         GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
+
+        if (studyGroup == null) {
+            throw new ResponseStatusException(HttpStatus.GONE, "Study group 'study-" + studyId + "' does not exist.");
+        }
+
         List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);
 
         // Iterate through the desired roles (subgroups)
@@ -416,5 +422,28 @@ public class KeycloakService {
         return userRoles.stream()
                 .map(RoleRepresentation::getName)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Deletes the Keycloak group associated with a specific study.
+     *
+     * @param studyId Id of the study
+     */
+    public void deleteStudyGroup(String studyId) {
+        String groupName = "study-" + studyId;
+
+        try {
+            String groupId = findGroupIdByName(groupName);
+
+            if (groupId != null) {
+                keycloak.realm(realm).groups().group(groupId).remove();
+                log.info("Successfully deleted Keycloak group: {}", groupName);
+            } else {
+                log.warn("Study group '{}' not found. Skipping deletion.", groupName);
+            }
+        } catch (Exception e) {
+            log.error("Error deleting study group: {}", groupName, e);
+            throw new RuntimeException("Failed to delete study group: " + groupName, e);
+        }
     }
 }

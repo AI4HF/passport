@@ -224,6 +224,7 @@ public class StudyController {
         }
 
         Optional<Study> deletedStudy = studyService.deleteStudy(studyId);
+        keycloakService.deleteStudyGroup(studyId);
         if (deletedStudy.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(deletedStudy.get());
         } else {
