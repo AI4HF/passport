@@ -41,6 +41,9 @@ public class PassportService {
     private ParameterService parameterService;
 
     @Autowired
+    private LearningProcessParameterService learningProcessParameterService;
+
+    @Autowired
     private PopulationService populationService;
 
     @Autowired
@@ -80,6 +83,8 @@ public class PassportService {
     private ModelFigureService modelFigureService;
 
     private final RoleCheckerService roleCheckerService;
+    @Autowired
+    private LearningStageParameterService learningStageParameterService;
 
 
     @Autowired
@@ -176,6 +181,12 @@ public class PassportService {
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
                 detailsJson.put("parameters", fetchParameters(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
+                detailsJson.put("learningStageParameters", fetchLearningStageParameters(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
+                detailsJson.put("learningProcessParameters", fetchLearningProcessParameters(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isPopulationDetails()){
                 detailsJson.put("populationDetails", fetchPopulationDetails(passportWithDetailSelection.getPassport()));
@@ -277,6 +288,26 @@ public class PassportService {
             return parameterService.findParametersByStudyId(passport.getStudyId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Parameters: " + e.getMessage());
+        }
+    }
+
+    private List<LearningProcessParameterDTO> fetchLearningProcessParameters(Passport passport) {
+        try {
+            return learningProcessParameterService.findByStudyId(passport.getStudyId()).stream()
+                    .map(LearningProcessParameterDTO::new)
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching LearningProcessParameters: " + e.getMessage());
+        }
+    }
+
+    private List<LearningStageParameterDTO> fetchLearningStageParameters(Passport passport) {
+        try {
+            return learningStageParameterService.findByStudyId(passport.getStudyId()).stream()
+                    .map(LearningStageParameterDTO::new)
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching LearningStageParameters: " + e.getMessage());
         }
     }
 

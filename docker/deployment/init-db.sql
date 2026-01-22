@@ -736,7 +736,8 @@ VALUES
 
 -- Insert into parameter
 INSERT INTO parameter (parameter_id, name, study_id, description, data_type)
-VALUES ('0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1', 'Number of Folds', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'Number of folds for Gradient-boosted trees.', 'int');
+VALUES ('37be6100-6551-4a63-8f8d-33657e8ccd96', 'Number of Estimators', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'Number of Trees in Random Forest', 'int'),
+       ('0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1', 'Number of Folds', '0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'Number of folds for Gradient-boosted trees.', 'int');
 
 -- Insert into algorithm
 INSERT INTO algorithm (algorithm_id, name, objective_function, type, subtype)
@@ -1037,9 +1038,24 @@ VALUES
        },
        "parameters": [
          {
+           "parameterId": "37be6100-6551-4a63-8f8d-33657e8ccd96",
            "name": "Number of Estimators",
            "description": "Number of Trees in Random Forest",
            "dataType": "int"
+         }
+       ],
+       "learningProcessParameters": [
+         {
+           "parameterId": "0197a70e-aa2e-76dc-b4f7-68a3cd35c3a1",
+           "type": "int",
+           "value": "5"
+         }
+       ],
+       "learningStageParameters": [
+         {
+           "parameterId": "37be6100-6551-4a63-8f8d-33657e8ccd96",
+           "type": "int",
+           "value": "5"
          }
        ],
        "populationDetails": [
