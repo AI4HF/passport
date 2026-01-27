@@ -99,6 +99,15 @@ public class LearningStageParameterService {
     }
 
     /**
+     * Find LearningStageParameters by studyId
+     * @param studyId ID of the study
+     * @return
+     */
+    public List<LearningStageParameter> findByStudyId(String studyId) {
+        return learningStageParameterRepository.findByStudyId(studyId);
+    }
+
+    /**
      * Find a LearningStageParameter by composite id
      * @param learningStageParameterId composite ID of the LearningStageParameter
      * @return

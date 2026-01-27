@@ -99,6 +99,15 @@ public class LearningProcessParameterService {
     }
 
     /**
+     * Find LearningProcessParameters by studyId
+     * @param studyId ID of the study
+     * @return
+     */
+    public List<LearningProcessParameter> findByStudyId(String studyId) {
+        return learningProcessParameterRepository.findByStudyId(studyId);
+    }
+
+    /**
      * Find a LearningProcessParameter by composite id
      * @param learningProcessParameterId composite ID of the LearningProcessParameter
      * @return
