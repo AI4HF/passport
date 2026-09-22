@@ -626,7 +626,17 @@ VALUES
      'Passport Node Agent - monitoring import',
      '1.0',
      'Imports the deployment-period statistics of a replaced model version from the local Monitoring Platform.',
-     'ai4hf-node-agent-monitoring-import');
+     'ai4hf-node-agent-monitoring-import'),
+    ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4b01',
+     'FL Central metadata extraction',
+     '1.0',
+     'Pushes the training provenance - algorithm, implementation, learning process, model and its evaluation - from the federated learning central component.',
+     'ai4hf-fl-central'),
+    ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4b02',
+     'Monitoring Platform connector',
+     '1.0',
+     'Reads models and their evaluation runs from the Passport and feeds the Monitoring Platform dashboards.',
+     'ai4hf-monitoring-connector');
 
 
 -- Insert into study

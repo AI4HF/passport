@@ -955,6 +955,24 @@
         "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
         "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
       ]
+    },
+    {
+      "username": "service-account-ai4hf-fl-central",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-fl-central",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-monitoring-connector",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-monitoring-connector",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
+      ]
     }
   ],
   "scopeMappings": [
@@ -1479,6 +1497,74 @@
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "mK3xP8vB6tN1wL9cR4fH7jD2sG5aQ0zY",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-fl-central",
+      "name": "AI4HF FL Central metadata extraction",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "fT6yH2nQ9wE4rP7xK1mZ5vB8cJ3dL0sA",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-monitoring-connector",
+      "name": "AI4HF Monitoring Platform connector",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "nW5cJ8pK2xT6bR9vL4fH7mD1gS3aY0zQ",
       "redirectUris": [],
       "webOrigins": [],
       "bearerOnly": false,
