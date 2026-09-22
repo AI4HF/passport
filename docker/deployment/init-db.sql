@@ -397,6 +397,7 @@ VALUES
     ('data_scientist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Kerem', 'Yilmaz', 'data_scientist@gmail.com'),
     ('quality_assurance_specialist', '0197a6f5-bb48-7855-b248-95697e913f22', 'Anil', 'Sinaci', 'quality_assurance_specialist@gmail.com'),
     ('survey_manager', '0197a6f5-bb48-7855-b248-95697e913f22', 'Senan', 'Postaci', 'survey_manager@gmail.com'),
+    ('data_steward', '0197a6f5-bb48-7855-b248-95697e913f22', 'Suat', 'Gonul', 'data_steward@gmail.com'),
     ('ml_engineer', '0197a6f5-bb48-7855-b248-95697e913f22', 'Dogukan', 'Cavdaroglu', 'ml_engineer@gmail.com');
 
 
@@ -465,8 +466,10 @@ VALUES
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'quality_assurance_specialist', 'QUALITY_ASSURANCE_SPECIALIST'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_engineer', 'DATA_ENGINEER'),
     ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'ml_engineer', 'ML_ENGINEER'),
+    ('0197a6f8-2b78-71e4-81c1-b7b6a744ece3', 'data_steward', 'DATA_STEWARD'),
     ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','study_owner','STUDY_OWNER'),
     ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','data_engineer','DATA_ENGINEER'),
+    ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','data_steward','DATA_STEWARD'),
     ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','data_scientist','DATA_SCIENTIST'),
     ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','ml_engineer','ML_ENGINEER'),
     ('2197a6f8-2b78-71e4-81c1-b7b6a744ece4','quality_assurance_specialist','QUALITY_ASSURANCE_SPECIALIST');

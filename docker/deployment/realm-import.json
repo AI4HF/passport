@@ -56,6 +56,15 @@
         "attributes": {}
       },
       {
+        "id": "3f0a51b6-9c4d-4a2e-8f7b-5d1c0e6a4b92",
+        "name": "DATA_STEWARD",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "89cdc2ae-1f92-42f6-a503-1baa806074dc",
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -522,6 +531,13 @@
       "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
       "subGroups": [
         {
+          "name": "DATA_STEWARD",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
           "name": "DATA_ENGINEER",
           "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER",
           "attributes": {},
@@ -577,6 +593,16 @@
           "id": "7b22fe9f-7c43-407e-a87c-a4b4318c9698",
           "name": "DATA_ENGINEER",
           "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_ENGINEER",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
+          "id": "8c2e7d41-5b93-4f60-9a18-6e3c2b7d04af",
+          "name": "DATA_STEWARD",
+          "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -802,6 +828,26 @@
       "groups": [
         "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_ENGINEER",
         "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER"
+      ]
+    },
+    {
+      "id": "data_steward",
+      "username": "data_steward",
+      "enabled": true,
+      "email": "data_steward@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_steward"
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "DATA_STEWARD"
+      ],
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD"
       ]
     },
     {

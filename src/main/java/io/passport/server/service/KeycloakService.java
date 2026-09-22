@@ -252,6 +252,7 @@ public class KeycloakService {
         List<String> subgroupNames = Arrays.asList(
                 "STUDY_OWNER",
                 "DATA_ENGINEER",
+                "DATA_STEWARD",
                 "DATA_SCIENTIST",
                 "SURVEY_MANAGER",
                 "QUALITY_ASSURANCE_SPECIALIST",
