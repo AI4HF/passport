@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -240,11 +242,13 @@ public class PassportService {
                 detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
             }
             cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
-            passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
-            passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
-            passportWithDetailSelection.getPassport().setApprovedAt(Instant.now());
+            Passport passport = passportWithDetailSelection.getPassport();
+            passport.setDetailsJson(detailsJson);
+            passport.setCreatedAt(Instant.now());
+            passport.setApprovedAt(Instant.now());
+            linkToPreviousVersion(passport);
 
-            return passportRepository.save(passportWithDetailSelection.getPassport());
+            return passportRepository.save(passport);
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating passport: " + e.getMessage());
         }
@@ -257,6 +261,70 @@ public class PassportService {
     public Passport getPassportById(String passportId) {
         return passportRepository.findById(passportId)
                 .orElseThrow(() -> new RuntimeException("Passport not found"));
+    }
+
+    /**
+     * Chains a new passport onto the newest one the model already has. A passport is never rewritten, so
+     * regenerating produces the next version rather than replacing the record that was signed.
+     *
+     * @param passport The passport being created
+     */
+    private void linkToPreviousVersion(Passport passport) {
+        Optional<Passport> previous = passportRepository.findFirstByModelIdOrderByVersionDesc(passport.getModelId());
+        if (previous.isPresent()) {
+            passport.setPreviousPassportId(previous.get().getPassportId());
+            passport.setVersion(previous.get().getVersion() == null ? 2 : previous.get().getVersion() + 1);
+        } else {
+            passport.setPreviousPassportId(null);
+            passport.setVersion(1);
+        }
+    }
+
+    /**
+     * Stores the signed PDF on the passport the first time it is generated, together with its SHA-256.
+     * A passport that already carries a document keeps it: the signed bytes are the record, and producing
+     * a different document for the same passport would make the signature meaningless.
+     *
+     * @param passportId ID of the passport
+     * @param signedPdf The signed PDF bytes
+     * @return The stored bytes - the ones just stored, or the ones already held
+     */
+    public byte[] storeSignedPdf(String passportId, byte[] signedPdf) {
+        Passport passport = getPassportById(passportId);
+        if (passport.getSignedPdf() != null && passport.getSignedPdf().length > 0) {
+            return passport.getSignedPdf();
+        }
+        passport.setSignedPdf(signedPdf);
+        passport.setSignedPdfHash(sha256Hex(signedPdf));
+        passportRepository.save(passport);
+        return signedPdf;
+    }
+
+    /**
+     * Fetch the stored signed PDF of a passport.
+     *
+     * @param passportId ID of the passport
+     * @return The signed bytes, or empty when the passport has not been generated yet
+     */
+    public Optional<byte[]> findSignedPdf(String passportId) {
+        byte[] signedPdf = getPassportById(passportId).getSignedPdf();
+        return (signedPdf == null || signedPdf.length == 0) ? Optional.empty() : Optional.of(signedPdf);
+    }
+
+    /**
+     * Hex-encoded SHA-256 of the given bytes.
+     */
+    private String sha256Hex(byte[] bytes) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 is not available", e);
+        }
     }
 
     /**

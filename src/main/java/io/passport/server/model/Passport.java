@@ -1,6 +1,7 @@
 package io.passport.server.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,16 @@ public class Passport {
     @Column(name = "model_id")
     private String modelId;
 
+    /**
+     * Passports are never rewritten: regenerating one produces a new version linked to the previous,
+     * mirroring the Model lineage the passport documents.
+     */
+    @Column(name = "version")
+    private Integer version;
+
+    @Column(name = "previous_passport_id")
+    private String previousPassportId;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -51,4 +62,20 @@ public class Passport {
     @Convert(converter = JsonConverter.class)
     @ColumnTransformer(write = "?::jsonb")
     private Map<String, Object> detailsJson;
+
+    /**
+     * The signed PDF exactly as it was produced at generation time. It is kept out of every JSON response -
+     * it is served by its own download endpoint - so listing passports stays cheap.
+     */
+    @JsonIgnore
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "signed_pdf", columnDefinition = "bytea")
+    private byte[] signedPdf;
+
+    /**
+     * SHA-256 of signedPdf, so a downloaded document can be checked against the record without the record
+     * having to hand out the bytes.
+     */
+    @Column(name = "signed_pdf_hash")
+    private String signedPdfHash;
 }

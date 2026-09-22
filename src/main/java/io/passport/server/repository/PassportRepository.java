@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface PassportRepository extends JpaRepository<Passport, String> {
     List<Passport> findAllByStudyId(String studyId);
     List<Passport> findByModelId(String modelId);
+    Optional<Passport> findFirstByModelIdOrderByVersionDesc(String modelId);
     // Find Passports modified by a specific Personnel
     @Query("SELECT p FROM Passport p WHERE p.createdBy = :personnelId OR p.approvedBy = :personnelId")
     List<Passport> findByCreatedByOrApprovedBy(@Param("personnelId") String personnelId);

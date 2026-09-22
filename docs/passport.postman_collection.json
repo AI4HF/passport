@@ -3897,6 +3897,25 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "download the signed document",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": "{{passportBackend}}/passport/initial_passport/signed-pdf?studyId=initial_study"
+          },
+          "response": []
         }
       ]
     },

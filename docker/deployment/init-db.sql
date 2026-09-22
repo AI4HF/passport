@@ -536,14 +536,20 @@ CREATE TABLE model_evaluation_dataset
 -- Create passport table
 CREATE TABLE passport
 (
-    passport_id   VARCHAR(255) PRIMARY KEY,
-    model_id      VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
-    study_id      VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
-    created_at    TIMESTAMP,
-    created_by    VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
-    approved_at   TIMESTAMP,
-    approved_by   VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
-    details_json  JSONB
+    passport_id          VARCHAR(255) PRIMARY KEY,
+    model_id             VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
+    study_id             VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
+    -- a passport is never rewritten: regenerating chains a new version onto the previous one
+    version              INTEGER,
+    previous_passport_id VARCHAR(255) REFERENCES passport (passport_id) ON DELETE SET NULL,
+    created_at           TIMESTAMP,
+    created_by           VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    approved_at          TIMESTAMP,
+    approved_by          VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    details_json         JSONB,
+    -- the document exactly as it was signed, plus its SHA-256 so a copy can be checked against the record
+    signed_pdf           BYTEA,
+    signed_pdf_hash      VARCHAR(64)
 );
 
 -- Create audit_log table
@@ -1421,6 +1427,8 @@ INSERT INTO passport (
     passport_id,
     model_id,
     study_id,
+    version,
+    previous_passport_id,
     created_at,
     created_by,
     approved_at,
@@ -1431,6 +1439,8 @@ VALUES
     ('0197a71a-20fd-73ab-b3d1-65af71b25fd7',
      '0197a718-9800-7558-8565-5f760c97c8f0',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
+     1,
+     NULL,
      '2023-01-01 00:00:00',
      'quality_assurance_specialist',
      '2023-01-01 00:00:00',
@@ -1594,6 +1604,8 @@ VALUES
     ('b197a71a-20fd-73ab-b3d1-65af71b25ff1',
      'b197a718-9800-7558-8565-5f760c97c8f9',
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
+     1,
+     NULL,
      '2025-10-15 00:00:00',
      'quality_assurance_specialist',
      '2025-10-16 00:00:00',
