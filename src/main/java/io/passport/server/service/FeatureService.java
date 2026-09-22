@@ -148,6 +148,11 @@ public class FeatureService {
             feature.setUnits(updatedFeature.getUnits());
             feature.setEquipment(updatedFeature.getEquipment());
             feature.setDataCollection(updatedFeature.getDataCollection());
+            feature.setConceptUri(updatedFeature.getConceptUri());
+            feature.setConceptSystem(updatedFeature.getConceptSystem());
+            feature.setConceptCode(updatedFeature.getConceptCode());
+            feature.setExtractionDefinition(updatedFeature.getExtractionDefinition());
+            feature.setExtractionDefinitionUrl(updatedFeature.getExtractionDefinitionUrl());
             feature.setLastUpdatedAt(Instant.now());
             feature.setLastUpdatedBy(updatedFeature.getLastUpdatedBy());
             Feature savedFeature = featureRepository.save(feature);

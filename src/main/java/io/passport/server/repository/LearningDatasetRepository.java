@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Repository
 public interface LearningDatasetRepository extends JpaRepository<LearningDataset, String> {
-    List<LearningDataset> findByDataTransformationId(String dataTransformationId);
+    List<LearningDataset> findByDatasetTransformationId(String datasetTransformationId);
     List<LearningDataset> findByDatasetId(String datasetId);
     List<LearningDataset> findAllByStudyId(String studyId);
 }

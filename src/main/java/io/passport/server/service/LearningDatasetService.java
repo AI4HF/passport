@@ -128,12 +128,12 @@ public class LearningDatasetService {
     }
 
     /**
-     * Find LearningDatasets by dataTransformationId
-     * @param dataTransformationId ID of the DataTransformation
+     * Find LearningDatasets by datasetTransformationId
+     * @param datasetTransformationId ID of the DataTransformation
      * @return
      */
-    public List<LearningDataset> findByDataTransformationId(String dataTransformationId) {
-        return learningDatasetRepository.findByDataTransformationId(dataTransformationId);
+    public List<LearningDataset> findByDatasetTransformationId(String datasetTransformationId) {
+        return learningDatasetRepository.findByDatasetTransformationId(datasetTransformationId);
     }
 
     /**
@@ -177,11 +177,12 @@ public class LearningDatasetService {
      */
     @Transactional
     public LearningDatasetandTransformationDTO createLearningDatasetAndTransformation(LearningDatasetandTransformationDTO request) {
-        DatasetTransformation savedTransformation = datasetTransformationRepository.save(request.getDatasetTransformation());
-        request.getLearningDataset().setDataTransformationId(savedTransformation.getDataTransformationId());
-
-        // Find related study and set studyId field of the learning dataset
+        // Find related study and set studyId field of both the transformation and the learning dataset
         String relatedStudyId = this.studyService.findRelatedStudyByDatasetId(request.getLearningDataset().getDatasetId()).getId();
+
+        request.getDatasetTransformation().setStudyId(relatedStudyId);
+        DatasetTransformation savedTransformation = datasetTransformationRepository.save(request.getDatasetTransformation());
+        request.getLearningDataset().setDatasetTransformationId(savedTransformation.getDatasetTransformationId());
         request.getLearningDataset().setStudyId(relatedStudyId);
 
         LearningDataset savedLearningDataset = learningDatasetRepository.save(request.getLearningDataset());
@@ -200,12 +201,12 @@ public class LearningDatasetService {
             DatasetTransformation transformation,
             LearningDataset learningDataset
     ) {
-        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(transformation.getDataTransformationId());
+        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(transformation.getDatasetTransformationId());
 
         if (existingTransformation.isPresent()) {
             datasetTransformationRepository.save(transformation);
 
-            learningDataset.setDataTransformationId(transformation.getDataTransformationId());
+            learningDataset.setDatasetTransformationId(transformation.getDatasetTransformationId());
             Optional<LearningDataset> existingLearningDataset = learningDatasetRepository.findById(learningDataset.getLearningDatasetId());
 
             if (existingLearningDataset.isPresent()) {

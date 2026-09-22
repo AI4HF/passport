@@ -55,6 +55,27 @@ public class Feature {
     @Column(name = "data_collection")
     private String dataCollection;
 
+    @Column(name = "concept_uri")
+    private String conceptUri;
+
+    @Column(name = "concept_system")
+    private String conceptSystem;
+
+    @Column(name = "concept_code")
+    private String conceptCode;
+
+    /**
+     * How the extraction engine derived this column, carried over from the dataset descriptor.
+     */
+    @Column(name = "extraction_definition")
+    private String extractionDefinition;
+
+    /**
+     * The feature group definition the feature was extracted from.
+     */
+    @Column(name = "extraction_definition_url")
+    private String extractionDefinitionUrl;
+
     @Column(name = "created_at")
     private Instant createdAt;
 

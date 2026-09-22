@@ -46,7 +46,7 @@ public class DatasetTransformationStepService {
 
         switch (sourceResourceType) {
             case "DatasetTransformation":
-                affectedSteps = datasetTransformationStepRepository.findByDataTransformationId(sourceResourceId);
+                affectedSteps = datasetTransformationStepRepository.findByDatasetTransformationId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -78,12 +78,12 @@ public class DatasetTransformationStepService {
     }
 
     /**
-     * Find DatasetTransformationSteps by dataTransformationId
-     * @param dataTransformationId ID of the DatasetTransformation
+     * Find DatasetTransformationSteps by datasetTransformationId
+     * @param datasetTransformationId ID of the DatasetTransformation
      * @return
      */
-    public List<DatasetTransformationStep> findByDataTransformationId(String dataTransformationId) {
-        return datasetTransformationStepRepository.findByDataTransformationId(dataTransformationId);
+    public List<DatasetTransformationStep> findByDatasetTransformationId(String datasetTransformationId) {
+        return datasetTransformationStepRepository.findByDatasetTransformationId(datasetTransformationId);
     }
 
     /**
@@ -116,7 +116,8 @@ public class DatasetTransformationStepService {
         Optional<DatasetTransformationStep> oldDatasetTransformationStep = datasetTransformationStepRepository.findById(stepId);
         if (oldDatasetTransformationStep.isPresent()) {
             DatasetTransformationStep datasetTransformationStep = oldDatasetTransformationStep.get();
-            datasetTransformationStep.setDataTransformationId(updatedDatasetTransformationStep.getDataTransformationId());
+            datasetTransformationStep.setDatasetTransformationId(updatedDatasetTransformationStep.getDatasetTransformationId());
+            datasetTransformationStep.setStepOrder(updatedDatasetTransformationStep.getStepOrder());
             datasetTransformationStep.setInputFeatures(updatedDatasetTransformationStep.getInputFeatures());
             datasetTransformationStep.setOutputFeatures(updatedDatasetTransformationStep.getOutputFeatures());
             datasetTransformationStep.setMethod(updatedDatasetTransformationStep.getMethod());

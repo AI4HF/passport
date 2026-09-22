@@ -17,7 +17,7 @@ public interface FeatureSetRepository extends JpaRepository<FeatureSet, String> 
     List<FeatureSet> findByExperimentId(String experimentId);
 
     // Join with experiment table and get related featureSets for the study
-    @Query("SELECT new FeatureSet(fs.featuresetId, fs.experimentId, fs.title, fs.featuresetURL, fs.description, fs.createdAt, fs.createdBy, fs.lastUpdatedAt, fs.lastUpdatedBy)  " +
+    @Query("SELECT new FeatureSet(fs.featuresetId, fs.experimentId, fs.title, fs.featuresetURL, fs.version, fs.description, fs.createdAt, fs.createdBy, fs.lastUpdatedAt, fs.lastUpdatedBy)  " +
             "FROM FeatureSet fs, Experiment e WHERE fs.experimentId = e.experimentId AND e.studyId = :studyId")
     List<FeatureSet> findFeatureSetByStudyId(@Param("studyId") String studyId);
 

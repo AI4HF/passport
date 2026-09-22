@@ -225,7 +225,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"studyId\":\"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+              "raw": "{\r\n    \"studyId\":\"initial_study\",\r\n    \"version\": \"1.0\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -257,7 +257,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
+              "raw": "{\r\n    \"studyId\": \"initial_study\",\r\n    \"version\": \"1.0\",\r\n    \"populationUrl\": \"https://datatools4heart.eu/cohorts/study1\",\r\n    \"description\": \"Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.\",\r\n    \"characteristics\": \"The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1221,7 +1221,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
+              "raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"version\": \"1.0\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1253,7 +1253,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
+              "raw": "{\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"title\": \"Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.\",\r\n    \"version\": \"1.0\",\r\n    \"featuresetURL\": \"https://datatools4heart.eu/feature-sets/study1-features\",\r\n    \"description\": \"Feature set containing feature information used in risk score prediction for acute HF in the emergency department.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1737,12 +1737,12 @@
           "response": []
         },
         {
-          "name": "get a step by dataTransformationId",
+          "name": "get a step by datasetTransformationId",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{passportBackend}}/dataset-transformation-step?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
+              "raw": "{{passportBackend}}/dataset-transformation-step?datasetTransformationId=initial_dataset_transformation&studyId=initial_study",
               "host": [
                 "{{passportBackend}}"
               ],
@@ -1751,7 +1751,7 @@
               ],
               "query": [
                 {
-                  "key": "dataTransformationId",
+                  "key": "datasetTransformationId",
                   "value": "initial_dataset_transformation"
                 },
                 {
@@ -2158,12 +2158,12 @@
           "response": []
         },
         {
-          "name": "get all learningDatasets by dataTransformationId",
+          "name": "get all learningDatasets by datasetTransformationId",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{passportBackend}}/learning-dataset?dataTransformationId=initial_dataset_transformation&studyId=initial_study",
+              "raw": "{{passportBackend}}/learning-dataset?datasetTransformationId=initial_dataset_transformation&studyId=initial_study",
               "host": [
                 "{{passportBackend}}"
               ],
@@ -2172,7 +2172,7 @@
               ],
               "query": [
                 {
-                  "key": "dataTransformationId",
+                  "key": "datasetTransformationId",
                   "value": "initial_dataset_transformation"
                 },
                 {
@@ -2214,7 +2214,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_dataset\",\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
+              "raw": "{\r\n    \"datasetTransformation\": {\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_dataset\",\r\n        \"datasetTransformationId\": \"initial_dataset_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2246,7 +2246,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"datasetTransformation\": {\r\n        \"dataTransformationId\": \"initial_dataset_transformation\",\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_study\",\r\n        \"dataTransformationId\": \"initial_data_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
+              "raw": "{\r\n    \"datasetTransformation\": {\r\n        \"datasetTransformationId\": \"initial_dataset_transformation\",\r\n        \"title\": \"Dataset Smoothening and Normalization\",\r\n        \"description\": \"Dataset is transformed by smoothening and normalization.\"\r\n    },\r\n    \"learningDataset\": {\r\n        \"datasetId\": \"initial_study\",\r\n        \"datasetTransformationId\": \"initial_data_transformation\",\r\n        \"description\": \"Finalized learning dataset for HF Risk Prediction Model Training\"\r\n    }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

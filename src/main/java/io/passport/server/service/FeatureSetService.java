@@ -157,6 +157,7 @@ public class FeatureSetService {
             FeatureSet featureSet = oldFeatureSet.get();
             featureSet.setTitle(updatedFeatureSet.getTitle());
             featureSet.setFeaturesetURL(updatedFeatureSet.getFeaturesetURL());
+            featureSet.setVersion(updatedFeatureSet.getVersion());
             featureSet.setDescription(updatedFeatureSet.getDescription());
             featureSet.setLastUpdatedAt(Instant.now());
             featureSet.setLastUpdatedBy(updatedFeatureSet.getLastUpdatedBy());

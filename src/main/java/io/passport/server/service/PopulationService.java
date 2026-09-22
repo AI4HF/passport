@@ -149,6 +149,7 @@ public class PopulationService {
         if (oldPopulation.isPresent()) {
             Population population = oldPopulation.get();
             population.setPopulationUrl(updatedPopulation.getPopulationUrl());
+            population.setVersion(updatedPopulation.getVersion());
             population.setDescription(updatedPopulation.getDescription());
             population.setCharacteristics(updatedPopulation.getCharacteristics());
             population.setStudyId(updatedPopulation.getStudyId());

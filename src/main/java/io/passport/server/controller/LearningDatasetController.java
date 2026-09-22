@@ -90,10 +90,10 @@ public class LearningDatasetController {
     }
 
     /**
-     * Reads all LearningDatasets, or filters by dataTransformationId and/or datasetId if provided.
+     * Reads all LearningDatasets, or filters by datasetTransformationId and/or datasetId if provided.
      *
      * @param studyId              ID of the study for authorization
-     * @param dataTransformationId Optional DataTransformation ID
+     * @param datasetTransformationId Optional DataTransformation ID
      * @param datasetId            Optional Dataset ID
      * @param principal            Jwt principal containing user info
      * @return List of LearningDatasets
@@ -101,7 +101,7 @@ public class LearningDatasetController {
     @GetMapping
     public ResponseEntity<List<LearningDataset>> getLearningDatasets(
             @RequestParam String studyId,
-            @RequestParam(required = false) String dataTransformationId,
+            @RequestParam(required = false) String datasetTransformationId,
             @RequestParam(required = false) String datasetId,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -110,8 +110,8 @@ public class LearningDatasetController {
         }
 
         List<LearningDataset> datasets;
-        if (dataTransformationId != null) {
-            datasets = this.learningDatasetService.findByDataTransformationId(dataTransformationId);
+        if (datasetTransformationId != null) {
+            datasets = this.learningDatasetService.findByDatasetTransformationId(datasetTransformationId);
         } else if (datasetId != null) {
             datasets = this.learningDatasetService.findByDatasetId(datasetId);
         } else {

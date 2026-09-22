@@ -45,9 +45,12 @@ CREATE TABLE population
 (
     population_id   VARCHAR(255) PRIMARY KEY,
     study_id        VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
-    population_url  VARCHAR(255),
+    population_url  VARCHAR(2048),
+    version         VARCHAR(255),
     description     TEXT,
-    characteristics TEXT
+    characteristics TEXT,
+    -- a definition version is registered once: (url, version) is its canonical identity
+    UNIQUE (population_url, version)
 );
 
 -- Create experiment table
@@ -104,12 +107,15 @@ CREATE TABLE featureset
     featureset_id   VARCHAR(255) PRIMARY KEY,
     experiment_id   VARCHAR(255) REFERENCES experiment (experiment_id) ON DELETE CASCADE,
     title           VARCHAR(255),
-    featureset_url  VARCHAR(255),
+    featureset_url  VARCHAR(2048),
+    version         VARCHAR(255),
     description     TEXT,
     created_at      TIMESTAMP,
     created_by      VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     last_updated_at TIMESTAMP,
-    last_updated_by VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
+    last_updated_by VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
+    -- a definition version is registered once: (url, version) is its canonical identity
+    UNIQUE (featureset_url, version)
 );
 
 -- Create feature table
@@ -126,6 +132,12 @@ CREATE TABLE feature
     units           VARCHAR(255),
     equipment       VARCHAR(255),
     data_collection VARCHAR(255),
+    concept_uri     VARCHAR(255),
+    concept_system  VARCHAR(255),
+    concept_code    VARCHAR(255),
+    -- how Studyfyr derived the final column, carried over from the dataset descriptor
+    extraction_definition     TEXT,
+    extraction_definition_url VARCHAR(2048),
     created_at      TIMESTAMP,
     created_by      VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     last_updated_at TIMESTAMP,
@@ -154,7 +166,8 @@ CREATE TABLE dataset
 -- Create dataset_transformation table
 CREATE TABLE dataset_transformation
 (
-    data_transformation_id VARCHAR(255) PRIMARY KEY,
+    dataset_transformation_id VARCHAR(255) PRIMARY KEY,
+    study_id               VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
     title                  VARCHAR(255),
     description            TEXT
 );
@@ -163,7 +176,8 @@ CREATE TABLE dataset_transformation
 CREATE TABLE dataset_transformation_step
 (
     step_id                VARCHAR(255) PRIMARY KEY,
-    data_transformation_id VARCHAR(255) REFERENCES dataset_transformation (data_transformation_id) ON DELETE CASCADE,
+    dataset_transformation_id VARCHAR(255) REFERENCES dataset_transformation (dataset_transformation_id) ON DELETE CASCADE,
+    step_order             INTEGER,
     input_features         VARCHAR(255),
     output_features        VARCHAR(255),
     method                 VARCHAR(255),
@@ -180,7 +194,7 @@ CREATE TABLE learning_dataset
     learning_dataset_id    VARCHAR(255) PRIMARY KEY,
     dataset_id             VARCHAR(255) REFERENCES dataset (dataset_id) ON DELETE CASCADE,
     study_id               VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
-    data_transformation_id VARCHAR(255) REFERENCES dataset_transformation (data_transformation_id) ON DELETE CASCADE,
+    dataset_transformation_id VARCHAR(255) REFERENCES dataset_transformation (dataset_transformation_id) ON DELETE CASCADE,
     description            TEXT
 );
 
@@ -414,16 +428,18 @@ VALUES
      'study_owner');
 
 -- Insert into population
-INSERT INTO population (population_id, study_id, population_url, description, characteristics)
+INSERT INTO population (population_id, study_id, population_url, version, description, characteristics)
 VALUES
     ('0197a6f8-fbc4-7652-ae5d-d52eaa0a48db',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'https://ai4hf.eu/cohorts/study1',
+     '1.0',
      'Patients hospitalized with a primary discharge diagnosis of heart failure where the primary discharge diagnosis refers to the main reason for admission.',
      'The study population comprised 500 participants, evenly distributed between males and females, with seventy percent ranging between 20-30 years and the rest ranging between 40-50 years old.'),
     ('3197a6f8-2b78-71e4-81c1-b7b6a744ece5',
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      'https://ai4hf.eu/cohorts/maggic',
+     '1.0',
      'Patients with heart failure meeting MAGGIC inclusion criteria.',
      'The study population comprised 500 participants, evenly distributed between males and females, with mean age being 28.');
 
@@ -490,6 +506,7 @@ INSERT INTO featureset (
     experiment_id,
     title,
     featureset_url,
+    version,
     description,
     created_at,
     created_by,
@@ -501,6 +518,7 @@ VALUES
      '0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
      'Feature set for AI4HFsubstudy 2 – Risk score prediction for acute HF in the emergency department.',
      'https://ai4hf.eu/feature-sets/study1-features',
+     '2.1',
      'Feature set containing feature information used in risk score prediction for acute HF in the emergency department.',
      '2023-01-01 00:00:00',
      'data_engineer',
@@ -510,6 +528,7 @@ VALUES
      '4197a6f8-2b78-71e4-81c1-b7b6a744ece5',
      'MAGGIC Score Predictors',
      'https://ai4hf.eu/feature-sets/maggic-v1',
+     '1.0',
      'Canonical predictors used in MAGGIC score calculation and model training.',
      '2025-10-15 00:00:00','data_engineer','2025-10-15 00:00:00','data_engineer');
 
@@ -664,19 +683,22 @@ VALUES
 
 -- Insert into dataset_transformation
 INSERT INTO dataset_transformation (
-    data_transformation_id,
+    dataset_transformation_id,
+    study_id,
     title,
     description
 )
 VALUES
     ('0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
+     '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      'Dataset Smoothening and Normalization',
      'Dataset is transformed by smoothening and normalization.');
 
 -- Insert into dataset_transformation_step
 INSERT INTO dataset_transformation_step (
     step_id,
-    data_transformation_id,
+    dataset_transformation_id,
+    step_order,
     input_features,
     output_features,
     method,
@@ -689,6 +711,7 @@ INSERT INTO dataset_transformation_step (
 VALUES
     ('0197a6fa-6507-775b-99d9-f8808e10052d_transformation_step',
      '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
+     1,
      'feature1',
      'feature1_1',
      'Normalization',
@@ -703,7 +726,7 @@ INSERT INTO learning_dataset (
     learning_dataset_id,
     dataset_id,
     study_id,
-    data_transformation_id,
+    dataset_transformation_id,
     description
 )
 VALUES
