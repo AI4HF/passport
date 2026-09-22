@@ -144,6 +144,48 @@ CREATE TABLE feature
     last_updated_by VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
 );
 
+-- Create quality_criteria table
+CREATE TABLE quality_criteria
+(
+    quality_criteria_id VARCHAR(255) PRIMARY KEY,
+    experiment_id       VARCHAR(255) REFERENCES experiment (experiment_id) ON DELETE CASCADE,
+    title               VARCHAR(255),
+    url                 VARCHAR(2048),
+    description         TEXT,
+    version             VARCHAR(255),
+    created_at          TIMESTAMP,
+    created_by          VARCHAR(255),
+    last_updated_at     TIMESTAMP,
+    last_updated_by     VARCHAR(255),
+    -- a definition version is registered once: (url, version) is its canonical identity
+    UNIQUE (url, version)
+);
+
+-- Create quality_criterion table
+CREATE TABLE quality_criterion
+(
+    quality_criterion_id VARCHAR(255) PRIMARY KEY,
+    quality_criteria_id  VARCHAR(255) REFERENCES quality_criteria (quality_criteria_id) ON DELETE CASCADE,
+    feature_id           VARCHAR(255) REFERENCES feature (feature_id) ON DELETE CASCADE,
+    name                 VARCHAR(255),
+    description          TEXT,
+    category             VARCHAR(255),
+    context              VARCHAR(255),
+    subcategory          VARCHAR(255),
+    -- the expression language of "expression"
+    language             VARCHAR(255) DEFAULT 'application/sql',
+    -- the SQL over the virtual "dataset" table, computing aliased scalar measures
+    expression           TEXT,
+    -- the formula over those aliases, whose result is checked against low/high
+    rule_expression      TEXT,
+    low                  NUMERIC,
+    high                 NUMERIC,
+    created_at           TIMESTAMP,
+    created_by           VARCHAR(255),
+    last_updated_at      TIMESTAMP,
+    last_updated_by      VARCHAR(255)
+);
+
 -- Create dataset table
 CREATE TABLE dataset
 (
@@ -163,6 +205,30 @@ CREATE TABLE dataset
     last_updated_by  VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
 );
 
+-- Create quality_assessment table
+CREATE TABLE quality_assessment
+(
+    quality_assessment_id VARCHAR(255) PRIMARY KEY,
+    dataset_id            VARCHAR(255) REFERENCES dataset (dataset_id) ON DELETE CASCADE,
+    quality_criteria_id   VARCHAR(255) REFERENCES quality_criteria (quality_criteria_id) ON DELETE CASCADE,
+    overall_result        VARCHAR(255),
+    summary               TEXT,
+    executed_at           TIMESTAMP,
+    -- personnel or software agent, so no FK is emitted here
+    executed_by           VARCHAR(255)
+);
+
+-- Create quality_criterion_assessment_result table
+CREATE TABLE quality_criterion_assessment_result
+(
+    result_id             VARCHAR(255) PRIMARY KEY,
+    quality_assessment_id VARCHAR(255) REFERENCES quality_assessment (quality_assessment_id) ON DELETE CASCADE,
+    quality_criterion_id  VARCHAR(255) REFERENCES quality_criterion (quality_criterion_id) ON DELETE CASCADE,
+    value                 NUMERIC,
+    result                VARCHAR(255),
+    detail                TEXT
+);
+
 -- Create dataset_transformation table
 CREATE TABLE dataset_transformation
 (
@@ -178,6 +244,8 @@ CREATE TABLE dataset_transformation_step
     step_id                VARCHAR(255) PRIMARY KEY,
     dataset_transformation_id VARCHAR(255) REFERENCES dataset_transformation (dataset_transformation_id) ON DELETE CASCADE,
     step_order             INTEGER,
+    -- the assessment whose findings motivated this step, when there is one
+    quality_assessment_id  VARCHAR(255) REFERENCES quality_assessment (quality_assessment_id) ON DELETE SET NULL,
     input_features         VARCHAR(255),
     output_features        VARCHAR(255),
     method                 VARCHAR(255),
@@ -740,6 +808,129 @@ VALUES
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
      'Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction after planned transformations.');
+
+-- Insert into quality_criteria
+INSERT INTO quality_criteria (
+    quality_criteria_id,
+    experiment_id,
+    title,
+    url,
+    description,
+    version,
+    created_at,
+    created_by,
+    last_updated_at,
+    last_updated_by
+)
+VALUES
+    ('0197a6fb-1000-7000-a000-000000000001',
+     '0197a6f9-1f49-74a5-ab8a-e64fae0ca141',
+     'HF Risk Dataset Quality Criteria',
+     'http://ai4hf.com/quality-criteria/study1',
+     'Fitness-for-use rules the extracted dataset must satisfy before it is used for training.',
+     '1.0',
+     '2023-01-01 00:00:00',
+     'data_engineer',
+     '2023-01-01 00:00:00',
+     'data_engineer');
+
+-- Insert into quality_criterion
+INSERT INTO quality_criterion (
+    quality_criterion_id,
+    quality_criteria_id,
+    feature_id,
+    name,
+    description,
+    category,
+    context,
+    subcategory,
+    language,
+    expression,
+    rule_expression,
+    low,
+    high,
+    created_at,
+    created_by,
+    last_updated_at,
+    last_updated_by
+)
+VALUES
+    ('0197a6fb-2000-7000-a000-000000000001',
+     '0197a6fb-1000-7000-a000-000000000001',
+     NULL,
+     'validLVEF',
+     'Percentage of records that have a valid LVEF value',
+     'completeness',
+     'verification',
+     NULL,
+     'application/sql',
+     'SELECT count(*) as num_valid FROM dataset WHERE echocardiographs_lvef IS NOT NULL',
+     '(num_valid / %stats.dataset.numOfEntries * 1.0) * 100',
+     50.0,
+     NULL,
+     '2023-01-01 00:00:00',
+     'data_engineer',
+     '2023-01-01 00:00:00',
+     'data_engineer'),
+    ('0197a6fb-2000-7000-a000-000000000002',
+     '0197a6fb-1000-7000-a000-000000000001',
+     NULL,
+     'implausibleBMI',
+     'Percentage of records with a BMI below the plausible threshold',
+     'plausibility',
+     'verification',
+     NULL,
+     'application/sql',
+     'SELECT COUNT(*) AS num_below_threshold FROM dataset WHERE vital_signs_bmi_value_p3a_avg < 18.5 AND vital_signs_bmi_value_p3a_avg IS NOT NULL',
+     '(num_below_threshold / %stats.dataset.numOfEntries * 1.0) * 100',
+     NULL,
+     15.0,
+     '2023-01-01 00:00:00',
+     'data_engineer',
+     '2023-01-01 00:00:00',
+     'data_engineer');
+
+-- Insert into quality_assessment
+INSERT INTO quality_assessment (
+    quality_assessment_id,
+    dataset_id,
+    quality_criteria_id,
+    overall_result,
+    summary,
+    executed_at,
+    executed_by
+)
+VALUES
+    ('0197a6fb-3000-7000-a000-000000000001',
+     '0197a6fa-6507-775b-99d9-f8808e10052d',
+     '0197a6fb-1000-7000-a000-000000000001',
+     'PASSED',
+     'All criteria within bounds; LVEF completeness above the required floor.',
+     '2023-01-02 00:00:00',
+     '0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a01');
+
+-- Insert into quality_criterion_assessment_result
+INSERT INTO quality_criterion_assessment_result (
+    result_id,
+    quality_assessment_id,
+    quality_criterion_id,
+    value,
+    result,
+    detail
+)
+VALUES
+    ('0197a6fb-4000-7000-a000-000000000001',
+     '0197a6fb-3000-7000-a000-000000000001',
+     '0197a6fb-2000-7000-a000-000000000001',
+     87.4,
+     'PASSED',
+     '87.4% of records carry an LVEF value, above the 50% floor.'),
+    ('0197a6fb-4000-7000-a000-000000000002',
+     '0197a6fb-3000-7000-a000-000000000001',
+     '0197a6fb-2000-7000-a000-000000000002',
+     3.1,
+     'PASSED',
+     '3.1% of records fall below the plausible BMI threshold, under the 15% ceiling.');
 
 -- Insert into feature_dataset_characteristic
 INSERT INTO feature_dataset_characteristic (

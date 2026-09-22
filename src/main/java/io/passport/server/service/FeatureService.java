@@ -30,6 +30,7 @@ public class FeatureService {
      * Lazy service references for limited use in cascade validation
      */
     @Autowired @Lazy private FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
+    @Autowired @Lazy private QualityCriterionService qualityCriterionService;
 
     @Autowired
     public FeatureService(FeatureRepository featureRepository,
@@ -50,6 +51,7 @@ public class FeatureService {
         List<ValidationResult> results = new ArrayList<>();
 
         results.add(featureDatasetCharacteristicService.validateCascade(studyId, "Feature", featureId, principal));
+        results.add(qualityCriterionService.validateCascade(studyId, "Feature", featureId, principal));
 
         return ValidationResult.aggregate(results);
     }

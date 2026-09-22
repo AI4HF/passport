@@ -76,6 +76,18 @@ public class PassportService {
     @Autowired
     private ModelFigureService modelFigureService;
 
+    @Autowired
+    private QualityCriteriaService qualityCriteriaService;
+
+    @Autowired
+    private QualityCriterionService qualityCriterionService;
+
+    @Autowired
+    private QualityAssessmentService qualityAssessmentService;
+
+    @Autowired
+    private QualityCriterionAssessmentResultService qualityCriterionAssessmentResultService;
+
     private final RoleCheckerService roleCheckerService;
     @Autowired
     private LearningStageParameterService learningStageParameterService;
@@ -190,6 +202,12 @@ public class PassportService {
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isFeatureSets()){
                 detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityCriteria()){
+                detailsJson.put("qualityCriteriaWithCriterion", fetchQualityCriteriaWithCriterion(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityAssessments()){
+                detailsJson.put("qualityAssessmentsWithResults", fetchQualityAssessmentsWithResults(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isDatasets()){
                 detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passportWithDetailSelection.getPassport()));
@@ -319,6 +337,44 @@ public class PassportService {
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Feature Sets and Features: " + e.getMessage());
+        }
+    }
+
+    /**
+     * The quality criteria sets defined for the study, each with the rules it contains.
+     */
+    private List<Map<String, Object>> fetchQualityCriteriaWithCriterion(Passport passport) {
+        try {
+            return qualityCriteriaService.getAllQualityCriteriaByStudyId(passport.getStudyId()).stream()
+                    .map(qualityCriteria -> {
+                        Map<String, Object> criteriaWithCriterion = new HashMap<>();
+                        criteriaWithCriterion.put("qualityCriteria", qualityCriteria);
+                        criteriaWithCriterion.put("qualityCriterion",
+                                qualityCriterionService.findQualityCriterionByQualityCriteriaId(qualityCriteria.getQualityCriteriaId()));
+                        return criteriaWithCriterion;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Quality Criteria: " + e.getMessage());
+        }
+    }
+
+    /**
+     * The quality assessment runs over the study's datasets, each with its per-criterion results.
+     */
+    private List<Map<String, Object>> fetchQualityAssessmentsWithResults(Passport passport) {
+        try {
+            return qualityAssessmentService.getAllQualityAssessmentsByStudyId(passport.getStudyId()).stream()
+                    .map(qualityAssessment -> {
+                        Map<String, Object> assessmentWithResults = new HashMap<>();
+                        assessmentWithResults.put("qualityAssessment", qualityAssessment);
+                        assessmentWithResults.put("results",
+                                qualityCriterionAssessmentResultService.findResultsByQualityAssessmentId(qualityAssessment.getQualityAssessmentId()));
+                        return assessmentWithResults;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Quality Assessments: " + e.getMessage());
         }
     }
 

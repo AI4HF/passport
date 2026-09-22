@@ -34,6 +34,7 @@ public class DatasetService {
      */
     @Autowired @Lazy private LearningDatasetService learningDatasetService;
     @Autowired @Lazy private FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
+    @Autowired @Lazy private QualityAssessmentService qualityAssessmentService;
 
     @Autowired
     public DatasetService(DatasetRepository datasetRepository, PersonnelService personnelService, RoleCheckerService roleCheckerService) {
@@ -55,6 +56,7 @@ public class DatasetService {
 
         results.add(learningDatasetService.validateCascade(studyId, "Dataset", datasetId, principal));
         results.add(featureDatasetCharacteristicService.validateCascade(studyId, "Dataset", datasetId, principal));
+        results.add(qualityAssessmentService.validateCascade(studyId, "Dataset", datasetId, principal));
 
         return ValidationResult.aggregate(results);
     }

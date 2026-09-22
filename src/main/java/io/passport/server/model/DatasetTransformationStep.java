@@ -40,6 +40,9 @@ public class DatasetTransformationStep {
     @Column(name = "method")
     private String method;
 
+    @Column(name = "quality_assessment_id")
+    private String qualityAssessmentId;
+
     @Column(name = "explanation")
     private String explanation;
 
