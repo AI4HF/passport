@@ -105,8 +105,7 @@ public class LinkedArticleController {
             if (savedArticle.getLinkedArticleId() != null) {
                 String recordId = savedArticle.getLinkedArticleId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -149,8 +148,7 @@ public class LinkedArticleController {
                 LinkedArticle savedArticle = savedArticleOpt.get();
                 String recordId = savedArticle.getLinkedArticleId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -190,8 +188,7 @@ public class LinkedArticleController {
             Optional<LinkedArticle> deletedArticle = this.linkedArticleService.deleteLinkedArticle(linkedArticleId);
             if (deletedArticle.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

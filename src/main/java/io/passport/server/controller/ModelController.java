@@ -133,8 +133,7 @@ public class ModelController {
             if (saved.getModelId() != null) {
                 String recordId = saved.getModelId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -174,8 +173,7 @@ public class ModelController {
                 Model saved = savedOpt.get();
                 String recordId = saved.getModelId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -212,8 +210,7 @@ public class ModelController {
             Optional<Model> deletedModel = this.modelService.deleteModel(modelId);
             if (deletedModel.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

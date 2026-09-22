@@ -131,8 +131,7 @@ public class LearningProcessController {
             if (saved.getLearningProcessId() != null) {
                 String recordId = saved.getLearningProcessId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -174,8 +173,7 @@ public class LearningProcessController {
                 LearningProcess saved = savedOpt.get();
                 String recordId = saved.getLearningProcessId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -212,8 +210,7 @@ public class LearningProcessController {
             Optional<LearningProcess> deletedLearningProcess = this.learningProcessService.deleteLearningProcess(learningProcessId);
             if (deletedLearningProcess.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

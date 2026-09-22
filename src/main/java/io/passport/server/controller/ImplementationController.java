@@ -131,8 +131,7 @@ public class ImplementationController {
             if (saved.getImplementationId() != null) {
                 String recordId = saved.getImplementationId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -172,8 +171,7 @@ public class ImplementationController {
                 Implementation saved = savedOpt.get();
                 String recordId = saved.getImplementationId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -211,8 +209,7 @@ public class ImplementationController {
             Optional<Implementation> deletedImplementation = this.implementationService.deleteImplementation(implementationId);
             if (deletedImplementation.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

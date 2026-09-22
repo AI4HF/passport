@@ -107,8 +107,7 @@ public class ExperimentController {
             for (Experiment exp : newExperiments) {
                 String recordId = exp.getExperimentId();
                 auditLogBookService.createAuditLog(
-                        userId,
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,

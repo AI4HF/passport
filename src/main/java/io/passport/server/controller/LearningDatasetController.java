@@ -144,8 +144,7 @@ public class LearningDatasetController {
             if (newLd != null && newLd.getLearningDatasetId() != null) {
                 String recordId = newLd.getLearningDatasetId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -194,8 +193,7 @@ public class LearningDatasetController {
                 LearningDataset updatedLd = updatedDTO.getLearningDataset();
                 String recordId = updatedLd.getLearningDatasetId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -233,8 +231,7 @@ public class LearningDatasetController {
             Optional<LearningDataset> deletedLearningDataset = this.learningDatasetService.deleteLearningDataset(learningDatasetId);
             if (deletedLearningDataset.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

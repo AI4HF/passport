@@ -618,7 +618,6 @@
           "attributes": {},
           "realmRoles": [],
           "clientRoles": {}
-
         },
         {
           "id": "ef1f8e4a-e31f-45c8-9c5f-679d1e8e97f2",
@@ -1224,6 +1223,40 @@
           }
         }
       ],
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-node-agent",
+      "name": "Passport Node Agent",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "sJ8kQ2mVrX4pL7nT1wY6bF3dH9gC5aZe",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
       "defaultClientScopes": [
         "web-origins",
         "roles",

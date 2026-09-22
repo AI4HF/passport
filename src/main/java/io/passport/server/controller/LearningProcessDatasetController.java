@@ -113,8 +113,7 @@ public class LearningProcessDatasetController {
                 String ldId = saved.getId().getLearningDatasetId();
                 String compositeId = "(" + lpId + ", " + ldId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -165,8 +164,7 @@ public class LearningProcessDatasetController {
                 LearningProcessDataset saved = savedOpt.get();
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -213,8 +211,7 @@ public class LearningProcessDatasetController {
             if (deletedLearningProcessDataset.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + learningDatasetId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

@@ -112,8 +112,7 @@ public class LearningProcessParameterController {
                 String pId = saved.getId().getParameterId();
                 String compositeId = "(" + lpId + ", " + pId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -163,8 +162,7 @@ public class LearningProcessParameterController {
                 LearningProcessParameter saved = savedOpt.get();
                 String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -211,8 +209,7 @@ public class LearningProcessParameterController {
             if (deletedLearningProcessParameter.isPresent()) {
                 String compositeId = "(" + learningProcessId + ", " + parameterId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

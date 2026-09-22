@@ -19,6 +19,16 @@ CREATE TABLE personnel
     email           VARCHAR(255)
 );
 
+-- Create software_agent table
+CREATE TABLE software_agent
+(
+    software_agent_id  VARCHAR(255) PRIMARY KEY,
+    name               VARCHAR(255),
+    version            VARCHAR(255),
+    description        TEXT,
+    keycloak_client_id VARCHAR(255) UNIQUE
+);
+
 -- Create study table
 CREATE TABLE study
 (
@@ -326,8 +336,10 @@ CREATE TABLE passport
 CREATE TABLE audit_log
 (
     audit_log_id        VARCHAR(255) PRIMARY KEY,
-    person_id           VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
-    person_name         VARCHAR(255),
+    -- the actor is personnel or a software agent, so no FK is emitted here
+    actor_id            VARCHAR(255),
+    actor_name          VARCHAR(255),
+    actor_type          VARCHAR(255) CHECK (actor_type IN ('PERSONNEL', 'SOFTWARE_AGENT')),
     study_id            VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
     occurred_at         TIMESTAMP,
     action_type         VARCHAR(255),
@@ -373,6 +385,16 @@ VALUES
     ('survey_manager', '0197a6f5-bb48-7855-b248-95697e913f22', 'Senan', 'Postaci', 'survey_manager@gmail.com'),
     ('data_steward', '0197a6f5-bb48-7855-b248-95697e913f22', 'Suat', 'Gonul', 'data_steward@gmail.com'),
     ('ml_engineer', '0197a6f5-bb48-7855-b248-95697e913f22', 'Dogukan', 'Cavdaroglu', 'ml_engineer@gmail.com');
+
+
+-- Insert into software_agent
+INSERT INTO software_agent (software_agent_id, name, version, description, keycloak_client_id)
+VALUES
+    ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a01',
+     'Passport Node Agent - dataset sync',
+     '1.0',
+     'Reads the local Studyfyr dataset descriptor and quality assessment results and registers them in the Passport.',
+     'ai4hf-node-agent');
 
 
 -- Insert into study

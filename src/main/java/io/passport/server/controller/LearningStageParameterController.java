@@ -112,8 +112,7 @@ public class LearningStageParameterController {
                 String pId = saved.getId().getParameterId();
                 String compositeId = "(" + lsId + ", " + pId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -163,8 +162,7 @@ public class LearningStageParameterController {
                 LearningStageParameter saved = savedOpt.get();
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -210,8 +208,7 @@ public class LearningStageParameterController {
             if (deletedLearningStageParameter.isPresent()) {
                 String compositeId = "(" + learningStageId + ", " + parameterId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

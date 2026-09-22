@@ -145,8 +145,7 @@ public class StudyController {
             if (savedStudy.getId() != null) {
                 String recordId = savedStudy.getId();
                 auditLogBookService.createAuditLog(
-                        ownerId,
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         savedStudy.getId(),
                         Operation.CREATE,
                         relationName,
@@ -189,8 +188,7 @@ public class StudyController {
             Study savedStudy = savedStudyOpt.get();
             String recordId = savedStudy.getId();
             auditLogBookService.createAuditLog(
-                    userId,
-                    principal.getClaim(TokenClaim.USERNAME.getValue()),
+                    principal,
                     studyId,
                     Operation.UPDATE,
                     relationName,

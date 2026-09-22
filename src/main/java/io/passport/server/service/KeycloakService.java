@@ -6,14 +6,6 @@ import io.passport.server.config.KeycloakProvider;
 import io.passport.server.model.Role;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.AccessTokenResponse;
@@ -28,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,79 +60,6 @@ public class KeycloakService {
         keycloakWithCredentials.close(); // Close the instance used for token
         return tokenResponse;
     }
-
-    /**
-     * Issue a long-term Refresh Token for the user with given credentials.
-     * @param username Username of the user for the Refresh Token
-     * @param password Password of the user for the Refresh Token
-     * @return The Refresh Token
-     */
-    public String createOfflineSecret(String username, String password) {
-
-        String tokenUrl = String.format("%s/realms/%s/protocol/openid-connect/token",
-                keycloakProvider.getServerURL(), keycloakProvider.getRealm());
-
-        List<NameValuePair> body = List.of(
-                new BasicNameValuePair("grant_type",    "password"),
-                new BasicNameValuePair("client_id",     keycloakProvider.getClientID()),
-                new BasicNameValuePair("client_secret", keycloakProvider.getClientSecret()),
-                new BasicNameValuePair("username",      username),
-                new BasicNameValuePair("password",      password),
-                new BasicNameValuePair("scope",         "offline_access")
-        );
-
-        try (CloseableHttpClient http = HttpClients.createDefault()) {
-
-            HttpPost post = new HttpPost(tokenUrl);
-            post.setEntity(new UrlEncodedFormEntity(body));
-
-            try (var response = http.execute(post)) {
-                String json = EntityUtils.toString(response.getEntity());
-                AccessTokenResponse atr = objectMapper.readValue(json, AccessTokenResponse.class);
-
-                return atr.getRefreshToken();
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to obtain offline token", e);
-        }
-    }
-
-
-    /**
-     * Redeem the Refresh Token for an actual Access Token.
-     * @param offlineRefreshToken The secret given to the user.
-     * @return Access Token response with an Access Token
-     */
-    public AccessTokenResponse refreshWithSecret(String offlineRefreshToken) {
-
-        String tokenUrl = String.format("%s/realms/%s/protocol/openid-connect/token",
-                keycloakProvider.getServerURL(), realm);
-
-        List<NameValuePair> body = List.of(
-                new BasicNameValuePair(OAuth2Constants.GRANT_TYPE,  OAuth2Constants.REFRESH_TOKEN),
-                new BasicNameValuePair(OAuth2Constants.REFRESH_TOKEN, offlineRefreshToken),
-                new BasicNameValuePair(OAuth2Constants.CLIENT_ID,   keycloakProvider.getClientID()),
-                new BasicNameValuePair("client_secret",             keycloakProvider.getClientSecret())
-        );
-
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(tokenUrl);
-            post.setEntity(new UrlEncodedFormEntity(body));
-
-            String json = EntityUtils.toString(client.execute(post).getEntity());
-            AccessTokenResponse atr = objectMapper.readValue(json, AccessTokenResponse.class);
-
-            if (atr.getToken() == null || atr.getToken().isBlank()) {
-                throw new IllegalStateException("Keycloak did not return an access_token - refresh token may be expired or revoked.");
-            }
-            return atr;
-
-        } catch (IOException e) {
-            throw new RuntimeException("Could not refresh token", e);
-        }
-    }
-
 
     /**
      * Creates a Keycloak user with the given username and password, then assigns the specified role.
