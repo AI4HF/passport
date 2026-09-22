@@ -608,13 +608,25 @@ VALUES
 
 
 -- Insert into software_agent
+-- One row per module of the node agent: each writes as its own service account, so the audit log
+-- book distinguishes which module made a change.
 INSERT INTO software_agent (software_agent_id, name, version, description, keycloak_client_id)
 VALUES
     ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a01',
      'Passport Node Agent - dataset sync',
      '1.0',
      'Reads the local Studyfyr dataset descriptor and quality assessment results and registers them in the Passport.',
-     'ai4hf-node-agent');
+     'ai4hf-node-agent-dataset-sync'),
+    ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a02',
+     'Passport Node Agent - metadata publisher',
+     '1.0',
+     'Publishes approved dataset descriptions to the local FAIR Data Point and records where they were listed.',
+     'ai4hf-node-agent-metadata-publisher'),
+    ('0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a03',
+     'Passport Node Agent - monitoring import',
+     '1.0',
+     'Imports the deployment-period statistics of a replaced model version from the local Monitoring Platform.',
+     'ai4hf-node-agent-monitoring-import');
 
 
 -- Insert into study

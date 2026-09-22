@@ -162,22 +162,33 @@ public class DatasetService {
      * @return
      */
     public Optional<Dataset> saveDataset(Dataset dataset, String personnelId) {
-        Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if(personnel.isPresent()) {
-            dataset.setCreatedAt(Instant.now());
-            dataset.setLastUpdatedAt(Instant.now());
-            dataset.setPopulationId(dataset.getPopulationId());
-            dataset.setOrganizationId(personnel.get().getOrganizationId());
-            Dataset savedDataset = datasetRepository.save(dataset);
+        dataset.setCreatedAt(Instant.now());
+        dataset.setLastUpdatedAt(Instant.now());
+        dataset.setOrganizationId(resolveOrganizationId(dataset.getOrganizationId(), personnelId));
+        Dataset savedDataset = datasetRepository.save(dataset);
 
-            if (savedDataset.getPreviousDatasetId() != null) {
-                copyStewardMetadataForward(savedDataset);
-            }
-
-            return Optional.of(savedDataset);
-        }else{
-            return Optional.empty();
+        if (savedDataset.getPreviousDatasetId() != null) {
+            copyStewardMetadataForward(savedDataset);
         }
+
+        return Optional.of(savedDataset);
+    }
+
+    /**
+     * Decide which organization a dataset belongs to.
+     *
+     * A person's datasets belong to the organization they work for, which the caller cannot override.
+     * The node agent is not a person and has no Personnel record - it runs on behalf of one site and
+     * says which, so its value is taken as given.
+     *
+     * @param requestedOrganizationId Organization the caller supplied, if any
+     * @param personnelId Subject of the access token: a person, or a service account
+     * @return The organization the dataset is recorded against
+     */
+    private String resolveOrganizationId(String requestedOrganizationId, String personnelId) {
+        return this.personnelService.findPersonnelById(personnelId)
+                .map(Personnel::getOrganizationId)
+                .orElse(requestedOrganizationId);
     }
 
     /**
@@ -239,12 +250,11 @@ public class DatasetService {
      */
     public Optional<Dataset> updateDataset(String datasetId, Dataset updatedDataset, String personnelId) {
         Optional<Dataset> oldDataset = datasetRepository.findById(datasetId);
-        Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if (oldDataset.isPresent() && personnel.isPresent()) {
+        if (oldDataset.isPresent()) {
             Dataset dataset = oldDataset.get();
             dataset.setFeaturesetId(updatedDataset.getFeaturesetId());
             dataset.setPopulationId(updatedDataset.getPopulationId());
-            dataset.setOrganizationId(personnel.get().getOrganizationId());
+            dataset.setOrganizationId(resolveOrganizationId(updatedDataset.getOrganizationId(), personnelId));
             dataset.setTitle(updatedDataset.getTitle());
             dataset.setDescription(updatedDataset.getDescription());
             dataset.setVersion(updatedDataset.getVersion());
