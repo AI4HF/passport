@@ -24,13 +24,17 @@ public class ModelWithOwnerNameDTO {
 
     private String version;
 
+    private String previousModelId;
+
+    private String retrainingReason;
+
     private String tag;
 
     private String modelType;
 
     private String productIdentifier;
 
-    private String owner;
+    private String ownerOrganizationName;
 
     private String trlLevel;
 
@@ -65,10 +69,11 @@ public class ModelWithOwnerNameDTO {
         this.experimentId = model.getExperimentId();
         this.name = model.getName();
         this.version = model.getVersion();
+        this.previousModelId = model.getPreviousModelId();
+        this.retrainingReason = model.getRetrainingReason();
         this.tag = model.getTag();
         this.modelType = model.getModelType();
         this.productIdentifier = model.getProductIdentifier();
-        this.owner = model.getOwner();
         this.trlLevel = model.getTrlLevel();
         this.license = model.getLicense();
         this.primaryUse = model.getPrimaryUse();

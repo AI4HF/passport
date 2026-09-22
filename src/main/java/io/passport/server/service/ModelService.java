@@ -32,7 +32,8 @@ public class ModelService {
     @Autowired @Lazy private PassportService passportService;
     @Autowired @Lazy private ModelParameterService modelParameterService;
     @Autowired @Lazy private ModelFigureService modelFigureService;
-    @Autowired @Lazy private EvaluationMeasureService evaluationMeasureService;
+    @Autowired @Lazy private ModelEvaluationService modelEvaluationService;
+    @Autowired @Lazy private LinkedArticleService linkedArticleService;
 
     @Autowired
     public ModelService(ModelRepository modelRepository, RoleCheckerService roleCheckerService) {
@@ -54,7 +55,8 @@ public class ModelService {
         neighborResults.add(passportService.validateCascade(studyId, "Model", modelId, principal));
         neighborResults.add(modelParameterService.validateCascade(studyId, "Model", modelId, principal));
         neighborResults.add(modelFigureService.validateCascade(studyId, "Model", modelId, principal));
-        neighborResults.add(evaluationMeasureService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(modelEvaluationService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(linkedArticleService.validateCascade(studyId, "Model", modelId, principal));
 
         return ValidationResult.aggregate(neighborResults);
     }
@@ -80,7 +82,10 @@ public class ModelService {
                 affectedModels = modelRepository.findByExperimentId(sourceResourceId);
                 break;
             case "Organization":
-                affectedModels = modelRepository.findByOwner(sourceResourceId);
+                affectedModels = modelRepository.findByOwnerOrganizationId(sourceResourceId);
+                break;
+            case "Model":
+                affectedModels = modelRepository.findByPreviousModelId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -147,9 +152,12 @@ public class ModelService {
             model.setExperimentId(updatedModel.getExperimentId());
             model.setName(updatedModel.getName());
             model.setVersion(updatedModel.getVersion());
+            model.setPreviousModelId(updatedModel.getPreviousModelId());
+            model.setRetrainingReason(updatedModel.getRetrainingReason());
             model.setTag(updatedModel.getTag());
             model.setModelType(updatedModel.getModelType());
             model.setProductIdentifier(updatedModel.getProductIdentifier());
+            model.setOwnerOrganizationId(updatedModel.getOwnerOrganizationId());
             model.setTrlLevel(updatedModel.getTrlLevel());
             model.setLicense(updatedModel.getLicense());
             model.setPrimaryUse(updatedModel.getPrimaryUse());

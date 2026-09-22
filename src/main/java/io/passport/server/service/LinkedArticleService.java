@@ -44,8 +44,8 @@ public class LinkedArticleService {
         List<LinkedArticle> affectedArticles;
 
         switch (sourceResourceType) {
-            case "Study":
-                affectedArticles = linkedArticleRepository.findByStudyId(sourceResourceId);
+            case "Model":
+                affectedArticles = linkedArticleRepository.findByModelId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -58,7 +58,7 @@ public class LinkedArticleService {
         boolean hasPermission = roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
                 principal,
-                List.of(Role.STUDY_OWNER)
+                List.of(Role.DATA_SCIENTIST)
         );
 
         if (!hasPermission) {
@@ -72,21 +72,21 @@ public class LinkedArticleService {
     }
 
     /**
-     * Find a linked article by linkedArticleId
-     * @param linkedArticleId ID of the linked article
+     * Find a linked article by articleId
+     * @param articleId ID of the linked article
      * @return
      */
-    public Optional<LinkedArticle> findLinkedArticleById(String linkedArticleId) {
-        return linkedArticleRepository.findById(linkedArticleId);
+    public Optional<LinkedArticle> findLinkedArticleById(String articleId) {
+        return linkedArticleRepository.findById(articleId);
     }
 
     /**
-     * Find linked articles by studyId
-     * @param studyId ID of the study
+     * Find linked articles by modelId
+     * @param modelId ID of the model
      * @return
      */
-    public List<LinkedArticle> findLinkedArticleByStudyId(String studyId) {
-        return linkedArticleRepository.findByStudyId(studyId);
+    public List<LinkedArticle> findLinkedArticleByModelId(String modelId) {
+        return linkedArticleRepository.findByModelId(modelId);
     }
 
     /**
@@ -100,17 +100,22 @@ public class LinkedArticleService {
 
     /**
      * Update a linked article
-     * @param linkedArticleId ID of the linked article
+     * @param articleId ID of the linked article
      * @param updatedLinkedArticle linked article to be updated
      * @return
      */
-    public Optional<LinkedArticle> updateLinkedArticle(String linkedArticleId, LinkedArticle updatedLinkedArticle) {
-        Optional<LinkedArticle> oldArticle = linkedArticleRepository.findById(linkedArticleId);
+    public Optional<LinkedArticle> updateLinkedArticle(String articleId, LinkedArticle updatedLinkedArticle) {
+        Optional<LinkedArticle> oldArticle = linkedArticleRepository.findById(articleId);
         if (oldArticle.isPresent()) {
             LinkedArticle article = oldArticle.get();
-            article.setArticleUrl(updatedLinkedArticle.getArticleUrl());
+            article.setModelId(updatedLinkedArticle.getModelId());
+            article.setDoi(updatedLinkedArticle.getDoi());
+            article.setTitle(updatedLinkedArticle.getTitle());
+            article.setAuthors(updatedLinkedArticle.getAuthors());
+            article.setPublicationVenue(updatedLinkedArticle.getPublicationVenue());
+            article.setPublicationYear(updatedLinkedArticle.getPublicationYear());
+            article.setUrl(updatedLinkedArticle.getUrl());
             article.setDescription(updatedLinkedArticle.getDescription());
-            article.setStudyId(updatedLinkedArticle.getStudyId());
             LinkedArticle savedArticle = linkedArticleRepository.save(article);
             return Optional.of(savedArticle);
         } else {
@@ -120,11 +125,11 @@ public class LinkedArticleService {
 
     /**
      * Delete a linked article
-     * @param linkedArticleId ID of linked article to be deleted
+     * @param articleId ID of linked article to be deleted
      * @return
      */
-    public Optional<LinkedArticle> deleteLinkedArticle(String linkedArticleId) {
-        Optional<LinkedArticle> existingArticle = linkedArticleRepository.findById(linkedArticleId);
+    public Optional<LinkedArticle> deleteLinkedArticle(String articleId) {
+        Optional<LinkedArticle> existingArticle = linkedArticleRepository.findById(articleId);
         if (existingArticle.isPresent()) {
             linkedArticleRepository.delete(existingArticle.get());
             return existingArticle;

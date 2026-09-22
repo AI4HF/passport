@@ -71,6 +71,12 @@ public class PassportService {
     private EvaluationMeasureService evaluationMeasureService;
 
     @Autowired
+    private ModelEvaluationService modelEvaluationService;
+
+    @Autowired
+    private ModelEvaluationDatasetService modelEvaluationDatasetService;
+
+    @Autowired
     private OrganizationService organizationService;
 
     @Autowired
@@ -228,7 +234,7 @@ public class PassportService {
                 detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
-                detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
+                detailsJson.put("modelEvaluationsWithMeasures", fetchModelEvaluationsWithMeasures(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isModelFigures()){
                 detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
@@ -261,7 +267,7 @@ public class PassportService {
             Model model = modelService.findModelById(passport.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
             ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
-            modelWithOwnerNameDTO.setOwner(organizationService.findOrganizationById(model.getOwner()).orElseThrow().getName());
+            modelWithOwnerNameDTO.setOwnerOrganizationName(organizationService.findOrganizationById(model.getOwnerOrganizationId()).orElseThrow().getName());
             return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
@@ -330,7 +336,7 @@ public class PassportService {
     }
     private List<LinkedArticle> fetchLinkedArticles(Passport passport) {
         try {
-            return linkedArticleService.findLinkedArticleByStudyId(passport.getStudyId());
+            return linkedArticleService.findLinkedArticleByModelId(passport.getModelId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Linked Articles: " + e.getMessage());
         }
@@ -431,11 +437,27 @@ public class PassportService {
         }
     }
 
-    private List<EvaluationMeasure> fetchEvaluationMeasures(Passport passport) {
+    /**
+     * Measures belong to an evaluation run rather than to the model, so the passport carries each run
+     * with the measures it produced and the learning datasets it was computed over.
+     */
+    private List<Map<String, Object>> fetchModelEvaluationsWithMeasures(Passport passport) {
         try {
-            return evaluationMeasureService.findEvaluationMeasuresByModelId(passport.getModelId());
+            List<ModelEvaluation> modelEvaluations = modelEvaluationService.findModelEvaluationsByModelId(passport.getModelId());
+            return modelEvaluations.stream()
+                    .map(modelEvaluation -> {
+                        Map<String, Object> modelEvaluationWithMeasures = new HashMap<>();
+                        modelEvaluationWithMeasures.put("modelEvaluation", modelEvaluation);
+                        modelEvaluationWithMeasures.put("evaluationMeasures",
+                                evaluationMeasureService.findEvaluationMeasuresByModelEvaluationId(modelEvaluation.getModelEvaluationId()));
+                        modelEvaluationWithMeasures.put("evaluationDatasets",
+                                modelEvaluationDatasetService.findByModelEvaluationId(modelEvaluation.getModelEvaluationId())
+                                        .stream().map(ModelEvaluationDatasetDTO::new).collect(Collectors.toList()));
+                        return modelEvaluationWithMeasures;
+                    })
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error fetching Evaluation Measures: " + e.getMessage());
+            throw new RuntimeException("Error fetching Model Evaluations: " + e.getMessage());
         }
     }
 

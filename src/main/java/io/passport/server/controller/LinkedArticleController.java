@@ -33,7 +33,7 @@ public class LinkedArticleController {
     private final RoleCheckerService roleCheckerService;
     private final AuditLogBookService auditLogBookService;
 
-    private final List<Role> allowedRoles = List.of(Role.STUDY_OWNER, Role.DATA_ENGINEER);
+    private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
     public LinkedArticleController(LinkedArticleService linkedArticleService,
@@ -45,46 +45,48 @@ public class LinkedArticleController {
     }
 
     /**
-     * Read linked article by linkedArticleId.
+     * Read linked article by articleId.
      *
-     * @param linkedArticleId ID of the linked article.
+     * @param articleId ID of the linked article.
      * @param studyId         ID of the study.
      * @param principal       Jwt principal containing user info.
      * @return ResponseEntity with the linked article data.
      */
-    @GetMapping("/{linkedArticleId}")
-    public ResponseEntity<?> getLinkedArticleById(@PathVariable("linkedArticleId") String linkedArticleId,
+    @GetMapping("/{articleId}")
+    public ResponseEntity<?> getLinkedArticleById(@PathVariable("articleId") String articleId,
                                                   @RequestParam String studyId,
                                                   @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        Optional<LinkedArticle> article = this.linkedArticleService.findLinkedArticleById(linkedArticleId);
+        Optional<LinkedArticle> article = this.linkedArticleService.findLinkedArticleById(articleId);
         return article.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Read linked articles by studyId.
+     * Read linked articles by modelId.
      *
+     * @param modelId   ID of the model.
      * @param studyId   ID of the study.
      * @param principal Jwt principal containing user info.
      * @return ResponseEntity with the list of linked articles.
      */
     @GetMapping
-    public ResponseEntity<?> getLinkedArticlesByStudyId(@RequestParam String studyId,
+    public ResponseEntity<?> getLinkedArticlesByModelId(@RequestParam String modelId,
+                                                        @RequestParam String studyId,
                                                         @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedToViewStudy(studyId, principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<LinkedArticle> articles = this.linkedArticleService.findLinkedArticleByStudyId(studyId);
+        List<LinkedArticle> articles = this.linkedArticleService.findLinkedArticleByModelId(modelId);
         return ResponseEntity.ok().body(articles);
     }
 
     /**
      * Create Linked Article.
-     * (Only STUDY_OWNER is allowed to create)
+     * (Only DATA_SCIENTIST is allowed to create)
      *
      * @param linkedArticle LinkedArticle model instance to be created.
      * @param studyId       ID of the study.
@@ -102,8 +104,8 @@ public class LinkedArticleController {
         try {
             LinkedArticle savedArticle = this.linkedArticleService.saveLinkedArticle(linkedArticle);
 
-            if (savedArticle.getLinkedArticleId() != null) {
-                String recordId = savedArticle.getLinkedArticleId();
+            if (savedArticle.getArticleId() != null) {
+                String recordId = savedArticle.getArticleId();
                 auditLogBookService.createAuditLog(
                         principal,
                         studyId,
@@ -123,16 +125,16 @@ public class LinkedArticleController {
 
     /**
      * Update Linked Article.
-     * (Only STUDY_OWNER is allowed to update)
+     * (Only DATA_SCIENTIST is allowed to update)
      *
-     * @param linkedArticleId      ID of the linked article to be updated.
+     * @param articleId      ID of the linked article to be updated.
      * @param updatedLinkedArticle Updated linked article model.
      * @param studyId              ID of the study.
      * @param principal            Jwt principal containing user info.
      * @return ResponseEntity with the updated linked article data.
      */
-    @PutMapping("/{linkedArticleId}")
-    public ResponseEntity<?> updateLinkedArticle(@PathVariable String linkedArticleId,
+    @PutMapping("/{articleId}")
+    public ResponseEntity<?> updateLinkedArticle(@PathVariable String articleId,
                                                  @RequestBody LinkedArticle updatedLinkedArticle,
                                                  @RequestParam String studyId,
                                                  @AuthenticationPrincipal Jwt principal) {
@@ -142,11 +144,11 @@ public class LinkedArticleController {
 
         try {
             Optional<LinkedArticle> savedArticleOpt =
-                    this.linkedArticleService.updateLinkedArticle(linkedArticleId, updatedLinkedArticle);
+                    this.linkedArticleService.updateLinkedArticle(articleId, updatedLinkedArticle);
 
             if (savedArticleOpt.isPresent()) {
                 LinkedArticle savedArticle = savedArticleOpt.get();
-                String recordId = savedArticle.getLinkedArticleId();
+                String recordId = savedArticle.getArticleId();
                 auditLogBookService.createAuditLog(
                         principal,
                         studyId,
@@ -167,16 +169,16 @@ public class LinkedArticleController {
     }
 
     /**
-     * Delete Linked Article by linkedArticleId.
-     * (Only STUDY_OWNER is allowed to delete)
+     * Delete Linked Article by articleId.
+     * (Only DATA_SCIENTIST is allowed to delete)
      *
-     * @param linkedArticleId ID of the linked article to be deleted.
+     * @param articleId ID of the linked article to be deleted.
      * @param studyId         ID of the study.
      * @param principal       Jwt principal containing user info.
      * @return ResponseEntity with no content if successful.
      */
-    @DeleteMapping("/{linkedArticleId}")
-    public ResponseEntity<?> deleteLinkedArticle(@PathVariable String linkedArticleId,
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<?> deleteLinkedArticle(@PathVariable String articleId,
                                                  @RequestParam String studyId,
                                                  @AuthenticationPrincipal Jwt principal) {
 
@@ -185,14 +187,14 @@ public class LinkedArticleController {
         }
 
         try {
-            Optional<LinkedArticle> deletedArticle = this.linkedArticleService.deleteLinkedArticle(linkedArticleId);
+            Optional<LinkedArticle> deletedArticle = this.linkedArticleService.deleteLinkedArticle(articleId);
             if (deletedArticle.isPresent()) {
                 auditLogBookService.createAuditLog(
                         principal,
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        linkedArticleId,
+                        articleId,
                         deletedArticle.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedArticle.get());

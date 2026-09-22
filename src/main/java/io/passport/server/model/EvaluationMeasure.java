@@ -23,8 +23,8 @@ public class EvaluationMeasure {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String measureId;
 
-    @Column(name = "model_id")
-    private String modelId;
+    @Column(name = "model_evaluation_id")
+    private String modelEvaluationId;
 
     @Column(name = "name")
     private String name;

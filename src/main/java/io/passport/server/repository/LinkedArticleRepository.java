@@ -9,5 +9,5 @@ import java.util.List;
  * LinkedArticle repository for database management.
  */
 public interface LinkedArticleRepository extends JpaRepository<LinkedArticle, String> {
-    List<LinkedArticle> findByStudyId(String studyId);
+    List<LinkedArticle> findByModelId(String modelId);
 }

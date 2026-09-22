@@ -35,6 +35,7 @@ public class LearningDatasetService {
      * Lazy service references for limited use in cascade validation
      */
     @Autowired @Lazy private LearningProcessDatasetService learningProcessDatasetService;
+    @Autowired @Lazy private ModelEvaluationDatasetService modelEvaluationDatasetService;
 
     @Autowired
     public LearningDatasetService(LearningDatasetRepository learningDatasetRepository,
@@ -59,6 +60,7 @@ public class LearningDatasetService {
         List<ValidationResult> results = new ArrayList<>();
 
         results.add(learningProcessDatasetService.validateCascade(studyId, "LearningDataset", learningDatasetId, principal));
+        results.add(modelEvaluationDatasetService.validateCascade(studyId, "LearningDataset", learningDatasetId, principal));
 
         return ValidationResult.aggregate(results);
     }

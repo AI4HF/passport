@@ -1020,6 +1020,74 @@
       ]
     },
     {
+      "name": "modelEvaluation",
+      "item": [
+        {
+          "name": "get an evaluation run by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{passportBackend}}/model-evaluation/initial_model_evaluation?studyId=initial_study"
+          },
+          "response": []
+        },
+        {
+          "name": "get evaluation runs by modelId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{passportBackend}}/model-evaluation?studyId=initial_study&modelId=initial_model"
+          },
+          "response": []
+        },
+        {
+          "name": "create an evaluation run",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"modelId\": \"initial_model\",\n    \"organizationId\": null,\n    \"trigger\": \"training\",\n    \"aggregationMethod\": \"weighted-average\",\n    \"executedBy\": \"data_scientist\",\n    \"description\": \"Aggregated training evaluation of the model.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{passportBackend}}/model-evaluation?studyId=initial_study"
+          },
+          "response": []
+        },
+        {
+          "name": "update an evaluation run",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"modelId\": \"initial_model\",\n    \"organizationId\": null,\n    \"trigger\": \"training\",\n    \"aggregationMethod\": \"weighted-average\",\n    \"executedBy\": \"data_scientist\",\n    \"description\": \"Aggregated training evaluation of the model.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{passportBackend}}/model-evaluation/initial_model_evaluation?studyId=initial_study"
+          },
+          "response": []
+        },
+        {
+          "name": "delete an evaluation run",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{passportBackend}}/model-evaluation/initial_model_evaluation?studyId=initial_study"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "evaluationMeasure",
       "item": [
         {
@@ -1047,12 +1115,12 @@
           "response": []
         },
         {
-          "name": "get evaluation measures by modelId",
+          "name": "get evaluation measures by modelEvaluationId",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{passportBackend}}/evaluation-measure?studyId=initial_study&modelId=initial_model",
+              "raw": "{{passportBackend}}/evaluation-measure?studyId=initial_study&modelEvaluationId=initial_model_evaluation",
               "host": [
                 "{{passportBackend}}"
               ],
@@ -1065,8 +1133,8 @@
                   "value": "initial_study"
                 },
                 {
-                  "key": "modelId",
-                  "value": "initial_model"
+                  "key": "modelEvaluationId",
+                  "value": "initial_model_evaluation"
                 }
               ]
             }
@@ -1080,7 +1148,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
+              "raw": "{\r\n\t\"modelEvaluationId\": \"initial_model_evaluation\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1112,7 +1180,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n\t\"modelId\": \"initial_model\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
+              "raw": "{\r\n\t\"modelEvaluationId\": \"initial_model_evaluation\",\r\n    \"name\": \"Accuracy\",\r\n\t\"value\": \"0.77\",\r\n    \"dataType\": \"float\",\r\n    \"description\": \"Accuracy of Model with ID initial_model\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3599,7 +3667,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
+              "raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"ownerOrganizationId\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"createdBy\": \"data_scientist\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3631,7 +3699,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"owner\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
+              "raw": "{\r\n    \"learningProcessId\": \"initial_learning_process\",\r\n    \"studyId\": \"initial_study\",\r\n    \"experimentId\": \"initial_experiment\",\r\n    \"name\": \"HF risk prediction model 1 (for 7-day readmission risk)\",\r\n    \"version\": \"1.0\",\r\n    \"tag\": \"Production\",\r\n    \"modelType\": \"prediction\",\r\n    \"productIdentifier\": \"AI4HFModel001\",\r\n    \"ownerOrganizationId\": \"initial_organization\",\r\n    \"trlLevel\": \"TRL4\",\r\n    \"license\": \"RAIL-<DAMS>\",\r\n    \"primaryUse\": \"Predicting 7-day readmission risk for Heart Failure patients.\",\r\n    \"secondaryUse\": \"Early intervention recommendations.\",\r\n    \"intendedUsers\": \"Healthcare providers, Data scientists\",\r\n    \"counterIndications\": \"Not recommended for cases with incomplete patient history.\",\r\n    \"ethicalConsiderations\": \"Privacy and consent considerations.\",\r\n    \"limitations\": \"This model may have limited accuracy when applied to patients with rare or unique medical conditions due to insufficient representation in the training data.\",\r\n    \"fairnessConstraints\": \"Efforts have been made to ensure that the model predictions are fair across different demographic groups. However, it may exhibit biases in certain subpopulations.\",\r\n    \"lastUpdatedBy\": \"data_scientist\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
