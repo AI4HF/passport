@@ -197,12 +197,112 @@ CREATE TABLE dataset
     description      TEXT,
     version          VARCHAR(50),
     reference_entity VARCHAR(255),
-    num_of_records   INTEGER,
+    number_of_records   INTEGER,
     synthetic        BOOLEAN,
+    -- a refresh is a new row in the chain, not an update of the old one
+    previous_dataset_id    VARCHAR(255) REFERENCES dataset (dataset_id) ON DELETE SET NULL,
+    -- HealthDCAT-AP: auto-derived and auto-computed content metadata
+    persistent_identifier  VARCHAR(255),
+    structured_data        BOOLEAN,
+    temporal_coverage_start DATE,
+    temporal_coverage_end  DATE,
+    temporal_resolution    VARCHAR(255),
+    geographical_coverage  VARCHAR(255),
+    number_of_unique_individuals INTEGER,
+    min_typical_age        INTEGER,
+    max_typical_age        INTEGER,
+    conforms_to            VARCHAR(255),
+    provenance_statement   TEXT,
+    was_generated_by       VARCHAR(255),
     created_at       TIMESTAMP,
     created_by       VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
     last_updated_at  TIMESTAMP,
     last_updated_by  VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
+);
+
+-- Create dataset_concept table
+CREATE TABLE dataset_concept
+(
+    concept_id     VARCHAR(255) PRIMARY KEY,
+    dataset_id     VARCHAR(255) REFERENCES dataset (dataset_id) ON DELETE CASCADE,
+    -- the HealthDCAT-AP property this value fills, e.g. the health category
+    property_uri   VARCHAR(255),
+    concept_uri    VARCHAR(255),
+    pref_label     VARCHAR(255),
+    concept_scheme VARCHAR(255)
+);
+
+-- Create catalogue_dataset table
+CREATE TABLE catalogue_dataset
+(
+    catalogue_dataset_id           VARCHAR(255) PRIMARY KEY,
+    dataset_id                     VARCHAR(255) REFERENCES dataset (dataset_id) ON DELETE CASCADE,
+    public_title                   VARCHAR(255),
+    public_description             TEXT,
+    access_rights                  VARCHAR(255),
+    hdab_name                      VARCHAR(255),
+    hdab_uri                       VARCHAR(2048),
+    publisher_name                 VARCHAR(255),
+    publisher_type                 VARCHAR(255),
+    contact_point                  VARCHAR(255),
+    legal_basis                    VARCHAR(255),
+    purpose                        TEXT,
+    personal_data                  BOOLEAN,
+    publication_approval_reference VARCHAR(255),
+    applicable_legislation         VARCHAR(255),
+    retention_period_start         DATE,
+    retention_period_end           DATE,
+    landing_page                   VARCHAR(2048),
+    documentation                  VARCHAR(2048),
+    quality_annotation             VARCHAR(2048),
+    created_at                     TIMESTAMP,
+    created_by                     VARCHAR(255),
+    last_updated_at                TIMESTAMP,
+    last_updated_by                VARCHAR(255),
+    -- one publication decision per dataset version
+    UNIQUE (dataset_id)
+);
+
+-- Create dataset_distribution table
+CREATE TABLE dataset_distribution
+(
+    distribution_id      VARCHAR(255) PRIMARY KEY,
+    catalogue_dataset_id VARCHAR(255) REFERENCES catalogue_dataset (catalogue_dataset_id) ON DELETE CASCADE,
+    title                VARCHAR(255),
+    description          TEXT,
+    access_url           VARCHAR(2048),
+    download_url         VARCHAR(2048),
+    access_service_uri   VARCHAR(2048),
+    format               VARCHAR(255),
+    media_type           VARCHAR(255),
+    availability         VARCHAR(255),
+    status               VARCHAR(255),
+    licence              VARCHAR(255),
+    rights               TEXT,
+    byte_size            BIGINT,
+    checksum_algorithm   VARCHAR(255),
+    checksum_value       VARCHAR(255),
+    created_at           TIMESTAMP,
+    created_by           VARCHAR(255),
+    last_updated_at      TIMESTAMP,
+    last_updated_by      VARCHAR(255)
+);
+
+-- Create catalogue_registration table
+CREATE TABLE catalogue_registration
+(
+    registration_id      VARCHAR(255) PRIMARY KEY,
+    catalogue_dataset_id VARCHAR(255) REFERENCES catalogue_dataset (catalogue_dataset_id) ON DELETE CASCADE,
+    -- which catalogue the record was published to, e.g. the organization's FDP
+    catalogue_type       VARCHAR(255),
+    catalogue_uri        VARCHAR(2048),
+    listing_date         TIMESTAMP,
+    -- created or updated: a refresh updates the existing entry in place
+    change_type          VARCHAR(255),
+    created_at           TIMESTAMP,
+    created_by           VARCHAR(255),
+    last_updated_at      TIMESTAMP,
+    last_updated_by      VARCHAR(255)
 );
 
 -- Create quality_assessment table
@@ -715,7 +815,7 @@ INSERT INTO dataset (
     description,
     version,
     reference_entity,
-    num_of_records,
+    number_of_records,
     synthetic,
     created_at,
     created_by,
@@ -808,6 +908,125 @@ VALUES
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      '0197a6fa-6507-775b-99d9-f8808e10052d_transformation',
      'Finalized learning dataset derived from MAGGIC Dataset v1 for 1-year mortality prediction after planned transformations.');
+
+-- Insert into dataset_concept
+INSERT INTO dataset_concept (concept_id, dataset_id, property_uri, concept_uri, pref_label, concept_scheme)
+VALUES
+    ('0197a6fc-1000-7000-a000-000000000001',
+     '0197a6fa-6507-775b-99d9-f8808e10052d',
+     'http://healthdcat-ap.eu/healthCategory',
+     'http://publications.europa.eu/resource/authority/health-category/CARDIOVASCULAR',
+     'Cardiovascular',
+     'http://publications.europa.eu/resource/authority/health-category'),
+    ('0197a6fc-1000-7000-a000-000000000002',
+     '0197a6fa-6507-775b-99d9-f8808e10052d',
+     'http://www.w3.org/ns/dcat#theme',
+     'http://publications.europa.eu/resource/authority/data-theme/HEAL',
+     'Health',
+     'http://publications.europa.eu/resource/authority/data-theme');
+
+-- Insert into catalogue_dataset
+INSERT INTO catalogue_dataset (
+    catalogue_dataset_id,
+    dataset_id,
+    public_title,
+    public_description,
+    access_rights,
+    hdab_name,
+    publisher_name,
+    publisher_type,
+    contact_point,
+    legal_basis,
+    purpose,
+    personal_data,
+    applicable_legislation,
+    retention_period_start,
+    retention_period_end,
+    created_at,
+    created_by,
+    last_updated_at,
+    last_updated_by
+)
+VALUES
+    ('0197a6fc-2000-7000-a000-000000000001',
+     '0197a6fa-6507-775b-99d9-f8808e10052d',
+     'Heart failure risk factors, Amsterdam UMC',
+     'Tabular dataset of routinely collected heart failure indicators, extracted from the hospital FHIR repository for risk prediction research.',
+     'restricted',
+     'Dutch Health Data Access Body',
+     'Amsterdam UMC',
+     'http://purl.org/adms/publishertype/Academia-ScientificOrganisation',
+     'datasteward@amsterdamumc.nl',
+     'Scientific research in the public interest',
+     'Development and validation of heart failure risk prediction models.',
+     true,
+     'http://data.europa.eu/eli/reg/2016/679/oj',
+     '2023-01-01',
+     '2033-01-01',
+     '2023-01-05 00:00:00',
+     'data_steward',
+     '2023-01-05 00:00:00',
+     'data_steward');
+
+-- Insert into dataset_distribution
+INSERT INTO dataset_distribution (
+    distribution_id,
+    catalogue_dataset_id,
+    title,
+    description,
+    access_url,
+    format,
+    media_type,
+    availability,
+    status,
+    licence,
+    byte_size,
+    created_at,
+    created_by,
+    last_updated_at,
+    last_updated_by
+)
+VALUES
+    ('0197a6fc-3000-7000-a000-000000000001',
+     '0197a6fc-2000-7000-a000-000000000001',
+     'Access on request via the Health Data Access Body',
+     'The dataset is not downloadable: access is granted per approved research application.',
+     'https://fdp.amsterdamumc.nl/dataset/hf-risk-factors',
+     'CSV',
+     'text/csv',
+     'http://publications.europa.eu/resource/authority/planned-availability/STABLE',
+     'Completed',
+     'https://creativecommons.org/licenses/by/4.0/',
+     4718592,
+     '2023-01-05 00:00:00',
+     'data_steward',
+     '2023-01-05 00:00:00',
+     'data_steward');
+
+-- Insert into catalogue_registration
+INSERT INTO catalogue_registration (
+    registration_id,
+    catalogue_dataset_id,
+    catalogue_type,
+    catalogue_uri,
+    listing_date,
+    change_type,
+    created_at,
+    created_by,
+    last_updated_at,
+    last_updated_by
+)
+VALUES
+    ('0197a6fc-4000-7000-a000-000000000001',
+     '0197a6fc-2000-7000-a000-000000000001',
+     'FDP',
+     'https://fdp.amsterdamumc.nl/dataset/hf-risk-factors',
+     '2023-01-06 00:00:00',
+     'created',
+     '2023-01-06 00:00:00',
+     '0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a01',
+     '2023-01-06 00:00:00',
+     '0197a6f6-1c40-7f11-9a2e-3b8d5c7e4a01');
 
 -- Insert into quality_criteria
 INSERT INTO quality_criteria (
@@ -1233,7 +1452,7 @@ VALUES
              "description": "Dataset for HF Risk Prediction factors",
              "version": "0.1",
              "referenceEntity": "Encounter",
-             "numOfRecords": 1562,
+             "numberOfRecords": 1562,
              "synthetic": false
            },
            "learningDatasets": [
@@ -1364,7 +1583,7 @@ VALUES
              "description": "Dataset extracted from MAGGIC data of ABC Hospital (Turkey)",
              "version": "1.0",
              "referenceEntity": "Patient",
-             "numOfRecords": 500,
+             "numberOfRecords": 500,
              "synthetic": false
            },
            "learningDatasets": [

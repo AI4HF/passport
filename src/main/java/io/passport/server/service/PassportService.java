@@ -88,6 +88,18 @@ public class PassportService {
     @Autowired
     private QualityCriterionAssessmentResultService qualityCriterionAssessmentResultService;
 
+    @Autowired
+    private DatasetConceptService datasetConceptService;
+
+    @Autowired
+    private CatalogueDatasetService catalogueDatasetService;
+
+    @Autowired
+    private DatasetDistributionService datasetDistributionService;
+
+    @Autowired
+    private CatalogueRegistrationService catalogueRegistrationService;
+
     private final RoleCheckerService roleCheckerService;
     @Autowired
     private LearningStageParameterService learningStageParameterService;
@@ -386,6 +398,15 @@ public class PassportService {
                         Map<String, Object> datasetWithLearningDatasets = new HashMap<>();
                         datasetWithLearningDatasets.put("dataset", dataset);
                         datasetWithLearningDatasets.put("learningDatasets", learningDatasetService.findByDatasetId(dataset.getDatasetId()));
+                        datasetWithLearningDatasets.put("concepts", datasetConceptService.findByDatasetId(dataset.getDatasetId()));
+                        // the publication record, with what was actually listed where
+                        catalogueDatasetService.findByDatasetId(dataset.getDatasetId()).ifPresent(catalogueDataset -> {
+                            datasetWithLearningDatasets.put("catalogueDataset", catalogueDataset);
+                            datasetWithLearningDatasets.put("distributions",
+                                    datasetDistributionService.findByCatalogueDatasetId(catalogueDataset.getCatalogueDatasetId()));
+                            datasetWithLearningDatasets.put("catalogueRegistrations",
+                                    catalogueRegistrationService.findByCatalogueDatasetId(catalogueDataset.getCatalogueDatasetId()));
+                        });
                         return datasetWithLearningDatasets;
                     })
                     .collect(Collectors.toList());
