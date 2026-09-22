@@ -81,7 +81,7 @@ public class ModelController {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
                 studyId,
                 principal,
-                List.of(Role.DATA_SCIENTIST, Role.ML_ENGINEER, Role.QUALITY_ASSURANCE_SPECIALIST))) {
+                List.of(Role.DATA_SCIENTIST, Role.QUALITY_ASSURANCE_SPECIALIST))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

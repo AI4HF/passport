@@ -20,7 +20,7 @@ public class RoleCheckerService {
     private KeycloakService keycloakService;
 
     private final List<Role> viewOnlyRoles = List.of(Role.STUDY_OWNER, Role.DATA_SCIENTIST, Role.DATA_ENGINEER,
-            Role.DATA_STEWARD, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST, Role.ML_ENGINEER);
+            Role.DATA_STEWARD, Role.SURVEY_MANAGER, Role.QUALITY_ASSURANCE_SPECIALIST);
 
     /**
      * Check if the user has any of the roles from the rolesToCheck list based on the access token.

@@ -255,8 +255,7 @@ public class KeycloakService {
                 "DATA_STEWARD",
                 "DATA_SCIENTIST",
                 "SURVEY_MANAGER",
-                "QUALITY_ASSURANCE_SPECIALIST",
-                "ML_ENGINEER"
+                "QUALITY_ASSURANCE_SPECIALIST"
         );
 
         for (String subgroupName : subgroupNames) {

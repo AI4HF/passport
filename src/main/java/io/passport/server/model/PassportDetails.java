@@ -16,10 +16,6 @@ public class PassportDetails {
 
     private boolean modelDetails;
 
-    private boolean modelDeploymentDetails;
-
-    private boolean environmentDetails;
-
     private boolean datasets;
 
     private boolean featureSets;

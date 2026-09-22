@@ -29,7 +29,7 @@ public class ModelService {
     /**
      * Lazy service references for limited use in cascade validation
      */
-    @Autowired @Lazy private ModelDeploymentService modelDeploymentService;
+    @Autowired @Lazy private PassportService passportService;
     @Autowired @Lazy private ModelParameterService modelParameterService;
     @Autowired @Lazy private ModelFigureService modelFigureService;
     @Autowired @Lazy private EvaluationMeasureService evaluationMeasureService;
@@ -51,7 +51,7 @@ public class ModelService {
     public ValidationResult validateModelDeletion(String studyId, String modelId, Jwt principal) {
         List<ValidationResult> neighborResults = new ArrayList<>();
 
-        neighborResults.add(modelDeploymentService.validateCascade(studyId, "Model", modelId, principal));
+        neighborResults.add(passportService.validateCascade(studyId, "Model", modelId, principal));
         neighborResults.add(modelParameterService.validateCascade(studyId, "Model", modelId, principal));
         neighborResults.add(modelFigureService.validateCascade(studyId, "Model", modelId, principal));
         neighborResults.add(evaluationMeasureService.validateCascade(studyId, "Model", modelId, principal));

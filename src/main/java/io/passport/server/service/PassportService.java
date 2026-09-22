@@ -26,12 +26,6 @@ public class PassportService {
      * Passport pdf generation data.
      */
     @Autowired
-    private ModelDeploymentService deploymentService;
-
-    @Autowired
-    private DeploymentEnvironmentService environmentService;
-
-    @Autowired
     private ModelService modelService;
 
     @Autowired
@@ -107,8 +101,8 @@ public class PassportService {
         List<Passport> affectedPassports;
 
         switch (sourceResourceType) {
-            case "ModelDeployment":
-                affectedPassports = passportRepository.findByDeploymentId(sourceResourceId);
+            case "Model":
+                affectedPassports = passportRepository.findByModelId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -161,18 +155,12 @@ public class PassportService {
     /**
      * Creates and stores Passport with detailsJson populated.
      *
-     * @param passportWithDetailSelection The passport object with basic info (deploymentId, studyId, etc.) and selected details of the passport.
+     * @param passportWithDetailSelection The passport object with basic info (modelId, studyId, etc.) and selected details of the passport.
      * @return The saved Passport.
      */
     public Passport createPassport(PassportWithDetailSelection passportWithDetailSelection) {
         try {
             Map<String, Object> detailsJson = new HashMap<>();
-            if(passportWithDetailSelection.getPassportDetailsSelection().isModelDeploymentDetails()){
-                detailsJson.put("deploymentDetails", fetchDeploymentDetails(passportWithDetailSelection.getPassport()));
-            }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isEnvironmentDetails()){
-                detailsJson.put("environmentDetails", fetchEnvironmentDetails(passportWithDetailSelection.getPassport()));
-            }
             if(passportWithDetailSelection.getPassportDetailsSelection().isModelDetails()){
                 detailsJson.put("modelDetails", fetchModelDetails(passportWithDetailSelection.getPassport()));
             }
@@ -238,33 +226,9 @@ public class PassportService {
     /**
      * Fetch methods to obtain pdf generation data
      */
-    private ModelDeployment fetchDeploymentDetails(Passport passport) {
-        try {
-            return deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-        } catch (RuntimeException e) {
-            System.err.println("Error fetching Model Deployment: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    private DeploymentEnvironment fetchEnvironmentDetails(Passport passport) {
-        try {
-            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            return environmentService.findDeploymentEnvironmentById(deployment.getEnvironmentId())
-                    .orElseThrow(() -> new RuntimeException("Deployment Environment not found"));
-        } catch (RuntimeException e) {
-            System.err.println("Error fetching Deployment Environment: " + e.getMessage());
-            throw e;
-        }
-    }
-
     private ModelWithOwnerNameDTO fetchModelDetails(Passport passport) {
         try {
-            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            Model model = modelService.findModelById(deployment.getModelId())
+            Model model = modelService.findModelById(passport.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
             ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
             modelWithOwnerNameDTO.setOwner(organizationService.findOrganizationById(model.getOwner()).orElseThrow().getName());
@@ -392,8 +356,7 @@ public class PassportService {
 
     private List<EvaluationMeasure> fetchEvaluationMeasures(Passport passport) {
         try {
-            String modelId = this.fetchDeploymentDetails(passport).getModelId();
-            return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
+            return evaluationMeasureService.findEvaluationMeasuresByModelId(passport.getModelId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Evaluation Measures: " + e.getMessage());
         }
@@ -401,8 +364,7 @@ public class PassportService {
 
     private List<ModelFigure> fetchModelFigures(Passport passport) {
         try {
-            String modelId = this.fetchDeploymentDetails(passport).getModelId();
-            return modelFigureService.findByModelId(modelId);
+            return modelFigureService.findByModelId(passport.getModelId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model Figures: " + e.getMessage());
         }

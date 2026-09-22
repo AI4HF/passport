@@ -87,7 +87,7 @@ public class PassportController {
 
     /**
      * Create a Passport.
-     * @param passport The passport object with basic info (deploymentId, studyId, etc.)
+     * @param passport The passport object with basic info (modelId, studyId, etc.)
      * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
      * @return Created Passport

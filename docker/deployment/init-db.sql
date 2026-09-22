@@ -309,37 +309,11 @@ CREATE TABLE model_figure
     image_base64 TEXT
 );
 
--- Create deployment_environment table
-CREATE TABLE deployment_environment
-(
-    environment_id       VARCHAR(255) PRIMARY KEY,
-    title                VARCHAR(255),
-    description          TEXT,
-    hardware_properties  TEXT,
-    software_properties  TEXT,
-    connectivity_details TEXT
-);
-
--- Create model_deployment table
-CREATE TABLE model_deployment
-(
-    deployment_id       VARCHAR(255) PRIMARY KEY,
-    model_id            VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
-    environment_id      VARCHAR(255) REFERENCES deployment_environment (environment_id) ON DELETE CASCADE,
-    tags                VARCHAR(255),
-    identified_failures TEXT,
-    status              VARCHAR(255),
-    created_at          TIMESTAMP,
-    created_by          VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
-    last_updated_at     TIMESTAMP,
-    last_updated_by     VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE
-);
-
 -- Create passport table
 CREATE TABLE passport
 (
     passport_id   VARCHAR(255) PRIMARY KEY,
-    deployment_id VARCHAR(255) REFERENCES model_deployment (deployment_id) ON DELETE CASCADE,
+    model_id      VARCHAR(255) REFERENCES model (model_id) ON DELETE CASCADE,
     study_id      VARCHAR(255) REFERENCES study (study_id) ON DELETE CASCADE,
     created_at    TIMESTAMP,
     created_by    VARCHAR(255) REFERENCES personnel (person_id) ON DELETE CASCADE,
@@ -936,68 +910,10 @@ VALUES
      'int',
      '5');
 
--- Insert into deployment_environment
-INSERT INTO deployment_environment (
-    environment_id,
-    title,
-    description,
-    hardware_properties,
-    software_properties,
-    connectivity_details
-)
-VALUES
-    ('0197a718-ced2-73af-8ca9-d5ff45e2fa18',
-     'Production Environment',
-     'Main Production Environment',
-     'Disk: 512 GB, RAM: 32 GB',
-     'OS: Windows, Cloud Services: Google Cloud Platform',
-     'Secure HTTPS communication is established using TLS/SSL protocols. The environment is configured with a firewall allowing communication on ports 80 and 443. API endpoints are accessible via a private subnet, and external access is restricted to authorized IP addresses. Communication between services is encrypted, and access control is managed through role-based authentication'),
-    ('b197a718-ced2-73af-8ca9-d5ff45e2fa25',
-     'Clinical Validation Environment',
-     'Dedicated environment for MAGGIC-MLP model validation under clinical conditions.',
-     'RAM: 64 GB, CPU: 16 cores, GPU: 1x NVIDIA A100 40GB',
-     'OS: Ubuntu 22.04, Frameworks: TensorFlow 2.15, PyTorch 2.2, Spark 3.5',
-     'Secure hospital intranet connection with role-based VPN access and encrypted endpoints.');
-
--- Insert into model_deployment
-INSERT INTO model_deployment (
-    deployment_id,
-    model_id,
-    environment_id,
-    tags,
-    identified_failures,
-    status,
-    created_at,
-    created_by,
-    last_updated_at,
-    last_updated_by
-)
-VALUES
-    ('0197a717-f048-7bc2-802a-c1300736d9fc',
-     '0197a718-9800-7558-8565-5f760c97c8f0',
-     '0197a718-ced2-73af-8ca9-d5ff45e2fa18',
-     'Production',
-     'Instances of false positives in predicting rare events.',
-     'RUNNING',
-     '2023-01-01 00:00:00',
-     'data_scientist',
-     '2023-01-01 00:00:00',
-     'data_scientist'),
-    ('b197a717-f048-7bc2-802a-c1300736d9ff',
-     'b197a718-9800-7558-8565-5f760c97c8f9',
-     'b197a718-ced2-73af-8ca9-d5ff45e2fa25',
-     'Validation,ProductionCandidate',
-     'Model occasionally overestimates low-risk cases with missing LVEF values.',
-     'VALIDATING',
-     '2025-10-15 00:00:00',
-     'data_scientist',
-     '2025-10-15 00:00:00',
-     'data_scientist');
-
 -- Insert into passport
 INSERT INTO passport (
     passport_id,
-    deployment_id,
+    model_id,
     study_id,
     created_at,
     created_by,
@@ -1007,25 +923,13 @@ INSERT INTO passport (
 )
 VALUES
     ('0197a71a-20fd-73ab-b3d1-65af71b25fd7',
-     '0197a717-f048-7bc2-802a-c1300736d9fc',
+     '0197a718-9800-7558-8565-5f760c97c8f0',
      '0197a6f8-2b78-71e4-81c1-b7b6a744ece3',
      '2023-01-01 00:00:00',
      'quality_assurance_specialist',
      '2023-01-01 00:00:00',
      'quality_assurance_specialist',
      '{
-       "deploymentDetails": {
-         "tags": "Production",
-         "identifiedFailures": "Instances of false positives in predicting rare events.",
-         "status": "RUNNING"
-       },
-       "environmentDetails": {
-         "title": "Production Environment",
-         "description": "Main Production Environment",
-         "hardwareProperties": "Disk: 512 GB, RAM: 32 GB",
-         "softwareProperties": "OS: Windows, Cloud Services: Google Cloud Platform",
-         "connectivityDetails": "Secure HTTPS communication is established using TLS/SSL protocols."
-       },
        "modelDetails": {
          "name": "HF Risk Score",
          "version": "1.0",
@@ -1169,25 +1073,13 @@ VALUES
        ]
      }'),
     ('b197a71a-20fd-73ab-b3d1-65af71b25ff1',
-     'b197a717-f048-7bc2-802a-c1300736d9ff',
+     'b197a718-9800-7558-8565-5f760c97c8f9',
      '2197a6f8-2b78-71e4-81c1-b7b6a744ece4',
      '2025-10-15 00:00:00',
      'quality_assurance_specialist',
      '2025-10-16 00:00:00',
      'quality_assurance_specialist',
      '{
-       "deploymentDetails": {
-         "tags": "Validation, ProductionCandidate",
-         "identifiedFailures": "Model occasionally overestimates low-risk cases with missing LVEF values.",
-         "status": "VALIDATING"
-       },
-       "environmentDetails": {
-         "title": "Clinical Validation Environment",
-         "description": "Dedicated environment for MAGGIC-MLP model validation under clinical conditions.",
-         "hardwareProperties": "RAM: 64 GB, CPU: 16 cores, GPU: 1x NVIDIA A100 40GB",
-         "softwareProperties": "OS: Ubuntu 22.04, Frameworks: TensorFlow 2.15, PyTorch 2.2, Spark 3.5",
-         "connectivityDetails": "Secure hospital intranet connection with role-based VPN access and encrypted endpoints."
-       },
        "modelDetails": {
          "name": "MAGGIC-MLP Model (v1.0)",
          "version": "1.0",

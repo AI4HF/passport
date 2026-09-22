@@ -31,8 +31,8 @@ public class Passport {
     @Column(name = "study_id")
     private String studyId;
 
-    @Column(name = "deployment_id")
-    private String deploymentId;
+    @Column(name = "model_id")
+    private String modelId;
 
     @Column(name = "created_at")
     private Instant createdAt;

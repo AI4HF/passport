@@ -38,7 +38,6 @@ public class PersonnelService {
     @Autowired @Lazy private DatasetService datasetService;
     @Autowired @Lazy private DatasetTransformationStepService datasetTransformationStepService;
     @Autowired @Lazy private ModelService modelService;
-    @Autowired @Lazy private ModelDeploymentService modelDeploymentService;
     @Autowired @Lazy private PassportService passportService;
 
     @Autowired
@@ -94,11 +93,6 @@ public class PersonnelService {
         List<Model> models = modelService.findByCreatedByOrLastUpdatedBy(personnelId);
         for (Model m : models) {
             reassignModel(m, personnelId, organizationId);
-        }
-
-        List<ModelDeployment> deployments = modelDeploymentService.findByCreatedByOrLastUpdatedBy(personnelId);
-        for (ModelDeployment md : deployments) {
-            reassignModelDeployment(md, personnelId, organizationId);
         }
 
         List<Passport> passports = passportService.findByCreatedByOrApprovedBy(personnelId);
@@ -255,39 +249,6 @@ public class PersonnelService {
 
             if (updated) {
                 modelService.saveModel(m);
-            }
-        }
-    }
-
-    /**
-     * Helper to reassign a Model Deployment to the responsible personnel.
-     */
-    private void reassignModelDeployment(ModelDeployment md, String deletedPersonnelId, String organizationId) {
-        Optional<String> studyIdOpt = modelDeploymentService.findStudyIdByDeploymentId(md.getDeploymentId());
-
-        if (studyIdOpt.isEmpty()) return;
-        String studyId = studyIdOpt.get();
-
-        Optional<StudyOrganization> studyOrgOpt = studyOrganizationRepository
-                .findByStudyIdAndOrganizationId(studyId, organizationId);
-
-        if (studyOrgOpt.isPresent() && studyOrgOpt.get().getResponsiblePersonnelId() != null) {
-            String newResponsibleId = studyOrgOpt.get().getResponsiblePersonnelId();
-
-            if (newResponsibleId.equals(deletedPersonnelId)) return;
-
-            boolean updated = false;
-            if (deletedPersonnelId.equals(md.getCreatedBy())) {
-                md.setCreatedBy(newResponsibleId);
-                updated = true;
-            }
-            if (deletedPersonnelId.equals(md.getLastUpdatedBy())) {
-                md.setLastUpdatedBy(newResponsibleId);
-                updated = true;
-            }
-
-            if (updated) {
-                modelDeploymentService.saveModelDeployment(md);
             }
         }
     }
