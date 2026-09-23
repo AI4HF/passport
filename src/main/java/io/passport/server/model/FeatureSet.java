@@ -39,6 +39,9 @@ public class FeatureSet {
     @Column(name = "featureset_url")
     private String featuresetURL;
 
+    @Column(name = "version")
+    private String version;
+
     @Column(name = "description")
     private String description;
 

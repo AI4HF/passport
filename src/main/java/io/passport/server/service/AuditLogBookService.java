@@ -5,6 +5,7 @@ import io.passport.server.repository.AuditLogBookRepository;
 import io.passport.server.repository.AuditLogRepository;
 import io.passport.server.util.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,6 +18,11 @@ import java.util.List;
 public class AuditLogBookService {
 
     /**
+     * Keycloak names every service-account user after its client.
+     */
+    private static final String SERVICE_ACCOUNT_USERNAME_PREFIX = "service-account-";
+
+    /**
      * AuditLogBook repo access for database management.
      */
     private final AuditLogBookRepository auditLogBookRepository;
@@ -24,11 +30,17 @@ public class AuditLogBookService {
      * AuditLog repo access for database management.
      */
     private final AuditLogRepository auditLogRepository;
+    /**
+     * Resolves the service account behind a machine-to-machine token.
+     */
+    private final SoftwareAgentService softwareAgentService;
 
     @Autowired
-    public AuditLogBookService(AuditLogBookRepository auditLogBookRepository, AuditLogRepository auditLogRepository) {
+    public AuditLogBookService(AuditLogBookRepository auditLogBookRepository, AuditLogRepository auditLogRepository,
+                               SoftwareAgentService softwareAgentService) {
         this.auditLogBookRepository = auditLogBookRepository;
         this.auditLogRepository = auditLogRepository;
+        this.softwareAgentService = softwareAgentService;
     }
 
     /**
@@ -77,11 +89,11 @@ public class AuditLogBookService {
     }
 
     /**
-     * Creates and saves a new AuditLog entry. Optionally, you could also
-     * create an AuditLogBook entry in the same method if your domain
-     * requires it.
+     * Creates and saves a new AuditLog entry, attributed to whoever the access token belongs to -
+     * an interactive user or, for an automated integration, the SoftwareAgent bound to the
+     * Keycloak service account the token was issued to.
      *
-     * @param userId            The ID of the user who performed the action.
+     * @param principal         Access token of the caller that performed the action.
      * @param actionType        "CREATE", "UPDATE", or "DELETE", etc.
      * @param affectedRelation  The table/collection name (e.g. "Algorithm").
      * @param recordId          The primary key ID of the affected record.
@@ -89,8 +101,7 @@ public class AuditLogBookService {
      * @return                  The saved AuditLog entity.
      */
     public AuditLog createAuditLog(
-            String userId,
-            String username,
+            Jwt principal,
             String studyId,
             Operation actionType,
             String affectedRelation,
@@ -109,8 +120,7 @@ public class AuditLogBookService {
                 : "None";
 
         AuditLog auditLog = new AuditLog();
-        auditLog.setPersonId(userId);
-        auditLog.setPersonName(username);
+        applyActor(auditLog, principal);
         auditLog.setStudyId(studyId);
         auditLog.setActionType(actionType.name());
         auditLog.setAffectedRelation(affectedRelation);
@@ -120,5 +130,29 @@ public class AuditLogBookService {
         auditLog.setOccurredAt(Instant.now());
 
         return auditLogRepository.save(auditLog);
+    }
+
+    /**
+     * Attributes the log entry to the caller. A Keycloak service account has no interactive user
+     * behind it - its {@code preferred_username} is {@code service-account-<clientId>} - so the
+     * token's authorized party is resolved to the SoftwareAgent registered for that client.
+     *
+     * @param auditLog  The entry being written.
+     * @param principal Access token of the caller.
+     */
+    private void applyActor(AuditLog auditLog, Jwt principal) {
+        String username = principal.getClaim(TokenClaim.USERNAME.getValue());
+        String clientId = principal.getClaim(TokenClaim.AUTHORIZED_PARTY.getValue());
+
+        if (username != null && username.startsWith(SERVICE_ACCOUNT_USERNAME_PREFIX)) {
+            SoftwareAgent agent = softwareAgentService.findSoftwareAgentByKeycloakClientId(clientId).orElse(null);
+            auditLog.setActorType(ActorType.SOFTWARE_AGENT);
+            auditLog.setActorId(agent != null ? agent.getSoftwareAgentId() : clientId);
+            auditLog.setActorName(agent != null ? agent.getName() : username);
+        } else {
+            auditLog.setActorType(ActorType.PERSONNEL);
+            auditLog.setActorId(principal.getSubject());
+            auditLog.setActorName(username);
+        }
     }
 }

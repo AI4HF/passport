@@ -20,7 +20,7 @@ public interface DatasetRepository extends JpaRepository<Dataset, String> {
     List<Dataset> findByOrganizationId(String organizationId);
 
     // Join with population table and get related Dataset for the study
-    @Query("SELECT new Dataset(d.datasetId, d.featuresetId, d.populationId, d.organizationId, d.title, d.description, d.version, d.referenceEntity, d.numOfRecords, d.synthetic, d.createdAt, d.createdBy, d.lastUpdatedAt, d.lastUpdatedBy)  " +
+    @Query("SELECT new Dataset(d.datasetId, d.featuresetId, d.populationId, d.organizationId, d.title, d.description, d.version, d.referenceEntity, d.numberOfRecords, d.synthetic, d.createdAt, d.createdBy, d.lastUpdatedAt, d.lastUpdatedBy)  " +
             "FROM Dataset d, Population p WHERE d.populationId = p.populationId AND p.studyId = :studyId")
     List<Dataset> findDatasetByStudyId(@Param("studyId") String studyId);
 
@@ -35,7 +35,7 @@ public interface DatasetRepository extends JpaRepository<Dataset, String> {
            d.description,
            d.version,
            d.referenceEntity,
-           d.numOfRecords,
+           d.numberOfRecords,
            d.synthetic,
            d.createdAt,
            d.createdBy,

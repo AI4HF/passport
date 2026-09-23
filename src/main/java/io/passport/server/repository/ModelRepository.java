@@ -15,7 +15,8 @@ public interface ModelRepository extends JpaRepository<Model, String> {
     List<Model> findByStudyId(String studyId);
     List<Model> findByLearningProcessId(String learningProcessId);
     List<Model> findByExperimentId(String experimentId);
-    List<Model> findByOwner(String organizationId);
+    List<Model> findByOwnerOrganizationId(String organizationId);
+    List<Model> findByPreviousModelId(String previousModelId);
 
     // Find Models modified by a specific Personnel
     @Query("SELECT m FROM Model m WHERE m.createdBy = :personnelId OR m.lastUpdatedBy = :personnelId")

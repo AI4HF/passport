@@ -106,8 +106,7 @@ public class SurveyController {
             if (savedSurvey.getSurveyId() != null) {
                 String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -147,8 +146,7 @@ public class SurveyController {
                 Survey savedSurvey = savedSurveyOpt.get();
                 String recordId = savedSurvey.getSurveyId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -185,8 +183,7 @@ public class SurveyController {
             Optional<Survey> deletedSurvey = this.surveyService.deleteSurvey(surveyId);
             if (deletedSurvey.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

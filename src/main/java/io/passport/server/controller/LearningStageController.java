@@ -135,8 +135,7 @@ public class LearningStageController {
             if (saved.getLearningStageId() != null) {
                 String recordId = saved.getLearningStageId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -176,8 +175,7 @@ public class LearningStageController {
                 LearningStage saved = savedOpt.get();
                 String recordId = saved.getLearningStageId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -215,8 +213,7 @@ public class LearningStageController {
             Optional<LearningStage> deletedLearningStage = this.learningStageService.deleteLearningStage(learningStageId);
             if (deletedLearningStage.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

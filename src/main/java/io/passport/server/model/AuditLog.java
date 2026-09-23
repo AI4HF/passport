@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -31,11 +33,15 @@ public class AuditLog {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String auditLogId;
 
-    @Column(name = "person_id")
-    private String personId;
+    @Column(name = "actor_id")
+    private String actorId;
 
-    @Column(name = "person_name")
-    private String personName;
+    @Column(name = "actor_name")
+    private String actorName;
+
+    @Column(name = "actor_type")
+    @Enumerated(EnumType.STRING)
+    private ActorType actorType;
 
     @Column(name = "study_id")
     private String studyId;

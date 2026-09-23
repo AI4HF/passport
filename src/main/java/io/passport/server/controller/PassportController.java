@@ -87,7 +87,7 @@ public class PassportController {
 
     /**
      * Create a Passport.
-     * @param passport The passport object with basic info (deploymentId, studyId, etc.)
+     * @param passport The passport object with basic info (modelId, studyId, etc.)
      * @param studyId ID of the study for authorization
      * @param principal KeycloakPrincipal object that holds access token
      * @return Created Passport
@@ -130,7 +130,37 @@ public class PassportController {
     }
 
     /**
-     * Combined request to generate a passport PDF from a HTML, then sign it.
+     * Download the signed PDF stored on a passport, exactly as it was signed.
+     *
+     * @param passportId The ID of the passport
+     * @param studyId ID of the study for authorization
+     * @param principal Keycloak JWT principal
+     * @return The stored signed PDF, or not found when the passport has not been generated yet
+     */
+    @GetMapping(value = "/{passportId}/signed-pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<?> getSignedPdf(@PathVariable String passportId,
+                                          @RequestParam String studyId,
+                                          @AuthenticationPrincipal Jwt principal) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return this.passportService.findSignedPdf(passportId)
+                .map(signed -> {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_PDF);
+                    headers.setContentDisposition(ContentDisposition.attachment()
+                            .filename("passport-" + passportId + ".pdf").build());
+                    headers.add("Access-Control-Expose-Headers", "Content-Disposition");
+                    headers.setContentLength(signed.length);
+                    return new ResponseEntity<>(signed, headers, HttpStatus.OK);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Combined request to generate a passport PDF from a HTML, then sign it. The first call renders and
+     * signs the document and stores it on the passport; later calls hand back the stored bytes.
      *
      * @param req PDF generation request DTO
      * @param principal Keycloak JWT principal
@@ -151,15 +181,26 @@ public class PassportController {
                 return ResponseEntity.badRequest().body("Missing studyId");
             }
 
-            byte[] pdf = renderer.render(
-                    req.getHtmlContent(),
-                    req.getBaseUrl(),
-                    (req.getWidth() != null && !req.getWidth().isBlank()) ? req.getWidth() : "420mm",
-                    (req.getHeight() != null && !req.getHeight().isBlank()) ? req.getHeight() : "297mm",
-                    (req.getLandscape() != null) ? req.getLandscape() : Boolean.TRUE
-            );
+            if (req.getPassportId() == null || req.getPassportId().isBlank()) {
+                return ResponseEntity.badRequest().body("Missing passportId");
+            }
 
-            byte[] signed = passportSignatureService.generateSignature(pdf);
+            // A passport that has already been generated hands back the document it was signed with rather
+            // than rendering a second one: the stored bytes are the record.
+            byte[] signed = this.passportService.findSignedPdf(req.getPassportId()).orElse(null);
+
+            if (signed == null) {
+                byte[] pdf = renderer.render(
+                        req.getHtmlContent(),
+                        req.getBaseUrl(),
+                        (req.getWidth() != null && !req.getWidth().isBlank()) ? req.getWidth() : "420mm",
+                        (req.getHeight() != null && !req.getHeight().isBlank()) ? req.getHeight() : "297mm",
+                        (req.getLandscape() != null) ? req.getLandscape() : Boolean.TRUE
+                );
+
+                signed = this.passportService.storeSignedPdf(req.getPassportId(),
+                        passportSignatureService.generateSignature(pdf));
+            }
 
             String outName = req.getFileName();
 

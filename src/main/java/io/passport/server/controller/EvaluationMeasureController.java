@@ -35,21 +35,21 @@ public class EvaluationMeasureController {
     }
 
     /**
-     * Read all EvaluationMeasures by modelId.
-     * @param modelId ID of the model
+     * Read all EvaluationMeasures of an evaluation run.
+     * @param modelEvaluationId ID of the evaluation run
      * @param studyId ID of the study
      * @param principal KeycloakPrincipal object that holds access token
      * @return List of EvaluationMeasures
      */
     @GetMapping()
-    public ResponseEntity<List<EvaluationMeasure>> getAllEvaluationMeasuresByModelId(@RequestParam String modelId,
-                                                                                     @RequestParam String studyId,
-                                                                                     @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<List<EvaluationMeasure>> getAllEvaluationMeasuresByModelEvaluationId(@RequestParam String modelEvaluationId,
+                                                                                               @RequestParam String studyId,
+                                                                                               @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<EvaluationMeasure> evaluationMeasures = this.evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
+        List<EvaluationMeasure> evaluationMeasures = this.evaluationMeasureService.findEvaluationMeasuresByModelEvaluationId(modelEvaluationId);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(evaluationMeasures.size()));

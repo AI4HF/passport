@@ -120,8 +120,7 @@ public class AlgorithmController {
 
             String recordId = savedAlgorithm.getAlgorithmId();
             auditLogBookService.createAuditLog(
-                    principal.getSubject(),
-                    principal.getClaim(TokenClaim.USERNAME.getValue()),
+                    principal,
                     studyId,
                     Operation.CREATE,
                     relationName,
@@ -157,8 +156,7 @@ public class AlgorithmController {
 
             String recordId = String.valueOf(savedAlgorithm.getAlgorithmId());
             auditLogBookService.createAuditLog(
-                    principal.getSubject(),
-                    principal.getClaim(TokenClaim.USERNAME.getValue()),
+                    principal,
                     studyId,
                     Operation.UPDATE,
                     relationName,
@@ -192,8 +190,7 @@ public class AlgorithmController {
 
             String recordId = String.valueOf(algorithmId);
             auditLogBookService.createAuditLog(
-                    principal.getSubject(),
-                    principal.getClaim(TokenClaim.USERNAME.getValue()),
+                    principal,
                     studyId,
                     Operation.DELETE,
                     relationName,

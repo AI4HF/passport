@@ -95,8 +95,7 @@ public class ModelFigureController {
 
             if (saved.getFigureId() != null) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -137,8 +136,7 @@ public class ModelFigureController {
                 ModelFigure saved = savedOpt.get();
                 if (saved.getFigureId() != null) {
                     auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim(TokenClaim.USERNAME.getValue()),
+                            principal,
                             studyId,
                             Operation.UPDATE,
                             relationName,
@@ -178,8 +176,7 @@ public class ModelFigureController {
             Optional<ModelFigure> deletedModelFigure = this.modelFigureService.deleteModelFigure(figureId);
             if (deletedModelFigure.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

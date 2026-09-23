@@ -38,34 +38,35 @@ public class DatasetTransformationService {
      * Starts a validation chain of Dataset Transformations and all of their children for cascades
      *
      * @param studyId Id of the Study
-     * @param dataTransformationId Id of the Dataset Transformation
+     * @param datasetTransformationId Id of the Dataset Transformation
      * @param principal Access Token content
      * @return
      */
-    public ValidationResult validateDatasetTransformationDeletion(String studyId, String dataTransformationId, Jwt principal) {
+    public ValidationResult validateDatasetTransformationDeletion(String studyId, String datasetTransformationId, Jwt principal) {
         List<ValidationResult> results = new ArrayList<>();
 
-        results.add(datasetTransformationStepService.validateCascade(studyId, "DatasetTransformation", dataTransformationId, principal));
-        results.add(learningDatasetService.validateCascade(studyId, "DatasetTransformation", dataTransformationId, principal));
+        results.add(datasetTransformationStepService.validateCascade(studyId, "DatasetTransformation", datasetTransformationId, principal));
+        results.add(learningDatasetService.validateCascade(studyId, "DatasetTransformation", datasetTransformationId, principal));
 
         return ValidationResult.aggregate(results);
     }
 
     /**
-     * Return all DatasetTransformations
+     * Return all DatasetTransformations of a study
+     * @param studyId ID of the study
      * @return
      */
-    public List<DatasetTransformation> getAllDatasetTransformations() {
-        return datasetTransformationRepository.findAll();
+    public List<DatasetTransformation> getAllDatasetTransformationsByStudyId(String studyId) {
+        return datasetTransformationRepository.findByStudyId(studyId);
     }
 
     /**
-     * Find a DatasetTransformation by dataTransformationId
-     * @param dataTransformationId ID of the DatasetTransformation
+     * Find a DatasetTransformation by datasetTransformationId
+     * @param datasetTransformationId ID of the DatasetTransformation
      * @return
      */
-    public Optional<DatasetTransformation> findDatasetTransformationByDataTransformationId(String dataTransformationId) {
-        return datasetTransformationRepository.findById(dataTransformationId);
+    public Optional<DatasetTransformation> findDatasetTransformationByDatasetTransformationId(String datasetTransformationId) {
+        return datasetTransformationRepository.findById(datasetTransformationId);
     }
 
     /**
@@ -79,14 +80,15 @@ public class DatasetTransformationService {
 
     /**
      * Update a DatasetTransformation
-     * @param dataTransformationId ID of the DatasetTransformation
+     * @param datasetTransformationId ID of the DatasetTransformation
      * @param updatedDatasetTransformation DatasetTransformation to be updated
      * @return
      */
-    public Optional<DatasetTransformation> updateDatasetTransformation(String dataTransformationId, DatasetTransformation updatedDatasetTransformation) {
-        Optional<DatasetTransformation> oldDatasetTransformation = datasetTransformationRepository.findById(dataTransformationId);
+    public Optional<DatasetTransformation> updateDatasetTransformation(String datasetTransformationId, DatasetTransformation updatedDatasetTransformation) {
+        Optional<DatasetTransformation> oldDatasetTransformation = datasetTransformationRepository.findById(datasetTransformationId);
         if (oldDatasetTransformation.isPresent()) {
             DatasetTransformation datasetTransformation = oldDatasetTransformation.get();
+            datasetTransformation.setStudyId(updatedDatasetTransformation.getStudyId());
             datasetTransformation.setTitle(updatedDatasetTransformation.getTitle());
             datasetTransformation.setDescription(updatedDatasetTransformation.getDescription());
             DatasetTransformation savedDatasetTransformation = datasetTransformationRepository.save(datasetTransformation);
@@ -98,11 +100,11 @@ public class DatasetTransformationService {
 
     /**
      * Delete a DatasetTransformation
-     * @param dataTransformationId ID of DatasetTransformation to be deleted
+     * @param datasetTransformationId ID of DatasetTransformation to be deleted
      * @return
      */
-    public Optional<DatasetTransformation> deleteDatasetTransformation(String dataTransformationId) {
-        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(dataTransformationId);
+    public Optional<DatasetTransformation> deleteDatasetTransformation(String datasetTransformationId) {
+        Optional<DatasetTransformation> existingTransformation = datasetTransformationRepository.findById(datasetTransformationId);
         if (existingTransformation.isPresent()) {
             datasetTransformationRepository.delete(existingTransformation.get());
             return existingTransformation;

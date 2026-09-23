@@ -24,6 +24,12 @@ public class ModelFigure {
     @Column(name = "model_id")
     private String modelId;
 
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "image_base64")
     private String imageBase64;
 }

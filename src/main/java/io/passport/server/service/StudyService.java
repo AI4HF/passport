@@ -33,7 +33,6 @@ public class StudyService {
     @Autowired @Lazy private SurveyService surveyService;
     @Autowired @Lazy private StudyPersonnelService studyPersonnelService;
     @Autowired @Lazy private StudyOrganizationService studyOrganizationService;
-    @Autowired @Lazy private LinkedArticleService linkedArticleService;
 
     @Autowired
     public StudyService(StudyRepository studyRepository) {
@@ -57,7 +56,6 @@ public class StudyService {
         results.add(surveyService.validateCascade(studyId, "Study", studyId, principal));
         results.add(studyPersonnelService.validateCascade(studyId, "Study", studyId, principal));
         results.add(studyOrganizationService.validateCascade(studyId, "Study", studyId, principal));
-        results.add(linkedArticleService.validateCascade(studyId, "Study", studyId, principal));
 
         return ValidationResult.aggregate(results);
     }

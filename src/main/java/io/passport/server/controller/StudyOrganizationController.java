@@ -146,8 +146,7 @@ public class StudyOrganizationController {
                 String stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -193,8 +192,7 @@ public class StudyOrganizationController {
                 String stdId = saved.getId().getStudyId();
                 String compositeId = "(" + stdId + ", " + orgId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -234,8 +232,7 @@ public class StudyOrganizationController {
             if (deletedStudyOrganization.isPresent()) {
                 String compositeId = "(" + studyId + ", " + organizationId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

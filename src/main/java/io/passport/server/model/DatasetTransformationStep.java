@@ -25,8 +25,11 @@ public class DatasetTransformationStep {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String stepId;
 
-    @Column(name = "data_transformation_id")
-    private String dataTransformationId;
+    @Column(name = "dataset_transformation_id")
+    private String datasetTransformationId;
+
+    @Column(name = "step_order")
+    private Integer stepOrder;
 
     @Column(name = "input_features")
     private String inputFeatures;
@@ -36,6 +39,9 @@ public class DatasetTransformationStep {
 
     @Column(name = "method")
     private String method;
+
+    @Column(name = "quality_assessment_id")
+    private String qualityAssessmentId;
 
     @Column(name = "explanation")
     private String explanation;

@@ -7,7 +7,9 @@ import lombok.Getter;
  */
 @Getter
 public enum TokenClaim {
-    USERNAME("preferred_username");
+    USERNAME("preferred_username"),
+    /** Authorized party: the Keycloak client the token was issued to. */
+    AUTHORIZED_PARTY("azp");
 
     private String value;
 

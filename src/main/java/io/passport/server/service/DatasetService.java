@@ -7,7 +7,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.passport.server.model.CatalogueDataset;
 import io.passport.server.model.Dataset;
+import io.passport.server.model.DatasetConcept;
 import io.passport.server.model.Personnel;
 import io.passport.server.model.Role;
 import io.passport.server.model.ValidationResult;
@@ -34,6 +36,9 @@ public class DatasetService {
      */
     @Autowired @Lazy private LearningDatasetService learningDatasetService;
     @Autowired @Lazy private FeatureDatasetCharacteristicService featureDatasetCharacteristicService;
+    @Autowired @Lazy private QualityAssessmentService qualityAssessmentService;
+    @Autowired @Lazy private DatasetConceptService datasetConceptService;
+    @Autowired @Lazy private CatalogueDatasetService catalogueDatasetService;
 
     @Autowired
     public DatasetService(DatasetRepository datasetRepository, PersonnelService personnelService, RoleCheckerService roleCheckerService) {
@@ -55,6 +60,9 @@ public class DatasetService {
 
         results.add(learningDatasetService.validateCascade(studyId, "Dataset", datasetId, principal));
         results.add(featureDatasetCharacteristicService.validateCascade(studyId, "Dataset", datasetId, principal));
+        results.add(qualityAssessmentService.validateCascade(studyId, "Dataset", datasetId, principal));
+        results.add(datasetConceptService.validateCascade(studyId, "Dataset", datasetId, principal));
+        results.add(catalogueDatasetService.validateCascade(studyId, "Dataset", datasetId, principal));
 
         return ValidationResult.aggregate(results);
     }
@@ -154,16 +162,83 @@ public class DatasetService {
      * @return
      */
     public Optional<Dataset> saveDataset(Dataset dataset, String personnelId) {
-        Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if(personnel.isPresent()) {
-            dataset.setCreatedAt(Instant.now());
-            dataset.setLastUpdatedAt(Instant.now());
-            dataset.setPopulationId(dataset.getPopulationId());
-            dataset.setOrganizationId(personnel.get().getOrganizationId());
-            return Optional.of(datasetRepository.save(dataset));
-        }else{
-            return Optional.empty();
+        dataset.setCreatedAt(Instant.now());
+        dataset.setLastUpdatedAt(Instant.now());
+        dataset.setOrganizationId(resolveOrganizationId(dataset.getOrganizationId(), personnelId));
+        Dataset savedDataset = datasetRepository.save(dataset);
+
+        if (savedDataset.getPreviousDatasetId() != null) {
+            copyStewardMetadataForward(savedDataset);
         }
+
+        return Optional.of(savedDataset);
+    }
+
+    /**
+     * Decide which organization a dataset belongs to.
+     *
+     * A person's datasets belong to the organization they work for, which the caller cannot override.
+     * The node agent is not a person and has no Personnel record - it runs on behalf of one site and
+     * says which, so its value is taken as given.
+     *
+     * @param requestedOrganizationId Organization the caller supplied, if any
+     * @param personnelId Subject of the access token: a person, or a service account
+     * @return The organization the dataset is recorded against
+     */
+    private String resolveOrganizationId(String requestedOrganizationId, String personnelId) {
+        return this.personnelService.findPersonnelById(personnelId)
+                .map(Personnel::getOrganizationId)
+                .orElse(requestedOrganizationId);
+    }
+
+    /**
+     * Carries the steward-entered metadata of the previous dataset version onto a refreshed one.
+     *
+     * A refresh re-runs the same definitions over newer data, so the concepts and the publication
+     * decision still hold - re-typing them for every refresh would be the steward's whole job. The
+     * catalogue entries themselves are not copied: the publisher updates the existing listing in
+     * place rather than creating a second one.
+     *
+     * @param refreshedDataset The newly created dataset version
+     */
+    private void copyStewardMetadataForward(Dataset refreshedDataset) {
+        String previousDatasetId = refreshedDataset.getPreviousDatasetId();
+
+        datasetConceptService.findByDatasetId(previousDatasetId).forEach(previousConcept -> {
+            DatasetConcept concept = new DatasetConcept();
+            concept.setDatasetId(refreshedDataset.getDatasetId());
+            concept.setPropertyUri(previousConcept.getPropertyUri());
+            concept.setConceptUri(previousConcept.getConceptUri());
+            concept.setPrefLabel(previousConcept.getPrefLabel());
+            concept.setConceptScheme(previousConcept.getConceptScheme());
+            datasetConceptService.saveDatasetConcept(concept);
+        });
+
+        catalogueDatasetService.findByDatasetId(previousDatasetId).ifPresent(previousCatalogueDataset -> {
+            CatalogueDataset catalogueDataset = new CatalogueDataset();
+            catalogueDataset.setDatasetId(refreshedDataset.getDatasetId());
+            catalogueDataset.setPublicTitle(previousCatalogueDataset.getPublicTitle());
+            catalogueDataset.setPublicDescription(previousCatalogueDataset.getPublicDescription());
+            catalogueDataset.setAccessRights(previousCatalogueDataset.getAccessRights());
+            catalogueDataset.setHdabName(previousCatalogueDataset.getHdabName());
+            catalogueDataset.setHdabUri(previousCatalogueDataset.getHdabUri());
+            catalogueDataset.setPublisherName(previousCatalogueDataset.getPublisherName());
+            catalogueDataset.setPublisherType(previousCatalogueDataset.getPublisherType());
+            catalogueDataset.setContactPoint(previousCatalogueDataset.getContactPoint());
+            catalogueDataset.setLegalBasis(previousCatalogueDataset.getLegalBasis());
+            catalogueDataset.setPurpose(previousCatalogueDataset.getPurpose());
+            catalogueDataset.setPersonalData(previousCatalogueDataset.getPersonalData());
+            catalogueDataset.setPublicationApprovalReference(previousCatalogueDataset.getPublicationApprovalReference());
+            catalogueDataset.setApplicableLegislation(previousCatalogueDataset.getApplicableLegislation());
+            catalogueDataset.setRetentionPeriodStart(previousCatalogueDataset.getRetentionPeriodStart());
+            catalogueDataset.setRetentionPeriodEnd(previousCatalogueDataset.getRetentionPeriodEnd());
+            catalogueDataset.setLandingPage(previousCatalogueDataset.getLandingPage());
+            catalogueDataset.setDocumentation(previousCatalogueDataset.getDocumentation());
+            catalogueDataset.setQualityAnnotation(previousCatalogueDataset.getQualityAnnotation());
+            catalogueDataset.setCreatedBy(previousCatalogueDataset.getCreatedBy());
+            catalogueDataset.setLastUpdatedBy(previousCatalogueDataset.getLastUpdatedBy());
+            catalogueDatasetService.saveCatalogueDataset(catalogueDataset);
+        });
     }
 
     /**
@@ -175,18 +250,30 @@ public class DatasetService {
      */
     public Optional<Dataset> updateDataset(String datasetId, Dataset updatedDataset, String personnelId) {
         Optional<Dataset> oldDataset = datasetRepository.findById(datasetId);
-        Optional<Personnel> personnel = this.personnelService.findPersonnelById(personnelId);
-        if (oldDataset.isPresent() && personnel.isPresent()) {
+        if (oldDataset.isPresent()) {
             Dataset dataset = oldDataset.get();
             dataset.setFeaturesetId(updatedDataset.getFeaturesetId());
             dataset.setPopulationId(updatedDataset.getPopulationId());
-            dataset.setOrganizationId(personnel.get().getOrganizationId());
+            dataset.setOrganizationId(resolveOrganizationId(updatedDataset.getOrganizationId(), personnelId));
             dataset.setTitle(updatedDataset.getTitle());
             dataset.setDescription(updatedDataset.getDescription());
             dataset.setVersion(updatedDataset.getVersion());
             dataset.setReferenceEntity(updatedDataset.getReferenceEntity());
-            dataset.setNumOfRecords(updatedDataset.getNumOfRecords());
+            dataset.setNumberOfRecords(updatedDataset.getNumberOfRecords());
             dataset.setSynthetic(updatedDataset.getSynthetic());
+            dataset.setPreviousDatasetId(updatedDataset.getPreviousDatasetId());
+            dataset.setPersistentIdentifier(updatedDataset.getPersistentIdentifier());
+            dataset.setStructuredData(updatedDataset.getStructuredData());
+            dataset.setTemporalCoverageStart(updatedDataset.getTemporalCoverageStart());
+            dataset.setTemporalCoverageEnd(updatedDataset.getTemporalCoverageEnd());
+            dataset.setTemporalResolution(updatedDataset.getTemporalResolution());
+            dataset.setGeographicalCoverage(updatedDataset.getGeographicalCoverage());
+            dataset.setNumberOfUniqueIndividuals(updatedDataset.getNumberOfUniqueIndividuals());
+            dataset.setMinTypicalAge(updatedDataset.getMinTypicalAge());
+            dataset.setMaxTypicalAge(updatedDataset.getMaxTypicalAge());
+            dataset.setConformsTo(updatedDataset.getConformsTo());
+            dataset.setProvenanceStatement(updatedDataset.getProvenanceStatement());
+            dataset.setWasGeneratedBy(updatedDataset.getWasGeneratedBy());
             dataset.setLastUpdatedAt(Instant.now());
             dataset.setLastUpdatedBy(updatedDataset.getLastUpdatedBy());
             Dataset savedDataset = datasetRepository.save(dataset);

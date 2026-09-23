@@ -60,7 +60,7 @@ public class StudyController {
         }
 
         String userId = principal.getSubject();
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Study");
         }
 
@@ -140,13 +140,11 @@ public class StudyController {
             Study savedStudy = studyService.saveStudy(study);
 
             keycloakService.createStudyGroups(savedStudy.getId(), ownerId);
-            keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
             if (savedStudy.getId() != null) {
                 String recordId = savedStudy.getId();
                 auditLogBookService.createAuditLog(
-                        ownerId,
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         savedStudy.getId(),
                         Operation.CREATE,
                         relationName,
@@ -180,7 +178,7 @@ public class StudyController {
         }
         String userId = principal.getSubject();
 
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -189,8 +187,7 @@ public class StudyController {
             Study savedStudy = savedStudyOpt.get();
             String recordId = savedStudy.getId();
             auditLogBookService.createAuditLog(
-                    userId,
-                    principal.getClaim(TokenClaim.USERNAME.getValue()),
+                    principal,
                     studyId,
                     Operation.UPDATE,
                     relationName,
@@ -219,7 +216,7 @@ public class StudyController {
 
         String userId = principal.getSubject();
         // String username = principal.getClaim("preferred_username");
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

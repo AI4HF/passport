@@ -56,6 +56,15 @@
         "attributes": {}
       },
       {
+        "id": "3f0a51b6-9c4d-4a2e-8f7b-5d1c0e6a4b92",
+        "name": "DATA_STEWARD",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "AI4HF-Authorization",
+        "attributes": {}
+      },
+      {
         "id": "89cdc2ae-1f92-42f6-a503-1baa806074dc",
         "name": "offline_access",
         "description": "${role_offline-access}",
@@ -522,6 +531,13 @@
       "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4",
       "subGroups": [
         {
+          "name": "DATA_STEWARD",
+          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
           "name": "DATA_ENGINEER",
           "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER",
           "attributes": {},
@@ -584,6 +600,16 @@
           "clientRoles": {}
         },
         {
+          "id": "8c2e7d41-5b93-4f60-9a18-6e3c2b7d04af",
+          "name": "DATA_STEWARD",
+          "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
+          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
+          "subGroups": [],
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {}
+        },
+        {
           "id": "37b4a0c9-eeea-4209-857c-28869614e2f0",
           "name": "DATA_SCIENTIST",
           "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
@@ -592,7 +618,6 @@
           "attributes": {},
           "realmRoles": [],
           "clientRoles": {}
-
         },
         {
           "id": "ef1f8e4a-e31f-45c8-9c5f-679d1e8e97f2",
@@ -805,6 +830,26 @@
       ]
     },
     {
+      "id": "data_steward",
+      "username": "data_steward",
+      "enabled": true,
+      "email": "data_steward@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "data_steward"
+        }
+      ],
+      "realmRoles": [
+        "offline_access",
+        "DATA_STEWARD"
+      ],
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD"
+      ]
+    },
+    {
       "id": "ml_engineer",
       "username": "ml_engineer",
       "enabled": true,
@@ -882,6 +927,51 @@
       "groups": [
         "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/QUALITY_ASSURANCE_SPECIALIST",
         "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/QUALITY_ASSURANCE_SPECIALIST"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-node-agent-dataset-sync",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-node-agent-dataset-sync",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_ENGINEER",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_ENGINEER"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-node-agent-metadata-publisher",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-node-agent-metadata-publisher",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-node-agent-monitoring-import",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-node-agent-monitoring-import",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-fl-central",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-fl-central",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
+      ]
+    },
+    {
+      "username": "service-account-ai4hf-monitoring-connector",
+      "enabled": true,
+      "serviceAccountClientId": "ai4hf-monitoring-connector",
+      "groups": [
+        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
+        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_SCIENTIST"
       ]
     }
   ],
@@ -1319,6 +1409,176 @@
           }
         }
       ],
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-node-agent-dataset-sync",
+      "name": "AI4HF Passport Node Agent (dataset-sync)",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "qP4vL8xN2mR6tY9wB3cF7jH1kD5sA0zE",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-node-agent-metadata-publisher",
+      "name": "AI4HF Passport Node Agent (metadata-publisher)",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "wR7bT2nK9xM4pL6vC8fJ3hG5dS1aZ0qY",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-node-agent-monitoring-import",
+      "name": "AI4HF Passport Node Agent (monitoring-import)",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "mK3xP8vB6tN1wL9cR4fH7jD2sG5aQ0zY",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-fl-central",
+      "name": "AI4HF FL Central metadata extraction",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "fT6yH2nQ9wE4rP7xK1mZ5vB8cJ3dL0sA",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "roles",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "ai4hf-monitoring-connector",
+      "name": "AI4HF Monitoring Platform connector",
+      "description": "Service account for the node-side agent that registers datasets, publishes metadata and imports monitoring statistics.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "nW5cJ8pK2xT6bR9vL4fH7mD1gS3aY0zQ",
+      "redirectUris": [],
+      "webOrigins": [],
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "use.refresh.tokens": "false",
+        "client_credentials.use_refresh_token": "false"
+      },
       "defaultClientScopes": [
         "web-origins",
         "roles",

@@ -131,8 +131,7 @@ public class FeatureSetController {
             if (saved.getFeaturesetId() != null) {
                 String recordId = saved.getFeaturesetId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -172,8 +171,7 @@ public class FeatureSetController {
                 FeatureSet saved = savedOpt.get();
                 String recordId = saved.getFeaturesetId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -211,8 +209,7 @@ public class FeatureSetController {
             Optional<FeatureSet> deletedFeatureSet = this.featureSetService.deleteFeatureSet(featureSetId);
             if (deletedFeatureSet.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId, Operation.DELETE,
                         relationName,
                         featureSetId,

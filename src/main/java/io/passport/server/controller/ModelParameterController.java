@@ -111,8 +111,7 @@ public class ModelParameterController {
                 String pId = saved.getId().getParameterId();
                 String compositeId = "(" + mId + ", " + pId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -158,8 +157,7 @@ public class ModelParameterController {
                 if (saved.getId() != null) {
                     String compositeId = "(" + modelId + ", " + parameterId + ")";
                     auditLogBookService.createAuditLog(
-                            principal.getSubject(),
-                            principal.getClaim(TokenClaim.USERNAME.getValue()),
+                            principal,
                             studyId,
                             Operation.UPDATE,
                             relationName,
@@ -204,8 +202,7 @@ public class ModelParameterController {
             if (deletedModelParameter.isPresent()) {
                 String compositeId = "(" + modelId + ", " + parameterId + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

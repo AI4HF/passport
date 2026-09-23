@@ -31,6 +31,7 @@ public class ExperimentService {
      */
     @Autowired @Lazy private ModelService modelService;
     @Autowired @Lazy private FeatureSetService featureSetService;
+    @Autowired @Lazy private QualityCriteriaService qualityCriteriaService;
 
     @Autowired
     public ExperimentService(ExperimentRepository experimentRepository, RoleCheckerService roleCheckerService) {
@@ -51,6 +52,7 @@ public class ExperimentService {
 
         results.add(modelService.validateCascade(studyId, "Experiment", experimentId, principal));
         results.add(featureSetService.validateCascade(studyId, "Experiment", experimentId, principal));
+        results.add(qualityCriteriaService.validateCascade(studyId, "Experiment", experimentId, principal));
 
         return ValidationResult.aggregate(results);
     }

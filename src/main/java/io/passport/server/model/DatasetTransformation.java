@@ -16,12 +16,15 @@ import org.hibernate.annotations.GenericGenerator;
 @Setter
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "dataTransformationId")
+        property = "datasetTransformationId")
 public class DatasetTransformation {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String dataTransformationId;
+    private String datasetTransformationId;
+
+    @Column(name = "study_id")
+    private String studyId;
 
     @Column(name = "title")
     private String title;

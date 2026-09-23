@@ -29,8 +29,8 @@ public class LearningDataset {
     @Column(name = "study_id")
     private String studyId;
 
-    @Column(name = "data_transformation_id")
-    private String dataTransformationId;
+    @Column(name = "dataset_transformation_id")
+    private String datasetTransformationId;
 
     @Column(name = "description")
     private String description;

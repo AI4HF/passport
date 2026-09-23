@@ -10,7 +10,9 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- * LinkedArticle model used for the Linked Article Management tasks.
+ * A scientific publication linked to the ML model by the researchers - the paper describing the model or
+ * a study validating it. The citation is held in structured fields so the passport can render it rather
+ * than only link it.
  */
 @Entity
 @Table(name = "linked_article")
@@ -20,20 +22,35 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "linkedArticleId")
+        property = "articleId")
 public class LinkedArticle {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name = "linked_article_id")
-    private String linkedArticleId;
+    @Column(name = "article_id")
+    private String articleId;
 
-    @Column(name = "study_id")
-    private String studyId;
+    @Column(name = "model_id")
+    private String modelId;
 
-    @Column(name = "article_url")
-    private String articleUrl;
+    @Column(name = "doi")
+    private String doi;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "authors")
+    private String authors;
+
+    @Column(name = "publication_venue")
+    private String publicationVenue;
+
+    @Column(name = "publication_year")
+    private Integer publicationYear;
+
+    @Column(name = "url")
+    private String url;
 
     @Column(name = "description")
     private String description;

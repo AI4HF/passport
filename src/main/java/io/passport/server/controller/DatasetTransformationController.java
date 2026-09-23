@@ -45,13 +45,13 @@ public class DatasetTransformationController {
     /**
      * Validates if a Dataset Transformation deletion is safe and authorized
      *
-     * @param dataTransformationId Id of the Dataset Transformation being deleted
+     * @param datasetTransformationId Id of the Dataset Transformation being deleted
      * @param studyId Id of the Study
      * @param principal Jwt principal containing user info
      * @return Comma separated string/list of Cascaded entries
      */
-    @GetMapping("/{dataTransformationId}/validate-deletion")
-    public ResponseEntity<String> validateDatasetTransformationDeletion(@PathVariable String dataTransformationId,
+    @GetMapping("/{datasetTransformationId}/validate-deletion")
+    public ResponseEntity<String> validateDatasetTransformationDeletion(@PathVariable String datasetTransformationId,
                                                                         @RequestParam String studyId,
                                                                         @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(
@@ -61,7 +61,7 @@ public class DatasetTransformationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("DatasetTransformation");
         }
 
-        ValidationResult result = datasetTransformationService.validateDatasetTransformationDeletion(studyId, dataTransformationId, principal);
+        ValidationResult result = datasetTransformationService.validateDatasetTransformationDeletion(studyId, datasetTransformationId, principal);
 
         if (result.status()) {
             return ResponseEntity.ok(result.tables());
@@ -75,7 +75,7 @@ public class DatasetTransformationController {
      *
      * @param studyId   ID of the study for authorization
      * @param principal Jwt principal containing user info
-     * @return List of all DatasetTransformations
+     * @return List of the study's DatasetTransformations
      */
     @GetMapping
     public ResponseEntity<List<DatasetTransformation>> getAllDatasetTransformations(@RequestParam String studyId,
@@ -84,7 +84,7 @@ public class DatasetTransformationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<DatasetTransformation> datasetTransformations = this.datasetTransformationService.getAllDatasetTransformations();
+        List<DatasetTransformation> datasetTransformations = this.datasetTransformationService.getAllDatasetTransformationsByStudyId(studyId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(datasetTransformations.size()));
         return ResponseEntity.ok().headers(headers).body(datasetTransformations);
@@ -93,13 +93,13 @@ public class DatasetTransformationController {
     /**
      * Retrieves a single DatasetTransformation by its ID.
      *
-     * @param dataTransformationId ID of the DatasetTransformation
+     * @param datasetTransformationId ID of the DatasetTransformation
      * @param studyId              ID of the study for authorization
      * @param principal            Jwt principal containing user info
      * @return DatasetTransformation or NOT FOUND
      */
-    @GetMapping("/{dataTransformationId}")
-    public ResponseEntity<?> getDatasetTransformation(@PathVariable String dataTransformationId,
+    @GetMapping("/{datasetTransformationId}")
+    public ResponseEntity<?> getDatasetTransformation(@PathVariable String datasetTransformationId,
                                                       @RequestParam String studyId,
                                                       @AuthenticationPrincipal Jwt principal) {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
@@ -107,7 +107,7 @@ public class DatasetTransformationController {
         }
 
         Optional<DatasetTransformation> dtOpt = this.datasetTransformationService
-                .findDatasetTransformationByDataTransformationId(dataTransformationId);
+                .findDatasetTransformationByDatasetTransformationId(datasetTransformationId);
         return dtOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -128,13 +128,13 @@ public class DatasetTransformationController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
+            datasetTransformation.setStudyId(studyId);
             DatasetTransformation saved = this.datasetTransformationService.saveDatasetTransformation(datasetTransformation);
 
-            if (saved.getDataTransformationId() != null) {
-                String recordId = saved.getDataTransformationId();
+            if (saved.getDatasetTransformationId() != null) {
+                String recordId = saved.getDatasetTransformationId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -153,14 +153,14 @@ public class DatasetTransformationController {
     /**
      * Updates an existing DatasetTransformation by its ID.
      *
-     * @param dataTransformationId         ID of the DatasetTransformation to update
+     * @param datasetTransformationId         ID of the DatasetTransformation to update
      * @param updatedDatasetTransformation Updated details
      * @param studyId                      ID of the study for authorization
      * @param principal                    Jwt principal containing user info
      * @return The updated DatasetTransformation or NOT FOUND
      */
-    @PutMapping("/{dataTransformationId}")
-    public ResponseEntity<?> updateDatasetTransformation(@PathVariable String dataTransformationId,
+    @PutMapping("/{datasetTransformationId}")
+    public ResponseEntity<?> updateDatasetTransformation(@PathVariable String datasetTransformationId,
                                                          @RequestBody DatasetTransformation updatedDatasetTransformation,
                                                          @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
@@ -170,14 +170,13 @@ public class DatasetTransformationController {
             }
 
             Optional<DatasetTransformation> savedOpt =
-                    this.datasetTransformationService.updateDatasetTransformation(dataTransformationId, updatedDatasetTransformation);
+                    this.datasetTransformationService.updateDatasetTransformation(datasetTransformationId, updatedDatasetTransformation);
 
             if (savedOpt.isPresent()) {
                 DatasetTransformation saved = savedOpt.get();
-                String recordId = saved.getDataTransformationId();
+                String recordId = saved.getDatasetTransformationId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -197,13 +196,13 @@ public class DatasetTransformationController {
     /**
      * Deletes a DatasetTransformation by its ID.
      *
-     * @param dataTransformationId ID of the DatasetTransformation to delete
+     * @param datasetTransformationId ID of the DatasetTransformation to delete
      * @param studyId              ID of the study for authorization
      * @param principal            Jwt principal containing user info
      * @return OK if deleted, NOT_FOUND otherwise
      */
-    @DeleteMapping("/{dataTransformationId}")
-    public ResponseEntity<?> deleteDatasetTransformation(@PathVariable String dataTransformationId,
+    @DeleteMapping("/{datasetTransformationId}")
+    public ResponseEntity<?> deleteDatasetTransformation(@PathVariable String datasetTransformationId,
                                                          @RequestParam String studyId,
                                                          @AuthenticationPrincipal Jwt principal) {
         try {
@@ -211,15 +210,14 @@ public class DatasetTransformationController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Optional<DatasetTransformation> deletedDatasetTransformation = this.datasetTransformationService.deleteDatasetTransformation(dataTransformationId);
+            Optional<DatasetTransformation> deletedDatasetTransformation = this.datasetTransformationService.deleteDatasetTransformation(datasetTransformationId);
             if (deletedDatasetTransformation.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,
-                        dataTransformationId,
+                        datasetTransformationId,
                         deletedDatasetTransformation.get()
                 );
                 return ResponseEntity.status(HttpStatus.OK).body(deletedDatasetTransformation.get());

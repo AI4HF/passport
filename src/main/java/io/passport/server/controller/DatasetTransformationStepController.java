@@ -43,16 +43,16 @@ public class DatasetTransformationStepController {
     }
 
     /**
-     * Retrieves all DatasetTransformationSteps or filters by dataTransformationId if provided.
+     * Retrieves all DatasetTransformationSteps or filters by datasetTransformationId if provided.
      *
-     * @param dataTransformationId Optional ID to filter steps
+     * @param datasetTransformationId Optional ID to filter steps
      * @param studyId              ID of the study for authorization
      * @param principal            Jwt principal containing user info
      * @return List of DatasetTransformationSteps
      */
     @GetMapping
     public ResponseEntity<List<DatasetTransformationStep>> getDatasetTransformationSteps(
-            @RequestParam(required = false) String dataTransformationId,
+            @RequestParam(required = false) String datasetTransformationId,
             @RequestParam String studyId,
             @AuthenticationPrincipal Jwt principal) {
 
@@ -60,8 +60,8 @@ public class DatasetTransformationStepController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<DatasetTransformationStep> steps = (dataTransformationId != null)
-                ? this.datasetTransformationStepService.findByDataTransformationId(dataTransformationId)
+        List<DatasetTransformationStep> steps = (datasetTransformationId != null)
+                ? this.datasetTransformationStepService.findByDatasetTransformationId(datasetTransformationId)
                 : this.datasetTransformationStepService.getAllDatasetTransformationSteps();
 
         HttpHeaders headers = new HttpHeaders();
@@ -112,8 +112,7 @@ public class DatasetTransformationStepController {
             if (saved.getStepId() != null) {
                 String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -155,8 +154,7 @@ public class DatasetTransformationStepController {
                 DatasetTransformationStep saved = savedOpt.get();
                 String recordId = saved.getStepId();
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -193,8 +191,7 @@ public class DatasetTransformationStepController {
             Optional<DatasetTransformationStep> deletedDatasetTransformationStep = this.datasetTransformationStepService.deleteDatasetTransformationStep(stepId);
             if (deletedDatasetTransformationStep.isPresent()) {
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,

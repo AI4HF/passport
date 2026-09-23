@@ -20,4 +20,5 @@ public class PdfRequest {
     private String width;
     private String height;
     private String studyId;
+    private String passportId;
 }

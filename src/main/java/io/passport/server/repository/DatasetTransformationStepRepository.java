@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 @Repository
 public interface DatasetTransformationStepRepository extends JpaRepository<DatasetTransformationStep, String> {
-    List<DatasetTransformationStep> findByDataTransformationId(String dataTransformationId);
+    List<DatasetTransformationStep> findByDatasetTransformationId(String datasetTransformationId);
 
     // Find Steps modified by a specific Personnel
     @Query("SELECT s FROM DatasetTransformationStep s WHERE s.createdBy = :personnelId OR s.lastUpdatedBy = :personnelId")
@@ -22,7 +22,7 @@ public interface DatasetTransformationStepRepository extends JpaRepository<Datas
 
     // Find Study ID directly from Transformation Step ID
     @Query("SELECT ld.studyId FROM DatasetTransformationStep s, LearningDataset ld " +
-            "WHERE s.dataTransformationId = ld.dataTransformationId AND s.stepId = :stepId")
+            "WHERE s.datasetTransformationId = ld.datasetTransformationId AND s.stepId = :stepId")
     Optional<String> findStudyIdByStepId(@Param("stepId") String stepId);
 }
 

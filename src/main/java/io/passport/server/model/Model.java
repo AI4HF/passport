@@ -41,6 +41,12 @@ public class Model {
     @Column(name = "version")
     private String version;
 
+    @Column(name = "previous_model_id")
+    private String previousModelId;
+
+    @Column(name = "retraining_reason")
+    private String retrainingReason;
+
     @Column(name = "tag")
     private String tag;
 
@@ -50,8 +56,8 @@ public class Model {
     @Column(name = "product_identifier")
     private String productIdentifier;
 
-    @Column(name = "owner")
-    private String owner;
+    @Column(name = "owner_organization_id")
+    private String ownerOrganizationId;
 
     @Column(name = "trl_level")
     private String trlLevel;

@@ -104,6 +104,8 @@ public class ModelFigureService {
         if (oldModelFigure.isPresent()) {
             ModelFigure modelFigure = oldModelFigure.get();
             modelFigure.setModelId(updatedModelFigure.getModelId());
+            modelFigure.setTitle(updatedModelFigure.getTitle());
+            modelFigure.setDescription(updatedModelFigure.getDescription());
             modelFigure.setImageBase64(updatedModelFigure.getImageBase64());
             ModelFigure savedModelFigure = modelFigureRepository.save(modelFigure);
             return Optional.of(savedModelFigure);

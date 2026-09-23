@@ -41,8 +41,8 @@ public class EvaluationMeasureService {
         List<EvaluationMeasure> affectedMeasures;
 
         switch (sourceResourceType) {
-            case "Model":
-                affectedMeasures = evaluationMeasureRepository.findAllByModelId(sourceResourceId);
+            case "ModelEvaluation":
+                affectedMeasures = evaluationMeasureRepository.findAllByModelEvaluationId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -73,12 +73,12 @@ public class EvaluationMeasureService {
     }
 
     /**
-     * Find EvaluationMeasures by studyId
-     * @param modelId The ID of the model
+     * Find EvaluationMeasures by modelEvaluationId
+     * @param modelEvaluationId The ID of the evaluation run
      * @return
      */
-    public List<EvaluationMeasure> findEvaluationMeasuresByModelId(String modelId) {
-        return evaluationMeasureRepository.findAllByModelId(modelId);
+    public List<EvaluationMeasure> findEvaluationMeasuresByModelEvaluationId(String modelEvaluationId) {
+        return evaluationMeasureRepository.findAllByModelEvaluationId(modelEvaluationId);
     }
 
     /**
@@ -109,7 +109,7 @@ public class EvaluationMeasureService {
         Optional<EvaluationMeasure> oldEvaluationMeasure = evaluationMeasureRepository.findById(measureId);
         if (oldEvaluationMeasure.isPresent()) {
             EvaluationMeasure evaluationMeasure = oldEvaluationMeasure.get();
-            evaluationMeasure.setModelId(updatedEvaluationMeasure.getModelId());
+            evaluationMeasure.setModelEvaluationId(updatedEvaluationMeasure.getModelEvaluationId());
             evaluationMeasure.setName(updatedEvaluationMeasure.getName());
             evaluationMeasure.setDescription(updatedEvaluationMeasure.getDescription());
             evaluationMeasure.setValue(updatedEvaluationMeasure.getValue());

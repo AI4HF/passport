@@ -31,6 +31,9 @@ public class Population {
     @Column(name = "population_url")
     private String populationUrl;
 
+    @Column(name = "version")
+    private String version;
+
     @Column(name = "description")
     private String description;
 

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -25,12 +27,6 @@ public class PassportService {
     /**
      * Passport pdf generation data.
      */
-    @Autowired
-    private ModelDeploymentService deploymentService;
-
-    @Autowired
-    private DeploymentEnvironmentService environmentService;
-
     @Autowired
     private ModelService modelService;
 
@@ -77,10 +73,40 @@ public class PassportService {
     private EvaluationMeasureService evaluationMeasureService;
 
     @Autowired
+    private ModelEvaluationService modelEvaluationService;
+
+    @Autowired
+    private ModelEvaluationDatasetService modelEvaluationDatasetService;
+
+    @Autowired
     private OrganizationService organizationService;
 
     @Autowired
     private ModelFigureService modelFigureService;
+
+    @Autowired
+    private QualityCriteriaService qualityCriteriaService;
+
+    @Autowired
+    private QualityCriterionService qualityCriterionService;
+
+    @Autowired
+    private QualityAssessmentService qualityAssessmentService;
+
+    @Autowired
+    private QualityCriterionAssessmentResultService qualityCriterionAssessmentResultService;
+
+    @Autowired
+    private DatasetConceptService datasetConceptService;
+
+    @Autowired
+    private CatalogueDatasetService catalogueDatasetService;
+
+    @Autowired
+    private DatasetDistributionService datasetDistributionService;
+
+    @Autowired
+    private CatalogueRegistrationService catalogueRegistrationService;
 
     private final RoleCheckerService roleCheckerService;
     @Autowired
@@ -107,8 +133,8 @@ public class PassportService {
         List<Passport> affectedPassports;
 
         switch (sourceResourceType) {
-            case "ModelDeployment":
-                affectedPassports = passportRepository.findByDeploymentId(sourceResourceId);
+            case "Model":
+                affectedPassports = passportRepository.findByModelId(sourceResourceId);
                 break;
             default:
                 return new ValidationResult(true, "");
@@ -161,18 +187,12 @@ public class PassportService {
     /**
      * Creates and stores Passport with detailsJson populated.
      *
-     * @param passportWithDetailSelection The passport object with basic info (deploymentId, studyId, etc.) and selected details of the passport.
+     * @param passportWithDetailSelection The passport object with basic info (modelId, studyId, etc.) and selected details of the passport.
      * @return The saved Passport.
      */
     public Passport createPassport(PassportWithDetailSelection passportWithDetailSelection) {
         try {
             Map<String, Object> detailsJson = new HashMap<>();
-            if(passportWithDetailSelection.getPassportDetailsSelection().isModelDeploymentDetails()){
-                detailsJson.put("deploymentDetails", fetchDeploymentDetails(passportWithDetailSelection.getPassport()));
-            }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isEnvironmentDetails()){
-                detailsJson.put("environmentDetails", fetchEnvironmentDetails(passportWithDetailSelection.getPassport()));
-            }
             if(passportWithDetailSelection.getPassportDetailsSelection().isModelDetails()){
                 detailsJson.put("modelDetails", fetchModelDetails(passportWithDetailSelection.getPassport()));
             }
@@ -203,6 +223,12 @@ public class PassportService {
             if(passportWithDetailSelection.getPassportDetailsSelection().isFeatureSets()){
                 detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passportWithDetailSelection.getPassport()));
             }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityCriteria()){
+                detailsJson.put("qualityCriteriaWithCriterion", fetchQualityCriteriaWithCriterion(passportWithDetailSelection.getPassport()));
+            }
+            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityAssessments()){
+                detailsJson.put("qualityAssessmentsWithResults", fetchQualityAssessmentsWithResults(passportWithDetailSelection.getPassport()));
+            }
             if(passportWithDetailSelection.getPassportDetailsSelection().isDatasets()){
                 detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passportWithDetailSelection.getPassport()));
             }
@@ -210,17 +236,19 @@ public class PassportService {
                 detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
-                detailsJson.put("evaluationMeasures", fetchEvaluationMeasures(passportWithDetailSelection.getPassport()));
+                detailsJson.put("modelEvaluationsWithMeasures", fetchModelEvaluationsWithMeasures(passportWithDetailSelection.getPassport()));
             }
             if(passportWithDetailSelection.getPassportDetailsSelection().isModelFigures()){
                 detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
             }
             cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
-            passportWithDetailSelection.getPassport().setDetailsJson(detailsJson);
-            passportWithDetailSelection.getPassport().setCreatedAt(Instant.now());
-            passportWithDetailSelection.getPassport().setApprovedAt(Instant.now());
+            Passport passport = passportWithDetailSelection.getPassport();
+            passport.setDetailsJson(detailsJson);
+            passport.setCreatedAt(Instant.now());
+            passport.setApprovedAt(Instant.now());
+            linkToPreviousVersion(passport);
 
-            return passportRepository.save(passportWithDetailSelection.getPassport());
+            return passportRepository.save(passport);
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating passport: " + e.getMessage());
         }
@@ -236,38 +264,78 @@ public class PassportService {
     }
 
     /**
+     * Chains a new passport onto the newest one the model already has. A passport is never rewritten, so
+     * regenerating produces the next version rather than replacing the record that was signed.
+     *
+     * @param passport The passport being created
+     */
+    private void linkToPreviousVersion(Passport passport) {
+        Optional<Passport> previous = passportRepository.findFirstByModelIdOrderByVersionDesc(passport.getModelId());
+        if (previous.isPresent()) {
+            passport.setPreviousPassportId(previous.get().getPassportId());
+            passport.setVersion(previous.get().getVersion() == null ? 2 : previous.get().getVersion() + 1);
+        } else {
+            passport.setPreviousPassportId(null);
+            passport.setVersion(1);
+        }
+    }
+
+    /**
+     * Stores the signed PDF on the passport the first time it is generated, together with its SHA-256.
+     * A passport that already carries a document keeps it: the signed bytes are the record, and producing
+     * a different document for the same passport would make the signature meaningless.
+     *
+     * @param passportId ID of the passport
+     * @param signedPdf The signed PDF bytes
+     * @return The stored bytes - the ones just stored, or the ones already held
+     */
+    public byte[] storeSignedPdf(String passportId, byte[] signedPdf) {
+        Passport passport = getPassportById(passportId);
+        if (passport.getSignedPdf() != null && passport.getSignedPdf().length > 0) {
+            return passport.getSignedPdf();
+        }
+        passport.setSignedPdf(signedPdf);
+        passport.setSignedPdfHash(sha256Hex(signedPdf));
+        passportRepository.save(passport);
+        return signedPdf;
+    }
+
+    /**
+     * Fetch the stored signed PDF of a passport.
+     *
+     * @param passportId ID of the passport
+     * @return The signed bytes, or empty when the passport has not been generated yet
+     */
+    public Optional<byte[]> findSignedPdf(String passportId) {
+        byte[] signedPdf = getPassportById(passportId).getSignedPdf();
+        return (signedPdf == null || signedPdf.length == 0) ? Optional.empty() : Optional.of(signedPdf);
+    }
+
+    /**
+     * Hex-encoded SHA-256 of the given bytes.
+     */
+    private String sha256Hex(byte[] bytes) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 is not available", e);
+        }
+    }
+
+    /**
      * Fetch methods to obtain pdf generation data
      */
-    private ModelDeployment fetchDeploymentDetails(Passport passport) {
-        try {
-            return deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-        } catch (RuntimeException e) {
-            System.err.println("Error fetching Model Deployment: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    private DeploymentEnvironment fetchEnvironmentDetails(Passport passport) {
-        try {
-            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            return environmentService.findDeploymentEnvironmentById(deployment.getEnvironmentId())
-                    .orElseThrow(() -> new RuntimeException("Deployment Environment not found"));
-        } catch (RuntimeException e) {
-            System.err.println("Error fetching Deployment Environment: " + e.getMessage());
-            throw e;
-        }
-    }
-
     private ModelWithOwnerNameDTO fetchModelDetails(Passport passport) {
         try {
-            ModelDeployment deployment = deploymentService.findModelDeploymentByDeploymentId(passport.getDeploymentId())
-                    .orElseThrow(() -> new RuntimeException("Model Deployment not found"));
-            Model model = modelService.findModelById(deployment.getModelId())
+            Model model = modelService.findModelById(passport.getModelId())
                     .orElseThrow(() -> new RuntimeException("Model not found"));
             ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
-            modelWithOwnerNameDTO.setOwner(organizationService.findOrganizationById(model.getOwner()).orElseThrow().getName());
+            modelWithOwnerNameDTO.setOwnerOrganizationName(organizationService.findOrganizationById(model.getOwnerOrganizationId()).orElseThrow().getName());
             return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
@@ -336,7 +404,7 @@ public class PassportService {
     }
     private List<LinkedArticle> fetchLinkedArticles(Passport passport) {
         try {
-            return linkedArticleService.findLinkedArticleByStudyId(passport.getStudyId());
+            return linkedArticleService.findLinkedArticleByModelId(passport.getModelId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Linked Articles: " + e.getMessage());
         }
@@ -358,6 +426,44 @@ public class PassportService {
         }
     }
 
+    /**
+     * The quality criteria sets defined for the study, each with the rules it contains.
+     */
+    private List<Map<String, Object>> fetchQualityCriteriaWithCriterion(Passport passport) {
+        try {
+            return qualityCriteriaService.getAllQualityCriteriaByStudyId(passport.getStudyId()).stream()
+                    .map(qualityCriteria -> {
+                        Map<String, Object> criteriaWithCriterion = new HashMap<>();
+                        criteriaWithCriterion.put("qualityCriteria", qualityCriteria);
+                        criteriaWithCriterion.put("qualityCriterion",
+                                qualityCriterionService.findQualityCriterionByQualityCriteriaId(qualityCriteria.getQualityCriteriaId()));
+                        return criteriaWithCriterion;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Quality Criteria: " + e.getMessage());
+        }
+    }
+
+    /**
+     * The quality assessment runs over the study's datasets, each with its per-criterion results.
+     */
+    private List<Map<String, Object>> fetchQualityAssessmentsWithResults(Passport passport) {
+        try {
+            return qualityAssessmentService.getAllQualityAssessmentsByStudyId(passport.getStudyId()).stream()
+                    .map(qualityAssessment -> {
+                        Map<String, Object> assessmentWithResults = new HashMap<>();
+                        assessmentWithResults.put("qualityAssessment", qualityAssessment);
+                        assessmentWithResults.put("results",
+                                qualityCriterionAssessmentResultService.findResultsByQualityAssessmentId(qualityAssessment.getQualityAssessmentId()));
+                        return assessmentWithResults;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Quality Assessments: " + e.getMessage());
+        }
+    }
+
     private List<Map<String, Object>> fetchDatasetsWithLearningDatasets(Passport passport) {
         try {
             List<Dataset> datasets = datasetService.getAllDatasetsByStudyId(passport.getStudyId());
@@ -366,6 +472,15 @@ public class PassportService {
                         Map<String, Object> datasetWithLearningDatasets = new HashMap<>();
                         datasetWithLearningDatasets.put("dataset", dataset);
                         datasetWithLearningDatasets.put("learningDatasets", learningDatasetService.findByDatasetId(dataset.getDatasetId()));
+                        datasetWithLearningDatasets.put("concepts", datasetConceptService.findByDatasetId(dataset.getDatasetId()));
+                        // the publication record, with what was actually listed where
+                        catalogueDatasetService.findByDatasetId(dataset.getDatasetId()).ifPresent(catalogueDataset -> {
+                            datasetWithLearningDatasets.put("catalogueDataset", catalogueDataset);
+                            datasetWithLearningDatasets.put("distributions",
+                                    datasetDistributionService.findByCatalogueDatasetId(catalogueDataset.getCatalogueDatasetId()));
+                            datasetWithLearningDatasets.put("catalogueRegistrations",
+                                    catalogueRegistrationService.findByCatalogueDatasetId(catalogueDataset.getCatalogueDatasetId()));
+                        });
                         return datasetWithLearningDatasets;
                     })
                     .collect(Collectors.toList());
@@ -390,19 +505,33 @@ public class PassportService {
         }
     }
 
-    private List<EvaluationMeasure> fetchEvaluationMeasures(Passport passport) {
+    /**
+     * Measures belong to an evaluation run rather than to the model, so the passport carries each run
+     * with the measures it produced and the learning datasets it was computed over.
+     */
+    private List<Map<String, Object>> fetchModelEvaluationsWithMeasures(Passport passport) {
         try {
-            String modelId = this.fetchDeploymentDetails(passport).getModelId();
-            return evaluationMeasureService.findEvaluationMeasuresByModelId(modelId);
+            List<ModelEvaluation> modelEvaluations = modelEvaluationService.findModelEvaluationsByModelId(passport.getModelId());
+            return modelEvaluations.stream()
+                    .map(modelEvaluation -> {
+                        Map<String, Object> modelEvaluationWithMeasures = new HashMap<>();
+                        modelEvaluationWithMeasures.put("modelEvaluation", modelEvaluation);
+                        modelEvaluationWithMeasures.put("evaluationMeasures",
+                                evaluationMeasureService.findEvaluationMeasuresByModelEvaluationId(modelEvaluation.getModelEvaluationId()));
+                        modelEvaluationWithMeasures.put("evaluationDatasets",
+                                modelEvaluationDatasetService.findByModelEvaluationId(modelEvaluation.getModelEvaluationId())
+                                        .stream().map(ModelEvaluationDatasetDTO::new).collect(Collectors.toList()));
+                        return modelEvaluationWithMeasures;
+                    })
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error fetching Evaluation Measures: " + e.getMessage());
+            throw new RuntimeException("Error fetching Model Evaluations: " + e.getMessage());
         }
     }
 
     private List<ModelFigure> fetchModelFigures(Passport passport) {
         try {
-            String modelId = this.fetchDeploymentDetails(passport).getModelId();
-            return modelFigureService.findByModelId(modelId);
+            return modelFigureService.findByModelId(passport.getModelId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model Figures: " + e.getMessage());
         }

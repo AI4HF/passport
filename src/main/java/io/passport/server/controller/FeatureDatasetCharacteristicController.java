@@ -109,8 +109,7 @@ public class FeatureDatasetCharacteristicController {
             if (saved.getId() != null) {
                 String compositeId = "(" + saved.getId().getDatasetId() + ", " + saved.getId().getFeatureId() + ", " + saved.getId().getCharacteristicName() + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.CREATE,
                         relationName,
@@ -161,8 +160,7 @@ public class FeatureDatasetCharacteristicController {
                 FeatureDatasetCharacteristic saved = savedOpt.get();
                 String compositeId = "(" + id.getDatasetId() + ", " + id.getFeatureId() + ", " + id.getCharacteristicName() + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.UPDATE,
                         relationName,
@@ -211,8 +209,7 @@ public class FeatureDatasetCharacteristicController {
             if (deletedFeatureDatasetCharacteristic.isPresent()) {
                 String compositeId = "(" + datasetId + ", " + featureId + ", " + characteristicName + ")";
                 auditLogBookService.createAuditLog(
-                        principal.getSubject(),
-                        principal.getClaim(TokenClaim.USERNAME.getValue()),
+                        principal,
                         studyId,
                         Operation.DELETE,
                         relationName,
