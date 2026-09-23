@@ -31,12 +31,13 @@ src/main/java/io/passport/server/
 src/main/resources/
   application.properties     # all config; dev secrets committed here
   keystore.p12               # PAdES signing key (dev)
-  diagrams/ER_Diagram.drawio # editable ER diagram — update it when the schema changes
 docker/deployment/
   init-db.sql                # authoritative DDL (lines 1–~390) + demo data seed (rest, ~616 KB)
   realm-import.json          # Keycloak realm, client, roles
   docker-compose.yaml        # keycloak, both postgres instances, passport, passport-web
 docs/passport.postman_collection.json
+docs/architecture/           # component overview of the whole system, with its figures
+docs/data-model/             # ER diagrams, generated from init-db.sql by generate_er.py
 ```
 
 There is **no `src/test`**. See the workspace guide for how changes are verified.
@@ -220,7 +221,8 @@ parent's `validate*Deletion`,** or deletion will silently orphan rows.
 
 ## Data model
 
-`docker/deployment/init-db.sql` is the source of truth (DDL first ~390 lines). Ownership chains:
+`docker/deployment/init-db.sql` is the source of truth (DDL first ~390 lines). The ER diagrams in
+[`docs/data-model/README.md`](docs/data-model/README.md) are generated from it. Ownership chains:
 
 ```
 Organization ─┬─ Personnel ─── (Keycloak user id)
@@ -273,4 +275,5 @@ Composite-key join tables: `study_personnel`, `study_organization`, `feature_dat
   — a pre-existing quirk; several services have the same shape. Fix such quirks when they're in your path —
   nothing depends on preserving them.
 - `pdf.chrome.executablePath` must point at a Chrome binary; in Docker it is `/usr/local/bin/chrome`.
-- Keep `resources/diagrams/ER_Diagram.drawio` in sync when the schema changes.
+- After a schema change, regenerate the ER diagrams with `python docs/data-model/generate_er.py`. A new
+  table fails the run until it is placed in one of the script's `DOMAINS`.

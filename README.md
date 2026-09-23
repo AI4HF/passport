@@ -23,7 +23,7 @@ This repository contains the source code and deployment scripts of the backend o
 
 The AI Product Passport is one of the traceability tools for post-deployment AI monitoring. It aims to enhance transparency, traceability, and comprehensive documentation of AI models used within the production environments. Its validation and testing has been carried out for the healthcare sector where different predictive AI models have been deployed into hospital environments. Each AI model has its own AI Product Passport, a signed and versioned record of its provenance.
 
-For how the Passport fits together with the other components (the web UI, the node agent, Studyfyr, the definitions repository and the monitoring platform), see [docs/architecture](docs/architecture/README.md).
+For how the Passport fits together with the other components (the web UI, the node agent, Studyfyr, the definitions repository and the monitoring platform), see [docs/architecture](docs/architecture/README.md). The ER diagrams of the data model are in [docs/data-model](docs/data-model/README.md).
 
 
 # Passport Server

@@ -42,7 +42,8 @@ Three rules hold the architecture together:
   rewritten; regenerating creates the next version.
 - **Keycloak** issues tokens to people and machines and holds one group per study, with a subgroup per
   study role.
-- **PostgreSQL** holds the domain data, the audit log and the stored passports.
+- **PostgreSQL** holds the domain data, the audit log and the stored passports. Its schema is drawn in
+  the [data model](../data-model/README.md).
 - **FL Central** reports training provenance (algorithm, learning process, model, evaluation runs)
   through the metadata extraction library.
 
