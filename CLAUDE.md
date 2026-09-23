@@ -146,9 +146,9 @@ you touch. Renaming paths is fine — update `passport-web` and the Postman coll
    wide open. Endpoints are not secured by URL patterns; every controller checks explicitly.
 
 2. **Per-study group membership** — `RoleCheckerService` → `KeycloakService`:
-   - Creating a study creates a Keycloak group `study-<studyId>` with one subgroup per role
-     (`STUDY_OWNER`, `DATA_ENGINEER`, `DATA_SCIENTIST`, `SURVEY_MANAGER`,
-     `QUALITY_ASSURANCE_SPECIALIST`, `DATA_STEWARD`).
+   - Creating a study creates a Keycloak group `study-<studyId>` with one subgroup per role, derived from
+     the `Role` enum minus `ORGANIZATION_ADMIN` (`STUDY_OWNER`, `DATA_ENGINEER`, `DATA_SCIENTIST`,
+     `SURVEY_MANAGER`, `QUALITY_ASSURANCE_SPECIALIST`, `DATA_STEWARD`).
    - `isUserAuthorizedForStudy(studyId, principal, allowedRoles)` returns true if the caller is a member of
      **any** of those subgroups for that study.
    - `isUserAuthorizedToViewStudy(...)` accepts any of the six non-admin roles.
@@ -162,9 +162,8 @@ it has no per-study subgroup.
 
 `KeycloakService` also owns user lifecycle (`createUserAndReturnId`, `updateRole`, `deleteUser`), study group
 lifecycle (`createStudyGroups`, `deleteStudyGroup`, `assignPersonnelToStudyGroups`,
-`removePersonnelFromStudyGroups`), and the offline-token "connector secret" flow (`createOfflineSecret`,
-`refreshWithSecret`) exposed at `POST /user/connector/sign-up` and `POST /user/connector/login` for
-machine-to-machine metadata ingestion.
+`removePersonnelFromStudyGroups`). Role names are always taken from the enum (`Role.X.name()`), never
+written as string literals.
 
 ## Cascade-deletion validation
 

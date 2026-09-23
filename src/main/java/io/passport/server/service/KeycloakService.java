@@ -167,21 +167,18 @@ public class KeycloakService {
         }
         String groupId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
-        List<String> subgroupNames = Arrays.asList(
-                "STUDY_OWNER",
-                "DATA_ENGINEER",
-                "DATA_STEWARD",
-                "DATA_SCIENTIST",
-                "SURVEY_MANAGER",
-                "QUALITY_ASSURANCE_SPECIALIST"
-        );
+        // One subgroup per study role; ORGANIZATION_ADMIN is organization-wide, not granted per study.
+        List<String> subgroupNames = Arrays.stream(Role.values())
+                .filter(role -> role != Role.ORGANIZATION_ADMIN)
+                .map(Role::name)
+                .toList();
 
         for (String subgroupName : subgroupNames) {
             GroupRepresentation subgroup = new GroupRepresentation();
             subgroup.setName(subgroupName);
             keycloak.realm(realm).groups().group(groupId).subGroup(subgroup);
         }
-        assignPersonnelToStudyGroups(studyId, ownerId, List.of("STUDY_OWNER"));
+        assignPersonnelToStudyGroups(studyId, ownerId, List.of(Role.STUDY_OWNER.name()));
     }
 
     /**
@@ -197,7 +194,7 @@ public class KeycloakService {
         // Retrieve all subgroups of the study
         GroupRepresentation studyGroup = getGroupByName("study-" + studyId);
         List<GroupRepresentation> subgroups = keycloak.realm(realm).groups().group(studyGroup.getId()).getSubGroups(0, 100, true);
-        List<GroupRepresentation> subgroups2 = subgroups.stream().filter(subgroup -> !subgroup.getName().equals("STUDY_OWNER")).collect(Collectors.toList());
+        List<GroupRepresentation> subgroups2 = subgroups.stream().filter(subgroup -> !subgroup.getName().equals(Role.STUDY_OWNER.name())).collect(Collectors.toList());
         for (GroupRepresentation subgroup : subgroups2) {
             keycloak.realm(realm).users().get(personnelId).leaveGroup(subgroup.getId());
         }

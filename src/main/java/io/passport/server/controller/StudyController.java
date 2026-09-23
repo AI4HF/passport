@@ -60,7 +60,7 @@ public class StudyController {
         }
 
         String userId = principal.getSubject();
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Study");
         }
 
@@ -140,7 +140,6 @@ public class StudyController {
             Study savedStudy = studyService.saveStudy(study);
 
             keycloakService.createStudyGroups(savedStudy.getId(), ownerId);
-            keycloakService.assignPersonnelToStudyGroups(savedStudy.getId(), ownerId, List.of("STUDY_OWNER"));
 
             if (savedStudy.getId() != null) {
                 String recordId = savedStudy.getId();
@@ -179,7 +178,7 @@ public class StudyController {
         }
         String userId = principal.getSubject();
 
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -217,7 +216,7 @@ public class StudyController {
 
         String userId = principal.getSubject();
         // String username = principal.getClaim("preferred_username");
-        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of("STUDY_OWNER"))) {
+        if (!keycloakService.isUserInStudyGroupWithRoles(studyId, userId, List.of(Role.STUDY_OWNER.name()))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
