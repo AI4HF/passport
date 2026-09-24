@@ -30,8 +30,9 @@ src/main/java/io/passport/server/
   util/JSONUtil.java
 src/main/resources/
   application.properties     # all config; dev secrets committed here
-  keystore.p12               # PAdES signing key (dev)
+  keystore.p12               # PAdES signing key (dev) for mvn spring-boot:run
 docker/deployment/
+  keystore/keystore.p12      # the same key, mounted into the passport container
   init-db.sql                # authoritative DDL (lines 1–~390) + demo data seed (rest, ~616 KB)
   realm-import.json          # Keycloak realm, client, roles
   docker-compose.yaml        # keycloak, both postgres instances, passport, passport-web
@@ -214,10 +215,15 @@ parent's `validate*Deletion`,** or deletion will silently orphan rows.
 - `createPassport` chains the new row onto the newest passport of the same model (`version`,
   `previousPassportId`). Passports have no update endpoint by design.
 
-> **The committed dev keystore `docker/deployment/keystore/keystore.p12` expired on 2026-02-12**, so signing
-> fails with "The signing-certificate ... is expired at signing time" until it is replaced. Regenerate with
+> **The committed dev signing key expires on 2028-09-23** (self-signed `CN=AI4HF, O=AI4HF, C=NL`, alias
+> `mykey`, password `password`, issued 2026-09-24). The same file is committed twice:
+> `docker/deployment/keystore/keystore.p12` (mounted into the container) and `src/main/resources/keystore.p12`
+> (local runs). After it expires, signing fails with "The signing-certificate ... is expired at signing time"
+> and no PDF is stored. Regenerate once and copy the result over both files:
 > `keytool -genkeypair -alias mykey -keyalg RSA -keysize 2048 -validity 730 -storetype PKCS12 -keystore
 > keystore.p12 -storepass password -keypass password -dname "CN=AI4HF, O=AI4HF, C=NL"`.
+> `PassportSignatureService` reads the keystore on every signing, so a running container picks up the
+> replaced file without a restart; `dss.keystore.path`/`password` stay as they are.
 
 ## Data model
 
