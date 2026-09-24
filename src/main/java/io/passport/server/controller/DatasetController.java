@@ -32,6 +32,8 @@ public class DatasetController {
     private final AuditLogBookService auditLogBookService;
 
     private final List<Role> allowedRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST);
+    // the data steward publishes datasets it does not edit, so it can read them
+    private final List<Role> readRoles = List.of(Role.DATA_ENGINEER, Role.DATA_SCIENTIST, Role.DATA_STEWARD);
 
     @Autowired
     public DatasetController(DatasetService datasetService,
@@ -80,7 +82,7 @@ public class DatasetController {
     @GetMapping
     public ResponseEntity<List<Dataset>> getAllDatasetsByStudyId(@RequestParam String studyId,
                                                                  @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, readRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<Dataset> datasets = this.datasetService.getAllDatasetsByStudyId(studyId);
@@ -98,7 +100,7 @@ public class DatasetController {
     @GetMapping("/names")
     public ResponseEntity<List<Dataset>> getAllDatasetsWithNames(@RequestParam String studyId,
                                                                  @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, readRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<Dataset> datasets = this.datasetService.getAllDatasetsWithNamesByStudyId(studyId);
@@ -119,7 +121,7 @@ public class DatasetController {
     public ResponseEntity<?> getDataset(@PathVariable String datasetId,
                                         @RequestParam String studyId,
                                         @AuthenticationPrincipal Jwt principal) {
-        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
+        if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, readRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         Optional<Dataset> dataset = this.datasetService.findDatasetByDatasetId(datasetId);

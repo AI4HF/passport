@@ -2,6 +2,7 @@ package io.passport.server.model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -18,10 +19,12 @@ public class JsonConverter implements AttributeConverter<Map<String, Object>, St
 
     /**
      * Object Mapper class instance to be used in conversion.
-     * Configured to include JavaTimeModule in order to handle Java Time entities properly.
+     * Configured to include JavaTimeModule in order to handle Java Time entities properly, written as ISO-8601
+     * strings like the rest of the API - epoch seconds would be read as milliseconds by the frontend.
      */
     private final ObjectMapper objectMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
 
     /**

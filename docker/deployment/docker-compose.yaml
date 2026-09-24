@@ -40,6 +40,12 @@ services:
     volumes:
       - backend-data:/var/lib/postgresql/data
       - ./passport/docker/deployment/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    # over TCP, so it stays unhealthy while init-db.sql is still loading (the init server is socket-only)
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-h", "localhost", "-U", "admin", "-d", "ai4hf" ]
+      interval: 5s
+      timeout: 2s
+      retries: 30
     ports:
       - "15432:5432"
     networks:
@@ -71,8 +77,10 @@ services:
     volumes:
       - ./passport/docker/deployment/keystore/keystore.p12:/usr/local/passport/keystore/keystore.p12
     depends_on:
-      - keycloak
-      - backend_postgres
+      keycloak:
+        condition: service_started
+      backend_postgres:
+        condition: service_healthy
     ports:
       - "8082:8080"
     networks:

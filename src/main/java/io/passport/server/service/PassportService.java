@@ -446,7 +446,8 @@ public class PassportService {
     }
 
     /**
-     * The quality assessment runs over the study's datasets, each with its per-criterion results.
+     * The quality assessment runs over the study's datasets, each with its per-criterion results and the
+     * dataset and center it was run against, so the section reads on its own.
      */
     private List<Map<String, Object>> fetchQualityAssessmentsWithResults(Passport passport) {
         try {
@@ -454,6 +455,11 @@ public class PassportService {
                     .map(qualityAssessment -> {
                         Map<String, Object> assessmentWithResults = new HashMap<>();
                         assessmentWithResults.put("qualityAssessment", qualityAssessment);
+                        datasetService.findDatasetByDatasetId(qualityAssessment.getDatasetId()).ifPresent(dataset -> {
+                            assessmentWithResults.put("datasetTitle", dataset.getTitle());
+                            organizationService.findOrganizationById(dataset.getOrganizationId())
+                                    .ifPresent(organization -> assessmentWithResults.put("organizationName", organization.getName()));
+                        });
                         assessmentWithResults.put("results",
                                 qualityCriterionAssessmentResultService.findResultsByQualityAssessmentId(qualityAssessment.getQualityAssessmentId()));
                         return assessmentWithResults;

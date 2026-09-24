@@ -156,15 +156,6 @@
         "attributes": {}
       },
       {
-        "id": "2d5ab47b-3aa6-4de8-b187-ff135c83717d",
-        "name": "ML_ENGINEER",
-        "description": "",
-        "composite": false,
-        "clientRole": false,
-        "containerId": "AI4HF-Authorization",
-        "attributes": {}
-      },
-      {
         "id": "b3ace093-eaf9-4214-ad5a-863c4b786af6",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
@@ -552,13 +543,6 @@
           "clientRoles": {}
         },
         {
-          "name": "ML_ENGINEER",
-          "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/ML_ENGINEER",
-          "attributes": {},
-          "realmRoles": [],
-          "clientRoles": {}
-        },
-        {
           "name": "QUALITY_ASSURANCE_SPECIALIST",
           "path": "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/QUALITY_ASSURANCE_SPECIALIST",
           "attributes": {},
@@ -613,16 +597,6 @@
           "id": "37b4a0c9-eeea-4209-857c-28869614e2f0",
           "name": "DATA_SCIENTIST",
           "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_SCIENTIST",
-          "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
-          "subGroups": [],
-          "attributes": {},
-          "realmRoles": [],
-          "clientRoles": {}
-        },
-        {
-          "id": "ef1f8e4a-e31f-45c8-9c5f-679d1e8e97f2",
-          "name": "ML_ENGINEER",
-          "path": "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/ML_ENGINEER",
           "parentId": "dab241d3-fb34-417b-85b5-3dce135739b4",
           "subGroups": [],
           "attributes": {},
@@ -847,26 +821,6 @@
       "groups": [
         "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/DATA_STEWARD",
         "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/DATA_STEWARD"
-      ]
-    },
-    {
-      "id": "ml_engineer",
-      "username": "ml_engineer",
-      "enabled": true,
-      "email": "ml_engineer@gmail.com",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "ml_engineer"
-        }
-      ],
-      "realmRoles": [
-        "offline_access",
-        "ML_ENGINEER"
-      ],
-      "groups": [
-        "/study-0197a6f8-2b78-71e4-81c1-b7b6a744ece3/ML_ENGINEER",
-        "/study-2197a6f8-2b78-71e4-81c1-b7b6a744ece4/ML_ENGINEER"
       ]
     },
     {

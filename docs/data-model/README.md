@@ -141,9 +141,9 @@ erDiagram
         varchar title
         text description
         varchar data_type
-        boolean isOutcome
+        boolean is_outcome
         boolean mandatory
-        boolean isUnique
+        boolean is_unique
         varchar units
         varchar equipment
         varchar data_collection
@@ -392,7 +392,7 @@ erDiagram
         varchar name
         text objective_function
         varchar type
-        varchar subtype
+        varchar sub_type
     }
     implementation {
         varchar implementation_id PK
