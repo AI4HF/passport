@@ -195,14 +195,24 @@ parent's `validate*Deletion`,** or deletion will silently orphan rows.
 - On passport creation, `AuditLogBookService.createAuditLogBookEntries(passportId, studyId)` snapshots *all*
   audit logs for that study into the `audit_log_book` join table, freezing the change history.
 - `PassportService.createPassport(PassportWithDetailSelection)` assembles `detailsJson` from ~16 optional
-  sections driven by `PassportDetailsSelection` booleans (`isModelDetails`, `isStudyDetails`, `isDatasets`,
-  `isFeatureSets`, `isLearningProcessDetails`, `isEvaluationMeasures`, `isModelFigures`, `isParameterDetails`,
-  `isSurveyDetails`, `isPopulationDetails`, `isExperimentDetails`, `isLinkedArticleDetails`, …), then runs
+  sections driven by the booleans of `PassportDetails` (`isModelDetails`, `isStudyDetails`, `isDatasets`,
+  `isDatasetTransformations`, `isFeatureSets`, `isLearningProcessDetails`, `isEvaluationMeasures`,
+  `isModelFigures`, `isParameterDetails`, `isSurveyDetails`, `isPopulationDetails`, `isExperimentDetails`,
+  `isLinkedArticleDetails`, …), then runs
   `cleanEmptyStringFieldsDeep` to either drop blank fields or replace them with `"N/A"` based on
   `isExcludeEmptyFields`.
 
-  **Adding a section to the passport** means: a boolean on `PassportDetailsSelection`, a `fetchX(...)` private
-  method, an `if` block in `createPassport`, a field on `PassportDetails`, and the mirrored frontend changes.
+  **Passport content is model-scoped.** `resolveModelScope` collects the learning datasets the model used
+  (linked to its learning process, plus those its evaluations ran over) and their datasets. The data sections
+  come from that: the model's experiment and learning process, the parameters that process and its stages set,
+  the feature sets, populations and quality assessments of those datasets, the criteria those assessments
+  ran, and the dataset transformations of those learning datasets (`datasetTransformationsWithSteps`: each
+  with the datasets it was applied to and its ordered steps; a step that has a `qualityAssessmentId` carries
+  that assessment's dataset title and result). Only `studyDetails` and `surveys` are study-wide. A new section
+  should follow the same rule.
+
+  **Adding a section to the passport** means: a boolean on `PassportDetails`, a `fetchX(...)` private method,
+  an `if` block in `createPassport`, and the mirrored frontend changes.
 
 - `POST /passport/generate-and-sign` takes a `PdfRequest` (which names the `passportId`). The **first** call
   renders it with `PdfRenderService` (headless Chrome via `jvppeteer`, semaphore-limited, `pdf.*` properties),
