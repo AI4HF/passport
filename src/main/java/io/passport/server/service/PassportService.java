@@ -112,6 +112,12 @@ public class PassportService {
     @Autowired
     private CatalogueRegistrationService catalogueRegistrationService;
 
+    @Autowired
+    private DatasetTransformationService datasetTransformationService;
+
+    @Autowired
+    private DatasetTransformationStepService datasetTransformationStepService;
+
     private final RoleCheckerService roleCheckerService;
     @Autowired
     private LearningStageParameterService learningStageParameterService;
@@ -237,6 +243,9 @@ public class PassportService {
             }
             if(selection.isDatasets()){
                 detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(scope));
+            }
+            if(selection.isDatasetTransformations()){
+                detailsJson.put("datasetTransformationsWithSteps", fetchDatasetTransformationsWithSteps(scope));
             }
             if(selection.isLearningProcessDetails()){
                 detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(scope));
@@ -590,6 +599,53 @@ public class PassportService {
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Datasets and Learning Datasets: " + e.getMessage());
+        }
+    }
+
+    /**
+     * How the model's learning datasets were prepared: each transformation with the datasets it was applied
+     * to and its steps in order. A step made in response to a quality assessment carries that assessment's
+     * dataset and result, so the reader can see which finding it answers.
+     */
+    private List<Map<String, Object>> fetchDatasetTransformationsWithSteps(ModelScope scope) {
+        try {
+            return scope.learningDatasets().stream()
+                    .map(LearningDataset::getDatasetTransformationId)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(datasetTransformationService::findDatasetTransformationByDatasetTransformationId)
+                    .flatMap(Optional::stream)
+                    .map(datasetTransformation -> {
+                        String datasetTransformationId = datasetTransformation.getDatasetTransformationId();
+                        Map<String, Object> transformationWithSteps = new HashMap<>();
+                        transformationWithSteps.put("datasetTransformation", datasetTransformation);
+                        transformationWithSteps.put("appliedToDatasets", scope.learningDatasets().stream()
+                                .filter(learningDataset -> datasetTransformationId.equals(learningDataset.getDatasetTransformationId()))
+                                .map(LearningDataset::getDatasetId)
+                                .distinct()
+                                .flatMap(datasetId -> scope.datasets().stream().filter(dataset -> dataset.getDatasetId().equals(datasetId)))
+                                .map(Dataset::getTitle)
+                                .collect(Collectors.toList()));
+                        transformationWithSteps.put("steps", datasetTransformationStepService.findByDatasetTransformationId(datasetTransformationId).stream()
+                                .sorted(Comparator.comparing(DatasetTransformationStep::getStepOrder, Comparator.nullsLast(Comparator.naturalOrder())))
+                                .map(step -> {
+                                    Map<String, Object> stepWithAssessment = new HashMap<>();
+                                    stepWithAssessment.put("step", step);
+                                    if (step.getQualityAssessmentId() != null) {
+                                        qualityAssessmentService.findQualityAssessmentById(step.getQualityAssessmentId()).ifPresent(qualityAssessment -> {
+                                            stepWithAssessment.put("qualityAssessmentResult", qualityAssessment.getOverallResult());
+                                            datasetService.findDatasetByDatasetId(qualityAssessment.getDatasetId())
+                                                    .ifPresent(dataset -> stepWithAssessment.put("qualityAssessmentDatasetTitle", dataset.getTitle()));
+                                        });
+                                    }
+                                    return stepWithAssessment;
+                                })
+                                .collect(Collectors.toList()));
+                        return transformationWithSteps;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error fetching Dataset Transformations: " + e.getMessage());
         }
     }
 
