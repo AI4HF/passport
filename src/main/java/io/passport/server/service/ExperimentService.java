@@ -151,6 +151,15 @@ public class ExperimentService {
     }
 
     /**
+     * Find an experiment by experimentId
+     * @param experimentId ID of the experiment
+     * @return
+     */
+    public Optional<Experiment> findExperimentById(String experimentId) {
+        return this.experimentRepository.findById(experimentId);
+    }
+
+    /**
      * Overwrite all Experiment entries for a Study
      * @param studyId ID of the study
      * @param incoming Collection of Experiments to be overwritten as

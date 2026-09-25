@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service class for passport management.
@@ -62,6 +63,9 @@ public class PassportService {
 
     @Autowired
     private LearningDatasetService learningDatasetService;
+
+    @Autowired
+    private LearningProcessDatasetService learningProcessDatasetService;
 
     @Autowired
     private LearningProcessService learningProcessService;
@@ -193,52 +197,54 @@ public class PassportService {
     public Passport createPassport(PassportWithDetailSelection passportWithDetailSelection) {
         try {
             Map<String, Object> detailsJson = new HashMap<>();
-            if(passportWithDetailSelection.getPassportDetailsSelection().isModelDetails()){
-                detailsJson.put("modelDetails", fetchModelDetails(passportWithDetailSelection.getPassport()));
+            PassportDetails selection = passportWithDetailSelection.getPassportDetailsSelection();
+            ModelScope scope = resolveModelScope(passportWithDetailSelection.getPassport());
+            if(selection.isModelDetails()){
+                detailsJson.put("modelDetails", fetchModelDetails(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isStudyDetails()){
+            if(selection.isStudyDetails()){
                 detailsJson.put("studyDetails", fetchStudyDetails(passportWithDetailSelection.getPassport()));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
-                detailsJson.put("parameters", fetchParameters(passportWithDetailSelection.getPassport()));
+            if(selection.isParameterDetails()){
+                List<LearningProcessParameter> learningProcessParameters = fetchLearningProcessParameters(scope);
+                List<LearningStageParameter> learningStageParameters = fetchLearningStageParameters(scope);
+                detailsJson.put("parameters", fetchParameters(learningProcessParameters, learningStageParameters));
+                detailsJson.put("learningStageParameters", learningStageParameters.stream()
+                        .map(LearningStageParameterDTO::new).collect(Collectors.toList()));
+                detailsJson.put("learningProcessParameters", learningProcessParameters.stream()
+                        .map(LearningProcessParameterDTO::new).collect(Collectors.toList()));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
-                detailsJson.put("learningStageParameters", fetchLearningStageParameters(passportWithDetailSelection.getPassport()));
+            if(selection.isPopulationDetails()){
+                detailsJson.put("populationDetails", fetchPopulationDetails(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isParameterDetails()){
-                detailsJson.put("learningProcessParameters", fetchLearningProcessParameters(passportWithDetailSelection.getPassport()));
-            }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isPopulationDetails()){
-                detailsJson.put("populationDetails", fetchPopulationDetails(passportWithDetailSelection.getPassport()));
-            }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isSurveyDetails()){
+            if(selection.isSurveyDetails()){
                 detailsJson.put("surveys", fetchSurveys(passportWithDetailSelection.getPassport()));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isExperimentDetails()){
-                detailsJson.put("experiments", fetchExperiments(passportWithDetailSelection.getPassport()));
+            if(selection.isExperimentDetails()){
+                detailsJson.put("experiments", fetchExperiments(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isLinkedArticleDetails()){
+            if(selection.isLinkedArticleDetails()){
                 detailsJson.put("linkedArticles", fetchLinkedArticles(passportWithDetailSelection.getPassport()));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isFeatureSets()){
-                detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(passportWithDetailSelection.getPassport()));
+            if(selection.isFeatureSets()){
+                detailsJson.put("featureSetsWithFeatures", fetchFeatureSetsWithFeatures(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityCriteria()){
-                detailsJson.put("qualityCriteriaWithCriterion", fetchQualityCriteriaWithCriterion(passportWithDetailSelection.getPassport()));
+            if(selection.isQualityCriteria()){
+                detailsJson.put("qualityCriteriaWithCriterion", fetchQualityCriteriaWithCriterion(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isQualityAssessments()){
-                detailsJson.put("qualityAssessmentsWithResults", fetchQualityAssessmentsWithResults(passportWithDetailSelection.getPassport()));
+            if(selection.isQualityAssessments()){
+                detailsJson.put("qualityAssessmentsWithResults", fetchQualityAssessmentsWithResults(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isDatasets()){
-                detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(passportWithDetailSelection.getPassport()));
+            if(selection.isDatasets()){
+                detailsJson.put("datasetsWithLearningDatasets", fetchDatasetsWithLearningDatasets(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isLearningProcessDetails()){
-                detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(passportWithDetailSelection.getPassport()));
+            if(selection.isLearningProcessDetails()){
+                detailsJson.put("learningProcessesWithStages", fetchLearningProcessesWithStages(scope));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isEvaluationMeasures()){
+            if(selection.isEvaluationMeasures()){
                 detailsJson.put("modelEvaluationsWithMeasures", fetchModelEvaluationsWithMeasures(passportWithDetailSelection.getPassport()));
             }
-            if(passportWithDetailSelection.getPassportDetailsSelection().isModelFigures()){
+            if(selection.isModelFigures()){
                 detailsJson.put("modelFigures", fetchModelFigures(passportWithDetailSelection.getPassport()));
             }
             cleanEmptyStringFieldsDeep(detailsJson, passportWithDetailSelection.getPassportDetailsSelection().isExcludeEmptyFields());
@@ -328,14 +334,52 @@ public class PassportService {
     }
 
     /**
+     * What a passport describes: the model, and the learning datasets it was trained or evaluated on,
+     * with the datasets those were prepared from. Every data section of the passport is drawn from this
+     * rather than from the whole study, so a passport only shows what its model actually used.
+     */
+    private record ModelScope(Model model, List<LearningDataset> learningDatasets, List<Dataset> datasets) {}
+
+    /**
+     * Resolves the model of the passport and the learning datasets it used - those linked to its learning
+     * process, then those its evaluations were computed over - together with their datasets.
+     *
+     * @param passport The passport being created
+     * @return The model scope
+     */
+    private ModelScope resolveModelScope(Passport passport) {
+        Model model = modelService.findModelById(passport.getModelId())
+                .orElseThrow(() -> new RuntimeException("Model not found"));
+
+        Set<String> learningDatasetIds = new LinkedHashSet<>();
+        if (model.getLearningProcessId() != null) {
+            learningProcessDatasetService.findByLearningProcessId(model.getLearningProcessId())
+                    .forEach(learningProcessDataset -> learningDatasetIds.add(learningProcessDataset.getId().getLearningDatasetId()));
+        }
+        modelEvaluationService.findModelEvaluationsByModelId(model.getModelId())
+                .forEach(modelEvaluation -> modelEvaluationDatasetService.findByModelEvaluationId(modelEvaluation.getModelEvaluationId())
+                        .forEach(modelEvaluationDataset -> learningDatasetIds.add(modelEvaluationDataset.getId().getLearningDatasetId())));
+
+        List<LearningDataset> learningDatasets = learningDatasetIds.stream()
+                .map(learningDatasetService::findLearningDatasetByLearningDatasetId)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+        List<Dataset> datasets = learningDatasets.stream()
+                .map(LearningDataset::getDatasetId)
+                .distinct()
+                .map(datasetService::findDatasetByDatasetId)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+        return new ModelScope(model, learningDatasets, datasets);
+    }
+
+    /**
      * Fetch methods to obtain pdf generation data
      */
-    private ModelWithOwnerNameDTO fetchModelDetails(Passport passport) {
+    private ModelWithOwnerNameDTO fetchModelDetails(ModelScope scope) {
         try {
-            Model model = modelService.findModelById(passport.getModelId())
-                    .orElseThrow(() -> new RuntimeException("Model not found"));
-            ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(model);
-            modelWithOwnerNameDTO.setOwnerOrganizationName(organizationService.findOrganizationById(model.getOwnerOrganizationId()).orElseThrow().getName());
+            ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(scope.model());
+            modelWithOwnerNameDTO.setOwnerOrganizationName(organizationService.findOrganizationById(scope.model().getOwnerOrganizationId()).orElseThrow().getName());
             return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
@@ -351,37 +395,60 @@ public class PassportService {
         }
     }
 
-    private List<Parameter> fetchParameters(Passport passport) {
+    /**
+     * The definitions of the parameters the model's learning process and stages set.
+     */
+    private List<Parameter> fetchParameters(List<LearningProcessParameter> learningProcessParameters,
+                                            List<LearningStageParameter> learningStageParameters) {
         try {
-            return parameterService.findParametersByStudyId(passport.getStudyId());
+            return Stream.concat(
+                            learningProcessParameters.stream().map(parameter -> parameter.getId().getParameterId()),
+                            learningStageParameters.stream().map(parameter -> parameter.getId().getParameterId()))
+                    .distinct()
+                    .map(parameterService::findParameterById)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Parameters: " + e.getMessage());
         }
     }
 
-    private List<LearningProcessParameterDTO> fetchLearningProcessParameters(Passport passport) {
+    private List<LearningProcessParameter> fetchLearningProcessParameters(ModelScope scope) {
         try {
-            return learningProcessParameterService.findByStudyId(passport.getStudyId()).stream()
-                    .map(LearningProcessParameterDTO::new)
-                    .collect(Collectors.toList());
+            if (scope.model().getLearningProcessId() == null) {
+                return List.of();
+            }
+            return learningProcessParameterService.findByLearningProcessId(scope.model().getLearningProcessId());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching LearningProcessParameters: " + e.getMessage());
         }
     }
 
-    private List<LearningStageParameterDTO> fetchLearningStageParameters(Passport passport) {
+    private List<LearningStageParameter> fetchLearningStageParameters(ModelScope scope) {
         try {
-            return learningStageParameterService.findByStudyId(passport.getStudyId()).stream()
-                    .map(LearningStageParameterDTO::new)
+            if (scope.model().getLearningProcessId() == null) {
+                return List.of();
+            }
+            return learningStageService.findLearningStagesByProcessId(scope.model().getLearningProcessId()).stream()
+                    .flatMap(learningStage -> learningStageParameterService.findByLearningStageId(learningStage.getLearningStageId()).stream())
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching LearningStageParameters: " + e.getMessage());
         }
     }
 
-    private List<Population> fetchPopulationDetails(Passport passport) {
+    /**
+     * The populations the model's datasets were drawn from.
+     */
+    private List<Population> fetchPopulationDetails(ModelScope scope) {
         try {
-            return populationService.findPopulationByStudyId(passport.getStudyId());
+            return scope.datasets().stream()
+                    .map(Dataset::getPopulationId)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(populationService::findPopulationById)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Population details: " + e.getMessage());
         }
@@ -395,9 +462,15 @@ public class PassportService {
         }
     }
 
-    private List<Experiment> fetchExperiments(Passport passport) {
+    /**
+     * The research question the model answers.
+     */
+    private List<Experiment> fetchExperiments(ModelScope scope) {
         try {
-            return experimentService.findExperimentByStudyId(passport.getStudyId());
+            if (scope.model().getExperimentId() == null) {
+                return List.of();
+            }
+            return experimentService.findExperimentById(scope.model().getExperimentId()).stream().collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Experiments: " + e.getMessage());
         }
@@ -410,10 +483,17 @@ public class PassportService {
         }
     }
 
-    private List<Map<String, Object>> fetchFeatureSetsWithFeatures(Passport passport) {
+    /**
+     * The feature sets the model's datasets conform to, each with its features.
+     */
+    private List<Map<String, Object>> fetchFeatureSetsWithFeatures(ModelScope scope) {
         try {
-            List<FeatureSet> featureSets = featureSetService.getAllFeatureSetsByStudyId(passport.getStudyId());
-            return featureSets.stream()
+            return scope.datasets().stream()
+                    .map(Dataset::getFeaturesetId)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(featureSetService::findFeatureSetByFeatureSetId)
+                    .flatMap(Optional::stream)
                     .map(featureSet -> {
                         Map<String, Object> featureSetWithFeatures = new HashMap<>();
                         featureSetWithFeatures.put("featureSet", featureSet);
@@ -427,11 +507,25 @@ public class PassportService {
     }
 
     /**
-     * The quality criteria sets defined for the study, each with the rules it contains.
+     * The quality assessment runs over the model's datasets.
      */
-    private List<Map<String, Object>> fetchQualityCriteriaWithCriterion(Passport passport) {
+    private List<QualityAssessment> findQualityAssessments(ModelScope scope) {
+        return scope.datasets().stream()
+                .flatMap(dataset -> qualityAssessmentService.findQualityAssessmentsByDatasetId(dataset.getDatasetId()).stream())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * The quality criteria sets the model's datasets were assessed against, each with the rules it contains.
+     */
+    private List<Map<String, Object>> fetchQualityCriteriaWithCriterion(ModelScope scope) {
         try {
-            return qualityCriteriaService.getAllQualityCriteriaByStudyId(passport.getStudyId()).stream()
+            return findQualityAssessments(scope).stream()
+                    .map(QualityAssessment::getQualityCriteriaId)
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .map(qualityCriteriaService::findQualityCriteriaById)
+                    .flatMap(Optional::stream)
                     .map(qualityCriteria -> {
                         Map<String, Object> criteriaWithCriterion = new HashMap<>();
                         criteriaWithCriterion.put("qualityCriteria", qualityCriteria);
@@ -446,12 +540,12 @@ public class PassportService {
     }
 
     /**
-     * The quality assessment runs over the study's datasets, each with its per-criterion results and the
+     * The quality assessment runs over the model's datasets, each with its per-criterion results and the
      * dataset and center it was run against, so the section reads on its own.
      */
-    private List<Map<String, Object>> fetchQualityAssessmentsWithResults(Passport passport) {
+    private List<Map<String, Object>> fetchQualityAssessmentsWithResults(ModelScope scope) {
         try {
-            return qualityAssessmentService.getAllQualityAssessmentsByStudyId(passport.getStudyId()).stream()
+            return findQualityAssessments(scope).stream()
                     .map(qualityAssessment -> {
                         Map<String, Object> assessmentWithResults = new HashMap<>();
                         assessmentWithResults.put("qualityAssessment", qualityAssessment);
@@ -470,14 +564,18 @@ public class PassportService {
         }
     }
 
-    private List<Map<String, Object>> fetchDatasetsWithLearningDatasets(Passport passport) {
+    /**
+     * The model's datasets, each listing only the learning datasets the model used.
+     */
+    private List<Map<String, Object>> fetchDatasetsWithLearningDatasets(ModelScope scope) {
         try {
-            List<Dataset> datasets = datasetService.getAllDatasetsByStudyId(passport.getStudyId());
-            return datasets.stream()
+            return scope.datasets().stream()
                     .map(dataset -> {
                         Map<String, Object> datasetWithLearningDatasets = new HashMap<>();
                         datasetWithLearningDatasets.put("dataset", dataset);
-                        datasetWithLearningDatasets.put("learningDatasets", learningDatasetService.findByDatasetId(dataset.getDatasetId()));
+                        datasetWithLearningDatasets.put("learningDatasets", scope.learningDatasets().stream()
+                                .filter(learningDataset -> dataset.getDatasetId().equals(learningDataset.getDatasetId()))
+                                .collect(Collectors.toList()));
                         datasetWithLearningDatasets.put("concepts", datasetConceptService.findByDatasetId(dataset.getDatasetId()));
                         // the publication record, with what was actually listed where
                         catalogueDatasetService.findByDatasetId(dataset.getDatasetId()).ifPresent(catalogueDataset -> {
@@ -495,10 +593,15 @@ public class PassportService {
         }
     }
 
-    private List<Map<String, Object>> fetchLearningProcessesWithStages(Passport passport) {
+    /**
+     * The learning process that produced the model, with its stages.
+     */
+    private List<Map<String, Object>> fetchLearningProcessesWithStages(ModelScope scope) {
         try {
-            List<LearningProcess> learningProcesses = learningProcessService.getAllLearningProcessByStudyId(passport.getStudyId());
-            return learningProcesses.stream()
+            if (scope.model().getLearningProcessId() == null) {
+                return List.of();
+            }
+            return learningProcessService.findLearningProcessById(scope.model().getLearningProcessId()).stream()
                     .map(learningProcess -> {
                         Map<String, Object> learningProcessWithStages = new HashMap<>();
                         learningProcessWithStages.put("learningProcess", learningProcess);
