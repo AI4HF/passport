@@ -5,6 +5,7 @@ import io.passport.server.repository.PassportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -122,6 +123,9 @@ public class PassportService {
     @Autowired
     private LearningStageParameterService learningStageParameterService;
 
+    @Autowired
+    private AuditLogBookService auditLogBookService;
+
 
     @Autowired
     public PassportService(PassportRepository passportRepository, RoleCheckerService roleCheckerService) {
@@ -192,6 +196,20 @@ public class PassportService {
         }else{
             return false;
         }
+    }
+
+    /**
+     * Creates a passport and freezes its audit log book in one transaction, so a passport is never stored
+     * without the change history it was generated from.
+     *
+     * @param passportWithDetailSelection The passport object with basic info (modelId, studyId, etc.) and selected details of the passport.
+     * @return The saved Passport.
+     */
+    @Transactional
+    public Passport createPassportWithAuditLogBook(PassportWithDetailSelection passportWithDetailSelection) {
+        Passport savedPassport = createPassport(passportWithDetailSelection);
+        auditLogBookService.createAuditLogBookEntries(savedPassport.getPassportId(), savedPassport.getStudyId());
+        return savedPassport;
     }
 
     /**
@@ -389,10 +407,34 @@ public class PassportService {
         try {
             ModelWithOwnerNameDTO modelWithOwnerNameDTO = new ModelWithOwnerNameDTO(scope.model());
             modelWithOwnerNameDTO.setOwnerOrganizationName(organizationService.findOrganizationById(scope.model().getOwnerOrganizationId()).orElseThrow().getName());
+            Optional<Model> previousModel = findPreviousModelInStudy(scope.model());
+            if (previousModel.isPresent()) {
+                modelWithOwnerNameDTO.setPreviousModelName(previousModel.get().getName());
+                modelWithOwnerNameDTO.setPreviousModelVersion(previousModel.get().getVersion());
+            } else {
+                // A previous model outside the study (or gone) is not named, and its id is not shown either
+                modelWithOwnerNameDTO.setPreviousModelId(null);
+            }
             return modelWithOwnerNameDTO;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error fetching Model: " + e.getMessage());
         }
+    }
+
+    /**
+     * The model the given one was retrained from. The lineage is only followed within the model's own study,
+     * so a passport never shows another study's model.
+     *
+     * @param model The model of the passport
+     * @return The previous model, or empty when there is none in the same study
+     */
+    private Optional<Model> findPreviousModelInStudy(Model model) {
+        String previousModelId = model.getPreviousModelId();
+        if (previousModelId == null || previousModelId.isBlank() || model.getStudyId() == null) {
+            return Optional.empty();
+        }
+        return modelService.findModelById(previousModelId)
+                .filter(previous -> model.getStudyId().equals(previous.getStudyId()));
     }
 
     private Study fetchStudyDetails(Passport passport) {

@@ -57,11 +57,13 @@ public class AuditLogBookController {
     }
 
     /**
-     * Creates Audit Log Book entities for all Audit Logs of the chosen Study.
+     * Kept for clients that still call it after creating a passport; it changes nothing. A passport's audit log
+     * book is the snapshot taken when the passport is created (in the same transaction), and it never changes
+     * afterwards - not even when it is empty, or when the passport was created before books were taken this way.
      * @param passportId Passport related to all of Audit Log Books.
      * @param studyId Connected Study of all the Audit Logs.
      * @param principal JWT principal containing user info.
-     * @return
+     * @return 201, as before, so existing clients keep working
      */
     @PostMapping("")
     public ResponseEntity<?> createAuditLogBookEntries(
@@ -72,13 +74,7 @@ public class AuditLogBookController {
         if (!this.roleCheckerService.isUserAuthorizedForStudy(studyId, principal, allowedRoles)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        try {
-            auditLogBookService.createAuditLogBookEntries(passportId, studyId);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
-            log.error("Error creating Dataset: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

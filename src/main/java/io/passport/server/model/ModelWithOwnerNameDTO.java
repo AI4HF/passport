@@ -28,6 +28,11 @@ public class ModelWithOwnerNameDTO {
 
     private String retrainingReason;
 
+    /** Name and version of the model this one was retrained from, for a reader of the passport. */
+    private String previousModelName;
+
+    private String previousModelVersion;
+
     private String tag;
 
     private String modelType;

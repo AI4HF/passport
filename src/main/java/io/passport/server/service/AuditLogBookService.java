@@ -7,6 +7,7 @@ import io.passport.server.util.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -53,30 +54,21 @@ public class AuditLogBookService {
     }
 
     /**
-     * Create AuditLogBook entries.
+     * Create AuditLogBook entries: snapshots every audit log of the study into the passport's audit log book.
+     * Called only while a passport is being created (PassportService.createPassportWithAuditLogBook); the book
+     * is that snapshot and never changes afterwards. The check guards against a second snapshot for a passport.
      * @param passportId Connected passport id.
      * @param studyId Connected study id.
      */
+    @Transactional
     public void createAuditLogBookEntries(String passportId, String studyId) {
-        List<AuditLog> relatedAuditLogs = auditLogRepository.findAll()
-                .stream()
-                .filter(log -> isRelatedToPassport(log, studyId))
-                .toList();
-
-        for (AuditLog auditLog : relatedAuditLogs) {
-            AuditLogBook auditLogBook = new AuditLogBook(new AuditLogBookId(passportId, auditLog.getAuditLogId()));
-            auditLogBookRepository.save(auditLogBook);
+        if (auditLogBookRepository.existsByIdPassportId(passportId)) {
+            return;
         }
-    }
-
-    /**
-     * Check if an Audit Log belongs to a certain study.
-     * @param auditLog Subject of comparison.
-     * @param studyId Compared study id.
-     * @return
-     */
-    private boolean isRelatedToPassport(AuditLog auditLog, String studyId) {
-        return auditLog.getStudyId().equals(studyId);
+        List<AuditLogBook> auditLogBooks = auditLogRepository.findByStudyId(studyId).stream()
+                .map(auditLog -> new AuditLogBook(new AuditLogBookId(passportId, auditLog.getAuditLogId())))
+                .toList();
+        auditLogBookRepository.saveAll(auditLogBooks);
     }
 
     /**

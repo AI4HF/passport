@@ -110,29 +110,4 @@ public class Dataset {
 
     @Column(name = "last_updated_by")
     private String lastUpdatedBy;
-
-    /**
-     * Projection constructor used by the repository's constructor expressions. It is deliberately
-     * narrower than the entity: the HealthDCAT-AP columns are not part of the list projections, so
-     * adding one does not break those queries.
-     */
-    public Dataset(String datasetId, String featuresetId, String populationId, String organizationId,
-                   String title, String description, String version, String referenceEntity,
-                   Integer numberOfRecords, Boolean synthetic, Instant createdAt, String createdBy,
-                   Instant lastUpdatedAt, String lastUpdatedBy) {
-        this.datasetId = datasetId;
-        this.featuresetId = featuresetId;
-        this.populationId = populationId;
-        this.organizationId = organizationId;
-        this.title = title;
-        this.description = description;
-        this.version = version;
-        this.referenceEntity = referenceEntity;
-        this.numberOfRecords = numberOfRecords;
-        this.synthetic = synthetic;
-        this.createdAt = createdAt;
-        this.createdBy = createdBy;
-        this.lastUpdatedAt = lastUpdatedAt;
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
 }

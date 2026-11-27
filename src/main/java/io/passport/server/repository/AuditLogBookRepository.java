@@ -21,6 +21,14 @@ public interface AuditLogBookRepository extends JpaRepository<AuditLogBook, Audi
     List<AuditLogBook> findByIdPassportId(String passportId);
 
     /**
+     * Check whether a passport already has AuditLogBook entries.
+     *
+     * @param passportId The ID of the passport.
+     * @return True if the passport's audit log book has been created.
+     */
+    boolean existsByIdPassportId(String passportId);
+
+    /**
      * Find all AuditLogBook entries by Audit Log ID.
      *
      * @param auditLogId The ID of the audit log.
