@@ -1,7 +1,9 @@
 package io.passport.server.controller;
 
 import io.passport.server.model.EvaluationMeasure;
+import io.passport.server.model.Operation;
 import io.passport.server.model.Role;
+import io.passport.server.service.AuditLogBookService;
 import io.passport.server.service.EvaluationMeasureService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
@@ -24,14 +26,18 @@ import java.util.Optional;
 @RequestMapping("/evaluation-measure")
 public class EvaluationMeasureController {
     private static final Logger log = LoggerFactory.getLogger(EvaluationMeasureController.class);
+    private final String relationName = "Evaluation Measure";
     private final EvaluationMeasureService evaluationMeasureService;
     private final RoleCheckerService roleCheckerService;
+    private final AuditLogBookService auditLogBookService;
     private final List<Role> allowedRoles = List.of(Role.DATA_SCIENTIST);
 
     @Autowired
-    public EvaluationMeasureController(EvaluationMeasureService evaluationMeasureService, RoleCheckerService roleCheckerService) {
+    public EvaluationMeasureController(EvaluationMeasureService evaluationMeasureService, RoleCheckerService roleCheckerService,
+                                       AuditLogBookService auditLogBookService) {
         this.evaluationMeasureService = evaluationMeasureService;
         this.roleCheckerService = roleCheckerService;
+        this.auditLogBookService = auditLogBookService;
     }
 
     /**
@@ -93,6 +99,10 @@ public class EvaluationMeasureController {
             }
 
             EvaluationMeasure savedEvaluationMeasure = this.evaluationMeasureService.saveEvaluationMeasure(evaluationMeasure);
+            if (savedEvaluationMeasure.getMeasureId() != null) {
+                auditLogBookService.createAuditLog(principal, studyId, Operation.CREATE, relationName,
+                        savedEvaluationMeasure.getMeasureId(), savedEvaluationMeasure);
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEvaluationMeasure);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -119,6 +129,8 @@ public class EvaluationMeasureController {
             }
 
             Optional<EvaluationMeasure> savedEvaluationMeasure = this.evaluationMeasureService.updateEvaluationMeasure(evaluationMeasureId, updatedEvaluationMeasure);
+            savedEvaluationMeasure.ifPresent(saved -> auditLogBookService.createAuditLog(principal, studyId, Operation.UPDATE,
+                    relationName, saved.getMeasureId(), saved));
             return savedEvaluationMeasure.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -142,7 +154,12 @@ public class EvaluationMeasureController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
+            Optional<EvaluationMeasure> evaluationMeasure = this.evaluationMeasureService.findEvaluationMeasureById(evaluationMeasureId);
             boolean isDeleted = this.evaluationMeasureService.deleteEvaluationMeasure(evaluationMeasureId);
+            if (isDeleted && evaluationMeasure.isPresent()) {
+                auditLogBookService.createAuditLog(principal, studyId, Operation.DELETE, relationName,
+                        evaluationMeasureId, evaluationMeasure.get());
+            }
             return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error(e.getMessage());

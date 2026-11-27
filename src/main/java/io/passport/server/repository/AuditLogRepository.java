@@ -18,4 +18,12 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, String> {
      * @return List of AuditLog entries.
      */
     List<AuditLog> findByAuditLogIdIn(List<String> auditLogIds);
+
+    /**
+     * Find all AuditLogs of a study.
+     *
+     * @param studyId The ID of the study.
+     * @return List of AuditLog entries.
+     */
+    List<AuditLog> findByStudyId(String studyId);
 }

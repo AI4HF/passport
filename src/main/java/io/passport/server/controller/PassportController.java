@@ -7,6 +7,7 @@ import io.passport.server.model.Role;
 import io.passport.server.service.PassportService;
 import io.passport.server.service.PassportSignatureService;
 import io.passport.server.service.PdfRenderService;
+import io.passport.server.service.PersonnelService;
 import io.passport.server.service.RoleCheckerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +31,17 @@ public class PassportController {
     private final PassportService passportService;
     private final RoleCheckerService roleCheckerService;
     private final PassportSignatureService passportSignatureService;
+    private final PersonnelService personnelService;
     private final List<Role> allowedRoles = List.of(Role.QUALITY_ASSURANCE_SPECIALIST);
 
     @Autowired
-    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService, PassportSignatureService passportSignatureService, PdfRenderService renderer) {
+    public PassportController(PassportService passportService, RoleCheckerService roleCheckerService, PassportSignatureService passportSignatureService, PdfRenderService renderer,
+                              PersonnelService personnelService) {
         this.passportService = passportService;
         this.roleCheckerService = roleCheckerService;
         this.passportSignatureService = passportSignatureService;
         this.renderer = renderer;
+        this.personnelService = personnelService;
     }
 
     /**
@@ -101,7 +105,18 @@ public class PassportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            Passport savedPassport = passportService.createPassport(passport);
+            // The Quality Assurance Specialist generating the passport is the one who approves it. Both fields are
+            // always taken from the token and any value in the request body is ignored (personnel ids are Keycloak
+            // user ids); a caller without a personnel record leaves them empty.
+            String caller = principal.getSubject();
+            String approver = (caller != null && personnelService.findPersonnelById(caller).isPresent()) ? caller : null;
+            Passport requestedPassport = passport.getPassport();
+            requestedPassport.setCreatedBy(approver);
+            requestedPassport.setApprovedBy(approver);
+
+            // Saves the passport and freezes its audit log book in one transaction. POST /audit-log-book, which
+            // passport-web still calls afterwards, then finds the book already created and leaves it as it is.
+            Passport savedPassport = passportService.createPassportWithAuditLogBook(passport);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPassport);
         } catch (RuntimeException e) {
             log.error("Error while creating passport: " + e.getMessage());

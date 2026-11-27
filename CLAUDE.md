@@ -192,8 +192,19 @@ parent's `validate*Deletion`,** or deletion will silently orphan rows.
 
 - `AuditLog` rows are written by controllers on every CREATE/UPDATE/DELETE, storing the serialized entity
   (`JSONUtil`) plus actor, study, timestamp, relation name and record id.
-- On passport creation, `AuditLogBookService.createAuditLogBookEntries(passportId, studyId)` snapshots *all*
-  audit logs for that study into the `audit_log_book` join table, freezing the change history.
+- On passport creation, `PassportController.createPassport` calls
+  `PassportService.createPassportWithAuditLogBook`, which saves the passport and, in the same transaction,
+  `AuditLogBookService.createAuditLogBookEntries(passportId, studyId)` snapshots *all* audit logs of the
+  passport's study into the `audit_log_book` join table: the book is the snapshot taken when the passport is
+  created and never changes afterwards, even when it is empty. `POST /audit-log-book` (which passport-web still
+  calls afterwards) does nothing and returns 201. The controller always sets `createdBy`/`approvedBy` from the token (the calling
+  personnel, or null for a caller without a personnel record) and ignores the values in the request body.
+- Passport versions are per model (by design): `linkToPreviousVersion` chains a regenerated passport onto the
+  model's newest one (`previousPassportId`, `version` + 1). A retrained model is a new Model, so its first
+  passport is version 1; its predecessor is reached through the model lineage (`previousModelId`, shown as
+  "Retrained From" by name and version). A passport shows only its own model's evaluation runs, never the
+  replaced model's performance (that lives in the replaced model's own passport). The passport follows
+  `previousModelId` only to a model of the same study; otherwise it leaves out the previous model's name and id.
 - `PassportService.createPassport(PassportWithDetailSelection)` assembles `detailsJson` from ~16 optional
   sections driven by the booleans of `PassportDetails` (`isModelDetails`, `isStudyDetails`, `isDatasets`,
   `isDatasetTransformations`, `isFeatureSets`, `isLearningProcessDetails`, `isEvaluationMeasures`,
